@@ -18,13 +18,14 @@ export default function ConnectionButton({
   const [loading, setLoading] = useState(false);
   const [status, setStatus] =
     useState<ConnectionStatusResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchStatus = async () => {
     try {
       const res = await getStatus(userId);
       setStatus(res.data.data);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error("Failed to fetch connection status", err);
     }
   };
 
@@ -35,10 +36,14 @@ export default function ConnectionButton({
   const handleConnect = async () => {
     try {
       setLoading(true);
-
+      setError(null);
       await sendRequest(userId);
-
       await fetchStatus();
+    } catch (err: any) {
+      console.error("Failed to send connection request", err);
+      setError(
+        err?.response?.data?.message || "Couldn't send request. Try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -49,10 +54,14 @@ export default function ConnectionButton({
 
     try {
       setLoading(true);
-
+      setError(null);
       await acceptRequest(status.requestId);
-
       await fetchStatus();
+    } catch (err: any) {
+      console.error("Failed to accept connection request", err);
+      setError(
+        err?.response?.data?.message || "Couldn't accept request. Try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -60,45 +69,43 @@ export default function ConnectionButton({
 
   if (!status) {
     return (
-      <button
-        disabled
-        className="rounded-lg bg-gray-200 px-4 py-2"
-      >
+      <button disabled className="rounded-lg bg-gray-200 px-4 py-2">
         Loading...
       </button>
     );
   }
 
+  const errorBanner = error ? (
+    <p className="mt-1 text-xs text-red-600">{error}</p>
+  ) : null;
+
   switch (status.status) {
     case "CONNECTED":
       return (
-        <button
-          disabled
-          className="rounded-lg bg-green-600 px-4 py-2 text-white"
-        >
+        <button disabled className="rounded-lg bg-green-600 px-4 py-2 text-white">
           Connected
         </button>
       );
 
     case "PENDING_SENT":
       return (
-        <button
-          disabled
-          className="rounded-lg bg-yellow-500 px-4 py-2 text-white"
-        >
+        <button disabled className="rounded-lg bg-yellow-500 px-4 py-2 text-white">
           Pending
         </button>
       );
 
     case "PENDING_RECEIVED":
       return (
-        <button
-          onClick={handleAccept}
-          disabled={loading}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-white"
-        >
-          Accept
-        </button>
+        <div>
+          <button
+            onClick={handleAccept}
+            disabled={loading}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-white disabled:opacity-60"
+          >
+            {loading ? "Accepting..." : "Accept"}
+          </button>
+          {errorBanner}
+        </div>
       );
 
     case "SELF":
@@ -106,13 +113,16 @@ export default function ConnectionButton({
 
     default:
       return (
-        <button
-          onClick={handleConnect}
-          disabled={loading}
-          className="rounded-lg bg-[#0A66C2] px-4 py-2 text-white hover:bg-[#004182]"
-        >
-          {loading ? "Sending..." : "Connect"}
-        </button>
+        <div>
+          <button
+            onClick={handleConnect}
+            disabled={loading}
+            className="rounded-lg bg-[#0F5B78] hover:bg-[#0b445a] px-5 py-2 text-white font-semibold text-sm transition-colors shadow-sm disabled:opacity-60"
+          >
+            {loading ? "Sending..." : "Connect"}
+          </button>
+          {errorBanner}
+        </div>
       );
   }
 }

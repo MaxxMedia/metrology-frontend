@@ -1,7 +1,8 @@
 "use client";
 
-import { Pencil, Camera, CheckCircle, MapPin, UserPlus, MessageSquare } from "lucide-react";
+import { Pencil, Camera, CheckCircle, MapPin } from "lucide-react";
 import CandidateAvatar from "@/components/candidate/CandidateAvatar";
+import ConnectionButton from "@/components/network/ConnectionButton"; // adjust path to wherever you place it
 
 interface ProfileHeaderProps {
   displayName: string;
@@ -11,6 +12,7 @@ interface ProfileHeaderProps {
   displayLocation: string;
   avatarUrl?: string;
   isOwner?: boolean;
+  targetUserId?: number; // the profile currently being viewed
   onEditIntroClick: () => void;
 }
 
@@ -22,6 +24,7 @@ export default function ProfileHeader({
   displayLocation,
   avatarUrl,
   isOwner,
+  targetUserId,
   onEditIntroClick,
 }: ProfileHeaderProps) {
   return (
@@ -110,17 +113,7 @@ export default function ProfileHeader({
               </button>
             ) : (
               <>
-                <button className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer">
-                  <UserPlus size={16} />
-                  Connect
-                </button>
-                {/* Message button commented out for candidate profile */}
-                {/*
-                <button className="border-2 border-[#0F5B78] text-[#0F5B78] hover:bg-[#0F5B78]/10 px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer">
-                  <MessageSquare size={16} />
-                  Message
-                </button>
-                */}
+                {targetUserId != null && <ConnectionButton userId={targetUserId} />}
                 <button className="border border-gray-300 hover:bg-gray-100 text-[#5A5F69] px-4 py-2 rounded-full font-semibold text-sm transition-colors cursor-pointer">
                   More...
                 </button>
