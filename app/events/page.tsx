@@ -70,7 +70,17 @@ function formatDateRange(start: string, end: string) {
   return `${s} – ${e}`
 }
 
+// Parses "YYYY-MM-DD" as a LOCAL date. new Date("YYYY-MM-DD") is parsed as UTC
+// per the JS spec, which silently shifts the calendar day back or forward
+// depending on the viewer's timezone offset (this was the root cause of the
+// "click 29, get 28" bug). Full ISO datetime strings coming from the API
+// (e.g. event.startDate/endDate) still go through the normal `new Date()` path.
 function normalizeDate(date: string | Date) {
+  if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    const [y, m, d] = date.split("-").map(Number)
+    return new Date(y, m - 1, d).getTime()
+  }
+
   const d = new Date(date)
 
   return new Date(
@@ -283,11 +293,10 @@ export default async function EventsPage({ searchParams }: PageProps) {
             {[1, 2, 3].map(p => (
               <button
                 key={p}
-                className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium ${
-                  p === 1
+                className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium ${p === 1
                     ? "bg-[#0f5b78] text-white"
                     : "border border-gray-300 text-gray-600 hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 {p}
               </button>

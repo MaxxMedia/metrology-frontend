@@ -6,13 +6,29 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 
 type CalendarEvent = { startDate: string; endDate: string }
 
+// Format a Date using its LOCAL year/month/day (no UTC conversion, no day shift)
+function formatDateKey(date: Date) {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, "0")
+  const d = String(date.getDate()).padStart(2, "0")
+  return `${y}-${m}-${d}`
+}
+
+// Parse a "YYYY-MM-DD" string into a LOCAL Date (avoids new Date(str) treating it as UTC)
+function parseDateKey(dateStr: string) {
+  const [y, m, d] = dateStr.split("-").map(Number)
+  return new Date(y, m - 1, d)
+}
+
 export default function EventCalendar({ events }: { events: CalendarEvent[] }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const selectedDate = searchParams.get("date")
 
-  const [viewDate, setViewDate] = useState(() => (selectedDate ? new Date(selectedDate) : new Date()))
+  const [viewDate, setViewDate] = useState(() =>
+    selectedDate ? parseDateKey(selectedDate) : new Date()
+  )
   const year = viewDate.getFullYear()
   const month = viewDate.getMonth()
   const monthLabel = viewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })
@@ -44,10 +60,10 @@ export default function EventCalendar({ events }: { events: CalendarEvent[] }) {
   }
 
   function selectDate(date: Date) {
-    const iso = date.toISOString().slice(0, 10)
+    const key = formatDateKey(date)
     const params = new URLSearchParams(searchParams.toString())
-    if (selectedDate === iso) params.delete("date")
-    else params.set("date", iso)
+    if (selectedDate === key) params.delete("date")
+    else params.set("date", key)
     router.push(`${pathname}?${params.toString()}`)
   }
 
@@ -73,9 +89,9 @@ export default function EventCalendar({ events }: { events: CalendarEvent[] }) {
 
         <div className="grid grid-cols-7 gap-1 text-center text-xs">
           {cells.map(({ date, inMonth }, i) => {
-            const iso = date.toISOString().slice(0, 10)
+            const key = formatDateKey(date)
             const isToday = inMonth && date.toDateString() === today.toDateString()
-            const isSelected = inMonth && selectedDate === iso
+            const isSelected = inMonth && selectedDate === key
             const hasEvent = inMonth && eventDates.has(date.toDateString())
             return (
               <button
@@ -83,15 +99,14 @@ export default function EventCalendar({ events }: { events: CalendarEvent[] }) {
                 type="button"
                 disabled={!inMonth}
                 onClick={() => selectDate(date)}
-                className={`relative h-7 flex items-center justify-center rounded-full ${
-                  isSelected
+                className={`relative h-7 flex items-center justify-center rounded-full ${isSelected
                     ? "bg-[#b30f24] text-white"
                     : isToday
-                    ? "bg-[#0f5b78] text-white"
-                    : inMonth
-                    ? "text-gray-700 hover:bg-gray-100"
-                    : "text-gray-300"
-                }`}
+                      ? "bg-[#0f5b78] text-white"
+                      : inMonth
+                        ? "text-gray-700 hover:bg-gray-100"
+                        : "text-gray-300"
+                  }`}
               >
                 {date.getDate()}
                 {hasEvent && !isSelected && (
@@ -105,7 +120,7 @@ export default function EventCalendar({ events }: { events: CalendarEvent[] }) {
         {selectedDate && (
           <button
             type="button"
-            onClick={() => selectDate(new Date(selectedDate))}
+            onClick={() => selectDate(parseDateKey(selectedDate))}
             className="w-full mt-4 border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:bg-gray-50"
           >
             Clear Date Filter
