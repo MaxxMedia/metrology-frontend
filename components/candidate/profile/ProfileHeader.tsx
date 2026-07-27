@@ -155,10 +155,14 @@ export default function ProfileHeader({
               </>
             ) : (
               <>
-                <button className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer">
-                  <UserPlus size={16} />
-                  Connect
-                </button>
+                {targetUserId ? (
+                  <ConnectionButton userId={targetUserId} />
+                ) : (
+                  <button className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer">
+                    <UserPlus size={16} />
+                    Connect
+                  </button>
+                )}
 
                 {resume?.fileUrl && (
                   <a

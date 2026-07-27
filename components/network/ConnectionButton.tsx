@@ -82,14 +82,14 @@ export default function ConnectionButton({
   switch (status.status) {
     case "CONNECTED":
       return (
-        <button disabled className="rounded-lg bg-green-600 px-4 py-2 text-white">
+        <button disabled className="bg-[#0F5B78] text-white px-5 py-2 rounded-full font-semibold text-sm shadow-sm opacity-90 cursor-default">
           Connected
         </button>
       );
 
     case "PENDING_SENT":
       return (
-        <button disabled className="rounded-lg bg-yellow-500 px-4 py-2 text-white">
+        <button disabled className="bg-[#0F5B78]/80 text-white px-5 py-2 rounded-full font-semibold text-sm shadow-sm cursor-default">
           Pending
         </button>
       );
@@ -100,7 +100,7 @@ export default function ConnectionButton({
           <button
             onClick={handleAccept}
             disabled={loading}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white disabled:opacity-60"
+            className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm disabled:opacity-60 cursor-pointer"
           >
             {loading ? "Accepting..." : "Accept"}
           </button>
@@ -117,7 +117,7 @@ export default function ConnectionButton({
           <button
             onClick={handleConnect}
             disabled={loading}
-            className="rounded-lg bg-[#0F5B78] hover:bg-[#0b445a] px-5 py-2 text-white font-semibold text-sm transition-colors shadow-sm disabled:opacity-60"
+            className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm disabled:opacity-60 cursor-pointer"
           >
             {loading ? "Sending..." : "Connect"}
           </button>

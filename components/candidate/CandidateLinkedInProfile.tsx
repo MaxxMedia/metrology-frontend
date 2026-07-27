@@ -808,7 +808,7 @@ function getRoleAndOrganization(candidate: any) {
     <div className="bg-[#f8f9fa] min-h-screen text-[#000000] relative">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#000000] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 bg-[#000000] text-white px-10 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium animate-bounce">
           <CheckCircle2 size={18} className="text-green-400" />
           <span>{toastMessage}</span>
         </div>
