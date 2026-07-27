@@ -31,6 +31,24 @@ type Event = {
   timings?: string
 }
 
+type Industry = {
+  id: number
+  name: string
+}
+
+
+async function getIndustries(): Promise<Industry[]> {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+
+  const res = await fetch(`${baseUrl}/api/industries`, {
+    cache: "no-store",
+  })
+
+  if (!res.ok) return []
+
+  return res.json()
+}
+
 async function getEvents(search?: string): Promise<Event[]> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
   const url = new URL("/api/events", baseUrl)
@@ -77,7 +95,11 @@ type PageProps = {
 export default async function EventsPage({ searchParams }: PageProps) {
   const { q = "", date } = await searchParams
   const allEvents = await getEvents(q)
-  const events = date ? allEvents.filter(e => isOnDate(e, date)) : allEvents
+  const categories = await getIndustries()
+
+  const events = date
+    ? allEvents.filter((e) => isOnDate(e, date))
+    : allEvents
 
   return (
     <div className="w-full bg-gray-50" >
@@ -113,20 +135,37 @@ export default async function EventsPage({ searchParams }: PageProps) {
         <div className="lg:col-span-8">
 
           {/* FILTER BAR */}
-          <form className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row gap-3 mb-4">
+          <form action="/events" className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row gap-3 mb-4">
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+
               <input
                 type="text"
                 name="q"
                 defaultValue={q}
                 placeholder="Search events by name, venue or keyword..."
-                className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0f5b78]"
+                className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm"
               />
             </div>
-            <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
-              <option>All Categories</option>
-            </select>
+
+            <button
+              type="submit"
+              className="bg-[#0f5b78] text-white px-5 py-2 rounded-lg"
+            >
+              Search
+            </button>
+            {/* <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
+              <option value="">All Categories</option>
+
+              {categories.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select> */}
             {/* <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
               <option>All Locations</option>
             </select> */}
@@ -286,7 +325,7 @@ export default async function EventsPage({ searchParams }: PageProps) {
           </div>
 
           {/* POPULAR CATEGORIES */}
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
+          {/* <div className="bg-white border border-gray-200 rounded-xl p-4">
             <h3 className="text-sm font-semibold mb-3">Popular Categories</h3>
             <ul className="space-y-2 text-sm">
               {[
@@ -309,7 +348,7 @@ export default async function EventsPage({ searchParams }: PageProps) {
               </button>
             </Link>
          
-          </div>
+          </div> */}
 
           {/* LIST YOUR EVENT */}
           <div className="bg-white border border-gray-200 rounded-xl p-4">

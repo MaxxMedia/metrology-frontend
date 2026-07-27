@@ -49,6 +49,10 @@ export default function JobDetailPage() {
   const [user, setUser] = useState<any>(null)
   const [showFullDesc, setShowFullDesc] = useState(false)
 
+  // NEW: track whether the logged-in candidate has already applied to this job
+  const [hasApplied, setHasApplied] = useState(false)
+  const [checkingApplyStatus, setCheckingApplyStatus] = useState(false)
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user")
     if (storedUser) {
@@ -99,27 +103,66 @@ export default function JobDetailPage() {
   }, [slug]);
 
   useEffect(() => {
-    if (!job?.id || user?.role !== "candidate") return;
+    if (!job?.id) return;
+    if (user?.role?.toLowerCase() !== "candidate") return; // normalize casing
 
-    async function checkSaveStatus() {
+    async function checkApplyStatus() {
+      setCheckingApplyStatus(true);
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${job.id}/save-status`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${job.id}/apply-status`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (!res.ok) {
+          // Don't swallow this — log it so you can see it's the endpoint, not the UI
+          console.error("apply-status failed:", res.status, await res.text());
+          return;
+        }
+
+        const data = await res.json();
+        console.log("apply-status response:", data); // TEMP: check shape in devtools
+        setHasApplied(Boolean(data.hasApplied));
+      } catch (err) {
+        console.error("apply-status error:", err);
+      } finally {
+        setCheckingApplyStatus(false);
+      }
+    }
+
+    checkApplyStatus();
+  }, [job?.id, user?.role]);
+
+  // NEW: check whether this candidate has already applied, same pattern as save-status.
+  // Swap the URL below for your real "has this candidate applied" endpoint if it differs.
+  useEffect(() => {
+    if (!job?.id || user?.role !== "candidate") return;
+
+    async function checkApplyStatus() {
+      setCheckingApplyStatus(true);
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${job.id}/apply-status`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (res.ok) {
           const data = await res.json();
-          setSaved(data.isSaved);
+          setHasApplied(Boolean(data.hasApplied));
         }
       } catch (err) {
         console.error(err);
+      } finally {
+        setCheckingApplyStatus(false);
       }
     }
 
-    checkSaveStatus();
+    checkApplyStatus();
   }, [job?.id, user?.role]);
 
   async function toggleSave() {
@@ -155,8 +198,17 @@ export default function JobDetailPage() {
       return
     }
     if (storedUser?.role !== "candidate") return
+    if (hasApplied) return // already applied — do nothing
 
     setShowApplyForm(true)
+  }
+
+  // NEW: called by ApplySection once the application is successfully submitted.
+  // If ApplySection doesn't yet accept an onApplied prop, add one there that
+  // fires this after its POST /apply call succeeds.
+  const handleApplied = () => {
+    setHasApplied(true)
+    setShowApplyForm(false)
   }
 
   if (loading)
@@ -199,8 +251,8 @@ export default function JobDetailPage() {
     Array.isArray(rawHiringTeam) && rawHiringTeam.length > 0
       ? rawHiringTeam
       : rawHiringTeam && typeof rawHiringTeam === "object"
-      ? [rawHiringTeam]
-      : [{ name: `${companyName} Team`, role: "Hiring Manager" }]
+        ? [rawHiringTeam]
+        : [{ name: `${companyName} Team`, role: "Hiring Manager" }]
 
   const trendingSkills: string[] =
     job.skills && job.skills.length > 0 ? job.skills : FALLBACK_SKILLS
@@ -304,7 +356,15 @@ export default function JobDetailPage() {
                     {saved ? "Saved" : "Save"}
                   </button>
 
-                  {job.isExternal ? (
+                  {hasApplied ? (
+                    <button
+                      disabled
+                      className="flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200 px-6 py-2 rounded-full font-medium cursor-default"
+                    >
+                      <CheckCircle2 size={16} className="text-green-600" />
+                      Applied
+                    </button>
+                  ) : job.isExternal ? (
                     job.applyUrl && (
                       <a
                         href={job.applyUrl}
@@ -318,7 +378,8 @@ export default function JobDetailPage() {
                   ) : (
                     <button
                       onClick={handleApply}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors"
+                      disabled={checkingApplyStatus}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors disabled:opacity-60"
                     >
                       Easy Apply
                     </button>
@@ -338,8 +399,8 @@ export default function JobDetailPage() {
                 {daysAgo === 0
                   ? "today"
                   : daysAgo === 1
-                  ? "yesterday"
-                  : `${daysAgo} days ago`}
+                    ? "yesterday"
+                    : `${daysAgo} days ago`}
                 {` • ${applicants} applicants`}
               </p>
 
@@ -409,7 +470,12 @@ export default function JobDetailPage() {
             )}
 
             <div className="mt-8 pt-5 border-t border-gray-100">
-              {job.isExternal ? (
+              {hasApplied ? (
+                <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm font-semibold px-5 py-2.5 rounded-full w-fit">
+                  <CheckCircle2 size={16} className="text-green-600" />
+                  You've applied to this position
+                </div>
+              ) : job.isExternal ? (
                 <div className="flex flex-wrap gap-3">
                   {job.applyUrl && (
                     <a
@@ -426,14 +492,18 @@ export default function JobDetailPage() {
                 <>
                   <button
                     onClick={handleApply}
-                    className="bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-150 shadow-[0_2px_8px_rgba(37,99,235,0.35)]"
+                    disabled={checkingApplyStatus}
+                    className="bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-150 shadow-[0_2px_8px_rgba(37,99,235,0.35)] disabled:opacity-60"
                   >
                     Apply for this position
                   </button>
 
                   {showApplyForm && (
                     <div className="mt-6 border-t pt-6">
-                      <ApplySection jobId={job.id} />
+                      {/* NEW: pass onApplied so this page can flip to the "Applied" state
+                          as soon as the application succeeds. ApplySection needs to call
+                          this prop right after its submit request returns success. */}
+                      <ApplySection jobId={job.id} {...({ onApplied: handleApplied } as any)} />
                     </div>
                   )}
                 </>
@@ -536,10 +606,7 @@ export default function JobDetailPage() {
                   </div>
                 ))}
               </div>
-              <button className="flex items-center gap-1.5 border border-gray-300 hover:border-blue-600 hover:text-blue-600 text-gray-600 text-sm font-semibold px-4 py-2 rounded-full transition-colors">
-                <MessageSquare size={15} />
-                Message
-              </button>
+             
             </div>
           </div>
 
@@ -701,7 +768,7 @@ export default function JobDetailPage() {
               <InsightRow
                 icon={<FileText size={15} className="text-gray-400" />}
                 title={`${applicants} applicants`}
-                subtitle="Applied recently"
+                subtitle="Viewed recently"
               />
               {job.experience && (
                 <InsightRow
