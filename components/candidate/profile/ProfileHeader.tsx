@@ -172,10 +172,10 @@ export default function ProfileHeader({
                     <span>Download Resume</span>
                   </a>
                 )}
-
+                {/* 
                 <button className="border border-gray-300 hover:bg-gray-100 text-[#5A5F69] px-4 py-2 rounded-full font-semibold text-sm transition-colors cursor-pointer">
                   More...
-                </button>
+                </button> */}
               </>
             )}
           </div>

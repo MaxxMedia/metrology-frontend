@@ -20,6 +20,7 @@ import {
     fetchMyCandidateProfile,
     syncCandidateUserInStorage,
     updateMyCandidateProfile,
+    uploadCandidateImage,
     type CandidateProfile,
 } from "@/lib/candidateProfile";
 
@@ -271,12 +272,18 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         if (!profile) return;
         setSectionLoad("basic-info", true);
         try {
+            let avatarUrl: string | undefined = typeof values.avatar === "string" ? values.avatar : undefined;
+            if (values.avatar && typeof values.avatar !== "string") {
+                avatarUrl = await uploadCandidateImage(values.avatar as unknown as File);
+            }
+
             const updated = await updateMyCandidateProfile({
                 fullName: `${values.firstName} ${values.lastName}`.trim(),
                 headline: values.headline,
                 location: values.location,
                 about: values.about,
                 websiteUrl: values.website,
+                ...(avatarUrl ? { avatarUrl } : {}),
             });
             setProfile(updated);
             syncCandidateUserInStorage(updated);

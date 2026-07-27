@@ -18,7 +18,7 @@ import CandidateSidebar from "@/components/candidate/profile/sidebar/CandidateSi
 import ProfileModals, { type ModalType } from "@/components/candidate/profile/ProfileModals";
 
 // API imports
-import { fetchMyCandidateProfile, updateMyCandidateProfile, syncCandidateUserInStorage, fetchMyResume, fetchCandidateResume, uploadCandidateResume } from "@/lib/candidateProfile";
+import { fetchMyCandidateProfile, updateMyCandidateProfile, uploadCandidateImage, syncCandidateUserInStorage, fetchMyResume, fetchCandidateResume, uploadCandidateResume } from "@/lib/candidateProfile";
 import { getSkills, createSkill, updateSkill, deleteSkill } from "@/lib/api/candidate/skills";
 import { getExperiences, createExperience, updateExperience, deleteExperience } from "@/lib/api/candidate/experience";
 import { getEducation, createEducation, updateEducation, deleteEducation } from "@/lib/api/candidate/education";
@@ -408,12 +408,18 @@ function getRoleAndOrganization(candidate: any) {
   const handleSaveIntro = async (values: BasicInfoValues) => {
     setModalSaving(true);
     try {
+      let avatarUrl: string | undefined = typeof values.avatar === "string" ? values.avatar : undefined;
+      if (values.avatar && typeof values.avatar !== "string") {
+        avatarUrl = await uploadCandidateImage(values.avatar as unknown as File);
+      }
+
       const updated = await updateMyCandidateProfile({
         fullName: `${values.firstName} ${values.lastName}`.trim(),
         headline: values.headline,
         location: values.location,
         about: values.about,
         websiteUrl: values.website,
+        ...(avatarUrl ? { avatarUrl } : {}),
       });
 
       if (values.phone !== undefined) {
