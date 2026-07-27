@@ -52,14 +52,22 @@ function formatDateRange(start: string, end: string) {
   return `${s} – ${e}`
 }
 
+function normalizeDate(date: string | Date) {
+  const d = new Date(date)
+
+  return new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate()
+  ).getTime()
+}
+
 function isOnDate(event: Event, dateStr: string) {
-  const d = new Date(dateStr)
-  d.setHours(0, 0, 0, 0)
-  const s = new Date(event.startDate)
-  s.setHours(0, 0, 0, 0)
-  const e = new Date(event.endDate)
-  e.setHours(0, 0, 0, 0)
-  return d >= s && d <= e
+  const selected = normalizeDate(dateStr)
+  const start = normalizeDate(event.startDate)
+  const end = normalizeDate(event.endDate)
+
+  return selected >= start && selected <= end
 }
 
 type PageProps = {
@@ -295,9 +303,12 @@ export default async function EventsPage({ searchParams }: PageProps) {
                 </li>
               ))}
             </ul>
-            <button className="text-[#0f5b78] text-sm font-medium mt-3 hover:underline">
-              View All Categories →
-            </button>
+            <Link href="/suppliers">
+              <button className="text-[#0f5b78] text-sm font-medium mt-3 hover:underline">
+                View All Categories →
+              </button>
+            </Link>
+         
           </div>
 
           {/* LIST YOUR EVENT */}
