@@ -39,8 +39,10 @@ import { type Project } from "@/components/candidate/profile/forms/ProjectsForm"
 import { type Language } from "@/components/candidate/profile/forms/LanguagesForm";
 import { type Interest } from "@/components/candidate/profile/forms/InterestsForm";
 import { type SocialLink } from "@/components/candidate/profile/forms/SocialLinksForm";
+import ConnectionsTab from "./ConnectionsTab";
 
 type CandidateProfileData = {
+  id?: string;
   username: string;
   email?: string;
   fullName?: string;
@@ -693,6 +695,11 @@ export default function CandidateLinkedInProfile({ username }: Props) {
   };
 
   const candidateProjects = candidate?.projectsList ?? [];
+  const targetUserId = typeof candidate?.id === "number"
+    ? candidate.id
+    : typeof candidate?.id === "string" && !Number.isNaN(Number(candidate.id))
+    ? Number(candidate.id)
+    : undefined;
 
   return (
     <div className="bg-[#f8f9fa] min-h-screen text-[#000000] relative">
@@ -715,6 +722,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
           displayLocation={displayLocation}
           avatarUrl={candidate?.avatarUrl}
           isOwner={isOwner}
+          targetUserId={targetUserId}
           onEditIntroClick={() => setActiveModal("intro")}
         />
 
@@ -852,16 +860,8 @@ export default function CandidateLinkedInProfile({ username }: Props) {
         {/* TAB 3: CONNECTIONS (OWNER ONLY) */}
         {activeTab === "connections" && isOwner && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-            <div className="lg:col-span-8 space-y-4">
-              <div className="bg-white rounded-xl border border-[#e0e0e0] p-12 text-center shadow-sm">
-                <div className="w-16 h-16 bg-[#0F5B78]/10 text-[#0F5B78] rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Users size={28} />
-                </div>
-                <h3 className="text-lg font-bold text-[#000000]">Connections</h3>
-                <p className="text-sm text-[#5A5F69] mt-1 max-w-md mx-auto">
-                  Connect with {displayName} to expand your professional network.
-                </p>
-              </div>
+            <div className="lg:col-span-8">
+              <ConnectionsTab />
             </div>
             <CandidateSidebar
               candidate={candidate}
