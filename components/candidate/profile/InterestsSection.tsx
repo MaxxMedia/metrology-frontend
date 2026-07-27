@@ -54,27 +54,14 @@ export default function InterestsSection({
                                 key={interest.id || Math.random()}
                                 className="flex items-center gap-3 border border-[#e0e0e0] rounded-xl p-4 hover:shadow-sm transition bg-white"
                             >
-                                {interest.imageUrl ? (
-                                    <img
-                                        src={interest.imageUrl}
-                                        className="w-12 h-12 rounded-lg object-cover"
-                                        alt={name}
-                                    />
-                                ) : (
-                                    <div className="w-12 h-12 rounded-lg bg-[#0F5B78]/10 text-[#0F5B78] flex items-center justify-center shrink-0">
-                                        <Heart size={20} />
-                                    </div>
-                                )}
+                                <div className="w-10 h-10 rounded-lg bg-[#0F5B78]/10 text-[#0F5B78] flex items-center justify-center shrink-0 border border-[#0F5B78]/20">
+                                    <Heart size={18} />
+                                </div>
 
                                 <div className="flex-1 min-w-0">
                                     <h3 className="font-bold text-sm text-[#000000] truncate">{name}</h3>
                                     {category && (
                                         <p className="text-xs text-[#5A5F69] mt-0.5 truncate">{category}</p>
-                                    )}
-                                    {interest.followersCount !== undefined && (
-                                        <p className="text-xs text-[#5A5F69] mt-1">
-                                            {interest.followersCount.toLocaleString()} followers
-                                        </p>
                                     )}
                                 </div>
                             </div>

@@ -20,6 +20,7 @@ import {
     fetchMyCandidateProfile,
     syncCandidateUserInStorage,
     updateMyCandidateProfile,
+    uploadCandidateImage,
     type CandidateProfile,
 } from "@/lib/candidateProfile";
 
@@ -141,8 +142,8 @@ function Toast({
     return (
         <div
             className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-medium animate-slide-up backdrop-blur-sm ${type === "success"
-                    ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                    : "bg-red-50 text-red-800 border border-red-200"
+                ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                : "bg-red-50 text-red-800 border border-red-200"
                 }`}
         >
             {type === "success" ? (
@@ -271,12 +272,18 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         if (!profile) return;
         setSectionLoad("basic-info", true);
         try {
+            let avatarUrl: string | undefined = typeof values.avatar === "string" ? values.avatar : undefined;
+            if (values.avatar && typeof values.avatar !== "string") {
+                avatarUrl = await uploadCandidateImage(values.avatar as unknown as File);
+            }
+
             const updated = await updateMyCandidateProfile({
                 fullName: `${values.firstName} ${values.lastName}`.trim(),
                 headline: values.headline,
                 location: values.location,
                 about: values.about,
                 websiteUrl: values.website,
+                ...(avatarUrl ? { avatarUrl } : {}),
             });
             setProfile(updated);
             syncCandidateUserInStorage(updated);
@@ -556,16 +563,50 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         );
     }
 
+function getRoleAndOrganization(candidate: any) {
+  const exps = candidate?.experiences || candidate?.experiencesList || [];
+  const edus = candidate?.education || candidate?.educationList || [];
+
+  let activeExp = (Array.isArray(exps) ? exps : []).find((e: any) => e.currentlyWorking || e.currentlyWorking === true);
+  if (!activeExp && Array.isArray(exps) && exps.length > 0) {
+    activeExp = exps[0];
+  }
+
+  if (activeExp) {
+    const position = activeExp.designation || activeExp.title || "";
+    const company = activeExp.companyName || activeExp.company?.name || (typeof activeExp.company === "string" ? activeExp.company : "");
+    return { position, company };
+  }
+
+  const eduList = Array.isArray(edus) ? edus : (edus ? [edus] : []);
+  const latestEdu = eduList[0];
+  if (latestEdu) {
+    const degree = latestEdu.degree || "";
+    const field = latestEdu.fieldOfStudy || "";
+    const studyDetails = [degree, field].filter((p: any) => typeof p === "string" && p.trim()).join(" in ") || "Student";
+    const school = latestEdu.institution || latestEdu.school || "";
+    return { position: studyDetails, company: school };
+  }
+
+  const comp = typeof candidate?.company === "string" ? candidate.company : (candidate?.company?.name || "");
+  return { position: "", company: comp };
+}
+
     const nameParts = (profile?.fullName || "").split(" ");
+    const roleAndOrgInfo = getRoleAndOrganization({ ...profile, experiences, education });
+    const phoneFromSocials = (socials || []).find((s: any) =>
+        ["phone", "mobile", "contact", "phonenumber"].includes((s.platform || "").toLowerCase())
+    )?.url || (profile as any)?.phone || (profile as any)?.mobile || "";
+
     const basicInfoValues: BasicInfoValues = {
         firstName: nameParts[0] || "",
         lastName: nameParts.slice(1).join(" ") || "",
         headline: profile?.headline || "",
-        currentPosition: profile?.headline?.split(" at ")[0] || "",
-        company: (profile?.company as any)?.name || (profile?.Company as any)?.name || "",
+        currentPosition: roleAndOrgInfo.position,
+        company: roleAndOrgInfo.company,
         location: profile?.location || "",
         website: profile?.websiteUrl || "",
-        phone: "",
+        phone: phoneFromSocials,
         email: profile?.email || "",
         about: profile?.about || "",
         avatar: profile?.avatarUrl || "",
@@ -590,8 +631,8 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
                                     key={section.id}
                                     onClick={() => setActiveSection(section.id)}
                                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${isActive
-                                            ? "bg-[#0a66c2] text-white shadow-sm font-semibold"
-                                            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                        ? "bg-[#0a66c2] text-white shadow-sm font-semibold"
+                                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                         }`}
                                 >
                                     <Icon
@@ -625,8 +666,8 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
                                 key={section.id}
                                 onClick={() => setActiveSection(section.id)}
                                 className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors flex items-center gap-1.5 cursor-pointer ${isActive
-                                        ? "bg-[#0a66c2] text-white"
-                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                    ? "bg-[#0a66c2] text-white"
+                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                     }`}
                             >
                                 <Icon size={14} />
