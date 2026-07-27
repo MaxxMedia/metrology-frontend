@@ -1,4 +1,5 @@
 // lib/candidateProfile.ts
+import { getSocials, createSocial, updateSocial, deleteSocial } from "@/lib/api/candidate/socials";
 
 export type CandidateProfile = {
   id?: number;
@@ -106,4 +107,79 @@ export function syncCandidateUserInStorage(profile: CandidateProfile) {
     })
   );
   window.dispatchEvent(new Event("userChanged"));
+}
+
+export type CandidateResume = {
+  id?: number;
+  userId?: number;
+  fileName: string;
+  fileUrl: string;
+  fileSize?: number;
+  mimeType?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export async function fetchMyResume(): Promise<CandidateResume | null> {
+  try {
+    const socials = await getSocials().catch(() => []);
+    const resumeSocial = (socials || []).find((s: any) =>
+      ["resume", "cv"].includes((s.platform || "").toLowerCase())
+    );
+    if (resumeSocial?.url) {
+      return { fileName: "Resume.pdf", fileUrl: resumeSocial.url };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchCandidateResume(userId: number): Promise<CandidateResume | null> {
+  return null;
+}
+
+export async function uploadCandidateResume(file: File): Promise<CandidateResume> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const formData = new FormData();
+  formData.append("document", file);
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/upload/document`,
+    {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    }
+  );
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || (!data.documentUrl && !data.url)) {
+    throw new Error(data.error || "Failed to upload document file");
+  }
+
+  const fileUrl = data.documentUrl || data.url || "";
+
+  const mySocials = await getSocials().catch(() => []);
+  const existingResumeSocial = (mySocials || []).find((s: any) =>
+    ["resume", "cv"].includes((s.platform || "").toLowerCase())
+  );
+
+  if (existingResumeSocial?.id) {
+    await updateSocial(existingResumeSocial.id, { platform: "resume", url: fileUrl });
+  } else {
+    await createSocial({ platform: "resume", url: fileUrl });
+  }
+
+  return { fileName: file.name, fileUrl };
+}
+
+export async function deleteCandidateResume(): Promise<void> {
+  const mySocials = await getSocials().catch(() => []);
+  const existingResumeSocial = (mySocials || []).find((s: any) =>
+    ["resume", "cv"].includes((s.platform || "").toLowerCase())
+  );
+  if (existingResumeSocial?.id) {
+    await deleteSocial(existingResumeSocial.id);
+  }
 }

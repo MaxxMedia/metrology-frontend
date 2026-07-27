@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Camera, CheckCircle, MapPin } from "lucide-react";
+import { Pencil, Camera, CheckCircle, MapPin, UserPlus, FileUp, Download, Loader2 } from "lucide-react";
 import CandidateAvatar from "@/components/candidate/CandidateAvatar";
 import ConnectionButton from "@/components/network/ConnectionButton"; // adjust path to wherever you place it
 
@@ -14,6 +14,9 @@ interface ProfileHeaderProps {
   isOwner?: boolean;
   targetUserId?: number; // the profile currently being viewed
   onEditIntroClick: () => void;
+  resume?: { fileName?: string; fileUrl?: string } | null;
+  onResumeUpload?: (file: File) => Promise<void>;
+  resumeUploading?: boolean;
 }
 
 export default function ProfileHeader({
@@ -26,6 +29,9 @@ export default function ProfileHeader({
   isOwner,
   targetUserId,
   onEditIntroClick,
+  resume,
+  onResumeUpload,
+  resumeUploading = false,
 }: ProfileHeaderProps) {
   return (
     <div className="bg-white rounded-xl border border-[#e0e0e0] shadow-sm overflow-hidden mb-4 relative">
@@ -34,11 +40,11 @@ export default function ProfileHeader({
         {isOwner && (
           <button
             onClick={onEditIntroClick}
-            className="absolute top-3 right-3 bg-white/90 hover:bg-white p-2 rounded-full shadow text-[#5A5F69] hover:text-[#000000] transition-colors flex items-center gap-1.5 text-xs font-semibold px-3 cursor-pointer"
+            className="absolute top-3 right-3 p-2 rounded-full shadow text-[#5A5F69] hover:text-[#000000] transition-colors flex items-center gap-1.5 text-xs font-semibold px-3 cursor-pointer"
             title="Edit Banner & Intro"
           >
-            <Pencil size={14} />
-            <span>Edit Banner</span>
+            {/* <Pencil size={14} /> */}
+            {/* <span>Edit Bannr</span> */}
           </button>
         )}
       </div>
@@ -104,16 +110,69 @@ export default function ProfileHeader({
           {/* Action Buttons using #0F5B78 */}
           <div className="flex items-center gap-2 self-start flex-wrap mt-2 md:mt-0">
             {isOwner ? (
-              <button
-                onClick={onEditIntroClick}
-                className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
-              >
-                <Pencil size={15} />
-                Edit Profile
-              </button>
+              <>
+                <button
+                  onClick={onEditIntroClick}
+                  className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Pencil size={15} />
+                  Edit Profile
+                </button>
+
+                <label className="border border-[#0F5B78] text-[#0F5B78] hover:bg-[#0F5B78]/10 px-4 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer">
+                  {resumeUploading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <FileUp size={16} />
+                  )}
+                  <span>{resume?.fileUrl ? "Update Resume" : "Upload Resume"}</span>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    className="hidden"
+                    disabled={resumeUploading}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file && onResumeUpload) {
+                        onResumeUpload(file);
+                      }
+                    }}
+                  />
+                </label>
+
+                {resume?.fileUrl && (
+                  <a
+                    href={resume.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={resume.fileName || "Resume.pdf"}
+                    className="bg-[#0F5B78]/10 hover:bg-[#0F5B78]/20 text-[#0F5B78] border border-[#0F5B78]/30 px-4 py-2 rounded-full font-semibold text-sm transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Download size={16} />
+                    <span>Download Resume</span>
+                  </a>
+                )}
+              </>
             ) : (
               <>
-                {targetUserId != null && <ConnectionButton userId={targetUserId} />}
+                <button className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer">
+                  <UserPlus size={16} />
+                  Connect
+                </button>
+
+                {resume?.fileUrl && (
+                  <a
+                    href={resume.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={resume.fileName || "Resume.pdf"}
+                    className="border border-[#0F5B78] text-[#0F5B78] hover:bg-[#0F5B78]/10 px-4 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Download size={16} />
+                    <span>Download Resume</span>
+                  </a>
+                )}
+
                 <button className="border border-gray-300 hover:bg-gray-100 text-[#5A5F69] px-4 py-2 rounded-full font-semibold text-sm transition-colors cursor-pointer">
                   More...
                 </button>

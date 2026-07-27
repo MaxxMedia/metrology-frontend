@@ -71,9 +71,9 @@ export default function CertificationsSection({
         <div className="space-y-5 divide-y divide-gray-100">
           {certifications.map((cert) => {
             const certTitle = cert.name || cert.title || "Certification";
-            const certIssuer = cert.issuingOrganization || cert.issuer || "";
+            const certIssuer = cert.issuingOrganization || cert.issuer || (cert as any).organization || (cert as any).authority || "";
             const issueDateRaw = cert.issueDate || cert.startDate;
-            const expDateRaw = cert.expirationDate || cert.endDate;
+            const expDateRaw = cert.expirationDate || cert.endDate || (cert as any).expiryDate;
             const credId = cert.credentialId || cert.licenseNumber;
             const credUrl = cert.credentialUrl || cert.url;
 

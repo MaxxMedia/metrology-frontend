@@ -67,6 +67,8 @@ export default function AchievementsSection({
           {achievements.map((achievement) => {
             const formattedDate = formatDate(achievement.achievementDate);
 
+            const issuer = achievement.issuer || (achievement as any).organization || "";
+
             return (
               <div
                 key={achievement.id || Math.random()}
@@ -81,9 +83,9 @@ export default function AchievementsSection({
                     {achievement.title}
                   </h3>
 
-                  {achievement.issuer && (
+                  {issuer && (
                     <p className="text-sm font-medium text-[#000000] mt-0.5">
-                      {achievement.issuer}
+                      {issuer}
                     </p>
                   )}
 
