@@ -87,6 +87,9 @@ export default function AddDirectoryPage() {
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingCatalogue, setUploadingCatalogue] = useState(false);
   const [uploadingGalleryImage, setUploadingGalleryImage] = useState(false);
+  const [uploadingArrayFile, setUploadingArrayFile] = useState(false);
+  const [uploadingManufacturingImage, setUploadingManufacturingImage] = useState(false);
+  const [uploadingMachineryImage, setUploadingMachineryImage] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [listingEligibility, setListingEligibility] =
     useState<ContentLimitEligibility | null>(null);
@@ -247,6 +250,43 @@ export default function AddDirectoryPage() {
       setUploadError(err.message);
     } finally {
       setUploadingCover(false);
+    }
+  };
+
+  // Generic handler for plain string-array file/image uploads
+  // (companyBrochure, certifications, manufacturingCapabilityImages, machineryImages)
+  const handleArrayFileUpload = async (
+    file: File,
+    setFieldValue: any,
+    values: any,
+    field: string,
+    index: number,
+    setLoading?: (v: boolean) => void
+  ) => {
+    setLoading?.(true);
+    setUploadingArrayFile(true);
+    setUploadError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("File upload failed");
+
+      const data = await res.json();
+      const arr = [...(values[field] || [])];
+      arr[index] = data.imageUrl;
+      setFieldValue(field, arr);
+    } catch (err: any) {
+      setUploadError(err.message);
+    } finally {
+      setLoading?.(false);
+      setUploadingArrayFile(false);
     }
   };
 
@@ -489,9 +529,426 @@ export default function AddDirectoryPage() {
             console.log("=== VALIDATION ERRORS BLOCKING SUBMIT ===", errors);
           }
 
+          const wordLimit = getFeatureLimit(profileLimits?.descriptionLimit);
+          const wordCount = values.description
+            ? values.description.trim().split(/\s+/).filter(Boolean).length
+            : 0;
+          const atDescriptionLimit = wordLimit !== null && wordCount >= wordLimit;
+
           return (
             <Form className="space-y-6 bg-white p-6 rounded-xl shadow">
-              {/* ... (all existing form fields up to Product Gallery) ... */}
+              {status && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                  <p>{status}</p>
+                </div>
+              )}
+
+              {/* NAME + SLUG */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Company Name</label>
+                  <Field
+                    name="name"
+                    className="input"
+                    onChange={(e: any) => {
+                      const val = e.target.value;
+                      setFieldValue("name", val);
+                      setFieldValue("slug", slugify(val));
+                    }}
+                  />
+                  <ErrorMessage name="name" component="p" className="error" />
+                </div>
+                <div>
+                  <label className="label">Slug</label>
+                  <Field name="slug" className="input" />
+                  <ErrorMessage name="slug" component="p" className="error" />
+                </div>
+              </div>
+
+              {/* PHONE + EMAIL */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Phone Number</label>
+                  <Field name="phoneNumber" className="input" />
+                  <ErrorMessage name="phoneNumber" component="p" className="error" />
+                </div>
+                <div>
+                  <label className="label">Email</label>
+                  <Field name="email" className="input" />
+                  <ErrorMessage name="email" component="p" className="error" />
+                </div>
+              </div>
+
+              {/* COUNTRY + STATE */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Country</label>
+                  <Field
+                    as="select"
+                    name="country"
+                    className="input"
+                    onChange={(e: any) => {
+                      setFieldValue("country", e.target.value);
+                      setFieldValue("state", "");
+                      setFieldValue("city", "");
+                    }}
+                  >
+                    <option value="">Select Country</option>
+                    {countries.map((c) => (
+                      <option key={c.isoCode} value={c.isoCode}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </Field>
+                  <ErrorMessage name="country" component="p" className="error" />
+                </div>
+                <div>
+                  <label className="label">State</label>
+                  <Field
+                    as="select"
+                    name="state"
+                    className="input"
+                    onChange={(e: any) => {
+                      setFieldValue("state", e.target.value);
+                      setFieldValue("city", "");
+                    }}
+                  >
+                    <option value="">Select State</option>
+                    {states.map((s) => (
+                      <option key={s.isoCode} value={s.isoCode}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </Field>
+                  <ErrorMessage name="state" component="p" className="error" />
+                </div>
+              </div>
+
+              {/* CITY + ADDRESS */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">City</label>
+                  <Field as="select" name="city" className="input">
+                    <option value="">Select City</option>
+                    {cities.map((c) => (
+                      <option key={c.name} value={c.name}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </Field>
+                  <ErrorMessage name="city" component="p" className="error" />
+                </div>
+                <div>
+                  <label className="label">Full Address</label>
+                  <Field name="address" className="input" />
+                  <ErrorMessage name="address" component="p" className="error" />
+                </div>
+              </div>
+
+              {/* GOOGLE MAP - GATED BY PACKAGE */}
+              <Section title="Google Map">
+                <PlanGatedSection
+                  allowed={isFeatureAllowed(profileLimits?.googleMap)}
+                  upgradeMessage="Google Map is available on Basic plan and above."
+                >
+                  <div>
+                    <label className="label">Google Maps Embed/Share URL</label>
+                    <Field name="googleMapUrl" className="input" placeholder="https://www.google.com/maps/embed?..." />
+                    <p className="text-xs text-gray-400 mt-1">
+                      Paste the "Share" link from Google Maps for your business location.
+                    </p>
+                  </div>
+                </PlanGatedSection>
+              </Section>
+
+              {/* INDUSTRY + WEBSITE */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Industry</label>
+                  {industryLevels.map((levelOptions, levelIndex) => (
+                    <select
+                      key={levelIndex}
+                      className="input mb-2"
+                      value={industrySelected[levelIndex] ?? ""}
+                      onChange={(e) =>
+                        handleIndustrySelect(levelIndex, Number(e.target.value), setFieldValue)
+                      }
+                    >
+                      <option value="">Select Industry</option>
+                      {levelOptions.map((industry: any) => (
+                        <option key={industry.id} value={industry.id}>
+                          {industry.name}
+                        </option>
+                      ))}
+                    </select>
+                  ))}
+                  <ErrorMessage name="industryId" component="p" className="error" />
+                </div>
+                <div>
+                  <label className="label">Website</label>
+                  <Field name="website" className="input" />
+                  <ErrorMessage name="website" component="p" className="error" />
+                </div>
+              </div>
+
+              {/* DESCRIPTION */}
+              <div>
+                <label className="label" htmlFor="description">Description</label>
+                <Field
+                  as="textarea"
+                  id="description"
+                  name="description"
+                  rows={4}
+                  onChange={(e: any) => {
+                    const raw = e.target.value;
+                    if (wordLimit !== null) {
+                      const words = raw.trimStart().split(/\s+/);
+                      if (words.filter(Boolean).length > wordLimit) {
+                        setFieldValue("description", words.slice(0, wordLimit).join(" "));
+                        return;
+                      }
+                    }
+                    setFieldValue("description", raw);
+                  }}
+                  className={`w-full rounded-md border p-2 text-sm focus:outline-none focus:ring-1 ${atDescriptionLimit
+                    ? "border-red-400 focus:border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    }`}
+                  placeholder="Enter your description..."
+                />
+                <div className="flex items-center justify-between mt-1">
+                  {wordLimit !== null ? (
+                    <p className={`text-xs ml-auto ${atDescriptionLimit ? "text-red-500 font-medium" : "text-gray-400"}`}>
+                      {wordCount} / {wordLimit} words{atDescriptionLimit ? " — limit reached" : ""}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-gray-400 ml-auto">
+                      {wordCount} word{wordCount !== 1 ? "s" : ""} · Unlimited on your plan
+                    </p>
+                  )}
+                </div>
+                <ErrorMessage name="description" component="p" className="error" />
+              </div>
+
+              {/* LOGO */}
+              <div className="grid grid-cols-2 gap-6">
+                <UploadBox
+                  label="Company Logo"
+                  value={values.logoUrl}
+                  onUpload={(file) => handleImageUpload(file, setFieldValue, "logoUrl", "logo")}
+                />
+              </div>
+              {uploadError && <p className="error">{uploadError}</p>}
+
+              {/* COVER IMAGES */}
+              <Section title="Cover Images">
+                <PlanGatedSection
+                  allowed={isFeatureAllowed(maxCoverImages)}
+                  upgradeMessage="Cover images are available on the Basic plan and above. Upgrade your plan to add a cover banner to your showroom page."
+                >
+                  <p className="text-xs text-gray-400 mb-2">
+                    Your plan allows up to {getDisplayLimit(maxCoverImages)} cover image
+                    {typeof maxCoverImages === "number" && maxCoverImages !== 1 ? "s" : ""}.
+                    {isUnlimited(maxCoverImages) ? "" : maxCoverImages > 1 ? " Multiple images will display as a carousel." : ""}
+                  </p>
+                  <FieldArray name="coverImages">
+                    {({ push, remove }) => {
+                      const limit = getFeatureLimit(maxCoverImages);
+                      const atLimit = !isUnlimited(maxCoverImages) && values.coverImages.length >= (limit ?? 0);
+                      return (
+                        <div className="grid grid-cols-2 gap-4">
+                          {values.coverImages.map((item: string, i: number) => (
+                            <div key={i} className="space-y-1">
+                              <UploadBox
+                                label={`Cover Image ${i + 1}`}
+                                value={item}
+                                onUpload={(file) => handleCoverImageUpload(file, setFieldValue, values, i)}
+                              />
+                              <button type="button" onClick={() => remove(i)}>
+                                ✕ Remove
+                              </button>
+                            </div>
+                          ))}
+                          <div className="col-span-2">
+                            <button
+                              type="button"
+                              onClick={() => push("")}
+                              disabled={atLimit}
+                              className="disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              + Add cover image
+                              {!isUnlimited(maxCoverImages) && ` (${values.coverImages.length}/${getDisplayLimit(maxCoverImages)})`}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    }}
+                  </FieldArray>
+                </PlanGatedSection>
+              </Section>
+
+              {/* PRODUCT SUPPLIES */}
+              <Section title="Product Supplies">
+                {listingEligibility && (
+                  <p className="text-sm text-gray-500 mb-3">
+                    Products inside your directory do not count toward your directory slot limit.
+                    Your plan allows {getDisplayLimit(listingEligibility.effectiveLimit)} product supplies.
+                  </p>
+                )}
+                <FieldArray name="productSupplies">
+                  {({ push, remove }) => (
+                    <>
+                      {values.productSupplies.map((item: string, i: number) => (
+                        <div key={i} className="flex gap-2">
+                          <Field name={`productSupplies.${i}`} className="input flex-1" />
+                          {i > 0 && (
+                            <button type="button" onClick={() => remove(i)}>✕</button>
+                          )}
+                        </div>
+                      ))}
+                      <button type="button" onClick={() => push("")}>
+                        + Add product
+                      </button>
+                    </>
+                  )}
+                </FieldArray>
+              </Section>
+
+              {/* PRODUCT CATALOGUES - GATED BY PACKAGE */}
+              <Section title="Product Catalogues">
+                <PlanGatedSection
+                  allowed={isFeatureAllowed(profileLimits?.productCatalogues)}
+                  upgradeMessage="Product Catalogues are available on Basic plan and above."
+                >
+                  <p className="text-sm text-gray-500 mb-3">
+                    Upload your product catalogues (PDFs, brochures, etc.).
+                    {!isUnlimited(profileLimits?.productCatalogues) &&
+                      ` Your plan allows up to ${getDisplayLimit(profileLimits?.productCatalogues)} catalogues.`}
+                    {isUnlimited(profileLimits?.productCatalogues) && ` Unlimited catalogues on your plan.`}
+                  </p>
+                  <FieldArray name="productCatalogues">
+                    {({ push, remove }) => {
+                      const limit = getFeatureLimit(profileLimits?.productCatalogues);
+                      const atLimit = !isUnlimited(profileLimits?.productCatalogues) &&
+                        values.productCatalogues.length >= (limit ?? 0);
+                      return (
+                        <div className="grid grid-cols-2 gap-4">
+                          {values.productCatalogues.map((url: string, i: number) => (
+                            <div key={i} className="space-y-1">
+                              <UploadBox
+                                label={`Product Catalogue ${i + 1}`}
+                                value={url}
+                                onUpload={(file) => handleCatalogueUpload(file, setFieldValue, values, i)}
+                              />
+                              <button type="button" onClick={() => remove(i)}>
+                                ✕ Remove
+                              </button>
+                            </div>
+                          ))}
+                          <div className="col-span-2">
+                            <button
+                              type="button"
+                              onClick={() => push("")}
+                              disabled={atLimit}
+                              className="disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              + Add product catalogue
+                              {!isUnlimited(profileLimits?.productCatalogues) &&
+                                ` (${values.productCatalogues.length}/${getDisplayLimit(profileLimits?.productCatalogues)})`}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    }}
+                  </FieldArray>
+                </PlanGatedSection>
+              </Section>
+
+              {/* SOCIAL LINKS - WhatsApp gated */}
+              <Section title="Social Media">
+                <div className="grid grid-cols-2 gap-4">
+                  {["facebook", "linkedin", "twitter", "youtube"].map((key) => (
+                    <div key={key}>
+                      <label className="label capitalize">{key}</label>
+                      <Field name={`socialLinks.${key}`} className="input" placeholder={key} />
+                    </div>
+                  ))}
+                  {allowWhatsapp ? (
+                    <div>
+                      <label className="label">WhatsApp</label>
+                      <Field name="socialLinks.whatsapp" className="input" placeholder="WhatsApp number" />
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="label">WhatsApp</label>
+                      <div className="rounded-lg border border-dashed border-gray-300 p-3 text-xs text-gray-500">
+                        Available on Basic plan and above.
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Section>
+
+              {/* TRADE NAMES */}
+              <Section title="Trade Names">
+                <FieldArray name="tradeNames">
+                  {({ push, remove }) => (
+                    <>
+                      {values.tradeNames.map((item: string, i: number) => (
+                        <div key={i} className="flex gap-2">
+                          <Field name={`tradeNames.${i}`} className="input flex-1" />
+                          {i > 0 && <button type="button" onClick={() => remove(i)}>✕</button>}
+                        </div>
+                      ))}
+                      <button type="button" onClick={() => push("")}>
+                        + Add trade name
+                      </button>
+                    </>
+                  )}
+                </FieldArray>
+                <ErrorMessage name="tradeNames" component="p" className="error" />
+              </Section>
+
+              {/* VIDEO GALLERY - GATED BY PACKAGE */}
+              <Section title="YouTube Video Links">
+                <PlanGatedSection
+                  allowed={isFeatureAllowed(profileLimits?.productVideos)}
+                  upgradeMessage="Product Videos are available on Basic plan and above."
+                >
+                  <p className="text-xs text-gray-400 mb-2">
+                    {isUnlimited(profileLimits?.productVideos)
+                      ? "Unlimited videos on your plan."
+                      : `Your plan allows up to ${getDisplayLimit(profileLimits?.productVideos)} videos.`}
+                  </p>
+                  <FieldArray name="videoGallery">
+                    {({ push, remove }) => {
+                      const limit = getFeatureLimit(profileLimits?.productVideos);
+                      const atLimit = !isUnlimited(profileLimits?.productVideos) &&
+                        values.videoGallery.length >= (limit ?? 0);
+                      return (
+                        <>
+                          {values.videoGallery.map((item: string, i: number) => (
+                            <div key={i} className="flex gap-2">
+                              <Field name={`videoGallery.${i}`} className="input flex-1" placeholder="YouTube URL" />
+                              {i > 0 && <button type="button" onClick={() => remove(i)}>✕</button>}
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => push("")}
+                            disabled={atLimit}
+                            className="disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            + Add video
+                            {!isUnlimited(profileLimits?.productVideos) &&
+                              ` (${values.videoGallery.length}/${getDisplayLimit(profileLimits?.productVideos)})`}
+                          </button>
+                        </>
+                      );
+                    }}
+                  </FieldArray>
+                </PlanGatedSection>
+              </Section>
 
               {/* PRODUCT GALLERY - GATED BY PACKAGE */}
               <Section title="Product Gallery">
@@ -730,7 +1187,488 @@ export default function AddDirectoryPage() {
                 </PlanGatedSection>
               </Section>
 
-              {/* ... (rest of the form fields remain the same) ... */}
+              {/* COMPANY BROCHURE - GATED BY PACKAGE */}
+              <Section title="Company Brochure">
+                <PlanGatedSection
+                  allowed={isFeatureAllowed(profileLimits?.brochures)}
+                  upgradeMessage="Company Brochure is available on Basic plan and above."
+                >
+                  <FieldArray name="companyBrochure">
+                    {({ push, remove }) => (
+                      <div className="grid grid-cols-2 gap-4">
+                        {values.companyBrochure.map((item: string, i: number) => (
+                          <div key={i} className="space-y-1">
+                            <UploadBox
+                              label={`Brochure File ${i + 1}`}
+                              value={item}
+                              onUpload={(file) =>
+                                handleArrayFileUpload(file, setFieldValue, values, "companyBrochure", i)
+                              }
+                            />
+                            {i > 0 && (
+                              <button type="button" onClick={() => remove(i)}>
+                                ✕ Remove
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <div className="col-span-2">
+                          <button type="button" onClick={() => push("")}>
+                            + Add brochure file
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </FieldArray>
+                </PlanGatedSection>
+              </Section>
+
+              {/* CERTIFICATIONS - GATED BY PACKAGE */}
+              <Section title="Certifications">
+                <PlanGatedSection
+                  allowed={isFeatureAllowed(profileLimits?.certifications)}
+                  upgradeMessage="Certifications are available on Basic plan and above."
+                >
+                  <FieldArray name="certifications">
+                    {({ push, remove }) => (
+                      <div className="grid grid-cols-2 gap-4">
+                        {values.certifications.map((item: string, i: number) => (
+                          <div key={i} className="space-y-1">
+                            <UploadBox
+                              label={`Certification File ${i + 1}`}
+                              value={item}
+                              onUpload={(file) =>
+                                handleArrayFileUpload(file, setFieldValue, values, "certifications", i)
+                              }
+                            />
+                            {i > 0 && (
+                              <button type="button" onClick={() => remove(i)}>
+                                ✕ Remove
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <div className="col-span-2">
+                          <button type="button" onClick={() => push("")}>
+                            + Add certification file
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </FieldArray>
+                </PlanGatedSection>
+              </Section>
+
+              {/* BRANDS REPRESENTED */}
+              <Section title="Brands Represented">
+                {(() => {
+                  const isUnlimitedBrands = isUnlimited(profileLimits?.brandsRepresented);
+                  const limit = getFeatureLimit(profileLimits?.brandsRepresented);
+
+                  if (!isFeatureAllowed(profileLimits?.brandsRepresented)) {
+                    return (
+                      <div className="rounded-lg border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+                        Brands Represented are available on Basic plan and above.
+                        {isProfessionalOrEnterprise && " Your plan includes unlimited brands."}
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <>
+                      <p className="text-xs text-gray-400 mb-2">
+                        {isUnlimitedBrands
+                          ? "✅ Unlimited brands on your Professional/Enterprise plan."
+                          : `Your plan allows up to ${limit} brands.`}
+                      </p>
+                      <FieldArray name="brandsRepresented">
+                        {({ push, remove }) => (
+                          <>
+                            {values.brandsRepresented.map((item: string, i: number) => (
+                              <div key={i} className="flex gap-2">
+                                <Field
+                                  name={`brandsRepresented.${i}`}
+                                  className="input flex-1"
+                                  placeholder="Brand name"
+                                />
+                                {i > 0 && (
+                                  <button type="button" onClick={() => remove(i)}>
+                                    ✕
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                            <button
+                              type="button"
+                              onClick={() => push("")}
+                              disabled={!isUnlimitedBrands && values.brandsRepresented.length >= (limit ?? 0)}
+                              className="disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              + Add Brand
+                              {!isUnlimitedBrands && limit !== null &&
+                                ` (${values.brandsRepresented.length}/${limit})`}
+                              {isUnlimitedBrands && " (Unlimited)"}
+                            </button>
+                          </>
+                        )}
+                      </FieldArray>
+                    </>
+                  );
+                })()}
+              </Section>
+
+              {/* INDUSTRIES SERVED */}
+              <Section title="Industries Served">
+                {(() => {
+                  const isUnlimitedIndustries = isUnlimited(profileLimits?.industriesServed);
+                  const limit = getFeatureLimit(profileLimits?.industriesServed);
+
+                  if (!isFeatureAllowed(profileLimits?.industriesServed)) {
+                    return (
+                      <div className="rounded-lg border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+                        Industries Served are available on Free plan (limited to 5) and above.
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <>
+                      <p className="text-xs text-gray-400 mb-2">
+                        {isUnlimitedIndustries
+                          ? "✅ Unlimited industries on your Professional/Enterprise plan."
+                          : `Your plan allows up to ${limit} industries.`}
+                      </p>
+                      <FieldArray name="industriesServed">
+                        {({ push, remove }) => (
+                          <>
+                            {values.industriesServed.map((item: string, i: number) => (
+                              <div key={i} className="flex gap-2">
+                                <Field
+                                  name={`industriesServed.${i}`}
+                                  className="input flex-1"
+                                  placeholder="Industry name"
+                                />
+                                {i > 0 && (
+                                  <button type="button" onClick={() => remove(i)}>
+                                    ✕
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                            <button
+                              type="button"
+                              onClick={() => push("")}
+                              disabled={!isUnlimitedIndustries && values.industriesServed.length >= (limit ?? 0)}
+                              className="disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              + Add Industry
+                              {!isUnlimitedIndustries && limit !== null &&
+                                ` (${values.industriesServed.length}/${limit})`}
+                              {isUnlimitedIndustries && " (Unlimited)"}
+                            </button>
+                          </>
+                        )}
+                      </FieldArray>
+                    </>
+                  );
+                })()}
+              </Section>
+
+              {/* EXPORT MARKETS - GATED BY PACKAGE */}
+              <Section title="Export Markets">
+                <PlanGatedSection
+                  allowed={isFeatureAllowed(profileLimits?.exportMarkets)}
+                  upgradeMessage="Export Markets are available on Basic plan and above."
+                >
+                  <FieldArray name="exportMarkets">
+                    {({ push, remove }) => (
+                      <>
+                        {values.exportMarkets.map((item: string, i: number) => (
+                          <div key={i} className="flex gap-2">
+                            <Field name={`exportMarkets.${i}`} className="input flex-1" placeholder="Country name" />
+                            {i > 0 && (
+                              <button type="button" onClick={() => remove(i)}>
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <button type="button" onClick={() => push("")}>
+                          + Add Country
+                        </button>
+                      </>
+                    )}
+                  </FieldArray>
+                </PlanGatedSection>
+              </Section>
+
+              {/* ============================================================================
+                  MANUFACTURING CAPABILITIES - WITH ENTERPRISE MEDIA SUPPORT
+                  ============================================================================ */}
+              <Section title="Manufacturing Capabilities">
+                <PlanGatedSection
+                  allowed={isFeatureAllowed(profileLimits?.manufacturingCapabilities)}
+                  upgradeMessage="Manufacturing Capabilities are available on Basic plan and above."
+                >
+                  <p className="text-xs text-gray-400 mb-2">
+                    {typeof profileLimits?.manufacturingCapabilities === "string" && profileLimits.manufacturingCapabilities}
+                    {isEnterprise && " — Enterprise plan: Complete text + Photos + Videos."}
+                    {isProfessional && profileLimits?.manufacturingCapabilities === "Complete" && " — Professional plan: Complete text description."}
+                    {!isProfessional && !isEnterprise && profileLimits?.manufacturingCapabilities === "Basic" && " — Basic plan: Basic text description."}
+                  </p>
+
+                  {(isProfessional || isEnterprise) ? (
+                    <RichTextEditor
+                      value={values.manufacturingCapabilities || ""}
+                      onChange={(val: string) => setFieldValue("manufacturingCapabilities", val)}
+                    />
+                  ) : (
+                    <Field
+                      as="textarea"
+                      name="manufacturingCapabilities"
+                      rows={5}
+                      className="input w-full"
+                      placeholder="Describe your manufacturing capabilities..."
+                    />
+                  )}
+
+                  {isEnterprise && (
+                    <div className="mt-4">
+                      <label className="font-medium text-sm block mb-1">Manufacturing Photos</label>
+                      <p className="text-xs text-gray-400 mb-2">
+                        Upload photos of your manufacturing capabilities (Unlimited on Enterprise)
+                      </p>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <FieldArray name="manufacturingCapabilityImages">
+                          {({ push, remove }) => (
+                            <>
+                              {values.manufacturingCapabilityImages?.map((url: string, i: number) => (
+                                <div key={i} className="relative space-y-1">
+                                  <UploadBox
+                                    label={`Photo ${i + 1}`}
+                                    value={url}
+                                    onUpload={(file) =>
+                                      handleArrayFileUpload(
+                                        file,
+                                        setFieldValue,
+                                        values,
+                                        "manufacturingCapabilityImages",
+                                        i,
+                                        setUploadingManufacturingImage
+                                      )
+                                    }
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => remove(i)}
+                                    className="text-red-500 text-sm hover:text-red-700"
+                                  >
+                                    ✕ Remove
+                                  </button>
+                                </div>
+                              ))}
+                              <div className="col-span-full">
+                                <button
+                                  type="button"
+                                  onClick={() => push("")}
+                                  className="border px-4 py-2 rounded bg-gray-50 hover:bg-gray-100 text-sm font-medium"
+                                >
+                                  + Add Photo
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </FieldArray>
+                      </div>
+                    </div>
+                  )}
+
+                  {isEnterprise && (
+                    <div className="mt-4">
+                      <label className="font-medium text-sm block mb-1">Manufacturing Videos</label>
+                      <p className="text-xs text-gray-400 mb-2">
+                        Add YouTube or Vimeo video URLs (Unlimited on Enterprise)
+                      </p>
+                      <FieldArray name="manufacturingCapabilityVideos">
+                        {({ push, remove }) => (
+                          <>
+                            {values.manufacturingCapabilityVideos?.map((url: string, i: number) => (
+                              <div key={i} className="flex gap-2 mb-2">
+                                <Field
+                                  name={`manufacturingCapabilityVideos.${i}`}
+                                  className="input flex-1"
+                                  placeholder="YouTube or Vimeo URL"
+                                />
+                                <button type="button" onClick={() => remove(i)} className="text-red-500 hover:text-red-700">
+                                  ✕
+                                </button>
+                              </div>
+                            ))}
+                            <button
+                              type="button"
+                              onClick={() => push("")}
+                              className="border px-4 py-2 rounded bg-gray-50 hover:bg-gray-100 text-sm font-medium"
+                            >
+                              + Add Video
+                            </button>
+                          </>
+                        )}
+                      </FieldArray>
+                    </div>
+                  )}
+
+                  {isEnterprise && (
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-blue-700">
+                        <strong>Enterprise Feature:</strong> You can upload unlimited photos and videos
+                        to showcase your manufacturing capabilities.
+                      </p>
+                    </div>
+                  )}
+                </PlanGatedSection>
+              </Section>
+
+              {/* ============================================================================
+                  MACHINERY LIST - WITH ENTERPRISE MEDIA SUPPORT
+                  ============================================================================ */}
+              <Section title="Machinery List">
+                <PlanGatedSection
+                  allowed={isFeatureAllowed(profileLimits?.machineryList)}
+                  upgradeMessage="Machinery List is available on Basic plan and above."
+                >
+                  <p className="text-xs text-gray-400 mb-2">
+                    {typeof profileLimits?.machineryList === "string" && profileLimits.machineryList}
+                    {isEnterprise && " — Enterprise plan: Detailed text + Machinery Images."}
+                    {isProfessional && profileLimits?.machineryList === "Detailed" && " — Professional plan: Detailed text list."}
+                    {!isProfessional && !isEnterprise && profileLimits?.machineryList === "Basic" && " — Basic plan: Basic text list."}
+                  </p>
+
+                  {(isProfessional || isEnterprise) ? (
+                    <RichTextEditor
+                      value={values.machineryList || ""}
+                      onChange={(val: string) => setFieldValue("machineryList", val)}
+                    />
+                  ) : (
+                    <Field
+                      as="textarea"
+                      name="machineryList"
+                      rows={5}
+                      className="input w-full"
+                      placeholder="List your machinery..."
+                    />
+                  )}
+
+                  {isEnterprise && (
+                    <div className="mt-4">
+                      <label className="font-medium text-sm block mb-1">Machinery Images</label>
+                      <p className="text-xs text-gray-400 mb-2">
+                        Upload images of your machinery (Unlimited on Enterprise)
+                      </p>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <FieldArray name="machineryImages">
+                          {({ push, remove }) => (
+                            <>
+                              {values.machineryImages?.map((url: string, i: number) => (
+                                <div key={i} className="relative space-y-1">
+                                  <UploadBox
+                                    label={`Machine Image ${i + 1}`}
+                                    value={url}
+                                    onUpload={(file) =>
+                                      handleArrayFileUpload(
+                                        file,
+                                        setFieldValue,
+                                        values,
+                                        "machineryImages",
+                                        i,
+                                        setUploadingMachineryImage
+                                      )
+                                    }
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => remove(i)}
+                                    className="text-red-500 text-sm hover:text-red-700"
+                                  >
+                                    ✕ Remove
+                                  </button>
+                                </div>
+                              ))}
+                              <div className="col-span-full">
+                                <button
+                                  type="button"
+                                  onClick={() => push("")}
+                                  className="border px-4 py-2 rounded bg-gray-50 hover:bg-gray-100 text-sm font-medium"
+                                >
+                                  + Add Machine Image
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </FieldArray>
+                      </div>
+                    </div>
+                  )}
+
+                  {isEnterprise && (
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-blue-700">
+                        <strong>Enterprise Feature:</strong> You can upload unlimited machinery images
+                        alongside your text descriptions.
+                      </p>
+                    </div>
+                  )}
+                </PlanGatedSection>
+              </Section>
+
+              {/* QUALITY STANDARDS - GATED BY PACKAGE */}
+              <Section title="Quality Standards">
+                <PlanGatedSection
+                  allowed={isFeatureAllowed(profileLimits?.qualityStandards)}
+                  upgradeMessage="Quality Standards are available on Basic plan and above."
+                >
+                  <RichTextEditor
+                    value={values.qualityStandards}
+                    onChange={(val: string) => setFieldValue("qualityStandards", val)}
+                  />
+                </PlanGatedSection>
+              </Section>
+
+              {/* INQUIRY FORM */}
+              <Section title="Inquiry Form">
+                <label className="flex items-center gap-2">
+                  <Field type="checkbox" name="enableInquiryForm" />
+                  <span>Enable inquiry form on public showroom page</span>
+                </label>
+              </Section>
+
+              {/* GUIDELINES */}
+              <Section title="Business Listing Guidelines">
+                <BusinessListingGuidelinesSummary />
+                <label className="flex items-start gap-2 mt-3">
+                  <Field type="checkbox" name="acceptedGuidelines" className="mt-1" />
+                  <span className="text-sm">
+                    I have read and agree to the Business Listing Guidelines.
+                  </span>
+                </label>
+                <ErrorMessage name="acceptedGuidelines" component="p" className="error" />
+              </Section>
+
+              <button
+                type="submit"
+                disabled={
+                  isSubmitting ||
+                  uploadingLogo ||
+                  uploadingCover ||
+                  uploadingCatalogue ||
+                  uploadingGalleryImage ||
+                  uploadingArrayFile ||
+                  uploadingManufacturingImage ||
+                  uploadingMachineryImage
+                }
+                className="bg-black text-white px-6 py-2 rounded disabled:opacity-50"
+              >
+                {isSubmitting ? "Submitting..." : "Submit Directory"}
+              </button>
             </Form>
           );
         }}
