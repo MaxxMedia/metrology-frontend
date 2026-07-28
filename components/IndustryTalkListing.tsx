@@ -172,19 +172,19 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                 post.bannerImage?.startsWith("http")
                   ? post.bannerImage
                   : post.bannerImage
-                  ? `${process.env.NEXT_PUBLIC_API_URL}${post.bannerImage}`
-                  : post.thumbnailUrl?.startsWith("http")
-                  ? post.thumbnailUrl
-                  : post.thumbnailUrl
-                  ? `${process.env.NEXT_PUBLIC_API_URL}${post.thumbnailUrl}`
-                  : "/placeholder.svg"
+                    ? `${process.env.NEXT_PUBLIC_API_URL}${post.bannerImage}`
+                    : post.thumbnailUrl?.startsWith("http")
+                      ? post.thumbnailUrl
+                      : post.thumbnailUrl
+                        ? `${process.env.NEXT_PUBLIC_API_URL}${post.thumbnailUrl}`
+                        : "/placeholder.svg"
 
               const date = post.publishedAt
                 ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })
                 : ""
 
               const episodeNo = total - ((currentPage - 1) * PAGE_SIZE + i)
@@ -196,7 +196,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                   className="relative bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-5"
                 >
                   <Link
-                    href={`/post/${post.slug}`}
+                    href={`/industry-talks/${post.slug}`}
                     className="relative w-[140px] md:w-35 h-[110px] shrink-0 rounded-lg overflow-hidden bg-gray-100"
                   >
                     <Image
@@ -226,7 +226,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                     </div>
 
                     <h2 className="text-lg font-bold text-gray-900 leading-snug mb-1.5 hover:text-[#0F5B78] transition-colors">
-                      <Link href={`/post/${post.slug}`}>{post.title}</Link>
+                      <Link href={`/industry-talks/${post.slug}`}>{post.title}</Link>
                     </h2>
 
                     {post.guestName && (
@@ -254,7 +254,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                     </div>
 
                     <Link
-                      href={`/post/${post.slug}`}
+                      href={`/industry-talks/${post.slug}`}
                       className="flex items-center gap-1.5 text-[#0F5B78] font-semibold text-sm whitespace-nowrap"
                     >
                       View
@@ -363,16 +363,16 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                       post.bannerImage?.startsWith("http")
                         ? post.bannerImage
                         : post.bannerImage
-                        ? `${process.env.NEXT_PUBLIC_API_URL}${post.bannerImage}`
-                        : post.thumbnailUrl?.startsWith("http")
-                        ? post.thumbnailUrl
-                        : post.thumbnailUrl
-                        ? `${process.env.NEXT_PUBLIC_API_URL}${post.thumbnailUrl}`
-                        : "/placeholder.svg"
+                          ? `${process.env.NEXT_PUBLIC_API_URL}${post.bannerImage}`
+                          : post.thumbnailUrl?.startsWith("http")
+                            ? post.thumbnailUrl
+                            : post.thumbnailUrl
+                              ? `${process.env.NEXT_PUBLIC_API_URL}${post.thumbnailUrl}`
+                              : "/placeholder.svg"
                     return (
                       <Link
                         key={post.id}
-                        href={`/post/${post.slug}`}
+                        href={`/industry-talks/${post.slug}`}
                         className="flex items-center gap-3 group"
                       >
                         <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 bg-gray-100">

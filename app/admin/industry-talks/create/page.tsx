@@ -181,14 +181,12 @@ function Toggle({
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
-          checked ? "bg-[#0F5B78]" : "bg-gray-300"
-        }`}
+        className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${checked ? "bg-[#0F5B78]" : "bg-gray-300"
+          }`}
       >
         <span
-          className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ${
-            checked ? "translate-x-5" : "translate-x-0"
-          }`}
+          className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ${checked ? "translate-x-5" : "translate-x-0"
+            }`}
         />
       </button>
     </div>
@@ -358,7 +356,7 @@ export default function CreateIndustryTalkPage() {
       const swapWith = idx + direction
       if (swapWith < 0 || swapWith >= prev.length) return prev
       const copy = [...prev]
-      ;[copy[idx], copy[swapWith]] = [copy[swapWith], copy[idx]]
+        ;[copy[idx], copy[swapWith]] = [copy[swapWith], copy[idx]]
       return copy.map((q, i) => ({ ...q, displayOrder: i + 1 }))
     })
   }
@@ -575,11 +573,10 @@ export default function CreateIndustryTalkPage() {
                         key={ind.id}
                         type="button"
                         onClick={() => toggleIndustry(ind.id)}
-                        className={`text-xs font-medium px-2.5 py-1 rounded-full border transition-colors ${
-                          form.industryIds.includes(ind.id)
+                        className={`text-xs font-medium px-2.5 py-1 rounded-full border transition-colors ${form.industryIds.includes(ind.id)
                             ? "bg-[#0F5B78] text-white border-[#0F5B78]"
                             : "bg-white text-gray-600 border-gray-200 hover:border-[#0F5B78]"
-                        }`}
+                          }`}
                       >
                         {ind.name}
                       </button>

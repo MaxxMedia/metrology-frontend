@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { useParams, useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 import { Calendar, Clock, Eye, Mail } from "lucide-react"
 
 import ShareSection from "@/components/share-section"
@@ -88,6 +88,12 @@ function mapTalkToPost(inputData: any): Post {
     ? inputData.data
     : inputData
 
+  console.log("🔍 [mapTalkToPost] Raw Input Data:", inputData)
+  console.log("🔍 [mapTalkToPost] Unwrapped Data:", data)
+  console.log("🔍 [mapTalkToPost] Company Object:", data?.Company)
+  console.log("🔍 [mapTalkToPost] Company Slug:", data?.Company?.slug)
+  console.log("🔍 [mapTalkToPost] SupplierDirectory:", data?.Company?.SupplierDirectory)
+
   const authorName = data.guestName || data.author?.name || "Industry Leader"
   const companyStr = data.companyName || (data.author as any)?.company || ""
   const designationStr = data.designation || ""
@@ -125,6 +131,9 @@ function mapTalkToPost(inputData: any): Post {
   const rawExcerpt = data.excerpt || data.shortBio || data.introduction || ""
   const cleanExcerpt = stripHtml(rawExcerpt)
 
+  console.log("🔍 [mapTalkToPost] Final Calculated rawSlug:", rawSlug)
+  console.log("🔍 [mapTalkToPost] Final Calculated profileUrl:", profileUrl)
+
   return {
     id: data.id,
     title: data.title,
@@ -155,13 +164,12 @@ function mapTalkToPost(inputData: any): Post {
     qa: Array.isArray(data.questions)
       ? data.questions
       : typeof data.questions === "string"
-        ? JSON.parse(data.questions)
-        : data.qa || [],
+      ? JSON.parse(data.questions)
+      : data.qa || [],
   }
 }
 
 export default function PostDetailsPage() {
-  const router = useRouter()
   const { slug } = useParams()
   const slugValue = Array.isArray(slug) ? slug[0] : slug
 
@@ -184,28 +192,7 @@ export default function PostDetailsPage() {
       setError(null)
 
       try {
-        // 1. Try fetching standard post by slug
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/posts/slug/${encodeURIComponent(slugValue)}`,
-          {
-            cache: "no-store",
-            headers: { "Content-Type": "application/json" },
-          }
-        )
-
-        if (res.ok) {
-          const data = await res.json()
-          if (data && typeof data === "object" && data.id) {
-            if (data.category?.slug === "industry-talks") {
-              router.replace(`/industry-talks/${encodeURIComponent(data.slug || slugValue)}`)
-              return
-            }
-            setPost(data)
-            return
-          }
-        }
-
-        // 2. Try fetching industry-talk by slug
+        // 1. Fetch industry-talk by slug directly
         let talkRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/slug/${encodeURIComponent(slugValue)}`,
           {
@@ -214,7 +201,7 @@ export default function PostDetailsPage() {
           }
         )
 
-        // 3. Try fetching industry-talk by ID
+        // 2. Fetch industry-talk by ID
         if (!talkRes.ok) {
           talkRes = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/${encodeURIComponent(slugValue)}`,
@@ -229,7 +216,24 @@ export default function PostDetailsPage() {
           const resJson = await talkRes.json()
           const talkData = resJson.data || resJson
           if (talkData && typeof talkData === "object" && (talkData.id || talkData.title)) {
-            router.replace(`/industry-talks/${encodeURIComponent(talkData.slug || slugValue)}`)
+            setPost(mapTalkToPost(talkData))
+            return
+          }
+        }
+
+        // 3. Fallback: Fetch standard post by slug
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/posts/slug/${encodeURIComponent(slugValue)}`,
+          {
+            cache: "no-store",
+            headers: { "Content-Type": "application/json" },
+          }
+        )
+
+        if (res.ok) {
+          const data = await res.json()
+          if (data && typeof data === "object" && data.id) {
+            setPost(mapTalkToPost(data))
             return
           }
         }
@@ -245,8 +249,8 @@ export default function PostDetailsPage() {
           const items = Array.isArray(listData?.data)
             ? listData.data
             : Array.isArray(listData)
-              ? listData
-              : []
+            ? listData
+            : []
 
           const decodedSlug = decodeURIComponent(slugValue)
           const found = items.find(
@@ -257,7 +261,7 @@ export default function PostDetailsPage() {
           )
 
           if (found) {
-            router.replace(`/industry-talks/${encodeURIComponent(found.slug || slugValue)}`)
+            setPost(mapTalkToPost(found))
             return
           }
         }
@@ -334,6 +338,8 @@ export default function PostDetailsPage() {
     )
   }
 
+  console.log("🔍 [Render Component] post.author:", post.author)
+
   const embedUrl = getYoutubeEmbed(post.youtubeUrl)
 
   const isIndustryTalk = post.category?.slug === "industry-talks"
@@ -344,15 +350,15 @@ export default function PostDetailsPage() {
   const imageUrl = post.imageUrl?.startsWith("http")
     ? post.imageUrl
     : post.imageUrl
-      ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-      : "/placeholder.svg"
+    ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
+    : "/placeholder.svg"
 
   const date = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    })
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
     : "Today"
 
   /* ================= INDUSTRY TALK LAYOUT ================= */
@@ -386,7 +392,7 @@ export default function PostDetailsPage() {
                 </h1>
 
                 {post.excerpt && (
-                  <p className="text-gray-600 text-base mb-5 leading-relaxed">{post.excerpt}</p>
+                  <p className="text-gray-600 text-base mb-5 leading-relaxed text-justify">{post.excerpt}</p>
                 )}
 
                 <div className="flex flex-wrap items-center justify-between gap-3 pb-5 mb-6 border-b border-gray-100">
@@ -526,7 +532,7 @@ export default function PostDetailsPage() {
                         <p className="text-sm text-gray-600 leading-relaxed mb-4 text-justify">{post.author.bio}</p>
                       )}
                       <a
-                        href={post.author.profileUrl || "/suppliers"}
+                        href={post.author.profileUrl || (post.author.companySlug ? `/suppliers/${post.author.companySlug}` : "/suppliers")}
                         className="inline-flex items-center justify-center gap-1.5 w-full bg-[#0F5B78] text-white text-sm font-semibold px-4 py-2.5 rounded-lg hover:opacity-90 transition-colors"
                       >
                         View Company Profile →
@@ -545,19 +551,19 @@ export default function PostDetailsPage() {
                           const rpImage = rp.imageUrl?.startsWith("http")
                             ? rp.imageUrl
                             : rp.imageUrl
-                              ? `${process.env.NEXT_PUBLIC_API_URL}${rp.imageUrl}`
-                              : "/placeholder.svg"
+                            ? `${process.env.NEXT_PUBLIC_API_URL}${rp.imageUrl}`
+                            : "/placeholder.svg"
                           const rpDate = rp.publishedAt
                             ? new Date(rp.publishedAt).toLocaleDateString("en-US", {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                            })
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              })
                             : ""
                           return (
                             <a
                               key={rp.id}
-                              href={`/post/${rp.slug}`}
+                              href={`/industry-talks/${rp.slug}`}
                               className="flex items-start gap-3 group"
                             >
                               <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 bg-gray-100">
@@ -649,7 +655,7 @@ export default function PostDetailsPage() {
             </h1>
 
             {post.excerpt && (
-              <p className="text-gray-600 text-lg max-w-3xl mb-8 leading-relaxed">{post.excerpt}</p>
+              <p className="text-gray-600 text-lg max-w-3xl mb-8 leading-relaxed text-justify">{post.excerpt}</p>
             )}
 
             <div className="relative w-full aspect-[16/9] md:aspect-[21/9] bg-gray-100 rounded-2xl overflow-hidden border border-gray-100">
@@ -677,7 +683,7 @@ export default function PostDetailsPage() {
                 <div>
                   <p className="text-sm font-semibold text-[#003049]">{post.author.name}</p>
                   {post.author.bio && (
-                    <p className="text-xs text-gray-500 mt-0.5">{post.author.bio}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 text-justify">{post.author.bio}</p>
                   )}
                 </div>
               </div>
@@ -689,7 +695,7 @@ export default function PostDetailsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr] gap-10">
             <article className="max-w-3xl overflow-hidden">
               <div
-                className="prose prose-lg max-w-none break-words overflow-hidden prose-headings:text-[#003049] prose-a:text-[#003049] prose-img:rounded-xl"
+                className="prose prose-lg max-w-none break-words overflow-hidden text-justify prose-p:text-justify prose-headings:text-[#003049] prose-a:text-[#003049] prose-img:rounded-xl"
                 dangerouslySetInnerHTML={{ __html: post.content || "" }}
               />
 

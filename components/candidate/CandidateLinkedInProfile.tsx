@@ -226,7 +226,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
           if (me && (me.username?.toLowerCase() === baseData.username?.toLowerCase() || me.id === baseData.id)) {
             currentIsOwner = true;
           }
-        } catch {}
+        } catch { }
       }
 
       setIsOwner(currentIsOwner);
@@ -365,38 +365,38 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     loadCandidate();
   }, [username]);
 
-function getRoleAndOrganization(candidate: any) {
-  const exps = candidate?.experiences || candidate?.experiencesList || [];
-  const edus = candidate?.educationList || candidate?.education || [];
+  function getRoleAndOrganization(candidate: any) {
+    const exps = candidate?.experiences || candidate?.experiencesList || [];
+    const edus = candidate?.educationList || candidate?.education || [];
 
-  // 1. Check for current working experience
-  let activeExp = (Array.isArray(exps) ? exps : []).find((e: any) => e.currentlyWorking || e.currentlyWorking === true);
+    // 1. Check for current working experience
+    let activeExp = (Array.isArray(exps) ? exps : []).find((e: any) => e.currentlyWorking || e.currentlyWorking === true);
 
-  // 2. If not currently working, use most recent previous experience
-  if (!activeExp && Array.isArray(exps) && exps.length > 0) {
-    activeExp = exps[0];
+    // 2. If not currently working, use most recent previous experience
+    if (!activeExp && Array.isArray(exps) && exps.length > 0) {
+      activeExp = exps[0];
+    }
+
+    if (activeExp) {
+      const position = activeExp.designation || activeExp.title || "";
+      const company = activeExp.companyName || activeExp.company?.name || (typeof activeExp.company === "string" ? activeExp.company : "");
+      return { position, company };
+    }
+
+    // 3. If no experience exists, fallback to school and study details
+    const eduList = Array.isArray(edus) ? edus : (edus ? [edus] : []);
+    const latestEdu = eduList[0];
+    if (latestEdu) {
+      const degree = latestEdu.degree || "";
+      const field = latestEdu.fieldOfStudy || "";
+      const studyDetails = [degree, field].filter((p: any) => typeof p === "string" && p.trim()).join(" in ") || "Student";
+      const school = latestEdu.institution || latestEdu.school || "";
+      return { position: studyDetails, company: school };
+    }
+
+    const comp = typeof candidate?.company === "string" ? candidate.company : (candidate?.company?.name || "");
+    return { position: "", company: comp };
   }
-
-  if (activeExp) {
-    const position = activeExp.designation || activeExp.title || "";
-    const company = activeExp.companyName || activeExp.company?.name || (typeof activeExp.company === "string" ? activeExp.company : "");
-    return { position, company };
-  }
-
-  // 3. If no experience exists, fallback to school and study details
-  const eduList = Array.isArray(edus) ? edus : (edus ? [edus] : []);
-  const latestEdu = eduList[0];
-  if (latestEdu) {
-    const degree = latestEdu.degree || "";
-    const field = latestEdu.fieldOfStudy || "";
-    const studyDetails = [degree, field].filter((p: any) => typeof p === "string" && p.trim()).join(" in ") || "Student";
-    const school = latestEdu.institution || latestEdu.school || "";
-    return { position: studyDetails, company: school };
-  }
-
-  const comp = typeof candidate?.company === "string" ? candidate.company : (candidate?.company?.name || "");
-  return { position: "", company: comp };
-}
 
   const roleAndOrg = getRoleAndOrganization(candidate);
   const displayName = getSafeString(candidate?.fullName, candidate?.username || username);
@@ -801,8 +801,8 @@ function getRoleAndOrganization(candidate: any) {
   const targetUserId = typeof candidate?.id === "number"
     ? candidate.id
     : typeof candidate?.id === "string" && !Number.isNaN(Number(candidate.id))
-    ? Number(candidate.id)
-    : undefined;
+      ? Number(candidate.id)
+      : undefined;
 
   return (
     <div className="bg-[#ffffff] min-h-screen text-[#000000] relative">
