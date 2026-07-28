@@ -72,7 +72,7 @@ export default function CompanyArticlesCarousel({ articles }: Props) {
         {articles.map((article) => (
           <Link
             key={article.id}
-            href={`/article/${article.slug}`}
+            href={`/post/${article.slug}`}
             className="min-w-[300px] max-w-[300px] bg-white rounded-lg border hover:shadow-lg transition overflow-hidden"
           >
             {/* Image */}
