@@ -23,10 +23,6 @@ const validationSchema = Yup.object({
     Yup.object({
       name: Yup.string().required("Interest name is required"),
       category: Yup.string(),
-      followersCount: Yup.number()
-        .nullable()
-        .transform((value, originalValue) => (originalValue === "" ? null : value)),
-      imageUrl: Yup.string().url("Invalid URL").nullable(),
     })
   ),
 });
@@ -37,13 +33,11 @@ export default function InterestsForm({
   loading = false,
 }: Props) {
   const sanitizedInitialValues = (initialValues.length > 0 ? initialValues : [
-    { name: "", category: "Industry", followersCount: undefined, imageUrl: "" }
+    { name: "", category: "Industry" }
   ]).map((i) => ({
     ...i,
     name: i.name || "",
     category: i.category || "Industry",
-    followersCount: i.followersCount !== undefined ? i.followersCount : undefined,
-    imageUrl: i.imageUrl || "",
   }));
 
   return (
@@ -93,19 +87,6 @@ export default function InterestsForm({
                           name={`interests.${index}.category`}
                           placeholder="e.g. Technology, Manufacturing"
                         />
-
-                        <Input
-                          label="Followers Count"
-                          name={`interests.${index}.followersCount`}
-                          type="number"
-                          placeholder="e.g. 15000"
-                        />
-
-                        <Input
-                          label="Image / Logo URL"
-                          name={`interests.${index}.imageUrl`}
-                          placeholder="https://example.com/logo.png"
-                        />
                       </div>
                     </div>
                   ))}
@@ -117,8 +98,6 @@ export default function InterestsForm({
                     push({
                       name: "",
                       category: "Industry",
-                      followersCount: undefined,
-                      imageUrl: "",
                     })
                   }
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0F5B78] hover:underline cursor-pointer pt-1"

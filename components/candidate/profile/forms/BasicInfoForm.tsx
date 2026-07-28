@@ -91,8 +91,8 @@ export default function BasicInfoForm({
             <div className="md:col-span-2">
               <Input name="headline" label="Headline *" placeholder="e.g. Senior Software Engineer at Tech Corp" />
             </div>
-            <Input name="currentPosition" label="Current Position" />
-            <Input name="company" label="Company" />
+            <Input name="currentPosition" label="Current Position (Auto from Experience)" disabled />
+            <Input name="company" label="Company (Auto from Experience)" disabled />
             <Input name="location" label="Location *" placeholder="e.g. Bengaluru, Karnataka, India" />
             <Input name="website" label="Website" placeholder="https://yourwebsite.com" />
             <Input name="email" label="Email *" type="email" />
@@ -121,9 +121,10 @@ interface InputProps {
   name: string;
   type?: string;
   placeholder?: string;
+  disabled?: boolean;
 }
 
-function Input({ label, name, type = "text", placeholder = "" }: InputProps) {
+function Input({ label, name, type = "text", placeholder = "", disabled = false }: InputProps) {
   return (
     <div>
       <label className="block text-xs font-semibold text-[#5A5F69] uppercase tracking-wider mb-1.5">
@@ -133,7 +134,8 @@ function Input({ label, name, type = "text", placeholder = "" }: InputProps) {
         name={name}
         type={type}
         placeholder={placeholder}
-        className="w-full border border-gray-300 rounded-lg px-3.5 py-2 text-sm text-[#000000] focus:outline-none focus:ring-2 focus:ring-[#0F5B78] focus:border-transparent transition-all"
+        disabled={disabled}
+        className="w-full border border-gray-300 rounded-lg px-3.5 py-2 text-sm text-[#000000] focus:outline-none focus:ring-2 focus:ring-[#0F5B78] focus:border-transparent transition-all disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
       />
       <ErrorMessage name={name} component="p" className="text-red-500 text-xs mt-1 font-medium" />
     </div>

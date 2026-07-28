@@ -41,10 +41,10 @@ export default function AchievementsForm({
       achievementDate: "",
       description: "",
     }
-  ]).map((ach) => ({
+  ]).map((ach: any) => ({
     ...ach,
     title: ach.title || "",
-    issuer: ach.issuer || "",
+    issuer: ach.issuer || ach.organization || "",
     achievementDate: ach.achievementDate || "",
     description: ach.description || "",
   }));

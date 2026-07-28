@@ -44,13 +44,13 @@ export default function CertificationsForm({
       expirationDate: "",
       credentialUrl: "",
     }
-  ]).map((cert) => ({
+  ]).map((cert: any) => ({
     ...cert,
-    name: cert.name || "",
-    issuingOrganization: cert.issuingOrganization || "",
-    issueDate: cert.issueDate || "",
-    expirationDate: cert.expirationDate || "",
-    credentialUrl: cert.credentialUrl || "",
+    name: cert.name || cert.title || cert.certificateName || "",
+    issuingOrganization: cert.issuingOrganization || cert.organization || cert.issuer || cert.authority || "",
+    issueDate: cert.issueDate || cert.startDate || "",
+    expirationDate: cert.expirationDate || cert.expiryDate || cert.endDate || "",
+    credentialUrl: cert.credentialUrl || cert.url || "",
   }));
 
   return (

@@ -155,7 +155,14 @@ export default function ProfileModals({
 
           {activeModal === "certifications" && (
             <CertificationsForm
-              initialValues={candidate?.certifications || []}
+              initialValues={(candidate?.certifications || []).map((c: any) => ({
+                id: c.id,
+                name: c.name || c.title || c.certificateName || "",
+                issuingOrganization: c.issuingOrganization || c.organization || c.issuer || c.authority || "",
+                issueDate: c.issueDate || "",
+                expirationDate: c.expirationDate || c.expiryDate || "",
+                credentialUrl: c.credentialUrl || c.url || "",
+              }))}
               onSubmit={onSaveCertifications}
               loading={modalSaving}
             />
@@ -171,7 +178,13 @@ export default function ProfileModals({
 
           {activeModal === "achievements" && (
             <AchievementsForm
-              initialValues={candidate?.achievements || []}
+              initialValues={(candidate?.achievements || []).map((a: any) => ({
+                id: a.id,
+                title: a.title || "",
+                issuer: a.issuer || a.organization || "",
+                achievementDate: a.achievementDate || "",
+                description: a.description || "",
+              }))}
               onSubmit={onSaveAchievements}
               loading={modalSaving}
             />

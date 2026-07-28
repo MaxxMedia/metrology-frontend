@@ -18,7 +18,7 @@ import CandidateSidebar from "@/components/candidate/profile/sidebar/CandidateSi
 import ProfileModals, { type ModalType } from "@/components/candidate/profile/ProfileModals";
 
 // API imports
-import { fetchMyCandidateProfile, updateMyCandidateProfile, syncCandidateUserInStorage } from "@/lib/candidateProfile";
+import { fetchMyCandidateProfile, updateMyCandidateProfile, uploadCandidateImage, syncCandidateUserInStorage, fetchMyResume, fetchCandidateResume, uploadCandidateResume } from "@/lib/candidateProfile";
 import { getSkills, createSkill, updateSkill, deleteSkill } from "@/lib/api/candidate/skills";
 import { getExperiences, createExperience, updateExperience, deleteExperience } from "@/lib/api/candidate/experience";
 import { getEducation, createEducation, updateEducation, deleteEducation } from "@/lib/api/candidate/education";
@@ -131,6 +131,22 @@ export default function CandidateLinkedInProfile({ username }: Props) {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [modalSaving, setModalSaving] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [resume, setResume] = useState<{ fileName?: string; fileUrl?: string } | null>(null);
+  const [resumeUploading, setResumeUploading] = useState(false);
+
+  const handleUploadResume = async (file: File) => {
+    setResumeUploading(true);
+    try {
+      const uploaded = await uploadCandidateResume(file);
+      setResume(uploaded);
+      setToastMessage("Resume uploaded successfully");
+    } catch (err: any) {
+      console.error("Upload error:", err);
+      setToastMessage(err.message || "Failed to upload resume");
+    } finally {
+      setResumeUploading(false);
+    }
+  };
 
   // Check ownership
   useEffect(() => {
@@ -283,6 +299,19 @@ export default function CandidateLinkedInProfile({ username }: Props) {
         category: item.category || item.type || "",
       }));
 
+      certsData = (certsData || []).map((item: any) => ({
+        ...item,
+        name: item.name || item.title || item.certificateName || "",
+        issuingOrganization: item.issuingOrganization || item.organization || item.issuer || item.authority || "",
+        expirationDate: item.expirationDate || item.expiryDate || "",
+      }));
+
+      achievementsData = (achievementsData || []).map((item: any) => ({
+        ...item,
+        title: item.title || "",
+        issuer: item.issuer || item.organization || "",
+      }));
+
       if (baseData) {
         setCandidate({
           ...baseData,
@@ -312,10 +341,18 @@ export default function CandidateLinkedInProfile({ username }: Props) {
           projectsList: projData,
           certifications: certsData,
           languages: langsData,
-          achievements: achievementsData,
           interests: interestsData,
           socials: socialsData,
         });
+      }
+
+      const resumeSocial = (socialsData || []).find((s: any) =>
+        ["resume", "cv"].includes((s.platform || "").toLowerCase())
+      );
+      if (resumeSocial?.url) {
+        setResume({ fileName: "Resume.pdf", fileUrl: resumeSocial.url });
+      } else {
+        setResume(null);
       }
     } catch (err) {
       console.error("Failed to load candidate data", err);
@@ -328,24 +365,83 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     loadCandidate();
   }, [username]);
 
+function getRoleAndOrganization(candidate: any) {
+  const exps = candidate?.experiences || candidate?.experiencesList || [];
+  const edus = candidate?.educationList || candidate?.education || [];
+
+  // 1. Check for current working experience
+  let activeExp = (Array.isArray(exps) ? exps : []).find((e: any) => e.currentlyWorking || e.currentlyWorking === true);
+
+  // 2. If not currently working, use most recent previous experience
+  if (!activeExp && Array.isArray(exps) && exps.length > 0) {
+    activeExp = exps[0];
+  }
+
+  if (activeExp) {
+    const position = activeExp.designation || activeExp.title || "";
+    const company = activeExp.companyName || activeExp.company?.name || (typeof activeExp.company === "string" ? activeExp.company : "");
+    return { position, company };
+  }
+
+  // 3. If no experience exists, fallback to school and study details
+  const eduList = Array.isArray(edus) ? edus : (edus ? [edus] : []);
+  const latestEdu = eduList[0];
+  if (latestEdu) {
+    const degree = latestEdu.degree || "";
+    const field = latestEdu.fieldOfStudy || "";
+    const studyDetails = [degree, field].filter((p: any) => typeof p === "string" && p.trim()).join(" in ") || "Student";
+    const school = latestEdu.institution || latestEdu.school || "";
+    return { position: studyDetails, company: school };
+  }
+
+  const comp = typeof candidate?.company === "string" ? candidate.company : (candidate?.company?.name || "");
+  return { position: "", company: comp };
+}
+
+  const roleAndOrg = getRoleAndOrganization(candidate);
   const displayName = getSafeString(candidate?.fullName, candidate?.username || username);
-  const displayHeadline = getSafeString(candidate?.headline, "");
-  const displayCompany = getCompanyDisplay(candidate?.company);
-  const displayEducation = getEducationDisplay(candidate?.education, candidate?.educationList);
+  const displayHeadline = getSafeString(candidate?.headline, roleAndOrg.position && roleAndOrg.company ? `${roleAndOrg.position} at ${roleAndOrg.company}` : (roleAndOrg.position || roleAndOrg.company || ""));
+  const displayCompany = getCompanyDisplay(candidate?.company) || roleAndOrg.company;
+  const hasWorkExp = (candidate?.experiences || []).length > 0;
+  const displayEducation = hasWorkExp ? "" : getEducationDisplay(candidate?.education, candidate?.educationList);
   const displayLocation = getLocationDisplay(candidate?.location);
   const displayAbout = getSafeString(candidate?.about, "");
 
-  // --- Modal Form Submit Handlers ---
   const handleSaveIntro = async (values: BasicInfoValues) => {
     setModalSaving(true);
     try {
+      let avatarUrl: string | undefined = typeof values.avatar === "string" ? values.avatar : undefined;
+      if (values.avatar && typeof values.avatar !== "string") {
+        avatarUrl = await uploadCandidateImage(values.avatar as unknown as File);
+      }
+
       const updated = await updateMyCandidateProfile({
         fullName: `${values.firstName} ${values.lastName}`.trim(),
         headline: values.headline,
         location: values.location,
         about: values.about,
         websiteUrl: values.website,
+        ...(avatarUrl ? { avatarUrl } : {}),
       });
+
+      if (values.phone !== undefined) {
+        const currentSocials = candidate?.socials || [];
+        const existingPhoneSocial = currentSocials.find((s: any) =>
+          ["phone", "mobile", "contact", "phonenumber"].includes((s.platform || "").toLowerCase())
+        );
+
+        const cleanPhone = values.phone.trim();
+        if (cleanPhone) {
+          if (existingPhoneSocial?.id) {
+            await updateSocial(existingPhoneSocial.id, { platform: "phone", url: cleanPhone });
+          } else {
+            await createSocial({ platform: "phone", url: cleanPhone });
+          }
+        } else if (existingPhoneSocial?.id) {
+          await deleteSocial(existingPhoneSocial.id);
+        }
+      }
+
       syncCandidateUserInStorage(updated);
       await loadCandidate();
       setToastMessage("Intro updated successfully");
@@ -526,6 +622,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
           authority: cert.issuingOrganization || "",
           issueDate: cert.issueDate || null,
           expirationDate: cert.expirationDate && cert.expirationDate.trim() !== "" ? cert.expirationDate : null,
+          expiryDate: cert.expirationDate && cert.expirationDate.trim() !== "" ? cert.expirationDate : null,
           credentialUrl: cert.credentialUrl && cert.credentialUrl.trim() !== "" ? cert.credentialUrl : null,
           url: cert.credentialUrl && cert.credentialUrl.trim() !== "" ? cert.credentialUrl : null,
         };
@@ -585,7 +682,8 @@ export default function CandidateLinkedInProfile({ username }: Props) {
           title: ach.title,
           description: ach.description,
           issuer: ach.issuer,
-          achievementDate: ach.achievementDate,
+          organization: ach.issuer,
+          achievementDate: ach.achievementDate || null,
         };
         if (ach.id) {
           await updateAchievement(ach.id, payload);
@@ -680,15 +778,20 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     );
   }
 
+  const roleAndOrgInfo = getRoleAndOrganization(candidate);
+  const phoneFromSocials = (candidate?.socials || []).find((s: any) =>
+    ["phone", "mobile", "contact", "phonenumber"].includes((s.platform || "").toLowerCase())
+  )?.url || (candidate as any)?.phone || (candidate as any)?.mobile || "";
+
   const initialBasicInfo: BasicInfoValues = {
     firstName: (candidate?.fullName || "").split(" ")[0] || "",
     lastName: (candidate?.fullName || "").split(" ").slice(1).join(" ") || "",
     headline: candidate?.headline || "",
-    currentPosition: typeof candidate?.company === "string" ? candidate.company : (candidate?.company?.name || ""),
-    company: typeof candidate?.company === "string" ? candidate.company : (candidate?.company?.name || ""),
+    currentPosition: roleAndOrgInfo.position,
+    company: roleAndOrgInfo.company,
     location: typeof candidate?.location === "string" ? candidate.location : (candidate?.location?.city || ""),
     website: candidate?.websiteUrl || "",
-    phone: "",
+    phone: phoneFromSocials,
     email: candidate?.email || "",
     about: candidate?.about || "",
     avatar: candidate?.avatarUrl || "",
@@ -705,7 +808,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     <div className="bg-[#f8f9fa] min-h-screen text-[#000000] relative">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#000000] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 bg-[#000000] text-white px-10 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium animate-bounce">
           <CheckCircle2 size={18} className="text-green-400" />
           <span>{toastMessage}</span>
         </div>
@@ -724,6 +827,9 @@ export default function CandidateLinkedInProfile({ username }: Props) {
           isOwner={isOwner}
           targetUserId={targetUserId}
           onEditIntroClick={() => setActiveModal("intro")}
+          resume={resume}
+          onResumeUpload={handleUploadResume}
+          resumeUploading={resumeUploading}
         />
 
         {/* SHARED SUB-NAV TAB BAR */}
