@@ -103,10 +103,10 @@ export default function CampaignsPage() {
       if (res.ok) {
         const data = await res.json();
         setTotalSubscribers(data.activeSubscribers || data.totalSubscribers || 0);
-        console.log("📊 Total subscribers:", data.activeSubscribers || data.totalSubscribers || 0);
+        // console.log("📊 Total subscribers:", data.activeSubscribers || data.totalSubscribers || 0);
       }
     } catch (err) {
-      console.error("Failed to load subscriber count:", err);
+      // console.error("Failed to load subscriber count:", err);
     }
   }
 
