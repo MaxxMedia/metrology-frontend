@@ -22,11 +22,11 @@ import {
 
 /* ================= TYPES ================= */
 
-type Post = {
+type IndustryTalkListItem = {
   id: number
   title: string
   slug: string
-  imageUrl?: string
+  bannerImage?: string
   publishedAt?: string
   views: number
 }
@@ -38,7 +38,7 @@ const PAGE_SIZE = 10
 export default function IndustryTalksPage() {
   const router = useRouter()
 
-  const [posts, setPosts] = useState<Post[]>([])
+  const [talks, setTalks] = useState<IndustryTalkListItem[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -52,7 +52,7 @@ export default function IndustryTalksPage() {
     return () => clearTimeout(t)
   }, [search])
 
-  /* ================= FETCH INDUSTRY TALKS ONLY ================= */
+  /* ================= FETCH INDUSTRY TALKS ================= */
 
   useEffect(() => {
     async function load() {
@@ -60,16 +60,16 @@ export default function IndustryTalksPage() {
 
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/posts?page=${page}&limit=${PAGE_SIZE}&q=${debouncedSearch}&category=industry-talks`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks?page=${page}&limit=${PAGE_SIZE}&search=${debouncedSearch}`
         )
 
         const json = await res.json()
 
-        setPosts(json.data || [])
-        setTotal(json.meta?.total || 0)
+        setTalks(json.items || [])
+        setTotal(json.total || 0)
       } catch (error) {
         console.error("Failed to load industry talks:", error)
-        setPosts([])
+        setTalks([])
         setTotal(0)
       } finally {
         setLoading(false)
@@ -88,26 +88,26 @@ export default function IndustryTalksPage() {
     if (!confirm("Delete this industry talk?")) return
 
     await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/${id}`,
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       }
     )
 
-    setPosts((p) => p.filter((x) => x.id !== id))
+    setTalks((t) => t.filter((x) => x.id !== id))
   }
 
   /* ================= TABLE ================= */
 
-  const columnHelper = createColumnHelper<Post>()
+  const columnHelper = createColumnHelper<IndustryTalkListItem>()
 
   const columns = [
     columnHelper.display({
       id: "image",
       header: "Image",
       cell: (info) => {
-        const url = info.row.original.imageUrl
+        const url = info.row.original.bannerImage
         return url ? (
           <Image
             src={
@@ -189,7 +189,7 @@ export default function IndustryTalksPage() {
   ]
 
   const table = useReactTable({
-    data: posts,
+    data: talks,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
@@ -264,6 +264,12 @@ export default function IndustryTalksPage() {
               ))}
             </tbody>
           </table>
+
+          {talks.length === 0 && (
+            <p className="text-center text-gray-400 py-10 text-sm">
+              No industry talks found.
+            </p>
+          )}
 
           {/* PAGINATION */}
           <div className="p-4 border-t flex justify-between items-center">
