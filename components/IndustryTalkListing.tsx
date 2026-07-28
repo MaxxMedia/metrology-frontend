@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import Banner from "@/components/Banners/Banner"
@@ -14,11 +17,10 @@ import {
 } from "lucide-react"
 
 const PAGE_SIZE = 10
-const BASE_PATH = "/industry-talks" // change to wherever this page actually lives
 
 // ---------- types (match Prisma IndustryTalk model) ----------
 
-type IndustryTalk = {
+export type IndustryTalk = {
   id: number
   title: string
   slug: string
@@ -47,17 +49,6 @@ type IndustryTalk = {
 }
 
 // ---------- helpers ----------
-
-function getPlainText(html?: string | null) {
-  if (!html) return ""
-  return html
-    .replace(/<[^>]*>?/gm, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, "&")
-    .trim()
-}
 
 function isNew(publishedAt?: string | null) {
   if (!publishedAt) return false
@@ -94,52 +85,21 @@ function getPageList(current: number, total: number): (number | "...")[] {
   return result
 }
 
-function buildPageHref(page: number) {
-  return `${BASE_PATH}?page=${page}`
-}
+// ---------- component ----------
 
-// ---------- data fetching ----------
+export default function IndustryTalkListing({ post: allPosts }: { post: IndustryTalk[] }) {
+  const [currentPage, setCurrentPage] = useState(1)
 
-async function getPosts(page: number): Promise<{ posts: IndustryTalk[]; total: number }> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks?page=${page}&limit=${PAGE_SIZE}&status=PUBLISHED`,
-    { cache: "no-store" }
-  )
-
-  if (res.status === 404) {
-    return { posts: [], total: 0 }
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch industry talks: ${res.status}`)
-  }
-
-  const data = await res.json()
-
-  // backend (industryTalkController.getIndustryTalks) returns
-  // { success, items, total, page, totalPages }
-  return { posts: data.items ?? [], total: data.total ?? 0 }
-}
-
-// ---------- page ----------
-
-export default async function IndustryTalksPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{ page?: string }>
-}) {
-  const resolvedParams = searchParams ? await searchParams : {}
-  const currentPage = Math.max(1, parseInt(resolvedParams.page ?? "1", 10) || 1)
-
-  const { posts, total } = await getPosts(currentPage)
+  const total = allPosts.length
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const posts = allPosts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
-  const categoryCounts = posts.reduce<Record<string, number>>((acc, p) => {
+  const categoryCounts = allPosts.reduce<Record<string, number>>((acc, p) => {
     const key = p.interviewType || "Industry Talks"
     acc[key] = (acc[key] || 0) + 1
     return acc
   }, {})
-  const popular = posts.slice(0, 3)
+  const popular = allPosts.slice(0, 3)
 
   const pageList = getPageList(currentPage, totalPages)
   const hasPrev = currentPage > 1
@@ -312,13 +272,14 @@ export default async function IndustryTalksPage({
             {posts.length > 0 && totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 pt-6">
                 {hasPrev ? (
-                  <Link
-                    href={buildPageHref(currentPage - 1)}
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     aria-label="Previous page"
                     className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50"
                   >
                     <ChevronLeft size={16} />
-                  </Link>
+                  </button>
                 ) : (
                   <span className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-300 cursor-not-allowed">
                     <ChevronLeft size={16} />
@@ -331,9 +292,10 @@ export default async function IndustryTalksPage({
                       ...
                     </span>
                   ) : (
-                    <Link
+                    <button
+                      type="button"
                       key={pg}
-                      href={buildPageHref(pg)}
+                      onClick={() => setCurrentPage(pg)}
                       aria-current={pg === currentPage ? "page" : undefined}
                       className={
                         pg === currentPage
@@ -342,18 +304,19 @@ export default async function IndustryTalksPage({
                       }
                     >
                       {pg}
-                    </Link>
+                    </button>
                   )
                 )}
 
                 {hasNext ? (
-                  <Link
-                    href={buildPageHref(currentPage + 1)}
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     aria-label="Next page"
                     className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50"
                   >
                     <ChevronRight size={16} />
-                  </Link>
+                  </button>
                 ) : (
                   <span className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-300 cursor-not-allowed">
                     <ChevronRight size={16} />
