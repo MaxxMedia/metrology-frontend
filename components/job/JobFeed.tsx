@@ -298,16 +298,16 @@ export default function JobFeed({
                 <div className="min-w-0">
                   <p className="text-sm text-gray-500 truncate">
                     <span
-                      onClick={(e) => {
+                     onClick={(e) => {
                         e.stopPropagation()
-                        if (job.Company?.slug) {
-                          router.push(`/company/${job.Company.slug}`)
+                        if (job?.Company) {
+                          router.push(`/suppliers/${job.Company.name.toLowerCase().replace(/\s+/g, "-")}`)
                         }
                       }}
                       className="font-semibold text-gray-900 hover:underline"
-                    >
-                      {job.Company?.name || "Company"}
-                    </span>{" "}
+                      >
+                        {job.Company?.name || "Company"}
+                      </span>{" "}
                     is hiring
                   </p>
 

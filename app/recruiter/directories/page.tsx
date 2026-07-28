@@ -131,27 +131,32 @@ export default function RecruiterDirectoriesPage() {
     )
   }
 
+  const canCreateDirectory = directories.length === 0
+
   return (
     <div className="max-w-5xl mx-auto p-10">
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-2xl font-bold">My Directories</h1>
 
-        <Link
-          href="/recruiter/directory/new"
-          onClick={(e) => {
-            if (listingEligibility && !listingEligibility.canAdd) {
-              e.preventDefault()
-              setShowLimitModal(true)
-            }
-          }}
-          className="bg-black text-white px-5 py-2 rounded text-sm"
-        >
-          + Add Directory
-        </Link>
+        {canCreateDirectory && (
+          <Link
+            href="/recruiter/directory/new"
+            onClick={(e) => {
+              if (listingEligibility && !listingEligibility.canAdd) {
+                e.preventDefault()
+                setShowLimitModal(true)
+              }
+            }}
+            className="bg-black text-white px-5 py-2 rounded text-sm"
+          >
+            + Add Directory
+          </Link>
+        )}
       </div>
 
       <p className="text-sm text-gray-500 mb-4">
         {directories.length} supplier {directories.length === 1 ? "directory" : "directories"}
+        {directories.length > 0 && " · One directory allowed per account"}
         {listingEligibility && !listingEligibility.isUnlimited && (
           <>
             {" · "}

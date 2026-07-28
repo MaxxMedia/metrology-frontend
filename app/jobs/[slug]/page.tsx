@@ -49,7 +49,6 @@ export default function JobDetailPage() {
   const [user, setUser] = useState<any>(null)
   const [showFullDesc, setShowFullDesc] = useState(false)
 
-  // NEW: track whether the logged-in candidate has already applied to this job
   const [hasApplied, setHasApplied] = useState(false)
   const [checkingApplyStatus, setCheckingApplyStatus] = useState(false)
 
@@ -104,7 +103,7 @@ export default function JobDetailPage() {
 
   useEffect(() => {
     if (!job?.id) return;
-    if (user?.role?.toLowerCase() !== "candidate") return; // normalize casing
+    if (user?.role?.toLowerCase() !== "candidate") return;
 
     async function checkApplyStatus() {
       setCheckingApplyStatus(true);
@@ -118,13 +117,12 @@ export default function JobDetailPage() {
         );
 
         if (!res.ok) {
-          // Don't swallow this — log it so you can see it's the endpoint, not the UI
           console.error("apply-status failed:", res.status, await res.text());
           return;
         }
 
         const data = await res.json();
-        console.log("apply-status response:", data); // TEMP: check shape in devtools
+        console.log("apply-status response:", data);
         setHasApplied(Boolean(data.hasApplied));
       } catch (err) {
         console.error("apply-status error:", err);
@@ -136,8 +134,6 @@ export default function JobDetailPage() {
     checkApplyStatus();
   }, [job?.id, user?.role]);
 
-  // NEW: check whether this candidate has already applied, same pattern as save-status.
-  // Swap the URL below for your real "has this candidate applied" endpoint if it differs.
   useEffect(() => {
     if (!job?.id || user?.role !== "candidate") return;
 
@@ -198,14 +194,11 @@ export default function JobDetailPage() {
       return
     }
     if (storedUser?.role !== "candidate") return
-    if (hasApplied) return // already applied — do nothing
+    if (hasApplied) return
 
     setShowApplyForm(true)
   }
 
-  // NEW: called by ApplySection once the application is successfully submitted.
-  // If ApplySection doesn't yet accept an onApplied prop, add one there that
-  // fires this after its POST /apply call succeeds.
   const handleApplied = () => {
     setHasApplied(true)
     setShowApplyForm(false)
@@ -258,7 +251,6 @@ export default function JobDetailPage() {
     job.skills && job.skills.length > 0 ? job.skills : FALLBACK_SKILLS
   const applicants = job.applicants ?? job.views ?? 0
 
-  // Job match (candidate view only)
   const requiredSkills: string[] =
     job.requiredSkills && job.requiredSkills.length > 0
       ? job.requiredSkills
@@ -342,7 +334,6 @@ export default function JobDetailPage() {
                   {job.title}
                 </h1>
 
-                {/* Buttons - always visible regardless of role; handlers redirect to login / gate action internally */}
                 <div className="flex items-center gap-3">
                   <button
                     onClick={toggleSave}
@@ -490,19 +481,16 @@ export default function JobDetailPage() {
                 </div>
               ) : (
                 <>
-                  <button
+                  {/* <button
                     onClick={handleApply}
                     disabled={checkingApplyStatus}
                     className="bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-150 shadow-[0_2px_8px_rgba(37,99,235,0.35)] disabled:opacity-60"
                   >
                     Apply for this position
-                  </button>
+                  </button> */}
 
                   {showApplyForm && (
                     <div className="mt-6 border-t pt-6">
-                      {/* NEW: pass onApplied so this page can flip to the "Applied" state
-                          as soon as the application succeeds. ApplySection needs to call
-                          this prop right after its submit request returns success. */}
                       <ApplySection jobId={job.id} {...({ onApplied: handleApplied } as any)} />
                     </div>
                   )}
@@ -676,7 +664,7 @@ export default function JobDetailPage() {
               <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">
                 Similar jobs
               </h3>
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-gray-300">
                 {otherJobs.map((item) => (
                   <Link
                     key={item.id}
@@ -721,12 +709,12 @@ export default function JobDetailPage() {
                 People also viewed
               </h3>
 
-              <div className="space-y-1">
+              <div className="divide-y divide-gray-300">
                 {otherJobs.slice(0, 3).map((item) => (
                   <Link
                     key={item.id}
                     href={`/jobs/${item.slug}`}
-                    className="flex items-start gap-3 p-3 -mx-3 rounded-md hover:bg-gray-50 transition-colors group"
+                    className="flex items-start gap-3 py-3 -mx-3 px-3 hover:bg-gray-50 transition-colors group"
                   >
                     <div className="w-8 h-8 rounded-md bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Building2 size={12} className="text-gray-500" />
@@ -808,7 +796,7 @@ export default function JobDetailPage() {
             <h3 className="text-sm font-bold text-gray-900 mb-4">
               Explore more
             </h3>
-            <div className="space-y-4">
+            <div className="divide-y divide-gray-300">
               <ExploreRow icon={<Briefcase size={15} />} title="Browse all jobs" subtitle="Find the right opportunity" href="/jobs" />
               <ExploreRow icon={<IndianRupee size={15} />} title="Salary insights" subtitle="Check salary trends" href="/salary" />
               <ExploreRow icon={<Star size={15} />} title="Resume review" subtitle="Get expert feedback" href="/resume" />
@@ -865,7 +853,7 @@ function InsightRow({ icon, title, subtitle }: any) {
 
 function ExploreRow({ icon, title, subtitle, href }: any) {
   return (
-    <Link href={href} className="flex items-start gap-3 group">
+    <Link href={href} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0 group">
       <div className="mt-0.5 text-gray-400 group-hover:text-blue-600 transition-colors">{icon}</div>
       <div>
         <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
