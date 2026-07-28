@@ -362,7 +362,7 @@ export default async function EventsPage({ searchParams }: PageProps) {
               </div>
             </div>
             <Link
-              href="/events/create"
+              href="/contact"
               className="block text-center border border-[#b30f24] text-[#b30f24] text-sm font-medium py-2 rounded-lg mt-2 hover:bg-red-50"
             >
               List Your Event

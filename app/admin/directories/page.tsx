@@ -451,7 +451,7 @@ export default function AdminDirectoriesPage() {
                 <tr className="text-left">
                   <th className="py-3">Name</th>
                   <th>Status</th>
-                  <th>Verified</th>
+                  {/* <th>Verified</th> */}
                   <th>Active</th>
                   <th>Company</th>
                   <th>Submitted By</th>
@@ -489,7 +489,7 @@ export default function AdminDirectoriesPage() {
                         </span>
                       </td>
 
-                      <td>
+                      {/* <td>
                         <span
                           className={`text-xs font-semibold px-2 py-1 rounded ${
                             dir.isVerified
@@ -499,7 +499,7 @@ export default function AdminDirectoriesPage() {
                         >
                           {dir.isVerified ? "✅ Verified" : "❌ Unverified"}
                         </span>
-                      </td>
+                      </td> */}
 
                       <td>
                         <span
