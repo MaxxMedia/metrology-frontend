@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
@@ -96,6 +97,7 @@ export default function AddDirectoryPage() {
   const [profileLimits, setProfileLimits] =
     useState<CompanyProfileEligibility | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [eligibilityLoaded, setEligibilityLoaded] = useState(false);
 
   useEffect(() => {
     async function loadEligibility() {
@@ -105,6 +107,8 @@ export default function AddDirectoryPage() {
         setListingEligibility(await fetchProductListingEligibility(token));
       } catch (error) {
         console.error("Product listing eligibility error:", error);
+      } finally {
+        setEligibilityLoaded(true);
       }
     }
     loadEligibility();
@@ -445,7 +449,9 @@ export default function AddDirectoryPage() {
 
   const countries = geo?.Country.getAllCountries() ?? [];
 
-  if (!geo) {
+  const singleDirectoryAlreadyUsed = (listingEligibility?.activeListings ?? 0) >= 1;
+
+  if (!geo || !eligibilityLoaded) {
     return (
       <div className="max-w-3xl mx-auto p-10">
         <p className="text-gray-600">Loading form...</p>
@@ -461,6 +467,26 @@ export default function AddDirectoryPage() {
   const isProfessional = profileLimits?.plan === "professional";
   const isEnterprise = profileLimits?.plan === "enterprise";
   const isProfessionalOrEnterprise = isProfessional || isEnterprise;
+
+  // Business rule: a recruiter account can create only one supplier directory.
+  if (singleDirectoryAlreadyUsed) {
+    return (
+      <div className="max-w-3xl mx-auto p-10">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-6">
+          <h1 className="text-2xl font-bold text-gray-900">Add Supplier Directory</h1>
+          <p className="mt-3 text-sm text-gray-700">
+            Only one supplier directory can be created for this account. Please edit your existing directory instead of creating a new one.
+          </p>
+          <Link
+            href="/recruiter/directories"
+            className="mt-4 inline-block rounded bg-black px-5 py-2 text-sm text-white"
+          >
+            Back to My Directories
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto p-10">

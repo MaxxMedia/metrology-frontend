@@ -805,7 +805,7 @@ function getRoleAndOrganization(candidate: any) {
     : undefined;
 
   return (
-    <div className="bg-[#f8f9fa] min-h-screen text-[#000000] relative">
+    <div className="bg-[#ffffff] min-h-screen text-[#000000] relative">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#000000] text-white px-10 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium animate-bounce">
@@ -814,7 +814,7 @@ function getRoleAndOrganization(candidate: any) {
         </div>
       )}
 
-      <div className="max-w-[1180px] mx-auto px-4 py-6 pb-16">
+      <div className="max-w-[1180px] mx-auto px-4 pt-20 sm:pt-24 pb-16">
 
         {/* PROFILE HEADER */}
         <ProfileHeader

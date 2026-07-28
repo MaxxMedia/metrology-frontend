@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useSearchParams, usePathname } from "next/navigation"
 import type { Post } from "@/types/Post"
 import Image from "next/image"
 import Banner from "@/components/Banners/Banner"
@@ -24,6 +25,30 @@ type Props = {
   posts: Post[]
 }
 
+const PAGE_SIZE = 10 // posts shown per page
+
+/**
+ * Builds the [1, 2, 3, "...", totalPages] style page list,
+ * always keeping first, last, and a window around currentPage.
+ */
+function getPageList(current: number, total: number): (number | "...")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+
+  const pages = new Set<number>([1, 2, total - 1, total, current - 1, current, current + 1])
+  const sorted = Array.from(pages)
+    .filter(p => p >= 1 && p <= total)
+    .sort((a, b) => a - b)
+
+  const result: (number | "...")[] = []
+  let prev = 0
+  for (const p of sorted) {
+    if (prev && p - prev > 1) result.push("...")
+    result.push(p)
+    prev = p
+  }
+  return result
+}
+
 function getPlainText(html: string) {
   if (!html) return ""
   return html
@@ -35,19 +60,37 @@ function getPlainText(html: string) {
     .trim()
 }
 
-function isNew(publishedAt?: string) {
+function isNew(publishedAt?: string | null) {
   if (!publishedAt) return false
   const days = (Date.now() - new Date(publishedAt).getTime()) / 86400000
   return days <= 14
 }
 
 export default function IndustryTalkListing({ posts }: Props) {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const currentPage = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10) || 1)
+  const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE))
+
+  const pagePosts = posts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
   const categoryCounts = posts.reduce<Record<string, number>>((acc, p) => {
     const key = p.badge || "Industry Talks"
     acc[key] = (acc[key] || 0) + 1
     return acc
   }, {})
   const popular = posts.slice(0, 3)
+
+  const buildPageHref = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("page", String(page))
+    return `${pathname}?${params.toString()}`
+  }
+
+  const pageList = getPageList(currentPage, totalPages)
+  const hasPrev = currentPage > 1
+  const hasNext = currentPage < totalPages
 
   return (
     <>
@@ -62,7 +105,7 @@ export default function IndustryTalkListing({ posts }: Props) {
             className="object-cover opacity-25"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-black/40" />
+          <div className="absolute inset-0 bg-linear-to-r from-black via-black/90 to-black/40" />
         </div>
 
         <div className="hidden lg:block absolute top-10 right-16 border-2 border-[#B30F24] rounded-lg px-6 py-2 rotate-[-4deg]">
@@ -138,7 +181,7 @@ export default function IndustryTalkListing({ posts }: Props) {
 
           {/* LEFT COLUMN */}
           <div className="space-y-5">
-            {posts.map((post, i) => {
+            {pagePosts.map((post) => {
               const imageUrl =
                 post.imageUrl?.startsWith("http")
                   ? post.imageUrl
@@ -155,14 +198,27 @@ export default function IndustryTalkListing({ posts }: Props) {
                 : ""
 
               const plainText = getPlainText(post.excerpt || post.content || "")
-              const episodeNo = posts.length - i
+              const indexInFullList = posts.findIndex(p => p.id === post.id)
+              const episodeNo = posts.length - indexInFullList
+              const authorCompany = (post.author as any)?.Company ?? (post.author as any)?.company
 
               return (
                 <article
                   key={post.id}
-                  className="bg-white border border-gray-100 rounded-xl p-4 grid grid-cols-[140px_1fr] md:grid-cols-[160px_1fr] gap-5"
+                  className="relative bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-5"
                 >
-                  <Link href={`/post/${post.slug}`} className="relative w-full h-full min-h-[110px] rounded-lg overflow-hidden bg-gray-100">
+                  {/* <button
+                    type="button"
+                    aria-label="More options"
+                    className="absolute top-4 right-4 text-gray-300 hover:text-gray-500"
+                  >
+                    <MoreVertical size={16} />
+                  </button> */}
+
+                  <Link
+                    href={`/post/${post.slug}`}
+                    className="relative w-[140px] md:w-35 h-[110px] shrink-0 rounded-lg overflow-hidden bg-gray-100"
+                  >
                     <Image
                       src={imageUrl}
                       alt={post.title}
@@ -177,46 +233,53 @@ export default function IndustryTalkListing({ posts }: Props) {
                     </div>
                   </Link>
 
-                  <div className="min-w-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-[#0F5B78] text-xs font-bold tracking-wide uppercase">
-                          Episode {episodeNo}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[#0F5B78] text-xs font-bold tracking-wide uppercase">
+                        Episode {episodeNo}
+                      </span>
+                      {isNew(post.publishedAt) && (
+                        <span className="bg-[#0F5B78]/10 text-[#0F5B78] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          New
                         </span>
-                        {/* {isNew(post.publishedAt) && (
-                          <span className="bg-[#f1e9fc] text-[#8c49e9] text-[10px] font-bold px-2 py-0.5 rounded-full">
-                            New
-                          </span>
-                        )} */}
-                      </div>
-                      <button type="button" aria-label="More options" className="text-gray-300 hover:text-gray-500">
-                        <MoreVertical size={16} />
-                      </button>
+                      )}
                     </div>
 
-                    <h2 className="text-lg font-bold text-gray-900 leading-snug mb-2 hover:text-[#0F5B78] transition-colors">
+                    <h2 className="text-lg font-bold text-gray-900 leading-snug mb-1.5 hover:text-[#0F5B78] transition-colors">
                       <Link href={`/post/${post.slug}`}>{post.title}</Link>
                     </h2>
 
-                    <p className="text-gray-600 text-sm leading-6 mb-3 line-clamp-2">
-                      {plainText.length > 160 ? plainText.slice(0, 160) + "..." : plainText}
-                    </p>
+                    {post.author?.name && (
+                      <p className="text-sm text-gray-700 font-medium">
+                        {post.author.name}
+                        {authorCompany && (
+                          <span className="text-gray-500 font-normal">, {authorCompany}</span>
+                        )}
+                      </p>
+                    )}
+                  </div>
 
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500">
-                      {date && (
+                  <div className="hidden md:flex items-center gap-8 shrink-0 pr-6">
+                    <div className="flex flex-col gap-1.5 text-xs text-gray-500">
+                      <span className="flex items-center gap-1.5">
+                        <Calendar size={13} />
+                        {date || "—"}
+                      </span>
+                      {(post as any).duration && (
                         <span className="flex items-center gap-1.5">
-                          <Calendar size={13} />
-                          {date}
+                          <Clock size={13} />
+                          {(post as any).duration}
                         </span>
                       )}
-                      <Link
-                        href={`/post/${post.slug}`}
-                        className="flex items-center gap-1.5 text-[#0F5B78] font-semibold ml-auto"
-                      >
-                        <AudioLines size={13} />
-                        Listen Now
-                      </Link>
                     </div>
+
+                    <Link
+                      href={`/post/${post.slug}`}
+                      className="flex items-center gap-1.5 text-[#0F5B78] font-semibold text-sm whitespace-nowrap"
+                    >
+                      {/* <AudioLines size={13} /> */}
+                      View
+                    </Link>
                   </div>
                 </article>
               )
@@ -227,27 +290,56 @@ export default function IndustryTalkListing({ posts }: Props) {
             )}
 
             {/* PAGINATION */}
-            {posts.length > 0 && (
+            {posts.length > 0 && totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 pt-6">
-                <button className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-400 hover:bg-gray-50">
-                  <ChevronLeft size={16} />
-                </button>
-                <button className="w-9 h-9 flex items-center justify-center rounded-lg text-sm font-semibold bg-[#0F5B78] text-white">
-                  1
-                </button>
-                <button className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
-                  2
-                </button>
-                <button className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
-                  3
-                </button>
-                <span className="text-gray-400">...</span>
-                <button className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
-                  10
-                </button>
-                <button className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-400 hover:bg-gray-50">
-                  <ChevronRight size={16} />
-                </button>
+                {hasPrev ? (
+                  <Link
+                    href={buildPageHref(currentPage - 1)}
+                    aria-label="Previous page"
+                    className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50"
+                  >
+                    <ChevronLeft size={16} />
+                  </Link>
+                ) : (
+                  <span className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-300 cursor-not-allowed">
+                    <ChevronLeft size={16} />
+                  </span>
+                )}
+
+                {pageList.map((page, idx) =>
+                  page === "..." ? (
+                    <span key={`ellipsis-${idx}`} className="text-gray-400 px-1">
+                      ...
+                    </span>
+                  ) : (
+                    <Link
+                      key={page}
+                      href={buildPageHref(page)}
+                      aria-current={page === currentPage ? "page" : undefined}
+                      className={
+                        page === currentPage
+                          ? "w-9 h-9 flex items-center justify-center rounded-lg text-sm font-semibold bg-[#0F5B78] text-white"
+                          : "w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+                      }
+                    >
+                      {page}
+                    </Link>
+                  )
+                )}
+
+                {hasNext ? (
+                  <Link
+                    href={buildPageHref(currentPage + 1)}
+                    aria-label="Next page"
+                    className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50"
+                  >
+                    <ChevronRight size={16} />
+                  </Link>
+                ) : (
+                  <span className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg text-gray-300 cursor-not-allowed">
+                    <ChevronRight size={16} />
+                  </span>
+                )}
               </div>
             )}
           </div>

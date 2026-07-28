@@ -288,6 +288,7 @@ export default function RecruiterDashboard() {
 
   const planLabel = dashboard.subscription?.displayPlanLabel ?? dashboard.subscription?.planLabel ?? "Free"
   const isFreePlan = !dashboard.subscription || dashboard.subscription.plan === "free"
+  const canCreateDirectory = (dashboard.directories?.length ?? 0) === 0
 
   /* ================= UI ================= */
 
@@ -374,7 +375,7 @@ export default function RecruiterDashboard() {
                       : `${dashboard.articlePosting.articlesThisYear ?? 0} of ${dashboard.articlePosting.effectiveLimit} used this year`
               }
             />
-            <KpiCard
+            {/* <KpiCard
               title="Directory Slots Left"
               value={formatLimitValue(dashboard.productListings)}
               icon={<FolderOpen className="w-4 h-4" />}
@@ -386,7 +387,7 @@ export default function RecruiterDashboard() {
                     ? "Unlimited directories"
                     : `${dashboard.productListings.activeListings ?? 0} of ${dashboard.productListings.effectiveLimit} used`
               }
-            />
+            /> */}
             <KpiCard
               title="Homepage Featured Ads"
               value={
@@ -569,26 +570,26 @@ export default function RecruiterDashboard() {
           {/* ================= DIRECTORIES ================= */}
           <Panel
             title="My Directories"
-            action={
+            action={canCreateDirectory ? (
               <Link
                 href="/recruiter/directory/new"
                 className="text-sm bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
               >
                 + Add Directory
               </Link>
-            }
-            subtitle={
-              dashboard.productListings
-                ? dashboard.productListings.isUnlimited
-                  ? "Unlimited supplier directories"
-                  : `${dashboard.productListings.remaining ?? 0} of ${dashboard.productListings.effectiveLimit ?? 0} directory slots remaining`
-                : undefined
-            }
+            ) : undefined}
+            // subtitle={
+            //   dashboard.productListings
+            //     ? dashboard.productListings.isUnlimited
+            //       ? "Unlimited supplier directories"
+            //       : `${dashboard.productListings.remaining ?? 0} of ${dashboard.productListings.effectiveLimit ?? 0} directory slots remaining`
+            //     : undefined
+            // }
           >
             {!dashboard.directories || dashboard.directories.length === 0 ? (
               <EmptyState icon={<FolderOpen className="w-10 h-10 text-gray-300" />} message="You haven't added any directories yet.">
                 <Link href="/recruiter/directory/new" className="inline-block text-sm text-amber-600 hover:text-amber-700 font-medium">
-                  Add your first directory
+                  Add your directory
                 </Link>
               </EmptyState>
             ) : (

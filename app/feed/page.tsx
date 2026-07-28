@@ -280,7 +280,7 @@ export default function PublicFeedPage() {
       >
         <div className="mb-10">
           <h2 className="text-4xl font-bold text-gray-900">
-            Explore Manufacturing Jobs
+            Explore Jobs
           </h2>
 
           <p className="mt-3 text-lg text-gray-600 max-w-2xl">
