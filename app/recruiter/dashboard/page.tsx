@@ -193,7 +193,7 @@ export default function RecruiterDashboard() {
 
         /* DASHBOARD */
         const dashboardRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/recruiters/dashboard`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/recruiters/dashboard`,   // ✅ singular, matches backend mount
           {
             headers: {
               Authorization: `Bearer ${token}`,

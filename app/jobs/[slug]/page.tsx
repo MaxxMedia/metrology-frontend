@@ -22,11 +22,14 @@ import {
   Lightbulb,
   TrendingUp,
   FileText,
-  MessageSquare,
   Star,
   Sparkles,
+  AlertCircle,
 } from "lucide-react"
-import { ApplySection } from "@/components/ApplySection"
+// ✅ REMOVED: import { ApplyModal } from "@/components/ApplyModel"
+// No more popup — Easy Apply now submits directly using the candidate's
+// already-stored resume.
+import { getMyResume } from "@/lib/api/candidate/resume"
 
 const FALLBACK_SKILLS = [
   "Communication",
@@ -35,6 +38,13 @@ const FALLBACK_SKILLS = [
   "Time Management",
   "Process Improvement",
 ]
+
+type Readiness = {
+  isReady: boolean
+  message: string
+  missingFields: string[]
+  resume?: { fileUrl?: string; fileName?: string } | null
+}
 
 export default function JobDetailPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -45,12 +55,20 @@ export default function JobDetailPage() {
   const [loading, setLoading] = useState(true)
   const [saved, setSaved] = useState(false)
   const [savingJob, setSavingJob] = useState(false)
-  const [showApplyForm, setShowApplyForm] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [showFullDesc, setShowFullDesc] = useState(false)
 
+  // Track whether the logged-in candidate has already applied to this job
   const [hasApplied, setHasApplied] = useState(false)
   const [checkingApplyStatus, setCheckingApplyStatus] = useState(false)
+
+  // ✅ ADDED: one-click apply state — replaces showApplyModal
+  const [applying, setApplying] = useState(false)
+  const [applyError, setApplyError] = useState("")
+
+  // ✅ ADDED: candidate profile / resume readiness for Easy Apply gating
+  const [readiness, setReadiness] = useState<Readiness | null>(null)
+  const [checkingReadiness, setCheckingReadiness] = useState(false)
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user")
@@ -105,6 +123,36 @@ export default function JobDetailPage() {
     if (!job?.id) return;
     if (user?.role?.toLowerCase() !== "candidate") return;
 
+    async function checkSaveStatus() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${job.id}/save-status`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        setSaved(Boolean(data.isSaved));
+      } catch (err) {
+        console.error("Save status error:", err);
+      }
+    }
+
+    checkSaveStatus();
+  }, [job?.id, user?.role]);
+
+  useEffect(() => {
+    if (!job?.id) return;
+    if (user?.role?.toLowerCase() !== "candidate") return; // normalize casing
+
     async function checkApplyStatus() {
       setCheckingApplyStatus(true);
       try {
@@ -122,7 +170,6 @@ export default function JobDetailPage() {
         }
 
         const data = await res.json();
-        console.log("apply-status response:", data);
         setHasApplied(Boolean(data.hasApplied));
       } catch (err) {
         console.error("apply-status error:", err);
@@ -134,32 +181,39 @@ export default function JobDetailPage() {
     checkApplyStatus();
   }, [job?.id, user?.role]);
 
+  // ✅ ADDED: fetch candidate profile/resume readiness once we know the
+  // user is a logged-in candidate. Drives whether Easy Apply is enabled
+  // and what message is shown if the profile is incomplete.
   useEffect(() => {
-    if (!job?.id || user?.role !== "candidate") return;
+    if (user?.role?.toLowerCase() !== "candidate") return;
 
-    async function checkApplyStatus() {
-      setCheckingApplyStatus(true);
+    async function loadReadiness() {
+      setCheckingReadiness(true);
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${job.id}/apply-status`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/candidates/me/application-readiness`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        if (res.ok) {
-          const data = await res.json();
-          setHasApplied(Boolean(data.hasApplied));
+
+        if (!res.ok) {
+          console.error("application-readiness failed:", res.status);
+          return;
         }
+
+        const data = await res.json();
+        setReadiness(data);
       } catch (err) {
-        console.error(err);
+        console.error("application-readiness error:", err);
       } finally {
-        setCheckingApplyStatus(false);
+        setCheckingReadiness(false);
       }
     }
 
-    checkApplyStatus();
-  }, [job?.id, user?.role]);
+    loadReadiness();
+  }, [user?.role]);
 
   async function toggleSave() {
     if (!user?.id) {
@@ -186,7 +240,15 @@ export default function JobDetailPage() {
     }
   }
 
-  const handleApply = () => {
+  // ✅ REWRITTEN: no modal. Clicking Easy Apply submits immediately using
+  // the candidate's already-stored resume (GET /api/candidate-resume/me
+  // via getMyResume()). We now also:
+  //   1. Block the submit up front if the profile/resume readiness check
+  //      says the profile is incomplete, showing exactly what's missing.
+  //   2. Actually send the resume URL to the backend (previously the
+  //      FormData never included it, so applications always saved with
+  //      resumeUrl = null even though a resume existed on file).
+  const handleApply = async () => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
 
     if (!storedUser?.id) {
@@ -194,14 +256,61 @@ export default function JobDetailPage() {
       return
     }
     if (storedUser?.role !== "candidate") return
-    if (hasApplied) return
+    if (hasApplied || applying) return
 
-    setShowApplyForm(true)
-  }
+    // ✅ Gate on profile completeness before doing anything else
+    if (readiness && !readiness.isReady) {
+      setApplyError(
+        readiness.message ||
+        "Please complete your profile before applying."
+      )
+      return
+    }
 
-  const handleApplied = () => {
-    setHasApplied(true)
-    setShowApplyForm(false)
+    setApplyError("")
+    setApplying(true)
+
+    try {
+      const resume = await getMyResume()
+
+      if (!resume?.fileUrl) {
+        setApplyError("Please upload a resume in your profile before applying.")
+        setApplying(false)
+        return
+      }
+
+      const token = localStorage.getItem("token")
+      const formData = new FormData()
+      formData.append("jobId", job.id.toString())
+      formData.append("coverNote", "")
+      // ✅ ADDED: actually send the candidate's existing resume URL so the
+      // backend has something to attach to the application record.
+      formData.append("resumeUrl", resume.fileUrl)
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/applications`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      })
+
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        if (res.status === 400 && data?.error?.toLowerCase().includes("already applied")) {
+          setHasApplied(true)
+        } else {
+          setApplyError(data?.error || "Failed to submit your application.")
+        }
+        return
+      }
+
+      setHasApplied(true)
+    } catch (err) {
+      console.error("Apply failed:", err)
+      setApplyError("Something went wrong. Please check your connection and try again.")
+    } finally {
+      setApplying(false)
+    }
   }
 
   if (loading)
@@ -251,6 +360,7 @@ export default function JobDetailPage() {
     job.skills && job.skills.length > 0 ? job.skills : FALLBACK_SKILLS
   const applicants = job.applicants ?? job.views ?? 0
 
+  // Job match (candidate view only)
   const requiredSkills: string[] =
     job.requiredSkills && job.requiredSkills.length > 0
       ? job.requiredSkills
@@ -268,6 +378,12 @@ export default function JobDetailPage() {
       : 0
   const matchLabel =
     matchPercent >= 70 ? "Great match" : matchPercent >= 40 ? "Good match" : "Partial match"
+
+  // ✅ ADDED: shared disabled/label logic for both Easy Apply buttons
+  const isCandidate = user?.role?.toLowerCase() === "candidate"
+  const profileIncomplete = isCandidate && readiness ? !readiness.isReady : false
+  const applyDisabled =
+    checkingApplyStatus || applying || checkingReadiness || profileIncomplete
 
   return (
     <div
@@ -334,46 +450,64 @@ export default function JobDetailPage() {
                   {job.title}
                 </h1>
 
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={toggleSave}
-                    disabled={savingJob}
-                    className="flex items-center gap-1.5 border border-blue-500 text-blue-600 bg-white px-5 py-2 rounded-full font-medium hover:bg-blue-50 transition-colors"
-                  >
-                    <Bookmark
-                      size={16}
-                      className={saved ? "fill-blue-600 text-blue-600" : ""}
-                    />
-                    {saved ? "Saved" : "Save"}
-                  </button>
+                {/* Buttons - always visible regardless of role; handlers redirect to login / gate action internally */}
+                <div className="flex flex-col items-end gap-1.5">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={toggleSave}
+                      disabled={savingJob}
+                      className="flex items-center gap-1.5 border border-blue-500 text-blue-600 bg-white px-5 py-2 rounded-full font-medium hover:bg-blue-50 transition-colors"
+                    >
+                      <Bookmark
+                        size={16}
+                        className={saved ? "fill-blue-600 text-blue-600" : ""}
+                      />
+                      {saved ? "Saved" : "Save"}
+                    </button>
 
-                  {hasApplied ? (
-                    <button
-                      disabled
-                      className="flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200 px-6 py-2 rounded-full font-medium cursor-default"
-                    >
-                      <CheckCircle2 size={16} className="text-green-600" />
-                      Applied
-                    </button>
-                  ) : job.isExternal ? (
-                    job.applyUrl && (
-                      <a
-                        href={job.applyUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors"
+                    {hasApplied ? (
+                      <button
+                        disabled
+                        className="flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200 px-6 py-2 rounded-full font-medium cursor-default"
                       >
-                        Easy Apply
-                      </a>
-                    )
-                  ) : (
-                    <button
-                      onClick={handleApply}
-                      disabled={checkingApplyStatus}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors disabled:opacity-60"
-                    >
-                      Easy Apply
-                    </button>
+                        <CheckCircle2 size={16} className="text-green-600" />
+                        Applied
+                      </button>
+                    ) : job.isExternal ? (
+                      job.applyUrl && (
+                        <a
+                          href={job.applyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors"
+                        >
+                          Easy Apply
+                        </a>
+                      )
+                    ) : (
+                      <button
+                        onClick={handleApply}
+                        disabled={applyDisabled}
+                        title={profileIncomplete ? readiness?.message : undefined}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors disabled:opacity-60"
+                      >
+                        {applying ? "Applying..." : "Easy Apply"}
+                      </button>
+                    )}
+                  </div>
+                  {/* ✅ ADDED: inline error instead of a modal */}
+                  {applyError && (
+                    <p className="text-xs text-red-600 max-w-xs text-right flex items-center gap-1 justify-end">
+                      <AlertCircle size={12} className="flex-shrink-0" />
+                      {applyError}
+                    </p>
+                  )}
+                  {/* ✅ ADDED: proactive nudge to complete profile, shown even
+                      before the user clicks Easy Apply */}
+                  {!applyError && profileIncomplete && !hasApplied && !job.isExternal && (
+                    <p className="text-xs text-amber-600 max-w-xs text-right">
+                      Complete your profile ({readiness?.missingFields.join(", ")}) to apply.
+                    </p>
                   )}
                 </div>
               </div>
@@ -460,43 +594,6 @@ export default function JobDetailPage() {
               </div>
             )}
 
-            <div className="mt-8 pt-5 border-t border-gray-100">
-              {hasApplied ? (
-                <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm font-semibold px-5 py-2.5 rounded-full w-fit">
-                  <CheckCircle2 size={16} className="text-green-600" />
-                  You've applied to this position
-                </div>
-              ) : job.isExternal ? (
-                <div className="flex flex-wrap gap-3">
-                  {job.applyUrl && (
-                    <a
-                      href={job.applyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-7 py-2.5 rounded-full"
-                    >
-                      Apply on Company Website
-                    </a>
-                  )}
-                </div>
-              ) : (
-                <>
-                  {/* <button
-                    onClick={handleApply}
-                    disabled={checkingApplyStatus}
-                    className="bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-150 shadow-[0_2px_8px_rgba(37,99,235,0.35)] disabled:opacity-60"
-                  >
-                    Apply for this position
-                  </button> */}
-
-                  {showApplyForm && (
-                    <div className="mt-6 border-t pt-6">
-                      <ApplySection jobId={job.id} {...({ onApplied: handleApplied } as any)} />
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
           </div>
 
           {/* About Company */}
@@ -534,9 +631,7 @@ export default function JobDetailPage() {
                 </div>
               </div>
 
-              <button className="border border-blue-600 text-blue-600 hover:bg-blue-50 text-sm font-semibold px-5 py-1.5 rounded-full transition-colors">
-                + Follow
-              </button>
+       
             </div>
 
             <p className="text-xs text-gray-500 leading-relaxed mt-4">
@@ -594,7 +689,7 @@ export default function JobDetailPage() {
                   </div>
                 ))}
               </div>
-             
+
             </div>
           </div>
 
@@ -649,9 +744,7 @@ export default function JobDetailPage() {
                         </span>
                       ))}
                     </div>
-                    <Link href="/profile" className="text-xs font-semibold text-blue-700 hover:text-blue-800">
-                      Update profile
-                    </Link>
+
                   </div>
                 )}
               </div>
@@ -664,7 +757,7 @@ export default function JobDetailPage() {
               <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">
                 Similar jobs
               </h3>
-              <div className="divide-y divide-gray-300">
+              <div className="divide-y divide-gray-50">
                 {otherJobs.map((item) => (
                   <Link
                     key={item.id}
@@ -709,12 +802,12 @@ export default function JobDetailPage() {
                 People also viewed
               </h3>
 
-              <div className="divide-y divide-gray-300">
+              <div className="space-y-1">
                 {otherJobs.slice(0, 3).map((item) => (
                   <Link
                     key={item.id}
                     href={`/jobs/${item.slug}`}
-                    className="flex items-start gap-3 py-3 -mx-3 px-3 hover:bg-gray-50 transition-colors group"
+                    className="flex items-start gap-3 p-3 -mx-3 rounded-md hover:bg-gray-50 transition-colors group"
                   >
                     <div className="w-8 h-8 rounded-md bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Building2 size={12} className="text-gray-500" />
@@ -796,7 +889,7 @@ export default function JobDetailPage() {
             <h3 className="text-sm font-bold text-gray-900 mb-4">
               Explore more
             </h3>
-            <div className="divide-y divide-gray-300">
+            <div className="space-y-4">
               <ExploreRow icon={<Briefcase size={15} />} title="Browse all jobs" subtitle="Find the right opportunity" href="/jobs" />
               <ExploreRow icon={<IndianRupee size={15} />} title="Salary insights" subtitle="Check salary trends" href="/salary" />
               <ExploreRow icon={<Star size={15} />} title="Resume review" subtitle="Get expert feedback" href="/resume" />
@@ -805,6 +898,8 @@ export default function JobDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* ✅ REMOVED: <ApplyModal /> — no popup anymore, apply is one-click */}
     </div>
   )
 }
@@ -853,7 +948,7 @@ function InsightRow({ icon, title, subtitle }: any) {
 
 function ExploreRow({ icon, title, subtitle, href }: any) {
   return (
-    <Link href={href} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0 group">
+    <Link href={href} className="flex items-start gap-3 group">
       <div className="mt-0.5 text-gray-400 group-hover:text-blue-600 transition-colors">{icon}</div>
       <div>
         <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">

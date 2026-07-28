@@ -53,6 +53,7 @@
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
     "formik": "^2.4.9",
+    "framer-motion": "^12.42.2",
     "input-otp": "1.4.1",
     "isomorphic-dompurify": "^2.35.0",
     "jsonwebtoken": "^9.0.3",
