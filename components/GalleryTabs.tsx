@@ -6,6 +6,7 @@ import VideoGallery from "./VideoGallery"
 import SupplierTeamTab from "./SupplierTeamTab"
 import { FileText, Download, Eye } from "lucide-react"
 import ProductGalleryPremium from "../components/suppliers/ProductGalleryPremium"
+import SplitGallerySection, { SectionItem } from "../components/suppliers/SplitGallerySection"
 
 type GalleryItem = {
   image: string
@@ -21,6 +22,11 @@ type GalleryTabsProps = {
   productCatalogues?: string[]
   isPaid?: boolean
   companySlug?: string // Company slug for fetching team members
+  // Optional copy for the left panel of Company / Industry galleries.
+  // Falls back to generic text if not provided, since this copy isn't
+  // part of the current gallery data model.
+  companyIntro?: { heading: string; description?: string; ctaLabel?: string; ctaHref?: string }
+  industryIntro?: { heading: string; description?: string; ctaLabel?: string; ctaHref?: string }
 }
 
 const NO_PLAN_MESSAGE =
@@ -61,6 +67,22 @@ function getGalleryDescription(item: any): string {
   return item?.description || ''
 }
 
+// Converts the existing string[] | GalleryItem[] data into SectionItem[]
+// for SplitGallerySection, reusing the helpers above.
+function toSectionItems(gallery: any[] | undefined): SectionItem[] {
+  if (!gallery || !Array.isArray(gallery)) return []
+  return gallery
+    .filter(item => {
+      if (typeof item === 'string') return item.trim().length > 0
+      return item && item.image && item.image.trim().length > 0
+    })
+    .map(item => ({
+      image: getGalleryImage(item),
+      name: getGalleryName(item),
+      description: getGalleryDescription(item),
+    }))
+}
+
 function ImageGrid({ images }: { images: any[] }) {
   if (!images || images.length === 0) return null
 
@@ -77,27 +99,29 @@ function ImageGrid({ images }: { images: any[] }) {
         return (
           <div key={i} className="bg-white rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition">
             <a
-              href={image}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block aspect-square overflow-hidden"
+            href={image}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block aspect-square overflow-hidden"
             >
-              <img
-                src={image}
-                alt={name || `Gallery image ${i + 1}`}
-                className="w-full h-full object-cover hover:opacity-90 transition"
-              />
-            </a>
-            {(name || description) && (
-              <div className="p-3">
-                {name && <h4 className="font-medium text-gray-800 text-sm">{name}</h4>}
-                {description && <p className="text-xs text-gray-600 mt-1 line-clamp-2">{description}</p>}
-              </div>
-            )}
+            <img
+              src={image}
+              alt={name || `Gallery image ${i + 1}`}
+              className="w-full h-full object-cover hover:opacity-90 transition"
+            />
+          </a>
+            {
+          (name || description) && (
+            <div className="p-3">
+              {name && <h4 className="font-medium text-gray-800 text-sm">{name}</h4>}
+              {description && <p className="text-xs text-gray-600 mt-1 line-clamp-2">{description}</p>}
+            </div>
+          )
+        }
           </div>
-        )
-      })}
-    </div>
+  )
+})}
+    </div >
   )
 }
 
@@ -250,6 +274,8 @@ export default function GalleryTabs({
   productCatalogues,
   isPaid = false,
   companySlug,
+  companyIntro,
+  industryIntro,
 }: GalleryTabsProps) {
   const [activeTab, setActiveTab] = useState("video")
 
@@ -300,10 +326,9 @@ export default function GalleryTabs({
           ) : (
             <>
               {productGallery && hasGalleryItems(productGallery) ? (
-                // Ensure we pass a string[] of image URLs to ProductGalleryPremium
-                  <ProductGalleryPremium
-                    images={productGallery}
-                  />
+                <ProductGalleryPremium
+                  images={productGallery}
+                />
               ) : (
                 <EmptyState message="No product images available" />
               )}
@@ -320,7 +345,13 @@ export default function GalleryTabs({
         (!isPaid ? (
           <EmptyState message={NO_PLAN_MESSAGE} />
         ) : companyGallery && hasGalleryItems(companyGallery) ? (
-          <ImageGrid images={companyGallery} />
+          <SplitGallerySection
+            heading={companyIntro?.heading ?? "Get to Know Our Company"}
+            description={companyIntro?.description}
+            ctaLabel={companyIntro?.ctaLabel ?? "Know More About Us"}
+            ctaHref={companyIntro?.ctaHref ?? (companySlug ? `/company/${companySlug}` : undefined)}
+            items={toSectionItems(companyGallery)}
+          />
         ) : (
           <EmptyState message="No company images available" />
         ))}
@@ -329,7 +360,13 @@ export default function GalleryTabs({
         (!isPaid ? (
           <EmptyState message={NO_PLAN_MESSAGE} />
         ) : factoryGallery && hasGalleryItems(factoryGallery) ? (
-          <ImageGrid images={factoryGallery} />
+          <SplitGallerySection
+            heading={industryIntro?.heading ?? "Industries We Serve"}
+            description={industryIntro?.description}
+            ctaLabel={industryIntro?.ctaLabel ?? "Explore Industries"}
+            ctaHref={industryIntro?.ctaHref ?? (companySlug ? `/company/${companySlug}` : undefined)}
+            items={toSectionItems(factoryGallery)}
+          />
         ) : (
           <EmptyState message="No factory images available" />
         ))}
