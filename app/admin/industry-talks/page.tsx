@@ -32,7 +32,6 @@ type IndustryTalkListItem = {
   interviewDate?: string
   createdAt?: string
   views: number
-  status?: string
   featured?: boolean
   trending?: boolean
   homepage?: boolean
@@ -166,22 +165,24 @@ export default function IndustryTalksPage() {
 
     columnHelper.accessor("title", {
       header: "Title",
-      cell: (info) => (
-        <div>
-          <p className="font-semibold line-clamp-2">
-            {info.getValue()}
-          </p>
-          <p className="text-xs text-gray-500">
-            /{info.row.original.slug}
-          </p>
-          {info.row.original.guestName && (
-            <p className="text-xs text-gray-400 mt-1">
-              {info.row.original.guestName}
-              {info.row.original.companyName && ` • ${info.row.original.companyName}`}
+      cell: (info) => {
+        const itemSlug = info.row.original.slug || String(info.row.original.id)
+        return (
+          <div>
+            <a
+              href={`/industry-talks/${itemSlug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold line-clamp-2 hover:text-[#0F5B78] hover:underline"
+            >
+              {info.getValue()}
+            </a>
+            <p className="text-xs text-gray-500">
+              /{itemSlug}
             </p>
-          )}
-        </div>
-      ),
+          </div>
+        )
+      },
     }),
 
     columnHelper.accessor("status", {
@@ -251,27 +252,40 @@ export default function IndustryTalksPage() {
     columnHelper.display({
       id: "actions",
       header: "Actions",
-      cell: (info) => (
-        <div className="flex gap-2">
-          <button
-            onClick={() =>
-              router.push(`/admin/industry-talks/edit/${info.row.original.id}`)
-            }
-            className="p-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors"
-            title="Edit"
-          >
-            <Edit size={16} />
-          </button>
+      cell: (info) => {
+        const itemSlug = info.row.original.slug || String(info.row.original.id)
+        return (
+          <div className="flex gap-2">
+            <a
+              href={`/industry-talks/${itemSlug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-gray-100 text-gray-700 hover:bg-[#0F5B78] hover:text-white rounded transition-colors"
+              title="View Industry Talk"
+            >
+              <Eye size={16} />
+            </a>
 
-          <button
-            onClick={() => handleDelete(info.row.original.id)}
-            className="p-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
-            title="Delete"
-          >
-            <Trash2 size={16} />
-          </button>
-        </div>
-      ),
+            <button
+              onClick={() =>
+                router.push(`/admin/industry-talks/edit/${info.row.original.id}`)
+              }
+              className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded transition-colors"
+              title="Edit Industry Talk"
+            >
+              <Edit size={16} />
+            </button>
+
+            <button
+              onClick={() => handleDelete(info.row.original.id)}
+              className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded transition-colors"
+              title="Delete Industry Talk"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        )
+      },
     }),
   ]
 

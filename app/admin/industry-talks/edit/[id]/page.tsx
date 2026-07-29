@@ -602,6 +602,13 @@ export default function EditIndustryTalkPage() {
             </button>
             <button
               type="button"
+              onClick={() => {
+                if (form.slug) {
+                  window.open(`/industry-talks/${form.slug}`, "_blank")
+                } else {
+                  alert("Please enter a title or slug to preview")
+                }
+              }}
               className="flex items-center gap-1.5 border border-gray-200 text-gray-700 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-50"
             >
               <Eye size={14} />

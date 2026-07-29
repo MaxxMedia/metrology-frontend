@@ -236,17 +236,19 @@ export default function PostDetailsPage() {
 
         // 4. Fallback: Fetch all industry-talks and find by slug or ID
         const listRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks?limit=100`,
           { cache: "no-store" }
         )
 
         if (listRes.ok) {
           const listData = await listRes.json()
-          const items = Array.isArray(listData?.data)
-            ? listData.data
-            : Array.isArray(listData)
-              ? listData
-              : []
+          const items = Array.isArray(listData?.items)
+            ? listData.items
+            : Array.isArray(listData?.data)
+              ? listData.data
+              : Array.isArray(listData)
+                ? listData
+                : []
 
           const decodedSlug = decodeURIComponent(slugValue)
           const found = items.find(
