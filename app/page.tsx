@@ -249,7 +249,7 @@ export default async function Home() {
   const posts: Post[] = postsData.data || postsData
 
   if (!Array.isArray(posts) || posts.length === 0) {
-    return <div className="text-center p-10">No posts available</div>
+    return <div className="text-center p-10 text-[16px]">No posts available</div>
   }
 
   // Log categories of all posts

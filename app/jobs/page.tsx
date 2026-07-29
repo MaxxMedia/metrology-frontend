@@ -22,11 +22,14 @@ import {
   Lightbulb,
   TrendingUp,
   FileText,
-  MessageSquare,
   Star,
   Sparkles,
+  AlertCircle,
 } from "lucide-react"
-import { ApplySection } from "@/components/ApplySection"
+// ✅ REMOVED: import { ApplyModal } from "@/components/ApplyModel"
+// No more popup — Easy Apply now submits directly using the candidate's
+// already-stored resume.
+import { getMyResume } from "@/lib/api/candidate/resume"
 
 const FALLBACK_SKILLS = [
   "Communication",
@@ -35,6 +38,13 @@ const FALLBACK_SKILLS = [
   "Time Management",
   "Process Improvement",
 ]
+
+type Readiness = {
+  isReady: boolean
+  message: string
+  missingFields: string[]
+  resume?: { fileUrl?: string; fileName?: string } | null
+}
 
 export default function JobDetailPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -45,9 +55,20 @@ export default function JobDetailPage() {
   const [loading, setLoading] = useState(true)
   const [saved, setSaved] = useState(false)
   const [savingJob, setSavingJob] = useState(false)
-  const [showApplyForm, setShowApplyForm] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [showFullDesc, setShowFullDesc] = useState(false)
+
+  // Track whether the logged-in candidate has already applied to this job
+  const [hasApplied, setHasApplied] = useState(false)
+  const [checkingApplyStatus, setCheckingApplyStatus] = useState(false)
+
+  // ✅ ADDED: one-click apply state — replaces showApplyModal
+  const [applying, setApplying] = useState(false)
+  const [applyError, setApplyError] = useState("")
+
+  // ✅ ADDED: candidate profile / resume readiness for Easy Apply gating
+  const [readiness, setReadiness] = useState<Readiness | null>(null)
+  const [checkingReadiness, setCheckingReadiness] = useState(false)
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user")
@@ -99,7 +120,8 @@ export default function JobDetailPage() {
   }, [slug]);
 
   useEffect(() => {
-    if (!job?.id || user?.role !== "candidate") return;
+    if (!job?.id) return;
+    if (user?.role?.toLowerCase() !== "candidate") return;
 
     async function checkSaveStatus() {
       try {
@@ -108,19 +130,90 @@ export default function JobDetailPage() {
 
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${job.id}/save-status`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        if (res.ok) {
-          const data = await res.json();
-          setSaved(data.isSaved);
-        }
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        setSaved(Boolean(data.isSaved));
       } catch (err) {
-        console.error(err);
+        console.error("Save status error:", err);
       }
     }
 
     checkSaveStatus();
   }, [job?.id, user?.role]);
+
+  useEffect(() => {
+    if (!job?.id) return;
+    if (user?.role?.toLowerCase() !== "candidate") return; // normalize casing
+
+    async function checkApplyStatus() {
+      setCheckingApplyStatus(true);
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${job.id}/apply-status`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (!res.ok) {
+          console.error("apply-status failed:", res.status, await res.text());
+          return;
+        }
+
+        const data = await res.json();
+        setHasApplied(Boolean(data.hasApplied));
+      } catch (err) {
+        console.error("apply-status error:", err);
+      } finally {
+        setCheckingApplyStatus(false);
+      }
+    }
+
+    checkApplyStatus();
+  }, [job?.id, user?.role]);
+
+  // ✅ ADDED: fetch candidate profile/resume readiness once we know the
+  // user is a logged-in candidate. Drives whether Easy Apply is enabled
+  // and what message is shown if the profile is incomplete.
+  useEffect(() => {
+    if (user?.role?.toLowerCase() !== "candidate") return;
+
+    async function loadReadiness() {
+      setCheckingReadiness(true);
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/candidates/me/application-readiness`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (!res.ok) {
+          console.error("application-readiness failed:", res.status);
+          return;
+        }
+
+        const data = await res.json();
+        setReadiness(data);
+      } catch (err) {
+        console.error("application-readiness error:", err);
+      } finally {
+        setCheckingReadiness(false);
+      }
+    }
+
+    loadReadiness();
+  }, [user?.role]);
 
   async function toggleSave() {
     if (!user?.id) {
@@ -147,7 +240,15 @@ export default function JobDetailPage() {
     }
   }
 
-  const handleApply = () => {
+  // ✅ REWRITTEN: no modal. Clicking Easy Apply submits immediately using
+  // the candidate's already-stored resume (GET /api/candidate-resume/me
+  // via getMyResume()). We now also:
+  //   1. Block the submit up front if the profile/resume readiness check
+  //      says the profile is incomplete, showing exactly what's missing.
+  //   2. Actually send the resume URL to the backend (previously the
+  //      FormData never included it, so applications always saved with
+  //      resumeUrl = null even though a resume existed on file).
+  const handleApply = async () => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
 
     if (!storedUser?.id) {
@@ -155,16 +256,69 @@ export default function JobDetailPage() {
       return
     }
     if (storedUser?.role !== "candidate") return
+    if (hasApplied || applying) return
 
-    setShowApplyForm(true)
+    // ✅ Gate on profile completeness before doing anything else
+    if (readiness && !readiness.isReady) {
+      setApplyError(
+        readiness.message ||
+        "Please complete your profile before applying."
+      )
+      return
+    }
+
+    setApplyError("")
+    setApplying(true)
+
+    try {
+      const resume = await getMyResume()
+
+      if (!resume?.fileUrl) {
+        setApplyError("Please upload a resume in your profile before applying.")
+        setApplying(false)
+        return
+      }
+
+      const token = localStorage.getItem("token")
+      const formData = new FormData()
+      formData.append("jobId", job.id.toString())
+      formData.append("coverNote", "")
+      // ✅ ADDED: actually send the candidate's existing resume URL so the
+      // backend has something to attach to the application record.
+      formData.append("resumeUrl", resume.fileUrl)
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/applications`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      })
+
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        if (res.status === 400 && data?.error?.toLowerCase().includes("already applied")) {
+          setHasApplied(true)
+        } else {
+          setApplyError(data?.error || "Failed to submit your application.")
+        }
+        return
+      }
+
+      setHasApplied(true)
+    } catch (err) {
+      console.error("Apply failed:", err)
+      setApplyError("Something went wrong. Please check your connection and try again.")
+    } finally {
+      setApplying(false)
+    }
   }
 
   if (loading)
     return (
-      <div className="min-h-screen bg-[#F4F2EE] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F4F2EE] flex items-center justify-center" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
-          <p className="text-sm text-gray-500 font-medium">
+          <p className="text-[16px] text-gray-500 font-medium">
             Loading job details...
           </p>
         </div>
@@ -173,12 +327,12 @@ export default function JobDetailPage() {
 
   if (!job)
     return (
-      <div className="min-h-screen bg-[#F4F2EE] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F4F2EE] flex items-center justify-center" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
         <div className="text-center">
-          <p className="text-2xl font-semibold text-gray-700">
+          <p className="text-[24px] font-semibold text-gray-700">
             Job not found
           </p>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-[12px] text-gray-400 mt-1">
             This listing may have been removed.
           </p>
         </div>
@@ -192,19 +346,50 @@ export default function JobDetailPage() {
   const company = job.Company || job.company || {}
   const companyName = company.name || job.companyName || "N/A"
   const benefits: string[] = job.benefits || []
+
+  const rawHiringTeam =
+    job.hiringTeam || job.team || job.recruiters || job.postedBy || job.hiring_team
   const hiringTeam: any[] =
-    job.hiringTeam && job.hiringTeam.length > 0
-      ? job.hiringTeam
-      : [{ name: `${companyName} Team`, role: "Hiring Manager" }]
+    Array.isArray(rawHiringTeam) && rawHiringTeam.length > 0
+      ? rawHiringTeam
+      : rawHiringTeam && typeof rawHiringTeam === "object"
+        ? [rawHiringTeam]
+        : [{ name: `${companyName} Team`, role: "Hiring Manager" }]
+
   const trendingSkills: string[] =
     job.skills && job.skills.length > 0 ? job.skills : FALLBACK_SKILLS
   const applicants = job.applicants ?? job.views ?? 0
 
+  // Job match (candidate view only)
+  const requiredSkills: string[] =
+    job.requiredSkills && job.requiredSkills.length > 0
+      ? job.requiredSkills
+      : trendingSkills.slice(0, 5)
+  const candidateSkills: string[] = user?.skills || []
+  const matchedSkills = requiredSkills.filter((s) =>
+    candidateSkills.some((cs) => cs.toLowerCase() === s.toLowerCase())
+  )
+  const missingSkills = requiredSkills.filter(
+    (s) => !matchedSkills.some((m) => m.toLowerCase() === s.toLowerCase())
+  )
+  const matchPercent =
+    requiredSkills.length > 0
+      ? Math.round((matchedSkills.length / requiredSkills.length) * 100)
+      : 0
+  const matchLabel =
+    matchPercent >= 70 ? "Great match" : matchPercent >= 40 ? "Good match" : "Partial match"
+
+  // ✅ ADDED: shared disabled/label logic for both Easy Apply buttons
+  const isCandidate = user?.role?.toLowerCase() === "candidate"
+  const profileIncomplete = isCandidate && readiness ? !readiness.isReady : false
+  const applyDisabled =
+    checkingApplyStatus || applying || checkingReadiness || profileIncomplete
+
   return (
-    <div className="min-h-screen bg-[#F4F2EE]">
+    <div className="min-h-screen bg-[#F4F2EE]" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
       {/* Breadcrumb */}
       <div className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-2 text-sm text-gray-500">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-2 text-[12px] text-gray-500">
           <button
             onClick={() => router.back()}
             className="flex items-center gap-1 hover:text-blue-600 transition-colors"
@@ -224,136 +409,157 @@ export default function JobDetailPage() {
         {/* LEFT */}
         <div className="lg:col-span-2 space-y-4 min-w-0">
 
-          {/* Hero Card */}
           <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden">
+
             {/* Banner */}
-            <div className="relative h-24 bg-gradient-to-br from-[#0B1E4D] via-[#142B63] to-[#1E3A8A] overflow-hidden">
-              <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/5" />
-              <div className="absolute right-10 -bottom-10 w-28 h-28 rounded-full bg-white/5" />
-              <div className="absolute left-20 top-6 flex gap-1.5">
+            <div className="relative h-32 bg-gradient-to-br from-[#0B1E4D] via-[#142B63] to-[#1E3A8A] overflow-visible">
+              <div className="absolute -right-6 top-4 w-40 h-40 rounded-full bg-white/5" />
+              <div className="absolute right-10 bottom-0 w-24 h-24 rounded-full bg-white/5" />
+              <div className="absolute left-24 top-6 flex gap-1.5">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <span key={i} className="w-1 h-1 rounded-full bg-white/30" />
                 ))}
               </div>
-            </div>
+              <div className="absolute right-4 top-4 w-2 h-2 rounded-full bg-blue-300/60" />
 
-            <div className="px-6 pb-6">
-              <div className="flex items-start justify-between gap-4 -mt-9">
-                <div className="w-16 h-16 rounded-md overflow-hidden shadow-md bg-white border border-gray-100 flex items-center justify-center">
+              {/* Floating Logo */}
+              <div className="absolute left-8 right-8 -bottom-10 flex items-end justify-between">
+                <div className="w-20 h-20 rounded-xl bg-white border border-gray-200 shadow-lg overflow-hidden flex items-center justify-center">
                   {company.logoUrl ? (
                     <Image
                       src={company.logoUrl}
                       alt={companyName}
-                      width={64}
-                      height={64}
+                      width={80}
+                      height={80}
                       className="object-contain w-full h-full p-2"
                     />
                   ) : (
-                    <Building2 size={24} className="text-gray-400" />
+                    <Building2 size={28} className="text-gray-400" />
                   )}
                 </div>
+              </div>
+            </div>
 
-                <div className="flex items-center gap-2 flex-shrink-0 mt-10">
-                  <button
-                    onClick={toggleSave}
-                    disabled={savingJob}
-                    title={saved ? "Remove from saved" : "Save job"}
-                    className="flex items-center gap-1.5 border border-gray-300 hover:border-blue-600 hover:text-blue-600 text-gray-600 text-sm font-semibold px-4 py-2 rounded-full transition-colors"
-                  >
-                    <Bookmark
-                      size={16}
-                      className={saved ? "fill-blue-600 text-blue-600" : ""}
-                    />
-                    {saved ? "Saved" : "Save"}
-                  </button>
+            {/* Content */}
+            <div className="px-8 pt-14 pb-8">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <h1 className="text-[24px] font-bold text-gray-900">
+                  {job.title}
+                </h1>
 
-                  {job.isExternal ? (
-                    job.applyUrl && (
-                      <a
-                        href={job.applyUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-semibold px-6 py-2 rounded-full transition-all duration-150 shadow-[0_2px_8px_rgba(37,99,235,0.35)]"
-                      >
-                        Easy Apply
-                      </a>
-                    )
-                  ) : (
+                {/* Buttons - always visible regardless of role; handlers redirect to login / gate action internally */}
+                <div className="flex flex-col items-end gap-1.5">
+                  <div className="flex items-center gap-3">
                     <button
-                      onClick={handleApply}
-                      className="bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-semibold px-6 py-2 rounded-full transition-all duration-150 shadow-[0_2px_8px_rgba(37,99,235,0.35)]"
+                      onClick={toggleSave}
+                      disabled={savingJob}
+                      className="flex items-center gap-1.5 border border-blue-500 text-blue-600 bg-white px-5 py-2 rounded-full font-medium hover:bg-blue-50 transition-colors text-[15px]"
                     >
-                      Easy Apply
+                      <Bookmark
+                        size={16}
+                        className={saved ? "fill-blue-600 text-blue-600" : ""}
+                      />
+                      {saved ? "Saved" : "Save"}
                     </button>
+
+                    {hasApplied ? (
+                      <button
+                        disabled
+                        className="flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200 px-6 py-2 rounded-full font-medium cursor-default text-[15px]"
+                      >
+                        <CheckCircle2 size={16} className="text-green-600" />
+                        Applied
+                      </button>
+                    ) : job.isExternal ? (
+                      job.applyUrl && (
+                        <a
+                          href={job.applyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors text-[15px]"
+                        >
+                          Easy Apply
+                        </a>
+                      )
+                    ) : (
+                      <button
+                        onClick={handleApply}
+                        disabled={applyDisabled}
+                        title={profileIncomplete ? readiness?.message : undefined}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors disabled:opacity-60 text-[15px]"
+                      >
+                        {applying ? "Applying..." : "Easy Apply"}
+                      </button>
+                    )}
+                  </div>
+                  {/* ✅ ADDED: inline error instead of a modal */}
+                  {applyError && (
+                    <p className="text-[12px] text-red-600 max-w-xs text-right flex items-center gap-1 justify-end">
+                      <AlertCircle size={12} className="flex-shrink-0" />
+                      {applyError}
+                    </p>
+                  )}
+                  {/* ✅ ADDED: proactive nudge to complete profile, shown even
+                      before the user clicks Easy Apply */}
+                  {!applyError && profileIncomplete && !hasApplied && !job.isExternal && (
+                    <p className="text-[12px] text-amber-600 max-w-xs text-right">
+                      Complete your profile ({readiness?.missingFields.join(", ")}) to apply.
+                    </p>
                   )}
                 </div>
               </div>
 
-              <div className="mt-4">
-                <h1 className="text-[22px] font-bold text-gray-900 leading-tight">
-                  {job.title}
-                </h1>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-[16px] font-semibold text-gray-700">
+                  {companyName}
+                </span>
+                <CheckCircle2 size={15} className="text-blue-600 fill-blue-100" />
+              </div>
 
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <span className="text-sm font-semibold text-blue-700">
-                    {companyName}
-                  </span>
-                  <CheckCircle2 size={14} className="text-blue-600 fill-blue-100" />
-                </div>
+              <p className="text-[16px] text-gray-500 mt-2">
+                {job.location} • Posted{" "}
+                {daysAgo === 0
+                  ? "today"
+                  : daysAgo === 1
+                    ? "yesterday"
+                    : `${daysAgo} days ago`}
+                {` • ${applicants} applicants`}
+              </p>
 
-                <p className="text-sm text-gray-500 mt-1">
-                  {job.location} • Posted{" "}
-                  {daysAgo === 0 ? "today" : daysAgo === 1 ? "yesterday" : `${daysAgo} days ago`}
-                  {` • ${applicants} applicants`}
-                </p>
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 mt-5">
+                {job.salaryRange && (
+                  <Tag icon={<IndianRupee size={12} />} label={job.salaryRange} />
+                )}
+                {job.employmentType && (
+                  <Tag icon={<Briefcase size={12} />} label={job.employmentType} />
+                )}
+                <Tag
+                  icon={<span className="w-2 h-2 rounded-full bg-green-500" />}
+                  label="Actively hiring"
+                  variant="success"
+                />
+              </div>
 
-                {/* Tags row 1 - plain inline, matches reference */}
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-4 text-sm text-gray-600">
-                  {job.salaryRange && (
-                    <span className="flex items-center gap-1.5">
-                      <IndianRupee size={13} className="text-gray-400" />
-                      {job.salaryRange}
-                    </span>
-                  )}
-                  {job.employmentType && (
-                    <span className="flex items-center gap-1.5">
-                      <Briefcase size={13} className="text-gray-400" />
-                      {job.employmentType}
-                    </span>
-                  )}
-                  <span className="flex items-center gap-1.5 text-green-600 font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
-                    Actively hiring
-                  </span>
-                </div>
-
-                {/* Tags row 2 - muted meta */}
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-2 text-xs text-gray-400">
-                  {job.experience && (
-                    <span className="flex items-center gap-1.5">
-                      <Clock size={12} />
-                      {job.experience}
-                    </span>
-                  )}
-                  <span className="flex items-center gap-1.5">
-                    <Eye size={12} />
-                    {job.views ?? 0} views
-                  </span>
-                </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {job.experience && (
+                  <Tag icon={<Clock size={12} />} label={job.experience} variant="muted" />
+                )}
+                <Tag icon={<Eye size={12} />} label={`${job.views ?? 0} views`} variant="muted" />
               </div>
             </div>
           </div>
 
           {/* Description */}
           <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h2 className="text-base font-bold text-gray-900 mb-4">
+            <h2 className="text-[20px] font-bold text-gray-900 mb-4">
               About the job
             </h2>
 
             <div className="relative">
               <div
-                className={`prose max-w-none prose-sm text-gray-700
-                           prose-h1:text-lg prose-h2:text-base
+                className={`prose max-w-none text-[16px] text-black-700
+                           prose-h1:text-[24px] prose-h2:text-[20px]
                            prose-h1:font-bold prose-h2:font-semibold
                            prose-ul:list-disc prose-ul:pl-5
                            prose-strong:text-gray-900
@@ -368,7 +574,7 @@ export default function JobDetailPage() {
 
             <button
               onClick={() => setShowFullDesc(!showFullDesc)}
-              className="flex items-center gap-1 text-sm font-semibold text-blue-700 hover:text-blue-800 mt-2"
+              className="flex items-center gap-1 text-[16px] font-semibold text-blue-700 hover:text-blue-800 mt-2"
             >
               {showFullDesc ? "Show less" : "Show more"}
               {showFullDesc ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -376,56 +582,20 @@ export default function JobDetailPage() {
 
             {benefits.length > 0 && (
               <div className="mt-6 pt-5 border-t border-gray-100">
-                <h3 className="text-sm font-bold text-gray-900 mb-3">Benefits</h3>
+                <h3 className="text-[15px] font-bold text-gray-900 mb-3">Benefits</h3>
                 <div className="flex flex-wrap gap-2">
                   {benefits.map((b, i) => (
-                    <span
-                      key={i}
-                      className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-500"
-                    >
-                      {b}
-                    </span>
+                    <Tag key={i} label={b} variant="muted" />
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="mt-8 pt-5 border-t border-gray-100">
-              {job.isExternal ? (
-                <div className="flex flex-wrap gap-3">
-                  {job.applyUrl && (
-                    <a
-                      href={job.applyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-7 py-2.5 rounded-full"
-                    >
-                      Apply on Company Website
-                    </a>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <button
-                    onClick={handleApply}
-                    className="bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-150 shadow-[0_2px_8px_rgba(37,99,235,0.35)]"
-                  >
-                    Apply for this position
-                  </button>
-
-                  {showApplyForm && (
-                    <div className="mt-6 border-t pt-6">
-                      <ApplySection jobId={job.id} />
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
           </div>
 
           {/* About Company */}
           <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">
+            <h3 className="text-[15px] font-bold text-gray-900 uppercase tracking-wide mb-4">
               About the company
             </h3>
 
@@ -446,21 +616,22 @@ export default function JobDetailPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <p className="text-sm font-semibold text-gray-800">{companyName}</p>
+                    <p className="text-[15px] font-semibold text-gray-800">{companyName}</p>
                     <CheckCircle2 size={13} className="text-blue-600 fill-blue-100" />
                   </div>
                   {company.industry && (
-                    <p className="text-xs text-gray-400">{company.industry}</p>
+                    <p className="text-[12px] text-gray-400">{company.industry}</p>
+                  )}
+                  {company.employeeCount && (
+                    <p className="text-[12px] text-gray-400">{company.employeeCount} employees</p>
                   )}
                 </div>
               </div>
 
-              <button className="border border-blue-600 text-blue-600 hover:bg-blue-50 text-sm font-semibold px-5 py-1.5 rounded-full transition-colors">
-                + Follow
-              </button>
+       
             </div>
 
-            <p className="text-xs text-gray-500 leading-relaxed mt-4">
+            <p className="text-[16px] text-black-500 leading-relaxed mt-4">
               {company.description ||
                 "More information about this company is not available at the moment."}
             </p>
@@ -488,7 +659,7 @@ export default function JobDetailPage() {
 
           {/* Meet the hiring team */}
           <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">
+            <h3 className="text-[15px] font-bold text-gray-900 uppercase tracking-wide mb-4">
               Meet the hiring team
             </h3>
             <div className="flex items-center justify-between flex-wrap gap-3">
@@ -509,23 +680,78 @@ export default function JobDetailPage() {
                       )}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">{person.name}</p>
-                      <p className="text-xs text-gray-400">{person.role}</p>
+                      <p className="text-[15px] font-semibold text-gray-800">{person.name}</p>
+                      <p className="text-[12px] text-gray-400">{person.role}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <button className="flex items-center gap-1.5 border border-gray-300 hover:border-blue-600 hover:text-blue-600 text-gray-600 text-sm font-semibold px-4 py-2 rounded-full transition-colors">
-                <MessageSquare size={15} />
-                Message
-              </button>
+
             </div>
           </div>
+
+          {/* Job match (candidates only) */}
+          {user?.role === "candidate" && (
+            <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
+              <h3 className="text-[15px] font-bold text-gray-900 uppercase tracking-wide mb-1">
+                Job match
+              </h3>
+              <p className="text-[12px] text-gray-500 flex items-center gap-1.5 mb-4">
+                <CheckCircle2 size={13} className="text-gray-400" />
+                Your profile matches {matchPercent}% of the qualifications for this job.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-5">
+                <div className="flex-1">
+                  <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-green-500 rounded-full"
+                      style={{ width: `${matchPercent}%` }}
+                    />
+                  </div>
+                  <p className="text-[12px] font-semibold text-green-600 mt-1.5">{matchLabel}</p>
+
+                  <p className="text-[12px] font-semibold text-gray-700 mt-4 mb-2">
+                    Top skills that match this job
+                  </p>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                    {(matchedSkills.length > 0 ? matchedSkills : requiredSkills).map((skill, i) => (
+                      <span key={i} className="flex items-center gap-1.5 text-[12px] text-gray-600">
+                        <CheckCircle2 size={12} className="text-green-500" />
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {missingSkills.length > 0 && (
+                  <div className="sm:w-56 flex-shrink-0 bg-gray-50 rounded-md p-4">
+                    <p className="flex items-center gap-1.5 text-[12px] font-semibold text-gray-800 mb-1">
+                      <Lightbulb size={13} className="text-amber-500" />
+                      Stand out from other applicants
+                    </p>
+                    <p className="text-[12px] text-gray-500 mb-2">Add these skills to your profile</p>
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {missingSkills.map((skill, i) => (
+                        <span
+                          key={i}
+                          className="text-[12px] font-medium px-2.5 py-1 rounded-full bg-white border border-gray-200 text-gray-600"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Similar Jobs */}
           {otherJobs.length > 0 && (
             <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">
+              <h3 className="text-[15px] font-bold text-gray-900 uppercase tracking-wide mb-4">
                 Similar jobs
               </h3>
               <div className="divide-y divide-gray-50">
@@ -540,20 +766,20 @@ export default function JobDetailPage() {
                         <Building2 size={14} className="text-gray-500" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors truncate">
+                        <p className="text-[15px] font-semibold text-gray-800 group-hover:text-blue-600 transition-colors truncate">
                           {item.title}
                         </p>
-                        <p className="text-xs text-gray-500 truncate">
+                        <p className="text-[12px] text-gray-500 truncate">
                           {item.company?.name || item.companyName}
                           {item.salaryRange && ` • ${item.salaryRange}`}
                         </p>
-                        <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                        <p className="text-[12px] text-gray-400 flex items-center gap-1 mt-0.5">
                           <MapPin size={10} />
                           {item.location}
                         </p>
                       </div>
                     </div>
-                    <button className="border border-gray-300 hover:border-blue-600 hover:text-blue-600 text-gray-500 text-xs font-semibold px-4 py-1.5 rounded-full flex-shrink-0 transition-colors">
+                    <button className="border border-gray-300 hover:border-blue-600 hover:text-blue-600 text-gray-500 text-[12px] font-semibold px-4 py-1.5 rounded-full flex-shrink-0 transition-colors">
                       Save
                     </button>
                   </Link>
@@ -569,7 +795,7 @@ export default function JobDetailPage() {
           {/* People also viewed */}
           {otherJobs.length > 0 && (
             <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-              <h3 className="text-sm font-bold text-gray-900 mb-4">
+              <h3 className="text-[15px] font-bold text-gray-900 mb-4">
                 People also viewed
               </h3>
 
@@ -585,13 +811,13 @@ export default function JobDetailPage() {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors truncate">
+                      <p className="text-[15px] font-semibold text-gray-800 group-hover:text-blue-600 transition-colors truncate">
                         {item.title}
                       </p>
-                      <p className="text-xs text-gray-500 mt-0.5 truncate">
+                      <p className="text-[12px] text-gray-500 mt-0.5 truncate">
                         {item.company?.name || item.companyName}
                       </p>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-[12px] text-gray-400 mt-0.5">
                         {item.location}
                       </p>
                     </div>
@@ -602,7 +828,7 @@ export default function JobDetailPage() {
               </div>
 
               {otherJobs.length > 3 && (
-                <button className="flex items-center gap-1 text-sm font-semibold text-blue-700 hover:text-blue-800 mt-2">
+                <button className="flex items-center gap-1 text-[15px] font-semibold text-blue-700 hover:text-blue-800 mt-2">
                   Show more jobs
                   <ChevronRight size={14} />
                 </button>
@@ -612,7 +838,7 @@ export default function JobDetailPage() {
 
           {/* Job insights */}
           <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h3 className="text-sm font-bold text-gray-900 mb-4">
+            <h3 className="text-[15px] font-bold text-gray-900 mb-4">
               Job insights
             </h3>
 
@@ -620,7 +846,7 @@ export default function JobDetailPage() {
               <InsightRow
                 icon={<FileText size={15} className="text-gray-400" />}
                 title={`${applicants} applicants`}
-                subtitle="Applied recently"
+                subtitle="Viewed recently"
               />
               {job.experience && (
                 <InsightRow
@@ -639,7 +865,7 @@ export default function JobDetailPage() {
 
           {/* Trending skills */}
           <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-1.5">
+            <h3 className="text-[15px] font-bold text-gray-900 mb-4 flex items-center gap-1.5">
               <Sparkles size={14} className="text-blue-500" />
               Trending skills for this role
             </h3>
@@ -647,7 +873,7 @@ export default function JobDetailPage() {
               {trendingSkills.map((skill, i) => (
                 <span
                   key={i}
-                  className="text-xs font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-600"
+                  className="text-[12px] font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-600"
                 >
                   {skill}
                 </span>
@@ -657,7 +883,7 @@ export default function JobDetailPage() {
 
           {/* Explore more */}
           <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h3 className="text-sm font-bold text-gray-900 mb-4">
+            <h3 className="text-[15px] font-bold text-gray-900 mb-4">
               Explore more
             </h3>
             <div className="space-y-4">
@@ -669,20 +895,38 @@ export default function JobDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* ✅ REMOVED: <ApplyModal /> — no popup anymore, apply is one-click */}
     </div>
   )
 }
 
 /* Helpers */
 
+function Tag({ icon, label, variant = "default" }: any) {
+  const variants: any = {
+    default: "bg-blue-50 text-blue-700",
+    muted: "bg-gray-100 text-gray-500",
+    success: "bg-green-50 text-green-700",
+  }
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 text-[12px] font-medium px-3 py-1.5 rounded-full ${variants[variant]}`}
+    >
+      {icon}
+      {label}
+    </span>
+  )
+}
+
 function CompanyMeta({ icon, label, value }: any) {
   return (
     <div>
-      <p className="flex items-center gap-1.5 text-xs text-gray-400 font-medium mb-1">
+      <p className="flex items-center gap-1.5 text-[12px] text-gray-400 font-medium mb-1">
         {icon}
         {label}
       </p>
-      <p className="text-xs text-gray-800 font-semibold truncate">{value}</p>
+      <p className="text-[12px] text-gray-800 font-semibold truncate">{value}</p>
     </div>
   )
 }
@@ -692,8 +936,8 @@ function InsightRow({ icon, title, subtitle }: any) {
     <div className="flex items-start gap-3">
       <div className="mt-0.5">{icon}</div>
       <div>
-        <p className="text-sm font-semibold text-gray-800">{title}</p>
-        <p className="text-xs text-gray-400">{subtitle}</p>
+        <p className="text-[15px] font-semibold text-gray-800">{title}</p>
+        <p className="text-[12px] text-gray-400">{subtitle}</p>
       </div>
     </div>
   )
@@ -704,10 +948,10 @@ function ExploreRow({ icon, title, subtitle, href }: any) {
     <Link href={href} className="flex items-start gap-3 group">
       <div className="mt-0.5 text-gray-400 group-hover:text-blue-600 transition-colors">{icon}</div>
       <div>
-        <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+        <p className="text-[15px] font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
           {title}
         </p>
-        <p className="text-xs text-gray-400">{subtitle}</p>
+        <p className="text-[12px] text-gray-400">{subtitle}</p>
       </div>
     </Link>
   )

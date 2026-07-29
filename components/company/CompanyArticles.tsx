@@ -150,19 +150,19 @@ export default function CompanyArticles() {
               return (
                 <div
                   key={`${post.id}-${i}`}
-                  className="bg-white rounded-md p-4 sm:p-5 flex gap-4 h-[140px] sm:h-[160px] overflow-hidden"
+                  className="bg-white text-[16px] rounded-md p-4 sm:p-5 flex gap-4 h-[140px] sm:h-[160px] overflow-hidden"
                 >
                   {/* thumbnail */}
                   <Link
                     href={`/post/${post.slug}`}
-                    className="relative w-[72px] h-[72px] sm:w-[96px] sm:h-[96px] rounded-md overflow-hidden flex-shrink-0 bg-gray-100"
+                    className="relative text-[16px] w-[72px] h-[72px] sm:w-[96px] sm:h-[96px] rounded-md overflow-hidden flex-shrink-0 bg-gray-100"
                   >
                     <Image
                       src={imageUrl}
                       alt={post.title.slice(0, 20)}
                       fill
                       sizes="(max-width: 640px) 72px, 96px"
-                      className={`object-cover transition-all duration-500 ease-in-out ${
+                      className={`object-cover text-[16px] transition-all duration-500 ease-in-out ${
                         fade
                           ? "opacity-100 scale-100 translate-x-0"
                           : "opacity-0 scale-95 -translate-x-2"
@@ -175,7 +175,7 @@ export default function CompanyArticles() {
                         if (parent) {
                           const fallback = document.createElement("div");
                           fallback.className =
-                            "w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-xs";
+                            "w-full h-full text-[16px] flex items-center justify-center bg-gray-200 text-gray-500 text-[12px]";
                           fallback.textContent = "No image";
                           parent.appendChild(fallback);
                         }
@@ -185,7 +185,7 @@ export default function CompanyArticles() {
 
                   {/* content */}
                   <div
-                    className={`flex flex-col gap-2 min-w-0 transition-all duration-500 ease-in-out ${
+                    className={`flex flex-col text-[16px] gap-2 min-w-0 transition-all duration-500 ease-in-out ${
                       fade
                         ? "translate-y-0 opacity-100"
                         : "translate-y-2 opacity-0"
@@ -193,13 +193,13 @@ export default function CompanyArticles() {
                   >
                     {tagText && (
                       <span
-                        className={`${tagClass} text-white px-3 py-[3px] rounded-full rounded-tl-none w-fit text-[11px] font-medium`}
+                        className={`${tagClass} text-[16px] text-white px-3 py-[3px] rounded-full rounded-tl-none w-fit text-[12px] font-medium`}
                       >
                         {tagText}
                       </span>
                     )}
 
-                    <h6 className="text-[15px] sm:text-[17px] leading-snug font-semibold text-[#121213] line-clamp-2 h-[44px] sm:h-[48px] hover:text-[#0073FF] transition">
+                    <h6 className="text-[20px] leading-snug font-semibold text-[#121213] line-clamp-2 h-[44px] sm:h-[48px] hover:text-[#0073FF] transition">
                       <Link href={`/post/${post.slug}`}>{post.title}</Link>
                     </h6>
 

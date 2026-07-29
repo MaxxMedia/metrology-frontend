@@ -213,13 +213,13 @@ export default function TrendingSection({ posts }: Props) {
         <div className="flex-1 min-w-0">
           {tag.text && (
             <span
-              className={`${tag.color} inline-block mb-1 text-[10px] font-bold px-2 py-0.5 rounded text-white uppercase`}
+              className={`${tag.color} inline-block mb-1 text-[10px] px-2 py-0.5 rounded text-white uppercase`}
             >
               {tag.text}
             </span>
           )}
 
-          <h3 className="text-[15px] font-semibold leading-snug group-hover:text-gray-300 transition line-clamp-2">
+          <h3 className="text-[15px] leading-snug group-hover:text-gray-300 transition line-clamp-2">
             {post.title}
           </h3>
 
