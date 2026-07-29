@@ -22,6 +22,12 @@ const CATEGORY_COLORS: Record<string, string> = {
   "header-videos": "bg-[#EF4444]",
   latest: "bg-[#F69C00]",
   engineering: "bg-[#0072BC]",
+  gaming: "bg-[#8B5CF6]",
+  food: "bg-[#F97316]",
+  travel: "bg-[#0EA5E9]",
+  tech: "bg-[#2563EB]",
+  leadership: "bg-[#7C3AED]",
+  machine: "bg-[#059669]",
 };
 
 type Props = {
@@ -141,11 +147,11 @@ export default function VideosSection({ posts }: Props) {
   // Always renders — falls back to "rstheme" + an initials avatar
   // instead of disappearing entirely when a video has no author.
   const AuthorMeta = ({ video }: { video?: VideoPost }) => (
-    <span className="flex items-center gap-2">
+    <span className="flex items-center gap-1.5">
       <AuthorAvatar
         name={video?.author?.name}
         avatarUrl={video?.author?.avatarUrl}
-        size={24}
+        size={18}
       />
       {video?.author?.name || "rstheme"}
     </span>
@@ -187,7 +193,7 @@ export default function VideosSection({ posts }: Props) {
 
   return (
     <section className="bg-[#171A1E] pt-[70px] pb-[80px] text-white">
-      <div className="max-w-[1320px] mx-auto px-[15px]">
+      <div className="max-w-[1320px] mx-auto px-4">
         {/* HEADER */}
         <div className="flex items-center justify-between mb-12">
           <h2 className="text-[36px] font-semibold">Featured Videos</h2>
@@ -201,8 +207,8 @@ export default function VideosSection({ posts }: Props) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr] gap-8">
-          {/* FEATURED VIDEO */}
-          <div className="relative h-[460px] rounded-md overflow-hidden bg-black">
+          {/* FEATURED VIDEO - LEFT SIDE */}
+          <div className="relative h-[420px] rounded-md overflow-hidden bg-black">
             {selectedVideo?.youtubeUrl ? (
               <iframe
                 key={selectedVideo.id}
@@ -214,13 +220,16 @@ export default function VideosSection({ posts }: Props) {
               />
             ) : (
               <>
-                <Image
-                  src={imageUrl(selectedVideo)}
-                  alt={selectedVideo?.title || "Video"}
-                  fill
-                  priority
-                  className="object-cover"
-                />
+                <div className="relative w-full h-full">
+                  <Image
+                    src={imageUrl(selectedVideo)}
+                    alt={selectedVideo?.title || "Video"}
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 800px"
+                    className="object-cover"
+                  />
+                </div>
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
@@ -228,7 +237,7 @@ export default function VideosSection({ posts }: Props) {
                   <div
                     className="
                       group
-                      w-10 h-10
+                      w-16 h-16
                       rounded-full
                       bg-white/15
                       backdrop-blur-md
@@ -243,7 +252,7 @@ export default function VideosSection({ posts }: Props) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
-                      className="w-4 h-4 ml-[1px] fill-white group-hover:fill-red-600 transition-colors duration-300"
+                      className="w-6 h-6 ml-1 fill-white group-hover:fill-red-600 transition-colors duration-300"
                     >
                       <path d="M8 5v14l11-7z" />
                     </svg>
@@ -266,7 +275,7 @@ export default function VideosSection({ posts }: Props) {
                   <div className="flex items-center gap-4 text-sm text-gray-300 mt-3">
                     <AuthorMeta video={selectedVideo} />
                     <span>{date(selectedVideo?.createdAt)}</span>
-                    {selectedVideo?.views && (
+                    {selectedVideo?.views !== undefined && selectedVideo?.views !== null && (
                       <span>{selectedVideo.views.toLocaleString()} Views</span>
                     )}
                   </div>
@@ -275,47 +284,50 @@ export default function VideosSection({ posts }: Props) {
             )}
           </div>
 
-          {/* SIDE VIDEOS */}
-          <div className="space-y-6">
-            {sideVideos.map((video) => {
+          {/* SIDE VIDEOS - RIGHT SIDE - EXACTLY MATCHING HEIGHT */}
+          <div className="flex flex-col h-[420px]">
+            {sideVideos.map((video, index) => {
               const tag = getTag(video);
+              const isLast = index === sideVideos.length - 1;
 
               return (
                 <button
                   key={video.id}
                   type="button"
                   onClick={() => setSelectedVideo(video)}
-                  className="flex gap-4 pb-6 border-b border-white/10 w-full text-left hover:opacity-90 transition"
+                  className={`
+                    flex gap-3 w-full text-left hover:opacity-90 transition group flex-1 items-center
+                    ${!isLast ? 'border-b border-white/10' : ''}
+                  `}
                 >
-                  <div className="relative w-[120px] h-[90px] rounded-md overflow-hidden">
+                  <div className="relative w-[130px] h-[85px] rounded-md overflow-hidden flex-shrink-0">
                     <Image
                       src={imageUrl(video)}
                       alt={video.title}
                       fill
-                      sizes="120px"
+                      sizes="130px"
                       quality={70}
-                      className="object-cover"
+                      className="object-cover group-hover:scale-105 transition duration-300"
                     />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/20 transition">
                       <div
                         className="
-                          group
-                          w-7 h-7
+                          w-8 h-8
                           rounded-full
-                          bg-white/15
+                          bg-white/20
                           backdrop-blur-md
-                          border border-white/30
+                          border border-white/40
                           shadow-[0_4px_16px_rgba(0,0,0,0.35)]
                           flex items-center justify-center
                           transition-all duration-300
-                          hover:bg-white/25
-                          hover:scale-110
+                          group-hover:bg-white/30
+                          group-hover:scale-110
                         "
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
-                          className="w-3 h-3 ml-[1px] fill-white group-hover:fill-red-600 transition-colors duration-300"
+                          className="w-3.5 h-3.5 ml-[1px] fill-white group-hover:fill-red-600 transition-colors duration-300"
                         >
                           <path d="M8 5v14l11-7z" />
                         </svg>
@@ -323,24 +335,25 @@ export default function VideosSection({ posts }: Props) {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="flex-1 min-w-0">
                     {tag.text && (
                       <span
-                        className={`${tag.color} text-xs font-bold px-3 py-1 rounded`}
+                        className={`${tag.color} text-[10px] font-bold px-2 py-0.5 rounded inline-block uppercase tracking-wide w-fit mb-1`}
                       >
                         {tag.text}
                       </span>
                     )}
 
-                    <h4 className="text-base font-semibold mt-2 leading-snug line-clamp-2">
+                    <h4 className="text-[14px] font-semibold leading-snug line-clamp-2 group-hover:text-gray-300 transition">
                       {video.title}
                     </h4>
 
-                    <div className="flex items-center gap-3 text-xs text-gray-400 mt-2">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1 flex-wrap">
                       <AuthorMeta video={video} />
-                      {video.views && (
-                        <span>{video.views.toLocaleString()} Views</span>
-                      )}
+                      <span>•</span>
+                      <span>{date(video.createdAt)}</span>
+                      <span>•</span>
+                      <span>{video.views ?? 0} Views</span>
                     </div>
                   </div>
                 </button>

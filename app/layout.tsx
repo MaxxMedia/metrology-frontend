@@ -121,8 +121,6 @@ export const metadata: Metadata = {
   
   verification: {
     google: "your-google-site-verification-code",
-    // yandex: "your-yandex-verification-code",
-    // bing: "your-bing-verification-code",
   },
 }
 
@@ -165,12 +163,11 @@ export default function RootLayout({
       "https://twitter.com/toolingtrends",
       "https://linkedin.com/company/toolingtrends",
       "https://youtube.com/toolingtrends",
-      // Add your social media URLs
     ],
   }
 
   return (
-    <html lang="en" className={interTight.variable}>
+    <html lang="en" className={interTight.variable} suppressHydrationWarning>
       <head>
         {/* JSON-LD Structured Data */}
         <script
@@ -202,7 +199,7 @@ export default function RootLayout({
         {/* Sitemap */}
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
       </head>
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning>
         <Header />
 
         <main className="pt-[80px] pb-24">

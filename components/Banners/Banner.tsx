@@ -118,29 +118,86 @@ export default function Banner({ placement, limit, sticky = true }: BannerProps)
 
   const banner = banners[0];
 
-  // --- Slim leaderboard, 728x90 responsive ---
-  if (TOP_PLACEMENTS.includes(placement)) {
+  // --- HOME_MIDDLE and HOME_BOTTOM banners - 1260x170 (increased width by 20px) ---
+  if (placement === "HOME_MIDDLE" || placement === "HOME_BOTTOM") {
     return (
-      <section className="py-6">
-        <div className="w-full flex justify-center px-6">
-          <div
-            className="relative overflow-hidden w-full"
-            style={{ maxWidth: "728px", aspectRatio: "728 / 90" }}
-          >
+      <section className="bg-[#f8f9fa] py-12 sm:py-16">
+        <div className="max-w-[1320px] mx-auto px-4">
+          <div className="w-full flex justify-center">
+            <Link 
+              href={banner.targetUrl || "#"} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block w-full max-w-[1260px]"
+            >
+              <div className="relative w-full" style={{ aspectRatio: "1260 / 170" }}>
+                <Image
+                  src={banner.imageUrl}
+                  alt={banner.title}
+                  fill
+                  priority
+                  sizes="(max-width: 1260px) 100vw, 1260px"
+                  className="object-cover rounded-md"
+                />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // --- HOME_TOP banner ---
+  if (placement === "HOME_TOP") {
+    return (
+      <section className="bg-[#ffffff] py-12 sm:py-16">
+        <div className="max-w-[1320px] mx-auto px-4">
+          <div className="w-full flex justify-center">
             <Link
               href={banner.targetUrl || "#"}
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full h-full"
+              className="block w-full max-w-[728px]"
             >
-              <Image
-                src={banner.imageUrl}
-                alt={banner.title}
-                fill
-                priority
-                sizes="(max-width: 728px) 100vw, 728px"
-                className="object-cover"
-              />
+              <div className="relative w-full" style={{ aspectRatio: "728 / 90" }}>
+                <Image
+                  src={banner.imageUrl}
+                  alt={banner.title}
+                  fill
+                  priority
+                  sizes="(max-width: 728px) 100vw, 728px"
+                  className="object-cover rounded-md"
+                />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // --- Other TOP placements (ARTICLE_TOP) ---
+  if (TOP_PLACEMENTS.includes(placement)) {
+    return (
+      <section className="bg-[#ffffff] py-12 sm:py-16">
+        <div className="max-w-[1320px] mx-auto px-4">
+          <div className="w-full flex justify-center">
+            <Link
+              href={banner.targetUrl || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full max-w-[728px]"
+            >
+              <div className="relative w-full" style={{ aspectRatio: "728 / 90" }}>
+                <Image
+                  src={banner.imageUrl}
+                  alt={banner.title}
+                  fill
+                  priority
+                  sizes="(max-width: 728px) 100vw, 728px"
+                  className="object-cover rounded-md"
+                />
+              </div>
             </Link>
           </div>
         </div>
@@ -151,23 +208,27 @@ export default function Banner({ placement, limit, sticky = true }: BannerProps)
   // --- 970x250 leaderboard on a light background block ---
   if (BLOCK_PLACEMENTS.includes(placement)) {
     return (
-      <section className="py-10 px-6" style={{ backgroundColor: "#F8F9FA" }}>
-        <div className="max-w-[970px] w-full mx-auto flex justify-center">
-          <Link href={banner.targetUrl || "#"} target="_blank" rel="noopener noreferrer">
-            <div
-              className="relative overflow-hidden"
-              style={{ width: "970px", height: "250px" }}
+      <section className="bg-[#f8f9fa] py-12 sm:py-16">
+        <div className="max-w-[1320px] mx-auto px-4">
+          <div className="w-full flex justify-center">
+            <Link 
+              href={banner.targetUrl || "#"} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block w-full max-w-[970px]"
             >
-              <Image
-                src={banner.imageUrl}
-                alt={banner.title}
-                fill
-                priority
-                sizes="970px"
-                className="object-cover"
-              />
-            </div>
-          </Link>
+              <div className="relative w-full" style={{ aspectRatio: "970 / 250" }}>
+                <Image
+                  src={banner.imageUrl}
+                  alt={banner.title}
+                  fill
+                  priority
+                  sizes="(max-width: 970px) 100vw, 970px"
+                  className="object-cover rounded-md"
+                />
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
     );
@@ -175,20 +236,27 @@ export default function Banner({ placement, limit, sticky = true }: BannerProps)
 
   // --- Default: plain 970x250 leaderboard (SUPPLIER_TOP, SUPPLIER_AFTER_VIDEO, FOOTER) ---
   return (
-    <section className="py-6">
-      <div className="max-w-[970px] w-full mx-auto px-6 flex justify-center">
-        <Link href={banner.targetUrl || "#"} target="_blank" rel="noopener noreferrer">
-          <div className="relative overflow-hidden" style={{ width: "970px", height: "250px" }}>
-            <Image
-              src={banner.imageUrl}
-              alt={banner.title}
-              fill
-              priority
-              sizes="970px"
-              className="object-cover"
-            />
-          </div>
-        </Link>
+    <section className="bg-[#ffffff] py-12 sm:py-16">
+      <div className="max-w-[1320px] mx-auto px-4">
+        <div className="w-full flex justify-center">
+          <Link 
+            href={banner.targetUrl || "#"} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="block w-full max-w-[970px]"
+          >
+            <div className="relative w-full" style={{ aspectRatio: "970 / 250" }}>
+              <Image
+                src={banner.imageUrl}
+                alt={banner.title}
+                fill
+                priority
+                sizes="(max-width: 970px) 100vw, 970px"
+                className="object-cover rounded-md"
+              />
+            </div>
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -205,7 +273,13 @@ function SquareAd({ ad }: { ad: BannerData }) {
       rel="noopener noreferrer"
     >
       <div className="relative overflow-hidden mx-auto rounded-sm" style={{ width: "300px", height: "250px" }}>
-        <Image src={ad.imageUrl} alt={ad.title} fill sizes="300px" className="object-cover" />
+        <Image 
+          src={ad.imageUrl} 
+          alt={ad.title} 
+          fill 
+          sizes="300px" 
+          className="object-cover" 
+        />
       </div>
     </Link>
   );

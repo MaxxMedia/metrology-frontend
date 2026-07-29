@@ -41,7 +41,7 @@ type Props = {
   posts: Post[];
 };
 
-export default function HomeCompanyArticles({ posts }: Props) {
+export default function CompanyArticles({ posts }: Props) {
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [fade, setFade] = useState(true);
@@ -100,7 +100,7 @@ export default function HomeCompanyArticles({ posts }: Props) {
           >
             {/* Heading */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-[#121213]">Featured Post</h2>
+              <h2 className="text-2xl font-bold text-[#121213]">Company Articles</h2>
               <Link
                 href="/articles"
                 className="text-sm font-medium text-[#616C74] hover:text-[#0073FF] transition flex items-center gap-1"
@@ -133,6 +133,7 @@ export default function HomeCompanyArticles({ posts }: Props) {
                   if (match) tagClass = CATEGORY_COLORS[match];
                 }
 
+                // Image URL logic matching HomeCompanyArticles
                 const imageUrl = post.imageUrl?.startsWith("http")
                   ? post.imageUrl
                   : post.imageUrl
@@ -157,13 +158,26 @@ export default function HomeCompanyArticles({ posts }: Props) {
                     {/* Image */}
                     <Link
                       href={`/post/${post.slug}`}
-                      className="block relative w-full aspect-[16/10] overflow-hidden"
+                      className="block relative w-full aspect-[16/10] overflow-hidden bg-gray-100"
                     >
                       <Image
                         src={imageUrl}
                         alt={post.title}
                         fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-500 hover:scale-105"
+                        onError={(e) => {
+                          // If image fails to load, show a fallback
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            const fallback = document.createElement('div');
+                            fallback.className = 'w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-sm';
+                            fallback.textContent = 'No image available';
+                            parent.appendChild(fallback);
+                          }
+                        }}
                       />
                     </Link>
 
@@ -192,7 +206,9 @@ export default function HomeCompanyArticles({ posts }: Props) {
                         <span>
                           By{" "}
                           <span className="font-semibold text-[#121213]">
-                            {post.author?.name || "rstheme"}
+                            {typeof post.author === 'object' 
+                              ? post.author?.name || "rstheme"
+                              : post.author || "rstheme"}
                           </span>
                         </span>
 

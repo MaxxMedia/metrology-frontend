@@ -12,18 +12,9 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden 
-bg-[#e7eaec]
-text-black">
-  
-
-
-      {/* 🔴 Radial Glow */}
-      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(254,3,64,0.12),_transparent_60%)] pointer-events-none"></div> */}
-
+    <footer className="relative overflow-hidden bg-[#e7eaec] text-black">
       {/* ================= FOOTER TOP ================= */}
       <div className="relative z-10 pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-12 lg:pb-16">
-
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Mobile: Stacked Layout */}
@@ -37,7 +28,8 @@ text-black">
                   alt="Tooling Technology Logo"
                   width={200}
                   height={67}
-                  className="w-auto h-14 sm:h-16"
+                  style={{ width: 'auto', height: '64px' }}
+                  className="sm:h-16"
                 />
               </Link>
 
@@ -46,50 +38,24 @@ text-black">
               </p>
 
               {/* Social Icons - Mobile */}
-             <div className="flex items-center gap-3 mb-6">
-  {[
-    {
-      Icon: Linkedin,
-      href: "#",
-      bg: "bg-[#0A66C2]",
-      hover: "hover:bg-[#084d94]",
-    },
-    {
-      Icon: Facebook,
-      href: "#",
-      bg: "bg-[#1877F2]",
-      hover: "hover:bg-[#145dbf]",
-    },
-    {
-      Icon: Youtube,
-      href: "#",
-      bg: "bg-[#FF0000]",
-      hover: "hover:bg-[#cc0000]",
-    },
-    {
-      Icon: Twitter,
-      href: "#",
-      bg: "bg-black",
-      hover: "hover:bg-gray-800",
-    },
-    {
-      Icon: Instagram,
-      href: "#",
-      bg: "bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600",
-      hover: "hover:opacity-90",
-    },
-  ].map(({ Icon, href, bg, hover }, i) => (
-    <Link
-      key={i}
-      href={href}
-      className={`w-10 h-10 flex items-center justify-center rounded-md text-white transition-all duration-300 transform hover:scale-110 ${bg} ${hover}`}
-      aria-label={`Social media link ${i + 1}`}
-    >
-      <Icon size={18} strokeWidth={2} />
-    </Link>
-  ))}
-</div>
-
+              <div className="flex items-center gap-3 mb-6">
+                {[
+                  { Icon: Linkedin, href: "#", bg: "bg-[#0A66C2]", hover: "hover:bg-[#084d94]" },
+                  { Icon: Facebook, href: "#", bg: "bg-[#1877F2]", hover: "hover:bg-[#145dbf]" },
+                  { Icon: Youtube, href: "#", bg: "bg-[#FF0000]", hover: "hover:bg-[#cc0000]" },
+                  { Icon: Twitter, href: "#", bg: "bg-black", hover: "hover:bg-gray-800" },
+                  { Icon: Instagram, href: "#", bg: "bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600", hover: "hover:opacity-90" },
+                ].map(({ Icon, href, bg, hover }, i) => (
+                  <Link
+                    key={i}
+                    href={href}
+                    className={`w-10 h-10 flex items-center justify-center rounded-md text-white transition-all duration-300 transform hover:scale-110 ${bg} ${hover}`}
+                    aria-label={`Social media link ${i + 1}`}
+                  >
+                    <Icon size={18} strokeWidth={2} />
+                  </Link>
+                ))}
+              </div>
 
               {/* App Store Buttons - Mobile */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start">
@@ -99,7 +65,8 @@ text-black">
                     alt="Download on Google Play"
                     width={135}
                     height={40}
-                    className="h-10 w-auto hover:opacity-80 transition"
+                    style={{ width: '135px', height: 'auto' }}
+                    className="hover:opacity-80 transition"
                   />
                 </Link>
                 <Link href="#" className="inline-block">
@@ -108,7 +75,8 @@ text-black">
                     alt="Download on App Store"
                     width={135}
                     height={40}
-                    className="h-10 w-auto hover:opacity-80 transition"
+                    style={{ width: '135px', height: 'auto' }}
+                    className="hover:opacity-80 transition"
                   />
                 </Link>
               </div>
@@ -116,12 +84,9 @@ text-black">
 
             {/* Quick Links Grid - Mobile/Tablet */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8">
-              
               {/* Topics */}
               <div>
-                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">
-                  Topics
-                </h5>
+                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">Topics</h5>
                 <ul className="space-y-2.5 text-sm">
                   <li><Link href="/topics/engineer" className="hover:text-black transition-colors">Engineer</Link></li>
                   <li><Link href="/topics/build" className="hover:text-black transition-colors">Build</Link></li>
@@ -133,9 +98,7 @@ text-black">
 
               {/* Resources */}
               <div>
-                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">
-                  Resources
-                </h5>
+                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">Resources</h5>
                 <ul className="space-y-2.5 text-sm">
                   <li><Link href="/mmtchats" className="hover:text-black transition-colors">Industry Talks</Link></li>
                   <li><Link href="/videos" className="hover:text-black transition-colors">Videos</Link></li>
@@ -147,9 +110,7 @@ text-black">
 
               {/* Magazine */}
               <div>
-                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">
-                  Magazine
-                </h5>
+                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">Magazine</h5>
                 <ul className="space-y-2.5 text-sm">
                   <li><Link href="/articles" className="hover:text-black transition-colors">Latest Issue</Link></li>
                   <li><Link href="/" className="hover:text-black transition-colors">Archives</Link></li>
@@ -160,9 +121,7 @@ text-black">
 
               {/* Calendar */}
               <div>
-                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">
-                  Calendar
-                </h5>
+                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">Calendar</h5>
                 <ul className="space-y-2.5 text-sm">
                   <li><Link href="/webinars" className="hover:text-black transition-colors">Webinars</Link></li>
                   <li><Link href="/events" className="hover:text-black transition-colors">Events</Link></li>
@@ -171,9 +130,7 @@ text-black">
 
               {/* More */}
               <div className="col-span-2 sm:col-span-1">
-                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">
-                  More
-                </h5>
+                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">More</h5>
                 <ul className="space-y-2.5 text-sm">
                   <li><Link href="/packages" className="hover:text-black transition-colors">Packages &amp; Pricing</Link></li>
                   <li><Link href="/contact" className="hover:text-black transition-colors">Contact Us</Link></li>
@@ -183,9 +140,7 @@ text-black">
 
               {/* Legal & Policies - Mobile */}
               <div className="col-span-2 sm:col-span-1">
-                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">
-                  Legal &amp; Policies
-                </h5>
+                <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">Legal &amp; Policies</h5>
                 <ul className="space-y-2.5 text-sm">
                   <li><Link href="/terms" className="hover:text-black transition-colors">Terms &amp; Conditions</Link></li>
                   <li><Link href="/privacy-policy" className="hover:text-black transition-colors">Privacy Policy</Link></li>
@@ -197,14 +152,11 @@ text-black">
                   <li><Link href="/refund-cancellation-policy" className="hover:text-black transition-colors">Refund &amp; Cancellation Policy</Link></li>
                 </ul>
               </div>
-
             </div>
-
           </div>
 
           {/* Desktop: Grid Layout */}
           <div className="hidden lg:grid lg:grid-cols-14 gap-10 xl:gap-12">
-
             {/* BRAND - Desktop */}
             <div className="lg:col-span-3">
               <Link href="/" className="inline-block mb-6">
@@ -213,7 +165,7 @@ text-black">
                   alt="Tooling Technology Logo"
                   width={240}
                   height={80}
-                  className="w-auto h-20"
+                  style={{ width: 'auto', height: '80px' }}
                 />
               </Link>
 
@@ -222,50 +174,24 @@ text-black">
               </p>
 
               {/* Social Icons - Desktop */}
-            <div className="flex items-center gap-3 mb-6">
-  {[
-    {
-      Icon: Linkedin,
-      href: "#",
-      bg: "bg-[#0A66C2]",
-      hover: "hover:bg-[#084d94]",
-    },
-    {
-      Icon: Facebook,
-      href: "#",
-      bg: "bg-[#1877F2]",
-      hover: "hover:bg-[#145dbf]",
-    },
-    {
-      Icon: Youtube,
-      href: "#",
-      bg: "bg-[#FF0000]",
-      hover: "hover:bg-[#cc0000]",
-    },
-    {
-      Icon: Twitter,
-      href: "#",
-      bg: "bg-black",
-      hover: "hover:bg-gray-800",
-    },
-    {
-      Icon: Instagram,
-      href: "#",
-      bg: "bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600",
-      hover: "hover:opacity-90",
-    },
-  ].map(({ Icon, href, bg, hover }, i) => (
-    <Link
-      key={i}
-      href={href}
-      className={`w-10 h-10 flex items-center justify-center rounded-md text-white transition-all duration-300 transform hover:scale-110 ${bg} ${hover}`}
-      aria-label={`Social media link ${i + 1}`}
-    >
-      <Icon size={18} strokeWidth={2} />
-    </Link>
-  ))}
-</div>
-
+              <div className="flex items-center gap-3 mb-6">
+                {[
+                  { Icon: Linkedin, href: "#", bg: "bg-[#0A66C2]", hover: "hover:bg-[#084d94]" },
+                  { Icon: Facebook, href: "#", bg: "bg-[#1877F2]", hover: "hover:bg-[#145dbf]" },
+                  { Icon: Youtube, href: "#", bg: "bg-[#FF0000]", hover: "hover:bg-[#cc0000]" },
+                  { Icon: Twitter, href: "#", bg: "bg-black", hover: "hover:bg-gray-800" },
+                  { Icon: Instagram, href: "#", bg: "bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600", hover: "hover:opacity-90" },
+                ].map(({ Icon, href, bg, hover }, i) => (
+                  <Link
+                    key={i}
+                    href={href}
+                    className={`w-10 h-10 flex items-center justify-center rounded-md text-white transition-all duration-300 transform hover:scale-110 ${bg} ${hover}`}
+                    aria-label={`Social media link ${i + 1}`}
+                  >
+                    <Icon size={18} strokeWidth={2} />
+                  </Link>
+                ))}
+              </div>
 
               {/* App Store Buttons - Desktop */}
               <div className="flex gap-3">
@@ -275,6 +201,7 @@ text-black">
                     alt="Download on Google Play"
                     width={135}
                     height={40}
+                    style={{ width: '135px', height: 'auto' }}
                     className="hover:opacity-80 transition"
                   />
                 </Link>
@@ -284,6 +211,7 @@ text-black">
                     alt="Download on App Store"
                     width={135}
                     height={40}
+                    style={{ width: '135px', height: 'auto' }}
                     className="hover:opacity-80 transition"
                   />
                 </Link>
@@ -292,9 +220,7 @@ text-black">
 
             {/* TOPICS - Desktop */}
             <div className="lg:col-span-2">
-              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">
-                Topics
-              </h5>
+              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Topics</h5>
               <ul className="space-y-3 text-sm">
                 <li><Link href="/topics/machining" className="hover:text-black hover:translate-x-1 inline-block transition-all">Machining</Link></li>
                 <li><Link href="/topics/cutting-tools" className="hover:text-black hover:translate-x-1 inline-block transition-all">Cutting Tools</Link></li>
@@ -308,9 +234,7 @@ text-black">
 
             {/* RESOURCES - Desktop */}
             <div className="lg:col-span-2">
-              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">
-                Resources
-              </h5>
+              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Resources</h5>
               <ul className="space-y-3 text-sm">
                 <li><Link href="/mmtchats" className="hover:text-black hover:translate-x-1 inline-block transition-all">Industry Talks</Link></li>
                 <li><Link href="/videos" className="hover:text-black hover:translate-x-1 inline-block transition-all">Videos</Link></li>
@@ -322,9 +246,7 @@ text-black">
 
             {/* MAGAZINE - Desktop */}
             <div className="lg:col-span-2">
-              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">
-                Magazine
-              </h5>
+              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Magazine</h5>
               <ul className="space-y-3 text-sm">
                 <li><Link href="/articles" className="hover:text-black hover:translate-x-1 inline-block transition-all">Latest Issue</Link></li>
                 <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Archives</Link></li>
@@ -336,29 +258,22 @@ text-black">
 
             {/* MORE + CALENDAR - Desktop */}
             <div className="lg:col-span-2">
-              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">
-                More
-              </h5>
+              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">More</h5>
               <ul className="space-y-3 text-sm mb-8">
                 <li><Link href="/packages" className="hover:text-black hover:translate-x-1 inline-block transition-all">Packages &amp; Pricing</Link></li>
                 <li><Link href="/contact" className="hover:text-black hover:translate-x-1 inline-block transition-all">Contact Us</Link></li>
                 <li><Link href="/suppliers" className="hover:text-black hover:translate-x-1 inline-block transition-all">Find a Supplier</Link></li>
               </ul>
 
-              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">
-                Calendar
-              </h5>
+              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Calendar</h5>
               <ul className="space-y-3 text-sm">
-                {/* <li><Link href="/webinars" className="hover:text-black hover:translate-x-1 inline-block transition-all">Webinars</Link></li> */}
                 <li><Link href="/events" className="hover:text-black hover:translate-x-1 inline-block transition-all">Events</Link></li>
               </ul>
             </div>
 
             {/* LEGAL & POLICIES - Desktop */}
             <div className="lg:col-span-3">
-              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">
-                Legal &amp; Policies
-              </h5>
+              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Legal &amp; Policies</h5>
               <div className="grid grid-cols-2 gap-x-8 text-sm">
                 <ul className="space-y-3">
                   <li><Link href="/terms" className="hover:text-black hover:translate-x-1 inline-block transition-all">Terms &amp; Conditions</Link></li>
@@ -374,37 +289,17 @@ text-black">
                 </ul>
               </div>
             </div>
-
           </div>
-
         </div>
       </div>
 
       {/* ================= COPYRIGHT BAR ================= */}
       <div className="border-t border-white/20 bg-[#2a3d47] backdrop-blur-md text-white">
-
-
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 text-xs sm:text-sm">
-            
-            {/* <Link 
-              href="/terms" 
-              className="hover:text-white transition-colors order-2 sm:order-1"
-            >
-              Terms & Agreements
-            </Link> */}
-
             <p className="text-center order-1 sm:order-2">
               Copyright © 2026 <span className="font-semibold">Tooling Trends</span>. All rights reserved.
             </p>
-
-            {/* <Link 
-              href="/privacy-policy" 
-              className="hover:text-white transition-colors order-3"
-            >
-              Privacy Policy
-            </Link> */}
-            
           </div>
         </div>
       </div>
