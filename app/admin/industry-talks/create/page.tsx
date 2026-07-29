@@ -402,6 +402,9 @@ export default function CreateIndustryTalkPage() {
     fd.append("interviewDate", form.interviewDate)
     if (form.readingTime) fd.append("readingTime", form.readingTime)
     fd.append("status", status)
+    if (status === "PUBLISHED") {
+      fd.append("publishedAt", form.interviewDate ? new Date(form.interviewDate).toISOString() : new Date().toISOString())
+    }
     fd.append("featured", String(form.featured))
     fd.append("trending", String(form.trending))
     fd.append("homepage", String(form.homepage))

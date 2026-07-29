@@ -308,7 +308,7 @@ export default function EditIndustryTalkPage() {
           tags: Array.isArray(post.tags) ? post.tags : [],
           interviewDate: (post.interviewDate || post.publishedAt || "").toString().slice(0, 10),
           readingTime: post.readingTime != null ? String(post.readingTime) : "",
-          status: post.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT",
+          status: post.status?.toUpperCase() === "PUBLISHED" ? "PUBLISHED" : "DRAFT",
           featured: !!post.featured,
           trending: !!post.trending,
           homepage: !!post.homepage,
@@ -478,6 +478,9 @@ export default function EditIndustryTalkPage() {
     fd.append("interviewDate", form.interviewDate)
     if (form.readingTime) fd.append("readingTime", form.readingTime)
     fd.append("status", status)
+    if (status === "PUBLISHED") {
+      fd.append("publishedAt", form.interviewDate ? new Date(form.interviewDate).toISOString() : new Date().toISOString())
+    }
     fd.append("featured", String(form.featured))
     fd.append("trending", String(form.trending))
     fd.append("homepage", String(form.homepage))

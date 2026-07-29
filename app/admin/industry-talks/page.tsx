@@ -26,8 +26,11 @@ type IndustryTalkListItem = {
   id: number
   title: string
   slug: string
+  status?: string
   bannerImage?: string
   publishedAt?: string
+  interviewDate?: string
+  createdAt?: string
   views: number
 }
 
@@ -154,13 +157,38 @@ export default function IndustryTalksPage() {
 
     columnHelper.display({
       id: "published",
-      header: "Published",
-      cell: (info) =>
-        info.row.original.publishedAt ? (
-          new Date(info.row.original.publishedAt).toLocaleDateString()
-        ) : (
-          <span className="text-gray-400">Draft</span>
-        ),
+      header: "Status / Published",
+      cell: (info) => {
+        const item = info.row.original
+        const isPublished =
+          item.status?.toUpperCase() === "PUBLISHED" ||
+          (!item.status && !!item.publishedAt)
+        const dateStr = item.publishedAt || item.interviewDate || item.createdAt
+        const formattedDate = dateStr
+          ? new Date(dateStr).toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })
+          : ""
+
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span
+              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold w-fit ${
+                isPublished
+                  ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                  : "bg-amber-100 text-amber-800 border border-amber-200"
+              }`}
+            >
+              {isPublished ? "Published" : "Draft"}
+            </span>
+            {formattedDate && (
+              <span className="text-[11px] text-gray-500">{formattedDate}</span>
+            )}
+          </div>
+        )
+      },
     }),
 
     columnHelper.display({
