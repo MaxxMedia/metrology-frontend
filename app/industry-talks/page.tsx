@@ -4,21 +4,31 @@ export default async function IndustryTalksPage() {
   let talks: any[] = []
 
   try {
+    const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "")
+
     let res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks?limit=100`,
+      `${baseUrl}/api/industry-talks?limit=100`,
       { cache: "no-store" }
     )
 
     if (!res.ok) {
       res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks`,
+        `${baseUrl}/api/industry-talks`,
         { cache: "no-store" }
       )
     }
 
     if (res.ok) {
       const response = await res.json()
-      talks = response?.data || response?.items || (Array.isArray(response) ? response : [])
+      talks = Array.isArray(response)
+        ? response
+        : Array.isArray(response?.data)
+          ? response.data
+          : Array.isArray(response?.items)
+            ? response.items
+            : Array.isArray(response?.posts)
+              ? response.posts
+              : []
     }
   } catch (error) {
     console.error("Error fetching industry talks:", error)

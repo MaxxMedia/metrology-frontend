@@ -67,24 +67,51 @@ export default function IndustryTalksPage() {
       setLoading(true)
 
       try {
-        const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks`)
-        url.searchParams.set('page', String(page))
-        url.searchParams.set('limit', String(PAGE_SIZE))
-        if (debouncedSearch) {
-          url.searchParams.set('search', debouncedSearch)
+        const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "")
+        const searchParam = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ""
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+
+        const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
+
+        const urlsToTry = [
+          { url: `${baseUrl}/api/industry-talks?page=${page}&limit=${PAGE_SIZE}${searchParam}`, headers: authHeaders },
+          { url: `${baseUrl}/api/industry-talks?limit=100`, headers: {} },
+          { url: `${baseUrl}/api/industry-talks`, headers: {} },
+          { url: `${baseUrl}/api/admin/industry-talks`, headers: authHeaders },
+        ]
+
+        let res: Response | null = null
+        for (const target of urlsToTry) {
+          try {
+            const r = await fetch(target.url, { headers: target.headers, cache: "no-store" })
+            if (r.ok) {
+              res = r
+              break
+            }
+          } catch {
+            // try next URL
+          }
         }
 
-        const res = await fetch(url.toString())
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`)
+        if (!res || !res.ok) {
+          console.error("Failed all fetch attempts for admin industry-talks")
+          setTalks([])
+          setTotal(0)
+          return
         }
 
         const json = await res.json()
 
-        // ✅ Fix: Handle the actual response format
-        // The API returns { success: true, data: [...], meta: { ... } }
-        const talksData = json.data || json.items || []
+        const talksData = Array.isArray(json)
+          ? json
+          : Array.isArray(json.data)
+            ? json.data
+            : Array.isArray(json.items)
+              ? json.items
+              : Array.isArray(json.posts)
+                ? json.posts
+                : []
+
         const totalCount = json.meta?.total || json.total || talksData.length
 
         setTalks(talksData)

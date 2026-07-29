@@ -151,7 +151,7 @@ export default function EventsContent() {
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
-  const eventsPerPage = 5
+  const eventsPerPage = 10
 
   useEffect(() => {
     fetchEvents()

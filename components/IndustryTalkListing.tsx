@@ -412,8 +412,8 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                   href="#"
                   className="flex items-center gap-1.5 text-[#0F5B78] text-sm font-semibold mt-4 hover:underline"
                 >
-                  View All Popular Talks
-                  <ArrowRight size={14} />
+                  {/* View All Popular Talks */}
+                  {/* <ArrowRight size={14} /> */}
                 </Link>
               </div>
             )}
