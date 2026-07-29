@@ -1,5 +1,9 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import {
   Calendar,
   Clock,
@@ -31,89 +35,239 @@ type Event = {
   timings?: string
 }
 
-type Industry = {
-  id: number
-  name: string
-}
+// ================= SUBSCRIBE FORM COMPONENT =================
+function SubscribeForm() {
+  const [email, setEmail] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!email || !email.includes('@')) {
+      setMessage({ type: 'error', text: 'Please enter a valid email address' })
+      return
+    }
 
-async function getIndustries(): Promise<Industry[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+    setIsSubmitting(true)
+    setMessage(null)
 
-  const res = await fetch(`${baseUrl}/api/industries`, {
-    cache: "no-store",
-  })
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/newsletter/subscribe`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            fullName: "",
+            companyName: "",
+            frequency: "MONTHLY",
+            emailSubscribed: true,
+            whatsappSubscribed: false,
+            smsSubscribed: false,
+          }),
+        }
+      )
 
-  if (!res.ok) return []
+      const data = await response.json()
 
-  return res.json()
-}
+      if (!response.ok) {
+        throw new Error(data.error || "Subscription failed")
+      }
 
-async function getEvents(search?: string): Promise<Event[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-  const url = new URL("/api/events", baseUrl)
-  if (search) url.searchParams.set("q", search)
+      setMessage({ type: 'success', text: 'Successfully subscribed! Thank you.' })
+      setEmail("")
+      
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
 
-  const res = await fetch(url.toString(), { cache: "no-store" })
-
-  if (!res.ok) {
-    console.error("Failed to fetch events:", res.status)
-    return []
+    } catch (error: any) {
+      console.error("Subscription error:", error)
+      setMessage({ type: 'error', text: error.message || "Failed to subscribe. Please try again." })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  return res.json()
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <h3 className="text-sm font-semibold mb-2">Subscribe to Updates</h3>
+      <p className="text-xs text-gray-500 mb-3">
+        Get the latest updates on upcoming events and industry news.
+      </p>
+      
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-[#0f5b78]"
+          disabled={isSubmitting}
+        />
+        
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-[#b30f24] text-white text-sm font-medium py-2 rounded-lg hover:bg-[#b30f24]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {isSubmitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Subscribing...
+            </span>
+          ) : (
+            'Subscribe'
+          )}
+        </button>
+      </form>
+
+      {message && (
+        <div className={`mt-3 p-2 rounded text-xs ${
+          message.type === 'success' 
+            ? 'bg-green-50 text-green-700 border border-green-200' 
+            : 'bg-red-50 text-red-700 border border-red-200'
+        }`}>
+          {message.text}
+        </div>
+      )}
+    </div>
+  )
 }
 
-function formatDateRange(start: string, end: string) {
-  const s = new Date(start).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })
-  const e = new Date(end).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })
-  return `${s} – ${e}`
-}
+export default function EventsPage() {
+  const searchParams = useSearchParams()
+  const dateParam = searchParams.get("date")
+  
+  const [events, setEvents] = useState<Event[]>([])
+  const [allEvents, setAllEvents] = useState<Event[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState("")
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const eventsPerPage = 5
 
-// Parses "YYYY-MM-DD" as a LOCAL date. new Date("YYYY-MM-DD") is parsed as UTC
-// per the JS spec, which silently shifts the calendar day back or forward
-// depending on the viewer's timezone offset (this was the root cause of the
-// "click 29, get 28" bug). Full ISO datetime strings coming from the API
-// (e.g. event.startDate/endDate) still go through the normal `new Date()` path.
-function normalizeDate(date: string | Date) {
-  if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    const [y, m, d] = date.split("-").map(Number)
-    return new Date(y, m - 1, d).getTime()
+  useEffect(() => {
+    fetchEvents()
+  }, [])
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [dateParam, searchQuery])
+
+  const fetchEvents = async (search?: string) => {
+    setLoading(true)
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+      const url = new URL("/api/events", baseUrl)
+      if (search) url.searchParams.set("q", search)
+
+      const res = await fetch(url.toString())
+      if (!res.ok) {
+        console.error("Failed to fetch events:", res.status)
+        setEvents([])
+        setAllEvents([])
+        return
+      }
+
+      const data = await res.json()
+      setAllEvents(data)
+      setEvents(data)
+    } catch (error) {
+      console.error("Error fetching events:", error)
+      setEvents([])
+      setAllEvents([])
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const d = new Date(date)
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    fetchEvents(searchQuery)
+  }
 
-  return new Date(
-    d.getFullYear(),
-    d.getMonth(),
-    d.getDate()
-  ).getTime()
-}
+  const handleClearFilters = () => {
+    setSearchQuery("")
+    window.location.href = "/events"
+  }
 
-function isOnDate(event: Event, dateStr: string) {
-  const selected = normalizeDate(dateStr)
-  const start = normalizeDate(event.startDate)
-  const end = normalizeDate(event.endDate)
+  // Filter events by date from URL param
+  const filteredEvents = dateParam
+    ? events.filter((e) => isOnDate(e, dateParam))
+    : events
 
-  return selected >= start && selected <= end
-}
+  // Pagination logic
+  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage)
+  const indexOfLastEvent = currentPage * eventsPerPage
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage
+  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent)
 
-type PageProps = {
-  searchParams: Promise<{ q?: string; date?: string }>
-}
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page)
+      // Scroll to top of events list
+      document.getElementById('events-list')?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
 
-export default async function EventsPage({ searchParams }: PageProps) {
-  const { q = "", date } = await searchParams
-  const allEvents = await getEvents(q)
-  const categories = await getIndustries()
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = []
+    const maxVisiblePages = 5
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i)
+      }
+    } else {
+      pageNumbers.push(1)
+      
+      let start = Math.max(2, currentPage - 1)
+      let end = Math.min(totalPages - 1, currentPage + 1)
+      
+      if (currentPage <= 2) {
+        end = 4
+      }
+      if (currentPage >= totalPages - 1) {
+        start = totalPages - 3
+      }
+      
+      if (start > 2) {
+        pageNumbers.push('...')
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(i)
+      }
+      
+      if (end < totalPages - 1) {
+        pageNumbers.push('...')
+      }
+      
+      pageNumbers.push(totalPages)
+    }
+    
+    return pageNumbers
+  }
 
-  const events = date
-    ? allEvents.filter((e) => isOnDate(e, date))
-    : allEvents
+  const calendarEvents = allEvents.map(e => ({ 
+    startDate: e.startDate, 
+    endDate: e.endDate 
+  }))
 
   return (
     <div className="w-full bg-gray-50" >
-      {/* ================= HERO ================= */}
+      {/* HERO */}
       <div className="bg-gradient-to-br from-[#0f5b78] via-black to-[#b30f24] text-white">
         <div className="max-w-7xl mx-auto px-6 py-14 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
           <div>
@@ -131,233 +285,205 @@ export default async function EventsPage({ searchParams }: PageProps) {
         </div>
       </div>
 
-      {/* ================= BREADCRUMB ================= */}
+      {/* BREADCRUMB */}
       <div className="max-w-7xl mx-auto px-6 pt-4 text-sm text-gray-500">
         <Link href="/" className="hover:underline">Home</Link>
         <span className="mx-2">›</span>
         <span className="text-gray-700">Events</span>
       </div>
 
-      {/* ================= MAIN CONTENT ================= */}
+      {/* MAIN CONTENT */}
       <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        {/* LEFT: FILTERS + EVENTS LIST */}
+        {/* LEFT */}
         <div className="lg:col-span-8">
 
           {/* FILTER BAR */}
-          <form action="/events" className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row gap-3 mb-4">
+          <form onSubmit={handleSearch} className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row gap-3 mb-4">
             <div className="relative flex-1">
               <Search
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               />
-
               <input
                 type="text"
-                name="q"
-                defaultValue={q}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search events by name, venue or keyword..."
                 className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm"
               />
             </div>
-
             <button
               type="submit"
               className="bg-[#0f5b78] text-white px-5 py-2 rounded-lg"
             >
               Search
             </button>
-            {/* <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
-              <option value="">All Categories</option>
-
-              {categories.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select> */}
-            {/* <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
-              <option>All Locations</option>
-            </select> */}
-            {/* <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
-              <option>Date (Newest First)</option>
-            </select> */}
           </form>
 
           <div className="flex items-center justify-between mb-6 text-sm">
             <span className="text-gray-500">
-              {date
-                ? `Showing ${events.length} event${events.length === 1 ? "" : "s"} on ${new Date(date).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}`
-                : `Showing 1 to ${events.length} of ${events.length} events`}
+              {dateParam
+                ? `Showing ${filteredEvents.length} event${filteredEvents.length === 1 ? "" : "s"} on ${new Date(dateParam).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}`
+                : `Showing ${indexOfFirstEvent + 1} to ${Math.min(indexOfLastEvent, filteredEvents.length)} of ${filteredEvents.length} events`}
             </span>
-            <Link href="/events" className="text-[#0f5b78] font-medium hover:underline">
+            <button 
+              onClick={handleClearFilters}
+              className="text-[#0f5b78] font-medium hover:underline"
+            >
               Clear Filters
-            </Link>
+            </button>
           </div>
 
           {/* EVENT CARDS */}
-          {events.length === 0 ? (
-            <p className="text-gray-500">No events found{date ? " on this date" : ""}.</p>
-          ) : (
-            <div className="space-y-5">
-              {events.map((event, i) => (
-                <div
-                  key={event.id}
-                  className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row gap-5 relative"
-                >
-                  <Link href={`/events/${event.slug}`} className="w-full md:w-56 h-36 flex-shrink-0 relative rounded-lg overflow-hidden bg-gray-100">
-                    {event.logoUrl || event.bannerUrl ? (
-                      <Image
-                        src={event.logoUrl || event.bannerUrl!}
-                        alt={event.title}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
-                        No Image
-                      </div>
-                    )}
-                    {i === 0 && (
-                      <span className="absolute top-2 left-2 bg-[#b30f24] text-white text-[10px] font-semibold px-2 py-1 rounded">
-                        FEATURED
-                      </span>
-                    )}
-                  </Link>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        <Link href={`/events/${event.slug}`} className="hover:underline">
-                          {event.title}
-                        </Link>
-                      </h3>
-                      {/* <button type="button" aria-label="Save event" className="text-gray-300 hover:text-yellow-400">
-                        <Star size={18} />
-                      </button> */}
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-2">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={13} />
-                        {formatDateRange(event.startDate, event.endDate)}
-                      </span>
-                      {event.timings && (
-                        <span className="flex items-center gap-1">
-                          <Clock size={13} />
-                          {event.timings}
+          <div id="events-list">
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0f5b78]"></div>
+              </div>
+            ) : currentEvents.length === 0 ? (
+              <p className="text-gray-500 text-center py-12">No events found{dateParam ? " on this date" : ""}.</p>
+            ) : (
+              <div className="space-y-5">
+                {currentEvents.map((event, i) => (
+                  <div
+                    key={event.id}
+                    className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row gap-5 relative hover:shadow-lg transition-shadow duration-200"
+                  >
+                    <Link href={`/events/${event.slug}`} className="w-full md:w-56 h-36 flex-shrink-0 relative rounded-lg overflow-hidden bg-gray-100">
+                      {event.logoUrl || event.bannerUrl ? (
+                        <Image
+                          src={event.logoUrl || event.bannerUrl!}
+                          alt={event.title}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                          No Image
+                        </div>
+                      )}
+                      {event.featured && (
+                        <span className="absolute top-2 left-2 bg-[#b30f24] text-white text-[10px] font-semibold px-2 py-1 rounded">
+                          FEATURED
                         </span>
                       )}
-                    </div>
+                    </Link>
 
-                    {event.location && (
-                      <p className="flex items-center gap-1 text-xs text-gray-500 mb-2">
-                        <MapPin size={13} />
-                        {event.location}
-                      </p>
-                    )}
-
-                    <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                      {event.description}
-                    </p>
-
-                    <div className="flex items-center justify-between flex-wrap gap-3">
-                      <div className="flex flex-wrap gap-2">
-                        {(event.tags ?? []).map(tag => (
-                          <span
-                            key={tag}
-                            className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          <Link href={`/events/${event.slug}`} className="hover:underline hover:text-[#0f5b78]">
+                            {event.title}
+                          </Link>
+                        </h3>
                       </div>
-                      <Link
-                        href={`/events/${event.slug}`}
-                        className="bg-[#0f5b78] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#0f5b78]/90"
-                      >
-                        View Details
-                      </Link>
+
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-2">
+                        <span className="flex items-center gap-1">
+                          <Calendar size={13} />
+                          {formatDateRange(event.startDate, event.endDate)}
+                        </span>
+                        {event.timings && (
+                          <span className="flex items-center gap-1">
+                            <Clock size={13} />
+                            {event.timings}
+                          </span>
+                        )}
+                      </div>
+
+                      {event.location && (
+                        <p className="flex items-center gap-1 text-xs text-gray-500 mb-2">
+                          <MapPin size={13} />
+                          {event.location}
+                        </p>
+                      )}
+
+                      <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                        {event.description}
+                      </p>
+
+                      <div className="flex items-center justify-between flex-wrap gap-3">
+                        <div className="flex flex-wrap gap-2">
+                          {(event.tags ?? []).slice(0, 3).map(tag => (
+                            <span
+                              key={tag}
+                              className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                          {(event.tags ?? []).length > 3 && (
+                            <span className="text-xs text-gray-400">
+                              +{(event.tags ?? []).length - 3} more
+                            </span>
+                          )}
+                        </div>
+                        <Link
+                          href={`/events/${event.slug}`}
+                          className="bg-[#0f5b78] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#0f5b78]/90 transition-colors"
+                        >
+                          View Details
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* PAGINATION */}
-          <div className="flex items-center justify-center gap-2 mt-8">
-            <button className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50">
-              <ChevronLeft size={16} />
-            </button>
-            {[1, 2, 3].map(p => (
+          {filteredEvents.length > 0 && (
+            <div className="flex items-center justify-center gap-2 mt-8">
               <button
-                key={p}
-                className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium ${p === 1
-                    ? "bg-[#0f5b78] text-white"
-                    : "border border-gray-300 text-gray-600 hover:bg-gray-50"
-                  }`}
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors ${
+                  currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
-                {p}
+                <ChevronLeft size={16} />
               </button>
-            ))}
-            <span className="text-gray-400">...</span>
-            <button className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
-              5
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50">
-              <ChevronRight size={16} />
-            </button>
-          </div>
+              
+              {getPageNumbers().map((page, index) => (
+                <button
+                  key={index}
+                  onClick={() => typeof page === 'number' && goToPage(page)}
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                    page === currentPage
+                      ? "bg-[#0f5b78] text-white"
+                      : page === '...'
+                        ? "border-0 cursor-default"
+                        : "border border-gray-300 text-gray-600 hover:bg-gray-50"
+                  }`}
+                  disabled={page === '...'}
+                >
+                  {page}
+                </button>
+              ))}
+              
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors ${
+                  currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* RIGHT: SIDEBAR */}
         <aside className="lg:col-span-4 space-y-6">
 
           {/* CALENDAR */}
-          <EventCalendar events={allEvents.map(e => ({ startDate: e.startDate, endDate: e.endDate }))} />
+          <EventCalendar events={calendarEvents} />
 
-          {/* SUBSCRIBE */}
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <h3 className="text-sm font-semibold mb-2">Subscribe to Updates</h3>
-            <p className="text-xs text-gray-500 mb-3">
-              Get the latest updates on upcoming events and industry news.
-            </p>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-[#0f5b78]"
-            />
-            <button className="w-full bg-[#b30f24] text-white text-sm font-medium py-2 rounded-lg hover:bg-[#b30f24]/90">
-              Subscribe
-            </button>
-          </div>
-
-          {/* POPULAR CATEGORIES */}
-          {/* <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <h3 className="text-sm font-semibold mb-3">Popular Categories</h3>
-            <ul className="space-y-2 text-sm">
-              {[
-                ["Tooling", 12],
-                ["Machine Tools", 10],
-                ["Die & Mould", 8],
-                ["Automation", 7],
-                ["Precision Engineering", 6],
-                ["Metrology", 5],
-              ].map(([label, count]) => (
-                <li key={label as string} className="flex items-center justify-between text-gray-600">
-                  <span>{label}</span>
-                  <span className="text-gray-400">{count}</span>
-                </li>
-              ))}
-            </ul>
-            <Link href="/suppliers">
-              <button className="text-[#0f5b78] text-sm font-medium mt-3 hover:underline">
-                View All Categories →
-              </button>
-            </Link>
-         
-          </div> */}
+          {/* SUBSCRIBE FORM */}
+          <SubscribeForm />
 
           {/* LIST YOUR EVENT */}
           <div className="bg-white border border-gray-200 rounded-xl p-4">
@@ -372,7 +498,7 @@ export default async function EventsPage({ searchParams }: PageProps) {
             </div>
             <Link
               href="/contact"
-              className="block text-center border border-[#b30f24] text-[#b30f24] text-sm font-medium py-2 rounded-lg mt-2 hover:bg-red-50"
+              className="block text-center border border-[#b30f24] text-[#b30f24] text-sm font-medium py-2 rounded-lg mt-2 hover:bg-red-50 transition-colors"
             >
               List Your Event
             </Link>
@@ -399,4 +525,26 @@ function StatBlock({
       <span className="text-xs text-blue-100">{label}</span>
     </div>
   )
+}
+
+function formatDateRange(start: string, end: string) {
+  const s = new Date(start).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })
+  const e = new Date(end).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })
+  return `${s} – ${e}`
+}
+
+function normalizeDate(date: string | Date) {
+  if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    const [y, m, d] = date.split("-").map(Number)
+    return new Date(y, m - 1, d).getTime()
+  }
+  const d = new Date(date)
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+}
+
+function isOnDate(event: Event, dateStr: string) {
+  const selected = normalizeDate(dateStr)
+  const start = normalizeDate(event.startDate)
+  const end = normalizeDate(event.endDate)
+  return selected >= start && selected <= end
 }
