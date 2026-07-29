@@ -10,9 +10,17 @@ export default function PostViewCounter({ slug }: { slug: string }) {
 
     if (!sessionStorage.getItem(key)) {
       fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/slug/${slug}/view`,
+        { method: "POST" }
+      ).catch(() => {})
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/${slug}/view`,
+        { method: "POST" }
+      ).catch(() => {})
+      fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/posts/slug/${slug}/view`,
         { method: "POST" }
-      )
+      ).catch(() => {})
       sessionStorage.setItem(key, "true")
     }
   }, [slug])

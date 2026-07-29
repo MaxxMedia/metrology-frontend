@@ -160,8 +160,8 @@ function mapTalkToPost(inputData: any): Post {
     qa: Array.isArray(data.questions)
       ? data.questions
       : typeof data.questions === "string"
-      ? JSON.parse(data.questions)
-      : data.qa || [],
+        ? JSON.parse(data.questions)
+        : data.qa || [],
   }
 }
 
@@ -232,17 +232,19 @@ export default function PostDetailsPage() {
         }
 
         const listRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks?limit=100`,
           { cache: "no-store" }
         )
 
         if (listRes.ok) {
           const listData = await listRes.json()
-          const items = Array.isArray(listData?.data)
-            ? listData.data
-            : Array.isArray(listData)
-            ? listData
-            : []
+          const items = Array.isArray(listData?.items)
+            ? listData.items
+            : Array.isArray(listData?.data)
+              ? listData.data
+              : Array.isArray(listData)
+                ? listData
+                : []
 
           const decodedSlug = decodeURIComponent(slugValue)
           const found = items.find(
@@ -341,15 +343,15 @@ export default function PostDetailsPage() {
   const imageUrl = post.imageUrl?.startsWith("http")
     ? post.imageUrl
     : post.imageUrl
-    ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-    : "/placeholder.svg"
+      ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
+      : "/placeholder.svg"
 
   const date = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
     : "Today"
 
   /* ================= INDUSTRY TALK LAYOUT ================= */
@@ -536,8 +538,8 @@ export default function PostDetailsPage() {
                         <p className="text-xs font-medium text-gray-500 text-center mb-4">
                           {post.author.role}
                           {post.author.role &&
-                          post.author.company &&
-                          !post.author.role.includes(post.author.company)
+                            post.author.company &&
+                            !post.author.role.includes(post.author.company)
                             ? `, ${post.author.company}`
                             : ""}
                         </p>
@@ -569,14 +571,14 @@ export default function PostDetailsPage() {
                           const rpImage = rp.imageUrl?.startsWith("http")
                             ? rp.imageUrl
                             : rp.imageUrl
-                            ? `${process.env.NEXT_PUBLIC_API_URL}${rp.imageUrl}`
-                            : "/placeholder.svg"
+                              ? `${process.env.NEXT_PUBLIC_API_URL}${rp.imageUrl}`
+                              : "/placeholder.svg"
                           const rpDate = rp.publishedAt
                             ? new Date(rp.publishedAt).toLocaleDateString("en-GB", {
-                                day: "numeric",
-                                month: "short",
-                                year: "numeric",
-                              })
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })
                             : ""
                           return (
                             <a
