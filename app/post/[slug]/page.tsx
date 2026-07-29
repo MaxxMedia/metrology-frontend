@@ -519,8 +519,8 @@ export default function PostDetailsPage() {
                             <p className="text-xs text-gray-500">
                               {post.author.role}
                               {post.author.role &&
-                              post.author.company &&
-                              !post.author.role.includes(post.author.company)
+                                post.author.company &&
+                                !post.author.role.includes(post.author.company)
                                 ? `, ${post.author.company}`
                                 : ""}
                             </p>
