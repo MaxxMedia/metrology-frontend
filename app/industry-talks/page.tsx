@@ -1,9 +1,4 @@
-import IndustryTalkListing, { type IndustryTalk } from "@/components/IndustryTalkListing"
-
-type IndustryTalksResponse = {
-  items?: IndustryTalk[]
-  data?: IndustryTalk[]
-}
+import IndustryTalkListing from "@/components/IndustryTalkListing"
 
 export default async function IndustryTalksPage() {
   const res = await fetch(
@@ -15,25 +10,16 @@ export default async function IndustryTalksPage() {
     throw new Error(`Failed to fetch industry talks: ${res.status}`)
   }
 
-  const data: IndustryTalksResponse = await res.json()
-  const rawPosts = Array.isArray(data.items)
-    ? data.items
-    : Array.isArray(data.data)
-      ? data.data
-      : []
+  const response = await res.json()
+  
+  // The data now includes the Industry relation from the backend
+  const talks = response?.data || response?.items || []
 
-  console.log("🔍 [IndustryTalksPage] Total raw industry talks fetched:", rawPosts.length)
-  rawPosts.forEach((talk, idx) => {
-    console.log(
-      `🔍 [IndustryTalksPage] Talk #${idx + 1}: ID=${talk.id}, Title="${talk.title}", Status="${talk.status}" -> Published: ${talk.status?.toUpperCase() === "PUBLISHED"}`
-    )
-  })
-
-  const posts = rawPosts.filter(
-    (talk) => talk.status?.toUpperCase() === "PUBLISHED"
-  )
-
-  console.log("🔍 [IndustryTalksPage] Total published industry talks to display:", posts.length)
+  // Map the data to include industryName for easier access
+  const posts = talks.map((talk: any) => ({
+    ...talk,
+    industryName: talk.industry?.name || null
+  }))
 
   return (
     <main className="bg-white">

@@ -18,8 +18,7 @@ import {
 
 const PAGE_SIZE = 10
 
-// ---------- types (match Prisma IndustryTalk model) ----------
-
+// ---------- types ----------
 export type IndustryTalk = {
   id: number
   title: string
@@ -27,6 +26,7 @@ export type IndustryTalk = {
   interviewType?: string | null
   categoryId?: number | null
   industryId?: number | null
+  industryName?: string | null // Added for easy access
   status: string
   featured: boolean
   trending: boolean
@@ -36,7 +36,7 @@ export type IndustryTalk = {
   videoUrl?: string | null
   uploadedVideo?: string | null
   thumbnailUrl?: string | null
-  duration?: number | null // seconds
+  duration?: number | null
   guestName: string
   designation?: string | null
   companyName?: string | null
@@ -46,10 +46,20 @@ export type IndustryTalk = {
   shares: number
   publishedAt?: string | null
   createdAt: string
+  // The Industry relation from the API
+  industry?: {
+    id: number
+    name: string
+    slug: string
+  } | null
+  category?: {
+    id: number
+    name: string
+    slug: string
+  } | null
 }
 
 // ---------- helpers ----------
-
 function isNew(publishedAt?: string | null) {
   if (!publishedAt) return false
   const days = (Date.now() - new Date(publishedAt).getTime()) / 86400000
@@ -63,10 +73,6 @@ function formatDuration(seconds?: number | null) {
   return `${m}:${s.toString().padStart(2, "0")}`
 }
 
-/**
- * Builds the [1, 2, 3, "...", totalPages] style page list,
- * always keeping first, last, and a window around currentPage.
- */
 function getPageList(current: number, total: number): (number | "...")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
 
@@ -86,7 +92,6 @@ function getPageList(current: number, total: number): (number | "...")[] {
 }
 
 // ---------- component ----------
-
 export default function IndustryTalkListing({ post: allPosts }: { post: IndustryTalk[] }) {
   const [currentPage, setCurrentPage] = useState(1)
 
@@ -94,11 +99,23 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const posts = allPosts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
+  // Build category counts from industry names
   const categoryCounts = allPosts.reduce<Record<string, number>>((acc, p) => {
-    const key = p.interviewType || "Industry Talks"
+    // Use industryName if available, fallback to Industry.name or interviewType
+    let key = "Uncategorized"
+    
+    if (p.industryName) {
+      key = p.industryName
+    } else if (p.industry?.name) {
+      key = p.industry.name
+    } else if (p.interviewType) {
+      key = p.interviewType
+    }
+    
     acc[key] = (acc[key] || 0) + 1
     return acc
   }, {})
+
   const popular = allPosts.slice(0, 3)
 
   const pageList = getPageList(currentPage, totalPages)
@@ -329,7 +346,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
           {/* RIGHT COLUMN */}
           <aside className="space-y-6 h-fit lg:sticky lg:top-24">
 
-            {/* CATEGORIES */}
+            {/* CATEGORIES - Now showing Industry Names */}
             <div className="bg-white border border-gray-100 rounded-xl p-5">
               <h3 className="text-base font-bold text-gray-900 border-b-2 border-[#0F5B78] inline-block pb-1 mb-4">
                 Categories
@@ -341,15 +358,17 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                     {total}
                   </span>
                 </li>
-                {Object.entries(categoryCounts).map(([name, count]) => (
-                  <li
-                    key={name}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 text-sm hover:bg-gray-50"
-                  >
-                    <span>{name}</span>
-                    <span className="text-gray-400 text-xs font-medium">{count}</span>
-                  </li>
-                ))}
+                {Object.entries(categoryCounts)
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .map(([name, count]) => (
+                    <li
+                      key={name}
+                      className="flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 text-sm hover:bg-gray-50"
+                    >
+                      <span>{name}</span>
+                      <span className="text-gray-400 text-xs font-medium">{count}</span>
+                    </li>
+                  ))}
               </ul>
             </div>
 
