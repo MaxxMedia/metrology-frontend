@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useParams, useRouter } from "next/navigation"
-import { Calendar, Clock, Eye, Mail } from "lucide-react"
+import { Calendar, Clock, Eye, Mail, MessageCircle } from "lucide-react"
 
 import ShareSection from "@/components/share-section"
 import RelatedPostsCarousel from "@/components/related-posts-carousel"
 import ContentGateModal from "@/components/content-gate-modal"
 import PostViewCounter from "@/components/PostViewCounter"
-import Loader from "@/components/Loader"
 import SupplierAds from "@/components/SupplierAds"
 
 /* ================= TYPES ================= */
@@ -22,12 +21,20 @@ type Author = {
   company?: string
   companySlug?: string
   profileUrl?: string
+  email?: string
 }
 
 type Category = {
   id: number
   name: string
   slug?: string
+}
+
+type Comment = {
+  id: number
+  content: string
+  createdAt: string
+  authorId: number
 }
 
 type Post = {
@@ -38,6 +45,7 @@ type Post = {
   content?: string
   imageUrl?: string
   publishedAt?: string
+  authorId?: number
   author?: Author
   category?: Category
   youtubeUrl?: string
@@ -45,6 +53,9 @@ type Post = {
   shares?: number
   readTime?: string
   videoCaption?: string
+  badge?: string
+  comments?: Comment[]
+  status?: string
   qa?: {
     question: string
     answer: string
@@ -73,98 +84,6 @@ function getYoutubeEmbed(url?: string) {
 }
 
 /* ================= PAGE ================= */
-/* ================= TALK MAPPING HELPER ================= */
-function stripHtml(html?: string | null): string {
-  if (!html) return ""
-  return html
-    .replace(/<[^>]*>?/gm, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/\s+/g, " ")
-    .trim()
-}
-
-function mapTalkToPost(inputData: any): Post {
-  const data = inputData?.data && typeof inputData.data === "object" && (inputData.data.id || inputData.data.title)
-    ? inputData.data
-    : inputData
-
-  const authorName = data.guestName || data.author?.name || "Industry Leader"
-  const companyStr = data.companyName || (data.author as any)?.company || ""
-  const designationStr = data.designation || ""
-  const fullRole = designationStr
-    ? `${designationStr}${companyStr ? ` at ${companyStr}` : ""}`
-    : companyStr
-
-  const supplierDirectorySlug = Array.isArray(data.Company?.SupplierDirectory)
-    ? data.Company.SupplierDirectory[0]?.slug
-    : data.Company?.SupplierDirectory?.slug
-
-  let rawSlug = supplierDirectorySlug || data.Company?.slug || (data.companyId ? String(data.companyId) : "")
-
-  if (!rawSlug && data.companyProfileUrl) {
-    const cleaned = data.companyProfileUrl
-      .replace(/^https?:\/\/[^\/]+/, "")
-      .replace(/^\/(?:suppliers|company)\//, "")
-      .replace(/\/$/, "")
-      .trim()
-    if (cleaned) rawSlug = cleaned
-  }
-
-  if (!rawSlug && data.companyName) {
-    rawSlug = data.companyName
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)+/g, "")
-  }
-
-  const profileUrl = rawSlug ? `/suppliers/${rawSlug}` : "/suppliers"
-
-  const rawBio = data.shortBio || data.author?.bio || ""
-  const cleanBio = stripHtml(rawBio)
-
-  const rawExcerpt = data.excerpt || data.shortBio || data.introduction || ""
-  const cleanExcerpt = stripHtml(rawExcerpt)
-
-  return {
-    id: data.id,
-    title: data.title,
-    slug: data.slug,
-    excerpt: cleanExcerpt,
-    content: data.introduction || data.content || "",
-    imageUrl: data.bannerImage || data.thumbnailUrl || data.profileImage || data.imageUrl,
-    publishedAt: data.publishedAt || data.interviewDate || data.createdAt,
-    views: data.views || 0,
-    shares: data.shares || 0,
-    readTime: data.readingTime ? `${data.readingTime} min read` : data.readTime || "",
-    youtubeUrl: data.videoUrl || data.uploadedVideo || data.youtubeUrl || "",
-    category: {
-      id: data.categoryId || 999,
-      name: "Industry Talks",
-      slug: "industry-talks",
-    },
-    author: {
-      id: data.id,
-      name: authorName,
-      role: fullRole,
-      company: companyStr,
-      companySlug: rawSlug,
-      avatarUrl: data.guestPhoto || data.profileImage || data.author?.avatarUrl,
-      bio: cleanBio,
-      profileUrl: profileUrl,
-    },
-    qa: Array.isArray(data.questions)
-      ? data.questions
-      : typeof data.questions === "string"
-        ? JSON.parse(data.questions)
-        : data.qa || [],
-  }
-}
-
 export default function PostDetailsPage() {
   const router = useRouter()
   const { slug } = useParams()
@@ -189,7 +108,6 @@ export default function PostDetailsPage() {
       setError(null)
 
       try {
-        // 1. Try fetching standard post by slug
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/posts/slug/${encodeURIComponent(slugValue)}`,
           {
@@ -201,68 +119,23 @@ export default function PostDetailsPage() {
         if (res.ok) {
           const data = await res.json()
           if (data && typeof data === "object" && data.id) {
-            if (data.category?.slug === "industry-talks") {
-              router.replace(`/industry-talks/${encodeURIComponent(data.slug || slugValue)}`)
-              return
-            }
             setPost(data)
             return
           }
         }
 
-        // 2. Try fetching industry-talk by slug
-        let talkRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/slug/${encodeURIComponent(slugValue)}`,
+        const idRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${encodeURIComponent(slugValue)}`,
           {
             cache: "no-store",
             headers: { "Content-Type": "application/json" },
           }
         )
 
-        // 3. Try fetching industry-talk by ID
-        if (!talkRes.ok) {
-          talkRes = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/${encodeURIComponent(slugValue)}`,
-            {
-              cache: "no-store",
-              headers: { "Content-Type": "application/json" },
-            }
-          )
-        }
-
-        if (talkRes.ok) {
-          const resJson = await talkRes.json()
-          const talkData = resJson.data || resJson
-          if (talkData && typeof talkData === "object" && (talkData.id || talkData.title)) {
-            router.replace(`/industry-talks/${encodeURIComponent(talkData.slug || slugValue)}`)
-            return
-          }
-        }
-
-        // 4. Fallback: Fetch all industry-talks and find by slug or ID
-        const listRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks`,
-          { cache: "no-store" }
-        )
-
-        if (listRes.ok) {
-          const listData = await listRes.json()
-          const items = Array.isArray(listData?.data)
-            ? listData.data
-            : Array.isArray(listData)
-              ? listData
-              : []
-
-          const decodedSlug = decodeURIComponent(slugValue)
-          const found = items.find(
-            (t: any) =>
-              t.slug === slugValue ||
-              t.slug === decodedSlug ||
-              String(t.id) === slugValue
-          )
-
-          if (found) {
-            router.replace(`/industry-talks/${encodeURIComponent(found.slug || slugValue)}`)
+        if (idRes.ok) {
+          const data = await idRes.json()
+          if (data && typeof data === "object" && data.id) {
+            setPost(data)
             return
           }
         }
@@ -279,13 +152,14 @@ export default function PostDetailsPage() {
     fetchPost()
   }, [slugValue])
 
-  /* ================= FETCH RELATED INDUSTRY TALKS ================= */
+  /* ================= FETCH RELATED POSTS ================= */
   useEffect(() => {
     async function fetchRelated() {
-      if (!post || post.category?.slug !== "industry-talks") return
+      if (!post) return
       try {
+        const categorySlug = post.category?.slug || ""
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=industry-talks&limit=5`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${categorySlug}&limit=5`,
           { cache: "no-store" }
         )
         if (!res.ok) return
@@ -293,7 +167,7 @@ export default function PostDetailsPage() {
         const list: Post[] = Array.isArray(data) ? data : data.posts || data.data || []
         setRelatedPosts(list.filter((p) => p.id !== post.id).slice(0, 4))
       } catch (err) {
-        console.error("Failed to load related interviews:", err)
+        console.error("Failed to load related posts:", err)
       }
     }
     fetchRelated()
@@ -340,11 +214,7 @@ export default function PostDetailsPage() {
   }
 
   const embedUrl = getYoutubeEmbed(post.youtubeUrl)
-
-  const isIndustryTalk = post.category?.slug === "industry-talks"
-
-  const allowYoutube =
-    post.category?.slug === "video" || post.category?.slug === "industry-talks"
+  const allowYoutube = post.category?.slug === "video" || post.category?.slug === "industry-talks"
 
   const imageUrl = post.imageUrl?.startsWith("http")
     ? post.imageUrl
@@ -354,275 +224,14 @@ export default function PostDetailsPage() {
 
   const date = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    })
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
     : "Today"
 
-  /* ================= INDUSTRY TALK LAYOUT ================= */
-  if (isIndustryTalk) {
-    return (
-      <>
-        <ContentGateModal
-          isOpen={showGate && !userSubmitted}
-          onClose={() => setShowGate(false)}
-          onSubmit={() => {
-            setUserSubmitted(true)
-            setShowGate(false)
-          }}
-        />
-
-        <main className="bg-white overflow-x-hidden">
-          {slugValue && <PostViewCounter slug={slugValue} />}
-
-          <section className="max-w-[1320px] mx-auto px-4 py-10">
-            <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr] gap-10">
-              {/* CONTENT */}
-              <article className="max-w-3xl overflow-hidden">
-                {post.category?.name && (
-                  <span className="inline-block text-[11px] font-bold tracking-wide uppercase text-[#0F5B78] mb-3">
-                    {post.category.name}
-                  </span>
-                )}
-
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
-                  {post.title}
-                </h1>
-
-                {post.excerpt && (
-                  <p className="text-gray-600 text-base mb-5 leading-relaxed">{post.excerpt}</p>
-                )}
-
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-5 mb-6 border-b border-gray-100">
-                  <div className="flex items-center gap-5 text-xs text-gray-500">
-                    <span className="flex items-center gap-1.5">
-                      <Calendar size={13} />
-                      {date}
-                    </span>
-                    {post.readTime && (
-                      <span className="flex items-center gap-1.5">
-                        <Clock size={13} />
-                        {post.readTime}
-                      </span>
-                    )}
-                    {typeof post.views === "number" && (
-                      <span className="flex items-center gap-1.5">
-                        <Eye size={13} />
-                        {post.views.toLocaleString()} Views
-                      </span>
-                    )}
-                  </div>
-                  <div className="[&>*]:!border-0 [&>*]:!mt-0 [&>*]:!pt-0 [&>*]:flex [&>*]:items-center [&>*]:gap-2 shrink-0">
-                    <ShareSection post={post} />
-                  </div>
-                </div>
-
-                {allowYoutube && post.youtubeUrl ? (
-                  <div className="mb-8">
-                    <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-3">
-                      Watch the Interview
-                    </h3>
-                    {embedUrl ? (
-                      <div className="aspect-video w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                        <iframe
-                          src={embedUrl}
-                          title={post.title}
-                          className="w-full h-full"
-                          allowFullScreen
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full rounded-xl border border-gray-800 bg-black text-white flex flex-col items-center justify-center py-16 px-6 text-center">
-                        <p className="text-lg font-semibold mb-4">Watch on YouTube</p>
-                        <a
-                          href={post.youtubeUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 bg-[#B30F24] px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-colors"
-                        >
-                          Open YouTube →
-                        </a>
-                      </div>
-                    )}
-                    {post.videoCaption && (
-                      <p className="text-sm text-gray-600 leading-relaxed mt-4 text-justify">
-                        {post.videoCaption}
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="relative w-full aspect-[16/9] bg-gray-100 rounded-xl overflow-hidden border border-gray-100 mb-8">
-                    <Image
-                      src={imageUrl}
-                      alt={post.title}
-                      fill
-                      className="object-contain"
-                      sizes="(max-width: 768px) 100vw, 900px"
-                      priority
-                    />
-                  </div>
-                )}
-
-                <div className="border-t border-gray-100 pt-6">
-                  <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
-                    The Interview
-                  </h3>
-
-                  {post.qa && post.qa.length > 0 ? (
-                    <div className="space-y-5">
-                      {post.qa.map((item, idx) => (
-                        <div key={idx}>
-                          <p className="text-[#0F5B78] font-bold text-base mb-1.5">
-                            Q{idx + 1}. {item.question}
-                          </p>
-                          <p className="text-gray-700 text-sm leading-relaxed text-justify">
-                            <span className="font-bold text-gray-900">
-                              {post.author?.name ? `${post.author.name}: ` : "A: "}
-                            </span>
-                            {item.answer}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div
-                      className="prose prose-lg max-w-none break-words overflow-hidden text-justify prose-p:text-justify prose-headings:text-[#0F5B78] prose-h3:text-base prose-h3:font-bold prose-h3:mb-2 prose-h3:mt-6 prose-strong:text-gray-900 prose-a:text-[#0F5B78] prose-img:rounded-xl prose-p:text-gray-700 [&_*]:!bg-transparent [&_*]:!text-inherit [&_strong]:!text-gray-900 [&_a]:!text-[#0F5B78]"
-                      dangerouslySetInnerHTML={{ __html: post.content || "" }}
-                    />
-                  )}
-                </div>
-              </article>
-
-              {/* SIDEBAR */}
-              <div className="w-full overflow-hidden">
-                <div className="lg:sticky lg:top-6 space-y-6">
-                  {/* ABOUT THE GUEST */}
-                  {post.author && (
-                    <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-                      <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
-                        About the Guest
-                      </h3>
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="relative w-14 h-14 shrink-0">
-                          <Image
-                            src={post.author.avatarUrl || "/avatar-placeholder.png"}
-                            alt={post.author.name}
-                            fill
-                            className="rounded-full border border-gray-200 object-cover"
-                            sizes="56px"
-                          />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-gray-900">{post.author.name}</p>
-                          {(post.author.role || post.author.company) && (
-                            <p className="text-xs text-gray-500">
-                              {post.author.role}
-                              {post.author.role &&
-                                post.author.company &&
-                                !post.author.role.includes(post.author.company)
-                                ? `, ${post.author.company}`
-                                : ""}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      {post.author.bio && (
-                        <p className="text-sm text-gray-600 leading-relaxed mb-4 text-justify">{post.author.bio}</p>
-                      )}
-                      <a
-                        href={post.author.profileUrl || "/suppliers"}
-                        className="inline-flex items-center justify-center gap-1.5 w-full bg-[#0F5B78] text-white text-sm font-semibold px-4 py-2.5 rounded-lg hover:opacity-90 transition-colors"
-                      >
-                        View Company Profile →
-                      </a>
-                    </div>
-                  )}
-
-                  {/* RELATED INTERVIEWS */}
-                  {relatedPosts.length > 0 && (
-                    <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-                      <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
-                        Related Interviews
-                      </h3>
-                      <div className="space-y-4">
-                        {relatedPosts.map((rp) => {
-                          const rpImage = rp.imageUrl?.startsWith("http")
-                            ? rp.imageUrl
-                            : rp.imageUrl
-                              ? `${process.env.NEXT_PUBLIC_API_URL}${rp.imageUrl}`
-                              : "/placeholder.svg"
-                          const rpDate = rp.publishedAt
-                            ? new Date(rp.publishedAt).toLocaleDateString("en-US", {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                            })
-                            : ""
-                          return (
-                            <a
-                              key={rp.id}
-                              href={`/post/${rp.slug}`}
-                              className="flex items-start gap-3 group"
-                            >
-                              <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 bg-gray-100">
-                                <Image
-                                  src={rp.author?.avatarUrl || rpImage}
-                                  alt={rp.title}
-                                  fill
-                                  className="object-cover"
-                                  sizes="56px"
-                                />
-                              </div>
-                              <div className="min-w-0">
-                                <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-2 group-hover:text-[#0F5B78]">
-                                  {rp.title}
-                                </p>
-                                {rp.author?.name && (
-                                  <p className="text-xs text-gray-500 mt-1">{rp.author.name}</p>
-                                )}
-                                {rpDate && (
-                                  <p className="text-xs text-gray-400">{rpDate}</p>
-                                )}
-                              </div>
-                            </a>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* NEWSLETTER */}
-                  <div className="bg-[#0F5B78]/5 border border-[#0F5B78]/10 rounded-xl p-5">
-                    <h3 className="text-sm font-bold text-gray-900 mb-2">
-                      Stay Updated with Industry Insights
-                    </h3>
-                    <p className="text-xs text-gray-600 mb-4 leading-relaxed">
-                      Subscribe to our newsletter and never miss an update from the manufacturing world.
-                    </p>
-                    <input
-                      type="email"
-                      placeholder="Enter your email address"
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-[#0F5B78]"
-                    />
-                    <button
-                      type="button"
-                      className="w-full flex items-center justify-center gap-2 bg-[#0F5B78] text-white text-sm font-semibold px-4 py-2.5 rounded-lg hover:opacity-90 transition-colors"
-                    >
-                      <Mail size={14} />
-                      Subscribe
-                    </button>
-                  </div>
-
-                  <SupplierAds />
-                </div>
-              </div>
-            </div>
-          </section>
-        </main>
-      </>
-    )
-  }
+  const author = post.author
+  const commentCount = post.comments?.length || 0
 
   /* ================= DEFAULT LAYOUT ================= */
   return (
@@ -641,51 +250,92 @@ export default function PostDetailsPage() {
 
         <section className="bg-white border-b border-gray-200">
           <div className="max-w-[1320px] mx-auto px-4 py-10">
-            {post.category?.name && (
-              <span className="inline-block text-[11px] font-semibold tracking-wide uppercase text-[#003049] bg-[#003049]/5 px-3 py-1 rounded-full mb-4">
-                {post.category.name}
-              </span>
-            )}
+            {/* IMAGE - Full width banner */}
+            <div className="relative w-full bg-gray-100 rounded-2xl overflow-hidden border border-gray-100">
+              <div style={{ aspectRatio: "16/9", width: "100%", position: "relative" }}>
+                <Image
+                  src={imageUrl}
+                  alt={post.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 1200px"
+                  priority
+                />
+              </div>
+            </div>
 
-            <p className="text-gray-500 text-sm mb-3">Published {date}</p>
-
-            <h1 className="text-3xl md:text-4xl font-bold text-[#003049] mb-4 leading-tight max-w-4xl">
+            {/* TITLE */}
+            <h1 className="text-2xl md:text-3xl font-bold text-[#003049] mt-4 mb-2 leading-tight">
               {post.title}
             </h1>
 
-            {post.excerpt && (
-              <p className="text-gray-600 text-lg max-w-3xl mb-8 leading-relaxed">{post.excerpt}</p>
-            )}
-
-            <div className="relative w-full aspect-[16/9] md:aspect-[21/9] bg-gray-100 rounded-2xl overflow-hidden border border-gray-100">
-              <Image
-                src={imageUrl}
-                alt={post.title}
-                fill
-                className="object-contain"
-                sizes="(max-width: 768px) 100vw, 1200px"
-                priority
-              />
+            {/* ONE LINE: Author | Date | Badge | Category | Views | Comments */}
+            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+              {/* Author with avatar */}
+              {author && (
+                <span className="flex items-center gap-1.5 font-medium text-gray-700">
+                  <div className="relative w-5 h-5 rounded-full overflow-hidden">
+                    <Image
+                      src={author.avatarUrl || "/avatar-placeholder.png"}
+                      alt={author.name}
+                      fill
+                      className="object-cover"
+                      sizes="20px"
+                    />
+                  </div>
+                  {author.name}
+                </span>
+              )}
+              
+              <span className="text-gray-300">|</span>
+              
+              {/* Date */}
+              <span className="flex items-center gap-1">
+                <Calendar size={12} />
+                {date}
+              </span>
+              
+              <span className="text-gray-300">|</span>
+              
+              {/* Badge */}
+              {post.badge && (
+                <>
+                  <span className="inline-block text-[9px] font-semibold uppercase text-white bg-[#003049] px-2 py-0.5 rounded-full">
+                    {post.badge}
+                  </span>
+                  <span className="text-gray-300">|</span>
+                </>
+              )}
+              
+              {/* Category */}
+              {post.category?.name && (
+                <span className="text-[#003049] font-medium">
+                  {post.category.name}
+                </span>
+              )}
+              
+              <span className="text-gray-300">|</span>
+              
+              {/* Views */}
+              {typeof post.views === "number" && (
+                <span className="flex items-center gap-1">
+                  <Eye size={12} />
+                  {post.views.toLocaleString()}
+                </span>
+              )}
+              
+              <span className="text-gray-300">|</span>
+              
+              {/* Comments */}
+              <span className="flex items-center gap-1">
+                <MessageCircle size={12} />
+                {commentCount} Comments
+              </span>
             </div>
 
-            {post.author && (
-              <div className="flex items-center gap-3 mt-8 pt-6 border-t border-gray-100">
-                <div className="relative w-11 h-11 shrink-0">
-                  <Image
-                    src={post.author.avatarUrl || "/avatar-placeholder.png"}
-                    alt={post.author.name}
-                    fill
-                    className="rounded-full border border-gray-200 object-cover"
-                    sizes="44px"
-                  />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#003049]">{post.author.name}</p>
-                  {post.author.bio && (
-                    <p className="text-xs text-gray-500 mt-0.5">{post.author.bio}</p>
-                  )}
-                </div>
-              </div>
+            {/* EXCERPT */}
+            {post.excerpt && (
+              <p className="text-gray-600 text-base mt-3 leading-relaxed">{post.excerpt}</p>
             )}
           </div>
         </section>
@@ -693,6 +343,7 @@ export default function PostDetailsPage() {
         <section className="max-w-[1320px] mx-auto px-4 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr] gap-10">
             <article className="max-w-3xl overflow-hidden">
+              {/* CONTENT */}
               <div
                 className="prose prose-lg max-w-none break-words overflow-hidden prose-headings:text-[#003049] prose-a:text-[#003049] prose-img:rounded-xl"
                 dangerouslySetInnerHTML={{ __html: post.content || "" }}
@@ -731,13 +382,57 @@ export default function PostDetailsPage() {
             </article>
 
             <div className="w-full overflow-hidden">
-              <div className="lg:sticky lg:top-6">
+              <div className="lg:sticky lg:top-6 space-y-6">
+                {/* Author Card in Sidebar */}
+                {author && (
+                  <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
+                    <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
+                      About the Author
+                    </h3>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="relative w-14 h-14 shrink-0">
+                        <Image
+                          src={author.avatarUrl || "/avatar-placeholder.png"}
+                          alt={author.name}
+                          fill
+                          className="rounded-full border border-gray-200 object-cover"
+                          sizes="56px"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">{author.name}</p>
+                        {author.role && (
+                          <p className="text-xs text-gray-500">{author.role}</p>
+                        )}
+                        {author.company && (
+                          <p className="text-xs text-gray-500">{author.company}</p>
+                        )}
+                      </div>
+                    </div>
+                    {author.bio && (
+                      <p className="text-sm text-gray-600 leading-relaxed mb-4 text-justify line-clamp-3">
+                        {author.bio}
+                      </p>
+                    )}
+                    {author.email && (
+                      <a
+                        href={`mailto:${author.email}`}
+                        className="inline-flex items-center gap-1.5 text-sm text-[#0F5B78] hover:underline"
+                      >
+                        <Mail size={14} />
+                        {author.email}
+                      </a>
+                    )}
+                  </div>
+                )}
+
                 <SupplierAds />
               </div>
             </div>
           </div>
         </section>
 
+        {/* Related Content */}
         <RelatedPostsCarousel />
       </main>
     </>
