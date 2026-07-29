@@ -45,7 +45,12 @@ type Post = {
   shares?: number
   readTime?: string
   videoCaption?: string
-  qa?: { question: string; answer: string }[]
+  qa?: {
+    question: string
+    answer: string
+    videoTimestamp?: string
+    highlightQuote?: string
+  }[]
 }
 
 /* ================= YOUTUBE HELPERS ================= */
@@ -479,7 +484,7 @@ export default function PostDetailsPage() {
                     <div className="space-y-7">
                       {post.qa.map((item, idx) => (
                         <div key={idx} className="group">
-                          <h3 className="text-[#0F5B78] font-bold text-base md:text-[17px] leading-snug mb-2 flex items-baseline justify-between gap-2">
+                          <h3 className="text-[#0F5B78] font-bold text-base md:text-[17px] leading-snug mb-2 flex items-baseline justify-between">
                             <span>
                               Q{idx + 1}. {item.question}
                             </span>

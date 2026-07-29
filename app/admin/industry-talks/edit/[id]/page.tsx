@@ -329,7 +329,7 @@ export default function EditIndustryTalkPage() {
           linkedinUrl: post.linkedinUrl || "",
           website: post.website || "",
           companyProfileUrl: post.companyProfileUrl || "",
-          shortBio: post.shortBio || "",
+          shortBio: (post.shortBio || "").replace(/<[^>]+>/g, "").trim(),
           introduction: post.introduction || "",
         })
 
@@ -456,6 +456,11 @@ export default function EditIndustryTalkPage() {
     }
     if (form.videoType !== "upload" && !form.videoUrl.trim()) {
       setMessage("Video URL is required for YouTube/Vimeo")
+      return
+    }
+    const bioCharCount = form.shortBio.replace(/<[^>]+>/g, "").length
+    if (bioCharCount > 350) {
+      setMessage(`Short Bio exceeds maximum limit of 350 characters (currently ${bioCharCount} characters)`)
       return
     }
 
@@ -1000,15 +1005,13 @@ export default function EditIndustryTalkPage() {
                   {form.shortBio.replace(/<[^>]+>/g, "").length} / 350 characters
                 </span>
               </div>
-              <ReactQuill
-                theme="snow"
-                value={form.shortBio}
-                onChange={(v) => {
-                  const charCount = v.replace(/<[^>]+>/g, "").length
-                  if (charCount <= 350) {
-                    set("shortBio", v)
-                  }
-                }}
+              <textarea
+                rows={3}
+                maxLength={350}
+                value={form.shortBio.replace(/<[^>]+>/g, "")}
+                onChange={(e) => set("shortBio", e.target.value)}
+                placeholder="Enter short bio (Max 350 characters)..."
+                className={`${inputClass} resize-y`}
               />
               {form.shortBio.replace(/<[^>]+>/g, "").length >= 350 && (
                 <p className="text-[11px] text-amber-600 font-medium mt-1">

@@ -45,7 +45,12 @@ type Post = {
   shares?: number
   readTime?: string
   videoCaption?: string
-  qa?: { question: string; answer: string }[]
+  qa?: {
+    question: string
+    answer: string
+    videoTimestamp?: string
+    highlightQuote?: string
+  }[]
 }
 
 /* ================= YOUTUBE HELPERS ================= */
