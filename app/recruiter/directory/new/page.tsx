@@ -26,6 +26,19 @@ function slugify(text: string) {
     .replace(/(^-|-$)/g, "");
 }
 
+// Counts how many gallery entries actually have an image set (i.e. would
+// survive the cleanGallery() filter below). Used for validation/limit
+// messaging around productGallery / companyGallery / factoryGallery.
+// NOTE: this was previously called from submit() without being defined
+// anywhere in the file, which threw "countGalleryItems is not defined"
+// and made every submission fail. Defining it here fixes that crash.
+function countGalleryItems(gallery: any[]): number {
+  if (!Array.isArray(gallery)) return 0;
+  return gallery.filter(
+    (item) => item && typeof item.image === "string" && item.image.trim().length > 0
+  ).length;
+}
+
 const GalleryItemSchema = Yup.object({
   image: Yup.string().url().required("Image URL is required"),
   name: Yup.string(),
@@ -258,7 +271,6 @@ export default function AddDirectoryPage() {
   };
 
   // Generic handler for plain string-array file/image uploads
-  // (companyBrochure, certifications, manufacturingCapabilityImages, machineryImages)
   const handleArrayFileUpload = async (
     file: File,
     setFieldValue: any,
@@ -273,19 +285,41 @@ export default function AddDirectoryPage() {
 
     try {
       const formData = new FormData();
-      formData.append("image", file);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
-        method: "POST",
-        body: formData,
-      });
+      // Determine if this is a document or image based on field name
+      const documentFields = ["companyBrochure", "certifications"];
+      const isDocument = documentFields.includes(field);
 
-      if (!res.ok) throw new Error("File upload failed");
+      if (isDocument) {
+        formData.append("document", file);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload/document`, {
+          method: "POST",
+          body: formData,
+        });
 
-      const data = await res.json();
-      const arr = [...(values[field] || [])];
-      arr[index] = data.imageUrl;
-      setFieldValue(field, arr);
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.error || "Document upload failed");
+        }
+
+        const data = await res.json();
+        const arr = [...(values[field] || [])];
+        arr[index] = data.documentUrl;
+        setFieldValue(field, arr);
+      } else {
+        formData.append("image", file);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) throw new Error("Image upload failed");
+
+        const data = await res.json();
+        const arr = [...(values[field] || [])];
+        arr[index] = data.imageUrl;
+        setFieldValue(field, arr);
+      }
     } catch (err: any) {
       setUploadError(err.message);
     } finally {
@@ -391,6 +425,24 @@ export default function AddDirectoryPage() {
         if (!Array.isArray(gallery)) return [];
         return gallery.filter(item => item.image && item.image.trim().length > 0);
       };
+
+      // Sanity-check gallery counts against the plan limits before submitting,
+      // so we fail fast with a clear message instead of relying purely on the
+      // server's error response.
+      const galleryLimitChecks: Array<{ field: string; label: string; limit: number | null }> = [
+        { field: "productGallery", label: "Product Gallery", limit: getFeatureLimit(profileLimits?.productImages) },
+        { field: "companyGallery", label: "Company Gallery", limit: getFeatureLimit(profileLimits?.galleryImages) },
+        { field: "factoryGallery", label: "Factory Gallery", limit: getFeatureLimit(profileLimits?.factoryImages) },
+      ];
+
+      for (const check of galleryLimitChecks) {
+        const count = countGalleryItems(values[check.field]);
+        if (check.limit !== null && count > check.limit) {
+          throw new Error(
+            `${check.label} has ${count} images, but your plan allows up to ${check.limit}. Please remove some images before submitting.`
+          );
+        }
+      }
 
       const payload = {
         ...values,
@@ -865,6 +917,8 @@ export default function AddDirectoryPage() {
                                 label={`Product Catalogue ${i + 1}`}
                                 value={url}
                                 onUpload={(file) => handleCatalogueUpload(file, setFieldValue, values, i)}
+                                uploadType="document"
+                                accept=".pdf,.doc,.docx"
                               />
                               <button type="button" onClick={() => remove(i)}>
                                 ✕ Remove
@@ -936,7 +990,7 @@ export default function AddDirectoryPage() {
               </Section>
 
               {/* VIDEO GALLERY - GATED BY PACKAGE */}
-              <Section title="YouTube Video Links">
+              <Section title="Product YouTube Video Links">
                 <PlanGatedSection
                   allowed={isFeatureAllowed(profileLimits?.productVideos)}
                   upgradeMessage="Product Videos are available on Basic plan and above."
@@ -1230,6 +1284,8 @@ export default function AddDirectoryPage() {
                               onUpload={(file) =>
                                 handleArrayFileUpload(file, setFieldValue, values, "companyBrochure", i)
                               }
+                              uploadType="document"
+                              accept=".pdf,.doc,.docx"
                             />
                             {i > 0 && (
                               <button type="button" onClick={() => remove(i)}>
@@ -1266,6 +1322,8 @@ export default function AddDirectoryPage() {
                               onUpload={(file) =>
                                 handleArrayFileUpload(file, setFieldValue, values, "certifications", i)
                               }
+                              uploadType="document"
+                              accept=".pdf,.doc,.docx"
                             />
                             {i > 0 && (
                               <button type="button" onClick={() => remove(i)}>
@@ -1483,6 +1541,8 @@ export default function AddDirectoryPage() {
                                         setUploadingManufacturingImage
                                       )
                                     }
+                                    uploadType="image"
+                                    accept="image/*"
                                   />
                                   <button
                                     type="button"
@@ -1609,6 +1669,8 @@ export default function AddDirectoryPage() {
                                         setUploadingMachineryImage
                                       )
                                     }
+                                    uploadType="image"
+                                    accept="image/*"
                                   />
                                   <button
                                     type="button"

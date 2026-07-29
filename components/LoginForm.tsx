@@ -1,12 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Eye, EyeOff } from "lucide-react"
 
+function setTokenCookie(token: string) {
+  const maxAge = 60 * 60 * 24 * 7 // 7 days — match your JWT expiry
+  const secure = typeof window !== "undefined" && window.location.protocol === "https:" ? "; Secure" : ""
+  document.cookie = `token=${token}; path=/; max-age=${maxAge}; SameSite=Lax${secure}`
+}
+
 export default function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -36,44 +43,58 @@ export default function LoginForm() {
         return
       }
 
+      // Keep localStorage for existing client-side reads...
       localStorage.setItem("token", data.token)
       localStorage.setItem("user", JSON.stringify(data.user))
-      // ✅ FIX: authController.login also returns `permissions` (the
-      // resolved RBAC key list) alongside `token`/`user` — persist it
-      // so permission-gated UI (sidebar links, buttons, route guards)
-      // doesn't need an extra /me round trip right after login.
       localStorage.setItem("permissions", JSON.stringify(data.permissions || []))
       window.dispatchEvent(new Event("userChanged"))
 
-      const user = data.user
+      // ...and ALSO set a real cookie, since Next.js server components
+      // (e.g. app/supplier/[slug]/page.tsx) read auth via cookies(),
+      // not localStorage. Without this, isLoggedIn is always false server-side.
+      setTokenCookie(data.token)
 
-      // ✅ FIX: `role` can also come back as "sub_admin" or "admin" from
-      // the backend (User.role) — the old switch only handled
-      // admin/recruiter/candidate, so a sub_admin login succeeded but
-      // silently never redirected anywhere. Both admin-side roles go
-      // to the admin dashboard; RBAC there is enforced by `permissions`.
+      const user = data.user
+      const redirectTo = searchParams.get("redirect")
+      const requiredRole = searchParams.get("role")
+
+      // If we were sent here specifically to log in as a candidate
+      // (e.g. clicking "Connect" on a supplier page) but this account
+      // isn't a candidate, don't silently redirect somewhere unrelated —
+      // tell them why.
+      if (requiredRole && user.role !== requiredRole) {
+        setError(
+          `This action requires a ${requiredRole} account. You're logged in as ${user.role}.`
+        )
+        return
+      }
+
+      if (redirectTo) {
+        // Hard reload (not router.push) so the server re-reads the
+        // fresh cookie instead of serving a cached RSC payload.
+        window.location.href = redirectTo
+        return
+      }
+
       if (user.role === "admin" || user.role === "sub_admin") {
-        router.push("/admin/dashboard")
+        window.location.href = "/admin/dashboard"
       } else if (user.role === "recruiter") {
-        // Recruiters still need package selection
         if (!user.packageSelected) {
-          router.push("/packages?from=login")
+          window.location.href = "/packages?from=login"
         } else if (!user.isOnboarded) {
-          router.push("/recruiter/onboarding")
+          window.location.href = "/recruiter/onboarding"
         } else {
-          router.push("/recruiter/dashboard")
+          window.location.href = "/recruiter/dashboard"
         }
       } else if (user.role === "candidate") {
-        // Candidates skip package selection, go directly to onboarding or profile
         if (!user.isOnboarded) {
-          router.push("/candidate/onboarding")
+          window.location.href = "/candidate/onboarding"
         } else {
-          const candUsername = user.username || user.email?.split("@")[0] || "gopinath2322002";
-          router.push(`/candidate/${candUsername}`)
+          const candUsername = user.username || user.email?.split("@")[0] || "gopinath2322002"
+          window.location.href = `/candidate/${candUsername}`
         }
       } else {
-        // Unknown/future role — don't leave the user stranded on the login page.
-        router.push("/")
+        window.location.href = "/"
       }
     } catch (err) {
       setError("Something went wrong. Try again.")
