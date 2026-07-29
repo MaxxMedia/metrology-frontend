@@ -1,9 +1,4 @@
-import IndustryTalkListing, { type IndustryTalk } from "@/components/IndustryTalkListing"
-
-type IndustryTalksResponse = {
-  items?: IndustryTalk[]
-  data?: IndustryTalk[]
-}
+import IndustryTalkListing from "@/components/IndustryTalkListing"
 
 export default async function IndustryTalksPage() {
   const res = await fetch(
@@ -15,12 +10,16 @@ export default async function IndustryTalksPage() {
     throw new Error(`Failed to fetch industry talks: ${res.status}`)
   }
 
-  const data: IndustryTalksResponse = await res.json()
-  const posts = Array.isArray(data.items)
-    ? data.items
-    : Array.isArray(data.data)
-    ? data.data
-    : []
+  const response = await res.json()
+  
+  // The data now includes the Industry relation from the backend
+  const talks = response?.data || response?.items || []
+
+  // Map the data to include industryName for easier access
+  const posts = talks.map((talk: any) => ({
+    ...talk,
+    industryName: talk.industry?.name || null
+  }))
 
   return (
     <main className="bg-white">

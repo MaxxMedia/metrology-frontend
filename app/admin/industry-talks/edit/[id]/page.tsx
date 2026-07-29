@@ -283,78 +283,78 @@ export default function EditIndustryTalkPage() {
 
   useEffect(() => {
     async function loadData() {
-      if (!id) return
+  if (!id) return
 
-      try {
-        const [postRes, industriesRes, suppliersRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/${id}`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/industries`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/suppliers?limit=1000`),
-        ])
+  try {
+    const [postRes, industriesRes, suppliersRes] = await Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/${id}`),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/industries`),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/suppliers?limit=1000`),
+    ])
 
-        const postData = await postRes.json()
-        const industriesData = await industriesRes.json()
-        const suppliersData = await suppliersRes.json()
+    const postData = await postRes.json()
+    const industriesData = await industriesRes.json()
+    const suppliersData = await suppliersRes.json()
 
-        setIndustries(industriesData.data || industriesData || [])
-        setSuppliers(suppliersData.data || suppliersData || [])
+    // Handle different response formats
+    setIndustries(Array.isArray(industriesData) ? industriesData : (industriesData.data || []))
+    setSuppliers(Array.isArray(suppliersData) ? suppliersData : (suppliersData.data || []))
 
-        const post = postData.data || postData
+    const post = postData.data || postData
 
-        setForm({
-          title: post.title || "",
-          slug: post.slug || "",
-          industryIds: post.industryId != null ? [post.industryId] : [],
-          tags: Array.isArray(post.tags) ? post.tags : [],
-          interviewDate: (post.interviewDate || post.publishedAt || "").toString().slice(0, 10),
-          readingTime: post.readingTime != null ? String(post.readingTime) : "",
-          status: post.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT",
-          featured: !!post.featured,
-          trending: !!post.trending,
-          homepage: !!post.homepage,
-          bannerImage: post.bannerImage || "",
-          videoType: (post.videoType as VideoType) || "youtube",
-          videoUrl: post.videoUrl || "",
-          uploadedVideo: post.uploadedVideo || "",
-          thumbnailUrl: post.thumbnailUrl || "",
-          duration: formatDurationForInput(post.duration),
-          autoplay: !!post.autoplay,
-          showControls: post.showControls ?? true,
-          // Backend/Prisma field is `profileImage`, not `guestPhoto`.
-          guestPhoto: post.profileImage || post.guestPhoto || "",
-          guestName: post.guestName || "",
-          designation: post.designation || "",
-          companyName: post.companyName || "",
-          companyLogo: post.companyLogo || "",
-          linkedinUrl: post.linkedinUrl || "",
-          website: post.website || "",
-          companyProfileUrl: post.companyProfileUrl || "",
-          shortBio: (post.shortBio || "").replace(/<[^>]+>/g, "").trim(),
-          introduction: post.introduction || "",
-        })
+    setForm({
+      title: post.title || "",
+      slug: post.slug || "",
+      industryIds: post.industryId != null ? [post.industryId] : [],
+      tags: Array.isArray(post.tags) ? post.tags : [],
+      interviewDate: (post.interviewDate || post.publishedAt || "").toString().slice(0, 10),
+      readingTime: post.readingTime != null ? String(post.readingTime) : "",
+      status: post.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT",
+      featured: !!post.featured,
+      trending: !!post.trending,
+      homepage: !!post.homepage,
+      bannerImage: post.bannerImage || "",
+      videoType: (post.videoType as VideoType) || "youtube",
+      videoUrl: post.videoUrl || "",
+      uploadedVideo: post.uploadedVideo || "",
+      thumbnailUrl: post.thumbnailUrl || "",
+      duration: formatDurationForInput(post.duration),
+      autoplay: !!post.autoplay,
+      showControls: post.showControls ?? true,
+      guestPhoto: post.profileImage || post.guestPhoto || "",
+      guestName: post.guestName || "",
+      designation: post.designation || "",
+      companyName: post.companyName || "",
+      companyLogo: post.companyLogo || "",
+      linkedinUrl: post.linkedinUrl || "",
+      website: post.website || "",
+      companyProfileUrl: post.companyProfileUrl || "",
+      shortBio: (post.shortBio || "").replace(/<[^>]+>/g, "").trim(),
+      introduction: post.introduction || "",
+    })
 
-        const loadedQAs: QA[] =
-          Array.isArray(post.questions) && post.questions.length > 0
-            ? [...post.questions]
-                .sort((a: any, b: any) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
-                .map((q: any, i: number) => ({
-                  id: q.id?.toString() || crypto.randomUUID(),
-                  question: q.question || "",
-                  answer: q.answer || "",
-                  videoTimestamp: q.videoTimestamp || "",
-                  highlightQuote: q.highlightQuote || "",
-                  displayOrder: q.displayOrder ?? i + 1,
-                }))
-            : [newQA(1)]
+    const loadedQAs: QA[] =
+      Array.isArray(post.questions) && post.questions.length > 0
+        ? [...post.questions]
+            .sort((a: any, b: any) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+            .map((q: any, i: number) => ({
+              id: q.id?.toString() || crypto.randomUUID(),
+              question: q.question || "",
+              answer: q.answer || "",
+              videoTimestamp: q.videoTimestamp || "",
+              highlightQuote: q.highlightQuote || "",
+              displayOrder: q.displayOrder ?? i + 1,
+            }))
+        : [newQA(1)]
 
-        setQAs(loadedQAs)
-      } catch (err) {
-        console.error(err)
-        setMessage("Failed to load interview data")
-      } finally {
-        setInitializing(false)
-      }
-    }
+    setQAs(loadedQAs)
+  } catch (err) {
+    console.error(err)
+    setMessage("Failed to load interview data")
+  } finally {
+    setInitializing(false)
+  }
+}
 
     loadData()
   }, [id])

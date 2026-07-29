@@ -264,23 +264,26 @@ export default function CreateIndustryTalkPage() {
   const [initializing, setInitializing] = useState(true)
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const [indRes, supRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/industries`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/suppliers?limit=1000`),
-        ])
-        const indData = await indRes.json()
-        const supData = await supRes.json()
+   async function loadData() {
+  try {
+    const [indRes, supRes] = await Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/industries`),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/suppliers?limit=1000`),
+    ])
+    
+    // The industries API returns the array directly, not { data: [...] }
+    const indData = await indRes.json()
+    const supData = await supRes.json()
 
-        setIndustries(indData.data || indData || [])
-        setSuppliers(supData.data || supData || [])
-      } catch (err) {
-        console.error("Initialization error:", err)
-      } finally {
-        setInitializing(false)
-      }
-    }
+    // Check if the response has a data property, otherwise use the response directly
+    setIndustries(Array.isArray(indData) ? indData : (indData.data || []))
+    setSuppliers(Array.isArray(supData) ? supData : (supData.data || []))
+  } catch (err) {
+    console.error("Initialization error:", err)
+  } finally {
+    setInitializing(false)
+  }
+}
     loadData()
   }, [])
 
@@ -955,139 +958,139 @@ export default function CreateIndustryTalkPage() {
         </div>
 
         {/* ============ 6. QUESTIONS & ANSWERS (full width) ============ */}
-        <div className="mt-5">
-          <SectionCard
-            number={6}
-            title="Interview Questions & Answers"
-            headerRight={
-              <button
-                type="button"
-                onClick={addQA}
-                className="flex items-center gap-1.5 bg-[#0F5B78] text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:opacity-90"
-              >
-                <Plus size={14} />
-                Add Question
-              </button>
-            }
-          >
-            <div className="space-y-2">
-              {qas.map((qa, idx) => {
-                const isOpen = openQAId === qa.id
-                return (
-                  <div key={qa.id} className="border border-gray-100 rounded-lg">
-                    <button
-                      type="button"
-                      onClick={() => setOpenQAId(isOpen ? null : qa.id)}
-                      className="w-full flex items-center justify-between px-4 py-3 text-left"
-                    >
-                      <span className="text-sm font-semibold text-gray-800 truncate pr-4">
-                        Q{idx + 1}.{" "}
-                        {qa.question || (
-                          <span className="text-gray-400 font-normal">Untitled question</span>
-                        )}
-                      </span>
-                      <div className="flex items-center gap-2 shrink-0 text-gray-400">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            moveQA(qa.id, -1)
-                          }}
-                          className="hover:text-gray-700"
-                          aria-label="Move up"
-                        >
-                          <ArrowUp size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            moveQA(qa.id, 1)
-                          }}
-                          className="hover:text-gray-700"
-                          aria-label="Move down"
-                        >
-                          <ArrowDown size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            removeQA(qa.id)
-                          }}
-                          className="hover:text-[#B30F24]"
-                          aria-label="Delete question"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </button>
-
-                    {isOpen && (
-                      <div className="px-4 pb-4 pt-1 space-y-3 border-t border-gray-100">
-                        <Field label="Question" required>
-                          <input
-                            value={qa.question}
-                            onChange={(e) => updateQA(qa.id, { question: e.target.value })}
-                            placeholder="e.g. Sustainability is a major focus today. What steps is your organization taking?"
-                            className={inputClass}
-                          />
-                        </Field>
-
-                        <Field label="Answer" required>
-                          <ReactQuill
-                            theme="snow"
-                            value={qa.answer}
-                            onChange={(v) => updateQA(qa.id, { answer: v })}
-                          />
-                        </Field>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                          <Field label="Video Timestamp (mm:ss)">
-                            <input
-                              value={qa.videoTimestamp}
-                              onChange={(e) =>
-                                updateQA(qa.id, { videoTimestamp: e.target.value })
-                              }
-                              placeholder="07:15"
-                              className={inputClass}
-                            />
-                          </Field>
-                          <Field label="Highlight Quote (Optional)">
-                            <input
-                              value={qa.highlightQuote}
-                              onChange={(e) =>
-                                updateQA(qa.id, { highlightQuote: e.target.value })
-                              }
-                              placeholder="A short pull-quote from the answer"
-                              className={inputClass}
-                            />
-                          </Field>
-                          <Field label="Display Order">
-                            <input
-                              type="number"
-                              value={qa.displayOrder}
-                              onChange={(e) =>
-                                updateQA(qa.id, { displayOrder: Number(e.target.value) })
-                              }
-                              className={inputClass}
-                            />
-                          </Field>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-
-              {qas.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-6">
-                  No questions yet — click "Add Question" to start.
-                </p>
-              )}
+<div className="mt-5">
+  <SectionCard
+    number={6}
+    title="Interview Questions & Answers"
+    headerRight={
+      <button
+        type="button"
+        onClick={addQA}
+        className="flex items-center gap-1.5 bg-[#0F5B78] text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:opacity-90"
+      >
+        <Plus size={14} />
+        Add Question
+      </button>
+    }
+  >
+    <div className="space-y-2">
+      {qas.map((qa, idx) => {
+        const isOpen = openQAId === qa.id
+        return (
+          <div key={qa.id} className="border border-gray-100 rounded-lg">
+            {/* ✅ Changed from <button> to <div> */}
+            <div
+              onClick={() => setOpenQAId(isOpen ? null : qa.id)}
+              className="w-full flex items-center justify-between px-4 py-3 text-left cursor-pointer hover:bg-gray-50 rounded-lg"
+            >
+              <span className="text-sm font-semibold text-gray-800 truncate pr-4">
+                Q{idx + 1}.{" "}
+                {qa.question || (
+                  <span className="text-gray-400 font-normal">Untitled question</span>
+                )}
+              </span>
+              <div className="flex items-center gap-2 shrink-0 text-gray-400">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    moveQA(qa.id, -1)
+                  }}
+                  className="hover:text-gray-700 p-1 rounded"
+                  aria-label="Move up"
+                >
+                  <ArrowUp size={14} />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    moveQA(qa.id, 1)
+                  }}
+                  className="hover:text-gray-700 p-1 rounded"
+                  aria-label="Move down"
+                >
+                  <ArrowDown size={14} />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    removeQA(qa.id)
+                  }}
+                  className="hover:text-[#B30F24] p-1 rounded"
+                  aria-label="Delete question"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             </div>
-          </SectionCard>
-        </div>
+
+            {isOpen && (
+              <div className="px-4 pb-4 pt-1 space-y-3 border-t border-gray-100">
+                <Field label="Question" required>
+                  <input
+                    value={qa.question}
+                    onChange={(e) => updateQA(qa.id, { question: e.target.value })}
+                    placeholder="e.g. Sustainability is a major focus today. What steps is your organization taking?"
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field label="Answer" required>
+                  <ReactQuill
+                    theme="snow"
+                    value={qa.answer}
+                    onChange={(v) => updateQA(qa.id, { answer: v })}
+                  />
+                </Field>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <Field label="Video Timestamp (mm:ss)">
+                    <input
+                      value={qa.videoTimestamp}
+                      onChange={(e) =>
+                        updateQA(qa.id, { videoTimestamp: e.target.value })
+                      }
+                      placeholder="07:15"
+                      className={inputClass}
+                    />
+                  </Field>
+                  <Field label="Highlight Quote (Optional)">
+                    <input
+                      value={qa.highlightQuote}
+                      onChange={(e) =>
+                        updateQA(qa.id, { highlightQuote: e.target.value })
+                      }
+                      placeholder="A short pull-quote from the answer"
+                      className={inputClass}
+                    />
+                  </Field>
+                  <Field label="Display Order">
+                    <input
+                      type="number"
+                      value={qa.displayOrder}
+                      onChange={(e) =>
+                        updateQA(qa.id, { displayOrder: Number(e.target.value) })
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      })}
+
+      {qas.length === 0 && (
+        <p className="text-sm text-gray-400 text-center py-6">
+          No questions yet — click "Add Question" to start.
+        </p>
+      )}
+    </div>
+  </SectionCard>
+</div>
       </form>
     </div>
   )

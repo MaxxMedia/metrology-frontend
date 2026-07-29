@@ -29,6 +29,12 @@ type IndustryTalkListItem = {
   bannerImage?: string
   publishedAt?: string
   views: number
+  status?: string
+  featured?: boolean
+  trending?: boolean
+  homepage?: boolean
+  guestName?: string
+  companyName?: string
 }
 
 const PAGE_SIZE = 10
@@ -59,14 +65,28 @@ export default function IndustryTalksPage() {
       setLoading(true)
 
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks?page=${page}&limit=${PAGE_SIZE}&search=${debouncedSearch}`
-        )
+        const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks`)
+        url.searchParams.set('page', String(page))
+        url.searchParams.set('limit', String(PAGE_SIZE))
+        if (debouncedSearch) {
+          url.searchParams.set('search', debouncedSearch)
+        }
+
+        const res = await fetch(url.toString())
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
+        }
 
         const json = await res.json()
 
-        setTalks(json.items || [])
-        setTotal(json.total || 0)
+        // ✅ Fix: Handle the actual response format
+        // The API returns { success: true, data: [...], meta: { ... } }
+        const talksData = json.data || json.items || []
+        const totalCount = json.meta?.total || json.total || talksData.length
+
+        setTalks(talksData)
+        setTotal(totalCount)
       } catch (error) {
         console.error("Failed to load industry talks:", error)
         setTalks([])
@@ -83,19 +103,32 @@ export default function IndustryTalksPage() {
 
   async function handleDelete(id: number) {
     const token = localStorage.getItem("token")
-    if (!token) return alert("Unauthorized")
+    if (!token) {
+      alert("Please login first")
+      return
+    }
 
     if (!confirm("Delete this industry talk?")) return
 
-    await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/${id}`,
-      {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    )
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/${id}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
 
-    setTalks((t) => t.filter((x) => x.id !== id))
+      if (!res.ok) {
+        throw new Error(`Failed to delete: ${res.status}`)
+      }
+
+      setTalks((t) => t.filter((x) => x.id !== id))
+      setTotal((t) => t - 1)
+    } catch (error) {
+      console.error("Delete error:", error)
+      alert("Failed to delete industry talk")
+    }
   }
 
   /* ================= TABLE ================= */
@@ -118,11 +151,11 @@ export default function IndustryTalksPage() {
             width={64}
             height={64}
             alt=""
-            className="rounded object-cover"
+            className="rounded object-cover w-16 h-16"
           />
         ) : (
           <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
-            <FileText className="text-gray-400" />
+            <FileText className="text-gray-400" size={24} />
           </div>
         )
       },
@@ -138,8 +171,32 @@ export default function IndustryTalksPage() {
           <p className="text-xs text-gray-500">
             /{info.row.original.slug}
           </p>
+          {info.row.original.guestName && (
+            <p className="text-xs text-gray-400 mt-1">
+              {info.row.original.guestName}
+              {info.row.original.companyName && ` • ${info.row.original.companyName}`}
+            </p>
+          )}
         </div>
       ),
+    }),
+
+    columnHelper.accessor("status", {
+      header: "Status",
+      cell: (info) => {
+        const status = info.getValue()
+        return (
+          <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+            status === 'PUBLISHED' 
+              ? 'bg-green-100 text-green-700' 
+              : status === 'DRAFT' 
+                ? 'bg-yellow-100 text-yellow-700'
+                : 'bg-gray-100 text-gray-700'
+          }`}>
+            {status || 'DRAFT'}
+          </span>
+        )
+      },
     }),
 
     columnHelper.accessor("views", {
@@ -147,7 +204,7 @@ export default function IndustryTalksPage() {
       cell: (info) => (
         <div className="flex items-center gap-1 text-gray-700 font-medium">
           <Eye size={14} className="text-gray-400" />
-          {info.getValue()}
+          {info.getValue() || 0}
         </div>
       ),
     }),
@@ -172,14 +229,16 @@ export default function IndustryTalksPage() {
             onClick={() =>
               router.push(`/admin/industry-talks/edit/${info.row.original.id}`)
             }
-            className="p-2 bg-blue-50 text-blue-600 rounded"
+            className="p-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors"
+            title="Edit"
           >
             <Edit size={16} />
           </button>
 
           <button
             onClick={() => handleDelete(info.row.original.id)}
-            className="p-2 bg-red-50 text-red-600 rounded"
+            className="p-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
+            title="Delete"
           >
             <Trash2 size={16} />
           </button>
@@ -194,12 +253,12 @@ export default function IndustryTalksPage() {
     getCoreRowModel: getCoreRowModel(),
   })
 
-  const totalPages = Math.ceil(total / PAGE_SIZE)
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
-  if (loading) {
+  if (loading && talks.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-[#0F5B78] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -209,14 +268,19 @@ export default function IndustryTalksPage() {
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* HEADER */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">
-            🎤 Industry Talks
-          </h1>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              🎤 Industry Talks
+            </h1>
+            <p className="text-sm text-gray-500">
+              Manage CEO interviews and industry conversations
+            </p>
+          </div>
 
           <button
             onClick={() => router.push("/admin/industry-talks/create")}
-            className="bg-indigo-600 text-white px-4 py-2 rounded flex items-center gap-2"
+            className="bg-[#0F5B78] text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:opacity-90 transition-opacity"
           >
             <Plus size={18} /> New Industry Talk
           </button>
@@ -224,77 +288,115 @@ export default function IndustryTalksPage() {
 
         {/* TABLE */}
         <div className="bg-white rounded-xl shadow overflow-hidden">
-          <div className="p-4 border-b">
-            <div className="relative max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <div className="p-4 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search industry talks..."
-                className="pl-10 pr-4 py-2 border rounded w-full"
+                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-[#0F5B78]/40 focus:border-[#0F5B78]"
               />
             </div>
+            <span className="text-sm text-gray-500 whitespace-nowrap">
+              {total} {total === 1 ? 'talk' : 'talks'} found
+            </span>
           </div>
 
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              {table.getHeaderGroups().map((hg) => (
-                <tr key={hg.id}>
-                  {hg.headers.map((h) => (
-                    <th
-                      key={h.id}
-                      className="px-6 py-3 text-left text-xs font-semibold text-gray-600"
-                    >
-                      {flexRender(h.column.columnDef.header, h.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                {table.getHeaderGroups().map((hg) => (
+                  <tr key={hg.id}>
+                    {hg.headers.map((h) => (
+                      <th
+                        key={h.id}
+                        className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                      >
+                        {flexRender(h.column.columnDef.header, h.getContext())}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
 
-            <tbody className="divide-y">
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-6 py-4">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              <tbody className="divide-y divide-gray-200">
+                {table.getRowModel().rows.map((row) => (
+                  <tr key={row.id} className="hover:bg-gray-50 transition-colors">
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-6 py-4">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {talks.length === 0 && (
-            <p className="text-center text-gray-400 py-10 text-sm">
-              No industry talks found.
-            </p>
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-sm">
+                {search ? 'No talks match your search' : 'No industry talks found. Create your first one!'}
+              </p>
+            </div>
           )}
 
           {/* PAGINATION */}
-          <div className="p-4 border-t flex justify-between items-center">
-            <span className="text-sm text-gray-600">
-              Page {page} of {totalPages || 1}
-            </span>
+          {talks.length > 0 && (
+            <div className="px-6 py-4 border-t flex flex-col sm:flex-row justify-between items-center gap-4">
+              <span className="text-sm text-gray-600">
+                Showing page {page} of {totalPages}
+              </span>
 
-            <div className="flex gap-2">
-              <button
-                disabled={page === 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="p-2 border rounded disabled:opacity-50"
-              >
-                <ChevronLeft />
-              </button>
+              <div className="flex gap-2">
+                <button
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="px-3 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                >
+                  <ChevronLeft size={18} />
+                </button>
 
-              <button
-                disabled={page === totalPages || totalPages === 0}
-                onClick={() => setPage((p) => p + 1)}
-                className="p-2 border rounded disabled:opacity-50"
-              >
-                <ChevronRight />
-              </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum: number
+                    if (totalPages <= 5) {
+                      pageNum = i + 1
+                    } else if (page <= 3) {
+                      pageNum = i + 1
+                    } else if (page >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i
+                    } else {
+                      pageNum = page - 2 + i
+                    }
+                    
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setPage(pageNum)}
+                        className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                          pageNum === page
+                            ? 'bg-[#0F5B78] text-white'
+                            : 'text-gray-600 hover:bg-gray-100'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <button
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  className="px-3 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
