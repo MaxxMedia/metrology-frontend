@@ -478,6 +478,9 @@ export default function EditIndustryTalkPage() {
     fd.append("interviewDate", form.interviewDate)
     if (form.readingTime) fd.append("readingTime", form.readingTime)
     fd.append("status", status)
+    if (status === "PUBLISHED") {
+      fd.append("publishedAt", form.interviewDate ? new Date(form.interviewDate).toISOString() : new Date().toISOString())
+    }
     fd.append("featured", String(form.featured))
     fd.append("trending", String(form.trending))
     fd.append("homepage", String(form.homepage))
@@ -599,6 +602,13 @@ export default function EditIndustryTalkPage() {
             </button>
             <button
               type="button"
+              onClick={() => {
+                if (form.slug) {
+                  window.open(`/industry-talks/${form.slug}`, "_blank")
+                } else {
+                  alert("Please enter a title or slug to preview")
+                }
+              }}
               className="flex items-center gap-1.5 border border-gray-200 text-gray-700 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-50"
             >
               <Eye size={14} />

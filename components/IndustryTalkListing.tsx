@@ -185,6 +185,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
           {/* LEFT COLUMN */}
           <div className="space-y-5">
             {posts.map((post, i) => {
+              const talkSlug = post.slug || post.id
               const imageUrl =
                 post.bannerImage?.startsWith("http")
                   ? post.bannerImage
@@ -213,7 +214,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                   className="relative bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-5"
                 >
                   <Link
-                    href={`/industry-talks/${post.slug}`}
+                    href={`/industry-talks/${talkSlug}`}
                     className="relative w-[140px] md:w-35 h-[110px] shrink-0 rounded-lg overflow-hidden bg-gray-100"
                   >
                     <Image
@@ -243,7 +244,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                     </div>
 
                     <h2 className="text-lg font-bold text-gray-900 leading-snug mb-1.5 hover:text-[#0F5B78] transition-colors">
-                      <Link href={`/industry-talks/${post.slug}`}>{post.title}</Link>
+                      <Link href={`/industry-talks/${talkSlug}`}>{post.title}</Link>
                     </h2>
 
                     {post.guestName && (
@@ -271,7 +272,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                     </div>
 
                     <Link
-                      href={`/industry-talks/${post.slug}`}
+                      href={`/industry-talks/${talkSlug}`}
                       className="flex items-center gap-1.5 text-[#0F5B78] font-semibold text-sm whitespace-nowrap"
                     >
                       View
@@ -391,7 +392,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                     return (
                       <Link
                         key={post.id}
-                        href={`/industry-talks/${post.slug}`}
+                        href={`/industry-talks/${post.slug || post.id}`}
                         className="flex items-center gap-3 group"
                       >
                         <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 bg-gray-100">
@@ -411,8 +412,8 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                   href="#"
                   className="flex items-center gap-1.5 text-[#0F5B78] text-sm font-semibold mt-4 hover:underline"
                 >
-                  View All Popular Talks
-                  <ArrowRight size={14} />
+                  {/* View All Popular Talks */}
+                  {/* <ArrowRight size={14} /> */}
                 </Link>
               </div>
             )}

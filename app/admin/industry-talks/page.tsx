@@ -26,10 +26,12 @@ type IndustryTalkListItem = {
   id: number
   title: string
   slug: string
+  status?: string
   bannerImage?: string
   publishedAt?: string
+  interviewDate?: string
+  createdAt?: string
   views: number
-  status?: string
   featured?: boolean
   trending?: boolean
   homepage?: boolean
@@ -65,24 +67,51 @@ export default function IndustryTalksPage() {
       setLoading(true)
 
       try {
-        const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks`)
-        url.searchParams.set('page', String(page))
-        url.searchParams.set('limit', String(PAGE_SIZE))
-        if (debouncedSearch) {
-          url.searchParams.set('search', debouncedSearch)
+        const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "")
+        const searchParam = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ""
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+
+        const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
+
+        const urlsToTry = [
+          { url: `${baseUrl}/api/industry-talks?page=${page}&limit=${PAGE_SIZE}${searchParam}`, headers: authHeaders },
+          { url: `${baseUrl}/api/industry-talks?limit=100`, headers: {} },
+          { url: `${baseUrl}/api/industry-talks`, headers: {} },
+          { url: `${baseUrl}/api/admin/industry-talks`, headers: authHeaders },
+        ]
+
+        let res: Response | null = null
+        for (const target of urlsToTry) {
+          try {
+            const r = await fetch(target.url, { headers: target.headers, cache: "no-store" })
+            if (r.ok) {
+              res = r
+              break
+            }
+          } catch {
+            // try next URL
+          }
         }
 
-        const res = await fetch(url.toString())
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`)
+        if (!res || !res.ok) {
+          console.error("Failed all fetch attempts for admin industry-talks")
+          setTalks([])
+          setTotal(0)
+          return
         }
 
         const json = await res.json()
 
-        // ✅ Fix: Handle the actual response format
-        // The API returns { success: true, data: [...], meta: { ... } }
-        const talksData = json.data || json.items || []
+        const talksData = Array.isArray(json)
+          ? json
+          : Array.isArray(json.data)
+            ? json.data
+            : Array.isArray(json.items)
+              ? json.items
+              : Array.isArray(json.posts)
+                ? json.posts
+                : []
+
         const totalCount = json.meta?.total || json.total || talksData.length
 
         setTalks(talksData)
@@ -163,22 +192,24 @@ export default function IndustryTalksPage() {
 
     columnHelper.accessor("title", {
       header: "Title",
-      cell: (info) => (
-        <div>
-          <p className="font-semibold line-clamp-2">
-            {info.getValue()}
-          </p>
-          <p className="text-xs text-gray-500">
-            /{info.row.original.slug}
-          </p>
-          {info.row.original.guestName && (
-            <p className="text-xs text-gray-400 mt-1">
-              {info.row.original.guestName}
-              {info.row.original.companyName && ` • ${info.row.original.companyName}`}
+      cell: (info) => {
+        const itemSlug = info.row.original.slug || String(info.row.original.id)
+        return (
+          <div>
+            <a
+              href={`/industry-talks/${itemSlug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold line-clamp-2 hover:text-[#0F5B78] hover:underline"
+            >
+              {info.getValue()}
+            </a>
+            <p className="text-xs text-gray-500">
+              /{itemSlug}
             </p>
-          )}
-        </div>
-      ),
+          </div>
+        )
+      },
     }),
 
     columnHelper.accessor("status", {
@@ -211,39 +242,77 @@ export default function IndustryTalksPage() {
 
     columnHelper.display({
       id: "published",
-      header: "Published",
-      cell: (info) =>
-        info.row.original.publishedAt ? (
-          new Date(info.row.original.publishedAt).toLocaleDateString()
-        ) : (
-          <span className="text-gray-400">Draft</span>
-        ),
+      header: "Status / Published",
+      cell: (info) => {
+        const item = info.row.original
+        const isPublished =
+          item.status?.toUpperCase() === "PUBLISHED" ||
+          (!item.status && !!item.publishedAt)
+        const dateStr = item.publishedAt || item.interviewDate || item.createdAt
+        const formattedDate = dateStr
+          ? new Date(dateStr).toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })
+          : ""
+
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span
+              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold w-fit ${
+                isPublished
+                  ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                  : "bg-amber-100 text-amber-800 border border-amber-200"
+              }`}
+            >
+              {isPublished ? "Published" : "Draft"}
+            </span>
+            {formattedDate && (
+              <span className="text-[11px] text-gray-500">{formattedDate}</span>
+            )}
+          </div>
+        )
+      },
     }),
 
     columnHelper.display({
       id: "actions",
       header: "Actions",
-      cell: (info) => (
-        <div className="flex gap-2">
-          <button
-            onClick={() =>
-              router.push(`/admin/industry-talks/edit/${info.row.original.id}`)
-            }
-            className="p-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors"
-            title="Edit"
-          >
-            <Edit size={16} />
-          </button>
+      cell: (info) => {
+        const itemSlug = info.row.original.slug || String(info.row.original.id)
+        return (
+          <div className="flex gap-2">
+            <a
+              href={`/industry-talks/${itemSlug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-gray-100 text-gray-700 hover:bg-[#0F5B78] hover:text-white rounded transition-colors"
+              title="View Industry Talk"
+            >
+              <Eye size={16} />
+            </a>
 
-          <button
-            onClick={() => handleDelete(info.row.original.id)}
-            className="p-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
-            title="Delete"
-          >
-            <Trash2 size={16} />
-          </button>
-        </div>
-      ),
+            <button
+              onClick={() =>
+                router.push(`/admin/industry-talks/edit/${info.row.original.id}`)
+              }
+              className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded transition-colors"
+              title="Edit Industry Talk"
+            >
+              <Edit size={16} />
+            </button>
+
+            <button
+              onClick={() => handleDelete(info.row.original.id)}
+              className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded transition-colors"
+              title="Delete Industry Talk"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        )
+      },
     }),
   ]
 
