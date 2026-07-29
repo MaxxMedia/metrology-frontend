@@ -265,10 +265,13 @@ export default function Footer() {
                 <li><Link href="/suppliers" className="hover:text-black hover:translate-x-1 inline-block transition-all">Find a Supplier</Link></li>
               </ul>
 
-              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Calendar</h5>
-              <ul className="space-y-3 text-sm">
-                <li><Link href="/events" className="hover:text-black hover:translate-x-1 inline-block transition-all">Events</Link></li>
-              </ul>
+              {/* <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">
+                Calendar
+              </h5> */}
+              {/* <ul className="space-y-3 text-sm"> */}
+                {/* <li><Link href="/webinars" className="hover:text-black hover:translate-x-1 inline-block transition-all">Webinars</Link></li> */}
+                {/* <li><Link href="/events" className="hover:text-black hover:translate-x-1 inline-block transition-all">Events</Link></li>
+              </ul> */}
             </div>
 
             {/* LEGAL & POLICIES - Desktop */}

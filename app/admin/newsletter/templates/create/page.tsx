@@ -115,7 +115,7 @@ export default function CreateTemplatePage() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>${form.subject || "Newsletter"}</title>
         <style>
-          body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+          body { font-family: 'Oswald', Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
           .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff; }
           .header { text-align: center; padding: 20px 0; border-bottom: 2px solid #0073FF; }
           .header h1 { color: #0073FF; font-size: 24px; margin: 0; }

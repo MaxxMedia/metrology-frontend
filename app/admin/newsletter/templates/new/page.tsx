@@ -131,7 +131,7 @@ export default function CreateTemplatePage() {
         <title>${form.subject || "Tooling Trends Newsletter"}</title>
         <style>
           /* RESET */
-          body, h1, h2, h3, p, div, a { margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
+          body, h1, h2, h3, p, div, a { margin: 0; padding: 0; font-family: 'Oswald', Arial, Helvetica, sans-serif; }
           body { background: #f4f4f4; }
           
           /* MAIN CONTAINER */

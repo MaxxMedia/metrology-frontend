@@ -19,7 +19,7 @@
   --radius: 0.625rem;
 
   /* ================= FONT SYSTEM ================= */
-  --font-primary: var(--font-inter-tight),
+  --font-primary: var(--font-oswald),
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -28,6 +28,10 @@
     sans-serif;
 
   /* Font sizes */
+  --fs-body: 16px;
+  --fs-h1: clamp(2rem, 1.8rem + 0.6vw, 2.25rem);
+  --fs-h2: 18px;
+  --fs-h3: 18px;
   --fs-12: 12px;
   --fs-13: 13px;
   --fs-14: 14px;
@@ -42,7 +46,9 @@
 
   /* Line heights */
   --lh-meta: 1.35;
-  --lh-body: 1.45;
+  --lh-body: 1.5;
+  --lh-heading: 1.25;
+  --lh-hero: 1.1;
   --lh-title: 1.25;
 
   /* Font weights */
@@ -74,65 +80,82 @@
 }
 
 /* ======================================================
-   BASE LAYER – HARD FONT LOCK
+   BASE LAYER - TYPOGRAPHY FOUNDATION
 ====================================================== */
 @layer base {
   html {
     font-family: var(--font-primary);
-    font-size: 16px;
+    font-size: var(--fs-body);
   }
 
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-primary);
-    font-size: 17px;
-    line-height: 21px;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
     font-weight: var(--fw-regular);
   }
 
+  body :where(
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p,
+      a,
+      button,
+      input,
+      textarea,
+      select,
+      label,
+      li,
+      dt,
+      dd,
+      blockquote,
+      figcaption,
+      small,
+      strong,
+      em,
+      span,
+      div
+    ) {
+    font-family: inherit !important;
+  }
+
   h1 {
-    font-size: 60px;
-    line-height: 1.1;
-    font-weight: var(--fw-bold);
+    font-size: var(--fs-h1) !important;
+    line-height: var(--lh-hero) !important;
+    font-weight: var(--fw-bold) !important;
   }
 
-  h2 {
-    font-size: 36px;
-    line-height: 1.2;
-    font-weight: var(--fw-semibold);
-  }
-
+  h2,
   h3 {
-    font-size: 30px;
-    line-height: 1.3;
-    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h2) !important;
+    line-height: var(--lh-heading) !important;
+    font-weight: var(--fw-semibold) !important;
   }
 
-  h4 {
-    font-size: 26px;
-    line-height: 1.35;
-    font-weight: var(--fw-medium);
-  }
-
-  h5 {
-    font-size: 24px;
-    line-height: 1.4;
-    font-weight: var(--fw-medium);
-  }
-
+  h4,
+  h5,
   h6 {
-    font-size: 18px;
-    line-height: 1.4;
+    font-size: var(--fs-body);
+    line-height: var(--lh-heading);
     font-weight: var(--fw-medium);
   }
 
   p,
-  span,
-  div,
+  li {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+
   button,
   input,
-  textarea {
-    font-family: var(--font-primary);
+  textarea,
+  select {
+    font: inherit;
   }
 }
 
@@ -147,7 +170,7 @@
 }
 
 .text-body {
-  font-size: var(--fs-16);
+  font-size: var(--fs-body);
   line-height: var(--lh-body);
 }
 
@@ -193,9 +216,7 @@
   display: none;
 }
 
-
-
-/* 🔒 IMPORTANT: prevent horizontal overflow */
+/* IMPORTANT: prevent horizontal overflow */
 html,
 body {
   overflow-x: hidden;
@@ -236,34 +257,40 @@ body {
 }
 
 /* ======================================================
-   PROSE (BLOG CONTENT – MAGAZINE STYLE)
+   PROSE (BLOG CONTENT - MAGAZINE STYLE)
 ====================================================== */
-
-/* Paragraphs */
 .prose p {
   margin: 1.25rem 0;
-  line-height: 1.8;
-  font-size: 1.05rem;
+  line-height: 1.75;
+  font-size: var(--fs-body);
 }
 
-/* Headings */
+.prose h1 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-size: var(--fs-h1) !important;
+  line-height: var(--lh-hero) !important;
+  font-weight: var(--fw-bold) !important;
+}
+
 .prose h2 {
   margin-top: 2.5rem;
   margin-bottom: 1rem;
-  font-size: 1.9rem;
-  font-weight: 600;
-  color: #0f172a; /* slate-900 */
+  font-size: var(--fs-h2) !important;
+  line-height: var(--lh-heading) !important;
+  font-weight: var(--fw-semibold) !important;
+  color: #0f172a;
 }
 
 .prose h3 {
   margin-top: 2rem;
   margin-bottom: 0.75rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1e293b; /* slate-800 */
+  font-size: var(--fs-h3) !important;
+  line-height: var(--lh-heading) !important;
+  font-weight: var(--fw-semibold) !important;
+  color: #1e293b;
 }
 
-/* Lists */
 .prose ol,
 .prose ul {
   margin: 1.25rem 0;
@@ -272,15 +299,14 @@ body {
 
 .prose li {
   margin: 0.75rem 0;
+  font-size: var(--fs-body);
   line-height: 1.7;
 }
 
-/* Fix Quill wrapping <p> inside <li> */
 .prose li > p {
   margin: 0;
 }
 
-/* Blockquotes */
 .prose blockquote {
   margin: 2rem 0;
   padding-left: 1.25rem;
@@ -289,7 +315,6 @@ body {
   font-style: italic;
 }
 
-/* Inline formatting */
 .prose strong {
   font-weight: 600;
 }
@@ -298,7 +323,6 @@ body {
   font-style: italic;
 }
 
-/* Links */
 .prose a {
   color: #2563eb;
   text-decoration: underline;
@@ -311,7 +335,6 @@ body {
 /* ======================================================
    RICH CONTENT SAFETY
 ====================================================== */
-
 .prose img,
 .prose iframe,
 .prose video,
@@ -319,7 +342,6 @@ body {
   max-width: 100%;
 }
 
-/* Responsive embeds */
 .prose iframe {
   width: 100%;
   height: auto;
@@ -327,7 +349,6 @@ body {
   margin: 1.5rem 0;
 }
 
-/* Code blocks */
 .prose pre {
   overflow-x: auto;
   padding: 1rem;
@@ -337,7 +358,6 @@ body {
   margin: 1.5rem 0;
 }
 
-/* Tables */
 .prose table {
   display: block;
   overflow-x: auto;
@@ -383,13 +403,4 @@ body {
 
 .swiper-pagination-bullet:hover {
   opacity: 1 !important;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }

@@ -201,10 +201,7 @@ export default function JobDetailPage() {
   const applicants = job.applicants ?? job.views ?? 0
 
   return (
-    <div
-      className="min-h-screen bg-[#F4F2EE]"
-      style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}
-    >
+    <div className="min-h-screen bg-[#F4F2EE]">
       {/* Breadcrumb */}
       <div className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-2 text-sm text-gray-500">

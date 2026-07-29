@@ -27,8 +27,8 @@ export default function TopicListing({
     post.imageUrl?.startsWith("http")
       ? post.imageUrl
       : post.imageUrl
-      ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-      : "/placeholder.svg"
+        ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
+        : "/placeholder.svg"
 
   const formatDate = (date?: string) =>
     date
@@ -42,25 +42,15 @@ export default function TopicListing({
   return (
     <section className="bg-[#E6EAED]">
       <div className="max-w-7xl mx-auto px-6 pt-12">
-
-        {/* ================= HERO ================= */}
         <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr_300px] gap-10 items-start">
-
-          {/* LEFT TEXT */}
           <div>
-            <h1
-              className="text-[36px] font-bold text-[#003B5C] mb-4 leading-tight"
-              style={{ fontFamily: "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif" }}
-            >
+            <h1 className="text-[36px] font-bold text-[#003B5C] mb-4 leading-tight">
               {title}
             </h1>
 
-            <p className="text-[15px] text-[#333] leading-relaxed">
-              {description}
-            </p>
+            <p className="text-[16px] text-[#333] leading-relaxed">{description}</p>
           </div>
 
-          {/* HERO IMAGE */}
           <Link
             href={`/post/${hero.slug}`}
             className="relative block h-[420px] overflow-hidden"
@@ -83,24 +73,18 @@ export default function TopicListing({
                 </span>
               )}
 
-              <h2
-                className="text-[26px] font-bold leading-snug mb-2"
-                style={{ fontFamily: "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif" }}
-              >
-                {hero.title}
-              </h2>
+              <h2 className="text-[26px] font-bold leading-snug mb-2">{hero.title}</h2>
 
-              <p className="text-sm text-gray-200 mb-3 max-w-2xl">
+              <p className="text-[16px] text-gray-200 mb-3 max-w-2xl leading-relaxed">
                 {hero.excerpt || hero.content?.substring(0, 150) + "..."}
               </p>
 
               <span className="text-[#C8102E] font-bold text-sm uppercase">
-                Read More →
+                Read More -&gt;
               </span>
             </div>
           </Link>
 
-          {/* RIGHT STATIC AD */}
           <aside className="space-y-6">
             <div className="relative w-full h-[420px]">
               <Image
@@ -112,32 +96,20 @@ export default function TopicListing({
               />
             </div>
           </aside>
-
         </div>
       </div>
 
-      {/* ================= BLUE BAR ================= */}
       <div className="bg-[#003B5C] mt-10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex gap-10">
           <span className="text-white font-bold uppercase text-sm">News</span>
-          <span className="text-white/70 font-bold uppercase text-sm">
-            Featured
-          </span>
+          <span className="text-white/70 font-bold uppercase text-sm">Featured</span>
         </div>
       </div>
 
-      {/* ================= POSTS GRID ================= */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10">
-
-          {/* POSTS */}
           <div>
-            <h2
-              className="text-[28px] font-bold text-[#003B5C] mb-6"
-              style={{ fontFamily: "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif" }}
-            >
-              {sectionTitle}
-            </h2>
+            <h2 className="text-[28px] font-bold text-[#003B5C] mb-6">{sectionTitle}</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {gridPosts.map((post) => (
@@ -156,33 +128,23 @@ export default function TopicListing({
                     {formatDate(post.publishedAt ?? undefined)}
                   </span>
 
-                  <h3
-                    className="text-[18px] font-bold leading-snug mb-2"
-                    style={{ fontFamily: "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif" }}
-                  >
-                    {post.title}
-                  </h3>
+                  <h3 className="text-[18px] font-bold leading-snug mb-2">{post.title}</h3>
 
-                  <p className="text-sm text-gray-600 mb-3">
+                  <p className="text-[16px] text-gray-600 mb-3 leading-relaxed">
                     {post.excerpt || post.content?.substring(0, 110) + "..."}
                   </p>
 
-                  <Link
-                    href={`/post/${post.slug}`}
-                    className="text-[#0072BC] font-bold text-sm uppercase"
-                  >
-                    Read More →
+                  <Link href={`/post/${post.slug}`} className="text-[#0072BC] font-bold text-sm uppercase">
+                    Read More -&gt;
                   </Link>
                 </article>
               ))}
             </div>
           </div>
 
-          {/* ADS */}
           <aside className="space-y-6 sticky top-24">
             <SupplierAds />
           </aside>
-
         </div>
       </div>
     </section>

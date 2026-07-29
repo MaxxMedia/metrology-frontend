@@ -329,7 +329,7 @@ export default function EditCampaignPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>${form.subject || "Campaign Preview"}</title>
         <style>
-          body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
+          body { font-family: 'Oswald', Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
           .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff; border-radius: 8px; }
           .preview-badge { background: #f0f0f0; padding: 10px; text-align: center; font-size: 12px; color: #666; border-radius: 4px; margin-bottom: 20px; }
           .preview-badge strong { color: #0073FF; }

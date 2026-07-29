@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Inter_Tight } from "next/font/google"
+import { Oswald } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "remixicon/fonts/remixicon.css"
 
@@ -8,10 +8,10 @@ import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
-const interTight = Inter_Tight({
+const oswald = Oswald({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-inter-tight",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-oswald",
   display: "swap",
 })
 
@@ -167,7 +167,7 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en" className={interTight.variable} suppressHydrationWarning>
+    <html lang="en" className={oswald.variable}>
       <head>
         {/* JSON-LD Structured Data */}
         <script

@@ -12,27 +12,18 @@ export default function InThisIssueListing({ posts }: Props) {
   return (
     <section className="max-w-7xl mx-auto px-6 py-10">
       {/* PAGE TITLE */}
-      <h1
-        className="text-[36px] font-bold text-[#003B5C] mb-10"
-        style={{
-          fontFamily:
-            "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-        }}
-      >
-        In This Issue
-      </h1>
+      <h1 className="text-[36px] font-bold text-[#003B5C] mb-10">In This Issue</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10">
-
-        {/* LEFT – ARTICLES */}
+        {/* LEFT - ARTICLES */}
         <div className="space-y-10">
           {posts.map((post) => {
             const imageUrl =
               post.imageUrl?.startsWith("http")
                 ? post.imageUrl
                 : post.imageUrl
-                ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-                : "/placeholder.svg"
+                  ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
+                  : "/placeholder.svg"
 
             const date = post.publishedAt
               ? new Date(post.publishedAt).toLocaleDateString("en-US", {
@@ -67,32 +58,20 @@ export default function InThisIssueListing({ posts }: Props) {
                     <span className="text-xs text-gray-500">{date}</span>
                   </div>
 
-                  <h2
-                    className="text-[22px] font-bold text-gray-900 leading-snug mb-3"
-                    style={{
-                      fontFamily:
-                        "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-                    }}
-                  >
+                  <h2 className="text-[22px] font-bold text-gray-900 leading-snug mb-3">
                     {post.title}
                   </h2>
 
-                  <p className="text-gray-600 text-[15px] leading-relaxed mb-4">
+                  <p className="text-gray-600 text-[16px] leading-relaxed mb-4">
                     {post.excerpt ||
-                      post.content
-                        ?.replace(/<[^>]+>/g, "")
-                        .substring(0, 160) + "..."}
+                      post.content?.replace(/<[^>]+>/g, "").substring(0, 160) + "..."}
                   </p>
 
                   <Link
                     href={`/post/${post.slug}`}
                     className="text-[#0072BC] font-bold text-sm uppercase hover:underline"
-                    style={{
-                      fontFamily:
-                        "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-                    }}
                   >
-                    Read More →
+                    Read More -&gt;
                   </Link>
                 </div>
               </article>
@@ -100,13 +79,11 @@ export default function InThisIssueListing({ posts }: Props) {
           })}
 
           {!posts.length && (
-            <p className="text-gray-500">
-              No articles found for this issue.
-            </p>
+            <p className="text-gray-500">No articles found for this issue.</p>
           )}
         </div>
 
-        {/* RIGHT – ADS */}
+        {/* RIGHT - ADS */}
         <aside className="space-y-6 sticky top-24 h-fit">
           {["/ads/ad1.jpg", "/ads/ad2.jpg", "/ads/ad3.jpg", "/ads/ad4.jpg"].map(
             (src, index) => (
@@ -122,7 +99,6 @@ export default function InThisIssueListing({ posts }: Props) {
             )
           )}
         </aside>
-
       </div>
     </section>
   )
