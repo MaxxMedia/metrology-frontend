@@ -35,6 +35,17 @@ async function uploadDocument(file: File): Promise<string> {
   return data.documentUrl;
 }
 
+// Counts how many gallery entries actually have an image set (i.e. would
+// survive the cleanGallery() filter below). Mirrors the same helper on the
+// "new directory" page so both pages can enforce gallery limits consistently
+// if you wire up client-side validation before saving.
+function countGalleryItems(gallery: any[]): number {
+  if (!Array.isArray(gallery)) return 0;
+  return gallery.filter(
+    (item) => item && typeof item.image === "string" && item.image.trim().length > 0
+  ).length;
+}
+
 type GalleryItem = {
   image: string;
   name: string;
@@ -260,6 +271,21 @@ export default function EditDirectoryPage() {
     updateArrayItem(field, index, url);
   };
 
+  // ✅ NEW: Document upload handler for GallerySection
+  const handleDocumentUpload = async (
+    field: string,
+    index: number,
+    file: File
+  ) => {
+    try {
+      const url = await uploadDocument(file);
+      updateArrayItem(field, index, url);
+    } catch (error: any) {
+      setSaveError(error.message || "Failed to upload document");
+      throw error;
+    }
+  };
+
   // Handle gallery image upload with object structure
   const handleGalleryImageUpload = async (
     field: string,
@@ -361,6 +387,21 @@ export default function EditDirectoryPage() {
     if (!directory.address?.trim() || directory.address.trim().length < 10)
       validationErrors.push("Full address must be at least 10 characters.");
     if (!directory.industryId) validationErrors.push("Industry is required.");
+
+    // Gallery limit checks (mirrors the "new directory" page)
+    const galleryLimitChecks: Array<{ field: string; label: string; limit: number | null }> = [
+      { field: "productGallery", label: "Product Gallery", limit: getFeatureLimit(profileLimits?.productImages) },
+      { field: "companyGallery", label: "Company Gallery", limit: getFeatureLimit(profileLimits?.galleryImages) },
+      { field: "factoryGallery", label: "Factory Gallery", limit: getFeatureLimit(profileLimits?.factoryImages) },
+    ];
+    for (const check of galleryLimitChecks) {
+      const count = countGalleryItems(directory[check.field]);
+      if (check.limit !== null && count > check.limit) {
+        validationErrors.push(
+          `${check.label} has ${count} images, but your plan allows up to ${check.limit}.`
+        );
+      }
+    }
 
     if (validationErrors.length > 0) {
       setSaveError(validationErrors.join(" "));
@@ -783,6 +824,8 @@ export default function EditDirectoryPage() {
                   label={`Product Catalogue ${i + 1}`}
                   value={url}
                   onUpload={(file) => handleCatalogueUpload("productCatalogues", i, file)}
+                  uploadType="document"
+                  accept=".pdf,.doc,.docx"
                 />
                 <button type="button" onClick={() => removeArrayItem("productCatalogues", i)}>
                   ✕ Remove
@@ -892,7 +935,7 @@ export default function EditDirectoryPage() {
       </Section>
 
       {/* VIDEO GALLERY - GATED BY PACKAGE */}
-      <Section title="YouTube Video Links">
+      <Section title="Product YouTube Video Links">
         <PlanGatedSection
           allowed={isFeatureAllowed(profileLimits?.productVideos)}
           upgradeMessage="Product Videos are available on Basic plan and above."
@@ -1184,7 +1227,7 @@ export default function EditDirectoryPage() {
           <GallerySection
             field="companyBrochure"
             items={directory.companyBrochure}
-            onUpload={handleImageUpload}
+            onUpload={handleDocumentUpload}
             onAdd={addArrayItem}
             onRemove={removeArrayItem}
             addLabel="+ Add brochure file"
@@ -1201,7 +1244,7 @@ export default function EditDirectoryPage() {
           <GallerySection
             field="certifications"
             items={directory.certifications}
-            onUpload={handleImageUpload}
+            onUpload={handleDocumentUpload}
             onAdd={addArrayItem}
             onRemove={removeArrayItem}
             addLabel="+ Add certification file"
