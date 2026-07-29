@@ -28,16 +28,125 @@ const TABS = [
   { label: "Other Details", id: "details" },
 ]
 
-
-function scrollToSection(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
-}
-
 function getYoutubeEmbedUrl(url: string): string {
   const match = url.match(
     /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
   )
   return match ? `https://www.youtube.com/embed/${match[1]}` : url
+}
+
+function ImagesGallerySection({
+  images,
+  imgIndex,
+  setImgIndex,
+  title,
+}: {
+  images: string[]
+  imgIndex: number
+  setImgIndex: React.Dispatch<React.SetStateAction<number>>
+  title: string
+}) {
+  return (
+    <section className="bg-white rounded-xl border border-gray-100 p-6">
+      <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
+        Images Gallery
+      </h2>
+      {images.length > 0 ? (
+        <div>
+          <div className="relative w-full h-80 rounded-lg overflow-hidden mb-3 bg-gray-100">
+            <Image
+              src={images[imgIndex]}
+              alt={title}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+            {images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setImgIndex((prev) => (prev - 1 + images.length) % images.length)}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-600 text-white w-8 h-8 rounded-full"
+                >
+                  ←
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setImgIndex((prev) => (prev + 1) % images.length)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 text-white w-8 h-8 rounded-full"
+                >
+                  →
+                </button>
+              </>
+            )}
+          </div>
+
+          <div className="flex gap-2 overflow-x-auto">
+            {images.map((img, i) => (
+              <button
+                type="button"
+                key={i}
+                onClick={() => setImgIndex(i)}
+                className={`relative w-28 h-16 flex-shrink-0 rounded overflow-hidden border-2 bg-gray-100 ${
+                  i === imgIndex ? "border-red-600" : "border-transparent"
+                }`}
+              >
+                <Image src={img} alt="" fill className="object-cover" unoptimized />
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p className="text-gray-500">No images available.</p>
+      )}
+    </section>
+  )
+}
+
+function VideosSection({ videos, title }: { videos: string[]; title: string }) {
+  return (
+    <section className="bg-white rounded-xl border border-gray-100 p-6">
+      <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
+        Videos
+      </h2>
+      {videos.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {videos.map((url, i) => (
+            <div key={i} className="aspect-video rounded-lg overflow-hidden">
+              <iframe
+                src={getYoutubeEmbedUrl(url)}
+                className="w-full h-full"
+                allowFullScreen
+                title={`${title} video ${i + 1}`}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-500">No video available.</p>
+      )}
+    </section>
+  )
+}
+
+function OtherDetailsSection({ event }: { event: Event }) {
+  return (
+    <section className="bg-white rounded-xl border border-gray-100 p-6">
+      <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
+        Other Details
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2 text-sm">
+        <DetailRow label="Frequency" value={event.frequency} />
+        <DetailRow label="Organizer" value={event.organizer} />
+        <DetailRow label="Edition" value={event.edition} />
+        <DetailRow label="Website" value={event.websiteUrl} fullWidth />
+        <DetailRow label="Expected Visitors" value={event.expectedVisitors} />
+        <DetailRow label="Email" value={event.email} fullWidth />
+        <DetailRow label="Exhibitors" value={event.exhibitors} />
+        <DetailRow label="Phone" value={event.phone} />
+      </div>
+    </section>
+  )
 }
 
 export default function EventTabs({ event }: { event: Event }) {
@@ -66,7 +175,7 @@ export default function EventTabs({ event }: { event: Event }) {
         ))}
       </div>
 
-      {/* ABOUT / DESCRIPTION */}
+      {/* ABOUT US: shows everything */}
       {activeTab === "about" && (
         <>
           <section className="bg-white rounded-xl border border-gray-100 p-6">
@@ -86,180 +195,32 @@ export default function EventTabs({ event }: { event: Event }) {
             )}
           </section>
 
-          <section className="bg-white rounded-xl border border-gray-100 p-6">
-            <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
-              Images Gallery
-            </h2>
-            {images.length > 0 ? (
-              <div>
-                <div className="relative w-full h-80 rounded-lg overflow-hidden mb-3">
-                  <Image src={images[imgIndex]} alt={event.title} fill className="object-cover" />
-                  {images.length > 1 && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => setImgIndex(i => (i - 1 + images.length) % images.length)}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-600 text-white w-8 h-8 rounded-full"
-                      >
-                        ←
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setImgIndex(i => (i + 1) % images.length)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 text-white w-8 h-8 rounded-full"
-                      >
-                        →
-                      </button>
-                    </>
-                  )}
-                </div>
-                <div className="flex gap-2 overflow-x-auto">
-                  {images.map((img, i) => (
-                    <button
-                      type="button"
-                      key={i}
-                      onClick={() => setImgIndex(i)}
-                      className={`relative w-28 h-16 flex-shrink-0 rounded overflow-hidden border-2 ${
-                        i === imgIndex ? "border-red-600" : "border-transparent"
-                      }`}
-                    >
-                      <Image src={img} alt="" fill className="object-cover" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <p className="text-gray-500">No images available.</p>
-            )}
-          </section>
-
-          <section className="bg-white rounded-xl border border-gray-100 p-6">
-            <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
-              Videos
-            </h2>
-            {event.videoUrl ? (
-              <div className="aspect-video rounded-lg overflow-hidden">
-                <iframe src={event.videoUrl} className="w-full h-full" allowFullScreen />
-              </div>
-            ) : (
-              <p className="text-gray-500">No video available.</p>
-            )}
-          </section>
-
-          <section className="bg-white rounded-xl border border-gray-100 p-6">
-            <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
-              Other Details
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2 text-sm">
-              <DetailRow label="Frequency" value={event.frequency} />
-              <DetailRow label="Organizer" value={event.organizer} />
-              <DetailRow label="Edition" value={event.edition} />
-              <DetailRow label="Website" value={event.websiteUrl} fullWidth />
-              <DetailRow label="Expected Visitors" value={event.expectedVisitors} />
-              <DetailRow label="Email" value={event.email} fullWidth />
-              <DetailRow label="Exhibitors" value={event.exhibitors} />
-              <DetailRow label="Phone" value={event.phone} />
-            </div>
-          </section>
+          <ImagesGallerySection
+            images={images}
+            imgIndex={imgIndex}
+            setImgIndex={setImgIndex}
+            title={event.title}
+          />
+          <VideosSection videos={videos} title={event.title} />
+          <OtherDetailsSection event={event} />
         </>
       )}
 
-      {/* IMAGES GALLERY */}
-
-      <section id="gallery" className="bg-white rounded-xl border border-gray-100 p-6 scroll-mt-20">
-        <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
-          Images Gallery
-        </h2>
-        {images.length > 0 ? (
-          <div>
-            <div className="relative w-full h-80 rounded-lg overflow-hidden mb-3 bg-gray-100">
-              <Image
-                src={images[imgIndex]}
-                alt={event.title}
-                fill
-                className="object-cover"
-                unoptimized
-              />
-              {images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setImgIndex((prev) => (prev - 1 + images.length) % images.length)}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-600 text-white w-8 h-8 rounded-full"
-                  >
-                    ←
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setImgIndex((prev) => (prev + 1) % images.length)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 text-white w-8 h-8 rounded-full"
-                  >
-                    →
-                  </button>
-                </>
-              )}
-            </div>
-
-            <div className="flex gap-2 overflow-x-auto">
-              {images.map((img, i) => (
-                <button
-                  type="button"
-                  key={i}
-                  onClick={() => setImgIndex(i)}
-                  className={`relative w-28 h-16 flex-shrink-0 rounded overflow-hidden border-2 bg-gray-100 ${i === imgIndex ? "border-red-600" : "border-transparent"
-                    }`}
-                >
-                  <Image src={img} alt="" fill className="object-cover" unoptimized />
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <p className="text-gray-500">No images available.</p>
-        )}
-      </section>
-
-      {/* VIDEOS */}
-      <section id="video" className="bg-white rounded-xl border border-gray-100 p-6 scroll-mt-20">
-        <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
-          Videos
-        </h2>
-        {videos.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {videos.map((url, i) => (
-              <div key={i} className="aspect-video rounded-lg overflow-hidden">
-                <iframe
-                  src={getYoutubeEmbedUrl(url)}
-                  className="w-full h-full"
-                  allowFullScreen
-                  title={`${event.title} video ${i + 1}`}
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500">No video available.</p>
-        )}
-      </section>
-
-      {/* OTHER DETAILS */}
-      {activeTab === "details" && (
-        <section className="bg-white rounded-xl border border-gray-100 p-6">
-          <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
-            Other Details
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2 text-sm">
-            <DetailRow label="Frequency" value={event.frequency} />
-            <DetailRow label="Organizer" value={event.organizer} />
-            <DetailRow label="Edition" value={event.edition} />
-            <DetailRow label="Website" value={event.websiteUrl} fullWidth />
-            <DetailRow label="Expected Visitors" value={event.expectedVisitors} />
-            <DetailRow label="Email" value={event.email} fullWidth />
-            <DetailRow label="Exhibitors" value={event.exhibitors} />
-            <DetailRow label="Phone" value={event.phone} />
-          </div>
-        </section>
+      {/* IMAGES GALLERY tab: just the gallery */}
+      {activeTab === "gallery" && (
+        <ImagesGallerySection
+          images={images}
+          imgIndex={imgIndex}
+          setImgIndex={setImgIndex}
+          title={event.title}
+        />
       )}
+
+      {/* VIDEO tab: just the videos */}
+      {activeTab === "video" && <VideosSection videos={videos} title={event.title} />}
+
+      {/* OTHER DETAILS tab: just the details */}
+      {activeTab === "details" && <OtherDetailsSection event={event} />}
     </div>
   )
 }
