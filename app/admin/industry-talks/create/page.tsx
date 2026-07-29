@@ -257,6 +257,7 @@ export default function CreateIndustryTalkPage() {
   const [openQAId, setOpenQAId] = useState<string | null>(null)
 
   const [industries, setIndustries] = useState<any[]>([])
+  const [suppliers, setSuppliers] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState("")
@@ -265,9 +266,15 @@ export default function CreateIndustryTalkPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/industries`)
-        const data = await res.json()
-        setIndustries(data.data || data || [])
+        const [indRes, supRes] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/industries`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/suppliers?limit=1000`),
+        ])
+        const indData = await indRes.json()
+        const supData = await supRes.json()
+
+        setIndustries(indData.data || indData || [])
+        setSuppliers(supData.data || supData || [])
       } catch (err) {
         console.error("Initialization error:", err)
       } finally {
@@ -370,6 +377,11 @@ export default function CreateIndustryTalkPage() {
     }
     if (form.videoType !== "upload" && !form.videoUrl.trim()) {
       setMessage("Video URL is required for YouTube/Vimeo")
+      return
+    }
+    const bioCharCount = form.shortBio.replace(/<[^>]+>/g, "").length
+    if (bioCharCount > 350) {
+      setMessage(`Short Bio exceeds maximum limit of 350 characters (currently ${bioCharCount} characters)`)
       return
     }
 
@@ -820,14 +832,45 @@ export default function CreateIndustryTalkPage() {
                     className={inputClass}
                   />
                 </Field>
-                <Field label="Company Profile URL">
-                  <input
+                <Field label="Company Profile">
+                  <select
                     name="companyProfileUrl"
                     value={form.companyProfileUrl}
-                    onChange={handleChange}
-                    placeholder="https://tooling-trends.com/company/ace-micromatic"
+                    onChange={(e) => {
+                      const selectedSlug = e.target.value
+                      const selectedSupplier = suppliers.find(
+                        (s) => s.slug === selectedSlug || String(s.id) === selectedSlug
+                      )
+                      setForm((prev) => ({
+                        ...prev,
+                        companyProfileUrl: selectedSlug,
+                        companyName: selectedSupplier
+                          ? selectedSupplier.name || selectedSupplier.companyName || prev.companyName
+                          : prev.companyName,
+                        companyLogo: selectedSupplier?.logoUrl ? selectedSupplier.logoUrl : prev.companyLogo,
+                      }))
+                    }}
                     className={inputClass}
-                  />
+                  >
+                    <option value="">-- Select Company Profile --</option>
+                    {suppliers.map((sup: any) => {
+                      const supSlug = sup.slug || String(sup.id)
+                      const supName = sup.name || sup.companyName || supSlug
+                      return (
+                        <option key={sup.id || supSlug} value={supSlug}>
+                          {supName}
+                        </option>
+                      )
+                    })}
+                    {form.companyProfileUrl &&
+                      !suppliers.some(
+                        (s) => s.slug === form.companyProfileUrl || String(s.id) === form.companyProfileUrl
+                      ) && (
+                        <option value={form.companyProfileUrl}>
+                          {form.companyName || form.companyProfileUrl}
+                        </option>
+                      )}
+                  </select>
                 </Field>
               </div>
 
@@ -868,17 +911,33 @@ export default function CreateIndustryTalkPage() {
             </div>
 
             <div className="mt-5">
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                Short Bio
-              </label>
-              <ReactQuill
-                theme="snow"
-                value={form.shortBio}
-                onChange={(v) => set("shortBio", v)}
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold text-gray-600">
+                  Short Bio <span className="text-gray-400 font-normal">(Max 350 characters)</span>
+                </label>
+                <span
+                  className={`text-[11px] font-semibold ${
+                    form.shortBio.replace(/<[^>]+>/g, "").length > 350
+                      ? "text-red-500"
+                      : "text-gray-400"
+                  }`}
+                >
+                  {form.shortBio.replace(/<[^>]+>/g, "").length} / 350 characters
+                </span>
+              </div>
+              <textarea
+                rows={3}
+                maxLength={350}
+                value={form.shortBio.replace(/<[^>]+>/g, "")}
+                onChange={(e) => set("shortBio", e.target.value)}
+                placeholder="Enter short bio (Max 350 characters)..."
+                className={`${inputClass} resize-y`}
               />
-              <p className="text-[11px] text-gray-400 mt-1 text-right">
-                {form.shortBio.replace(/<[^>]+>/g, "").length} characters
-              </p>
+              {form.shortBio.replace(/<[^>]+>/g, "").length >= 350 && (
+                <p className="text-[11px] text-amber-600 font-medium mt-1">
+                  Maximum limit of 350 characters reached for Short Bio.
+                </p>
+              )}
             </div>
           </SectionCard>
 

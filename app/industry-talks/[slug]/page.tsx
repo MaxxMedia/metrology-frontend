@@ -45,7 +45,12 @@ type Post = {
   shares?: number
   readTime?: string
   videoCaption?: string
-  qa?: { question: string; answer: string }[]
+  qa?: {
+    question: string
+    answer: string
+    videoTimestamp?: string
+    highlightQuote?: string
+  }[]
 }
 
 /* ================= YOUTUBE HELPERS ================= */
@@ -128,8 +133,8 @@ function mapTalkToPost(inputData: any): Post {
   const rawBio = data.shortBio || data.author?.bio || ""
   const cleanBio = stripHtml(rawBio)
 
-  const rawExcerpt = data.excerpt || data.shortBio || data.introduction || ""
-  const cleanExcerpt = stripHtml(rawExcerpt)
+  const rawIntro = data.introduction || data.content || ""
+  const cleanExcerpt = stripHtml(data.excerpt || rawIntro || "")
 
   console.log("🔍 [mapTalkToPost] Final Calculated rawSlug:", rawSlug)
   console.log("🔍 [mapTalkToPost] Final Calculated profileUrl:", profileUrl)
@@ -139,7 +144,7 @@ function mapTalkToPost(inputData: any): Post {
     title: data.title,
     slug: data.slug,
     excerpt: cleanExcerpt,
-    content: data.introduction || data.content || "",
+    content: rawIntro,
     imageUrl: data.bannerImage || data.thumbnailUrl || data.profileImage || data.imageUrl,
     publishedAt: data.publishedAt || data.interviewDate || data.createdAt,
     views: data.views || 0,
@@ -391,9 +396,14 @@ export default function PostDetailsPage() {
                   {post.title}
                 </h1>
 
-                {post.excerpt && (
+                {post.content ? (
+                  <div
+                    className="prose prose-sm md:prose-base max-w-none text-gray-600 mb-5 leading-relaxed text-justify [&_p]:mb-3 [&_*]:!text-inherit"
+                    dangerouslySetInnerHTML={{ __html: post.content }}
+                  />
+                ) : post.excerpt ? (
                   <p className="text-gray-600 text-base mb-5 leading-relaxed text-justify">{post.excerpt}</p>
-                )}
+                ) : null}
 
                 <div className="flex flex-wrap items-center justify-between gap-3 pb-5 mb-6 border-b border-gray-100">
                   <div className="flex items-center gap-5 text-xs text-gray-500">
@@ -465,24 +475,41 @@ export default function PostDetailsPage() {
                   </div>
                 )}
 
-                <div className="border-t border-gray-100 pt-6">
-                  <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
-                    The Interview
-                  </h3>
+                <div className="border-t border-gray-100 pt-8 mt-8">
+                  <h2 className="text-xs md:text-sm font-extrabold tracking-widest uppercase text-gray-900 mb-6">
+                    THE INTERVIEW
+                  </h2>
 
                   {post.qa && post.qa.length > 0 ? (
-                    <div className="space-y-5">
+                    <div className="space-y-7">
                       {post.qa.map((item, idx) => (
-                        <div key={idx}>
-                          <p className="text-[#0F5B78] font-bold text-base mb-1.5">
-                            Q{idx + 1}. {item.question}
-                          </p>
-                          <p className="text-gray-700 text-sm leading-relaxed text-justify">
-                            <span className="font-bold text-gray-900">
-                              {post.author?.name ? `${post.author.name}: ` : "A: "}
+                        <div key={idx} className="group">
+                          <h3 className="text-[#0F5B78] font-bold text-base md:text-[17px] leading-snug mb-2 flex items-baseline justify-between">
+                            <span>
+                              Q{idx + 1}. {item.question}
                             </span>
-                            {item.answer}
-                          </p>
+                            {item.videoTimestamp && (
+                              <span className="shrink-0 text-xs font-medium text-[#0F5B78] bg-[#0F5B78]/10 px-2.5 py-0.5 rounded-full">
+                                ⏱ {item.videoTimestamp}
+                              </span>
+                            )}
+                          </h3>
+
+                          <div className="text-gray-700 text-sm md:text-[15px] leading-relaxed">
+                            <span className="font-bold text-gray-900 mr-1.5 inline">
+                              {post.author?.name ? `${post.author.name}:` : "A:"}
+                            </span>
+                            <div
+                              className="inline [&_p]:inline [&_p]:m-0 [&_*]:!text-inherit [&_strong]:!text-gray-900"
+                              dangerouslySetInnerHTML={{ __html: item.answer || "" }}
+                            />
+                          </div>
+
+                          {item.highlightQuote && (
+                            <blockquote className="mt-3 pl-4 border-l-4 border-[#0F5B78] italic text-gray-800 text-sm bg-gray-50/70 py-2.5 px-3 rounded-r-lg">
+                              "{item.highlightQuote}"
+                            </blockquote>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -500,40 +527,45 @@ export default function PostDetailsPage() {
                 <div className="lg:sticky lg:top-6 space-y-6">
                   {/* ABOUT THE GUEST */}
                   {post.author && (
-                    <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-                      <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
-                        About the Guest
+                    <div className="bg-white border border-gray-200/80 rounded-2xl p-6 shadow-xs">
+                      <h3 className="text-xs font-extrabold tracking-wider uppercase text-gray-900 mb-6">
+                        ABOUT THE GUEST
                       </h3>
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="relative w-14 h-14 shrink-0">
-                          <Image
-                            src={post.author.avatarUrl || "/avatar-placeholder.png"}
-                            alt={post.author.name}
-                            fill
-                            className="rounded-full border border-gray-200 object-cover"
-                            sizes="56px"
-                          />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-gray-900">{post.author.name}</p>
-                          {(post.author.role || post.author.company) && (
-                            <p className="text-xs text-gray-500">
-                              {post.author.role}
-                              {post.author.role &&
-                              post.author.company &&
-                              !post.author.role.includes(post.author.company)
-                                ? `, ${post.author.company}`
-                                : ""}
-                            </p>
-                          )}
-                        </div>
+
+                      <div className="relative w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden border border-gray-100 shadow-sm">
+                        <Image
+                          src={post.author.avatarUrl || "/avatar-placeholder.png"}
+                          alt={post.author.name}
+                          fill
+                          className="object-cover"
+                          sizes="112px"
+                        />
                       </div>
-                      {post.author.bio && (
-                        <p className="text-sm text-gray-600 leading-relaxed mb-4 text-justify">{post.author.bio}</p>
+
+                      <h4 className="text-base font-bold text-gray-900 text-center mb-1">
+                        {post.author.name}
+                      </h4>
+
+                      {(post.author.role || post.author.company) && (
+                        <p className="text-xs font-medium text-gray-500 text-center mb-4">
+                          {post.author.role}
+                          {post.author.role &&
+                          post.author.company &&
+                          !post.author.role.includes(post.author.company)
+                            ? `, ${post.author.company}`
+                            : ""}
+                        </p>
                       )}
+
+                      {post.author.bio && (
+                        <p className="text-sm text-gray-600 leading-relaxed mb-6 text-left line-clamp-6">
+                          {post.author.bio}
+                        </p>
+                      )}
+
                       <a
                         href={post.author.profileUrl || (post.author.companySlug ? `/suppliers/${post.author.companySlug}` : "/suppliers")}
-                        className="inline-flex items-center justify-center gap-1.5 w-full bg-[#0F5B78] text-white text-sm font-semibold px-4 py-2.5 rounded-lg hover:opacity-90 transition-colors"
+                        className="inline-flex items-center justify-center gap-2 w-full bg-[#0F5B78] hover:bg-[#0A4359] text-white text-sm font-semibold py-3 px-4 rounded-xl transition-colors shadow-xs"
                       >
                         View Company Profile →
                       </a>
@@ -542,9 +574,9 @@ export default function PostDetailsPage() {
 
                   {/* RELATED INTERVIEWS */}
                   {relatedPosts.length > 0 && (
-                    <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-                      <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
-                        Related Interviews
+                    <div className="bg-white border border-gray-200/80 rounded-2xl p-6 shadow-xs">
+                      <h3 className="text-xs font-extrabold tracking-wider uppercase text-gray-900 mb-5">
+                        RELATED INTERVIEWS
                       </h3>
                       <div className="space-y-4">
                         {relatedPosts.map((rp) => {
@@ -554,8 +586,8 @@ export default function PostDetailsPage() {
                             ? `${process.env.NEXT_PUBLIC_API_URL}${rp.imageUrl}`
                             : "/placeholder.svg"
                           const rpDate = rp.publishedAt
-                            ? new Date(rp.publishedAt).toLocaleDateString("en-US", {
-                                day: "2-digit",
+                            ? new Date(rp.publishedAt).toLocaleDateString("en-GB", {
+                                day: "numeric",
                                 month: "short",
                                 year: "numeric",
                               })
@@ -564,9 +596,9 @@ export default function PostDetailsPage() {
                             <a
                               key={rp.id}
                               href={`/industry-talks/${rp.slug}`}
-                              className="flex items-start gap-3 group"
+                              className="flex items-start gap-3.5 group"
                             >
-                              <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 bg-gray-100">
+                              <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-gray-100 border border-gray-100">
                                 <Image
                                   src={rp.author?.avatarUrl || rpImage}
                                   alt={rp.title}
@@ -576,14 +608,14 @@ export default function PostDetailsPage() {
                                 />
                               </div>
                               <div className="min-w-0">
-                                <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-2 group-hover:text-[#0F5B78]">
+                                <p className="text-xs font-bold text-gray-900 leading-snug line-clamp-2 group-hover:text-[#0F5B78] transition-colors">
                                   {rp.title}
                                 </p>
                                 {rp.author?.name && (
-                                  <p className="text-xs text-gray-500 mt-1">{rp.author.name}</p>
+                                  <p className="text-xs font-gray-500 mt-1 font-medium">{rp.author.name}</p>
                                 )}
                                 {rpDate && (
-                                  <p className="text-xs text-gray-400">{rpDate}</p>
+                                  <p className="text-[11px] text-gray-400 mt-0.5">{rpDate}</p>
                                 )}
                               </div>
                             </a>
