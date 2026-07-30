@@ -184,12 +184,12 @@ export default function BasicsSection({ posts }: Props) {
             <h2 className="text-2xl sm:text-3xl font-semibold text-[#121213]">
               Basics & Fundamentals
             </h2>
-            <Link
+            {/* <Link
               href="/articles"
               className="text-sm font-semibold uppercase text-[#0073ff]"
             >
               View All →
-            </Link>
+            </Link> */}
           </div>
           <div className="text-center py-10">
             <p className="text-gray-500">No articles available at the moment.</p>

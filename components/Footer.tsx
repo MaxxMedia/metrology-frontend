@@ -254,24 +254,24 @@ export default function Footer() {
                 <li><Link href="/articles" className="hover:text-black hover:translate-x-1 inline-block transition-all">Latest Issue</Link></li>
                 <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Archives</Link></li>
                 <li><Link href="/subscribe" className="hover:text-black hover:translate-x-1 inline-block transition-all">Subscribe</Link></li>
-                <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Renew Subscription</Link></li>
+                {/* <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Renew Subscription</Link></li> */}
                 <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Customer Service</Link></li>
               </ul>
             </div>
 
             {/* LEGAL & POLICIES - Desktop */}
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-4 flex flex-col items-center">
               <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Legal &amp; Policies</h5>
-              <div className="grid grid-cols-2 gap-x-8 text-sm">
+              <div className="inline-grid grid-cols-2 gap-x-12 text-sm whitespace-nowrap">
                 <ul className="space-y-3">
                   <li><Link href="/terms" className="hover:text-black hover:translate-x-1 inline-block transition-all">Terms &amp; Conditions</Link></li>
                   <li><Link href="/privacy-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Privacy Policy</Link></li>
                   <li><Link href="/disclaimer" className="hover:text-black hover:translate-x-1 inline-block transition-all">Disclaimer</Link></li>
                   <li><Link href="/cookie-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Cookie Policy</Link></li>
-                  <li><Link href="/advertising-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Advertising Policy</Link></li>
                 </ul>
-                <ul className="space-y-5">
-                  <li><Link href="/dpdp-compliance-notice" className="hover:text-black hover:translate-x-1 inline-block transition-all">DPDP Act Compliance </Link></li>
+                <ul className="space-y-3">
+                  <li><Link href="/advertising-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Advertising Policy</Link></li>
+                  <li><Link href="/dpdp-compliance-notice" className="hover:text-black hover:translate-x-1 inline-block transition-all">DPDP Act Compliance</Link></li>
                   <li><Link href="/copyright-ip-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Copyright &amp; IP Policy</Link></li>
                   <li><Link href="/refund-cancellation-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Refund &amp; Cancellation</Link></li>
                 </ul>
