@@ -12,24 +12,18 @@ export default function PodcastListing({ posts }: Props) {
   return (
     <section className="max-w-7xl mx-auto px-6 py-10">
       {/* Page Title */}
-      <h1
-        className="text-[36px] font-bold text-[#003B5C] mb-10"
-        style={{ fontFamily: "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif" }}
-      >
-        Podcast
-      </h1>
+      <h1 className="text-[36px] font-bold text-[#003B5C] mb-10">Podcast</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10">
-
-        {/* LEFT – PODCAST LIST */}
+        {/* LEFT - PODCAST LIST */}
         <div className="space-y-10">
           {posts.map((post) => {
             const imageUrl =
               post.imageUrl?.startsWith("http")
                 ? post.imageUrl
                 : post.imageUrl
-                ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-                : "/placeholder.svg"
+                  ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
+                  : "/placeholder.svg"
 
             const date = post.publishedAt
               ? new Date(post.publishedAt).toLocaleDateString("en-US", {
@@ -56,35 +50,28 @@ export default function PodcastListing({ posts }: Props) {
 
                   <span className="absolute inset-0 flex items-center justify-center">
                     <span className="w-14 h-14 bg-black/70 rounded-full flex items-center justify-center text-white text-xl">
-                      ▶
+                      &#9654;
                     </span>
                   </span>
                 </div>
 
                 {/* CONTENT */}
                 <div>
-                  <div className="text-xs text-gray-500 mb-2">
-                    {date}
-                  </div>
+                  <div className="text-xs text-gray-500 mb-2">{date}</div>
 
-                  <h2
-                    className="text-[22px] font-bold text-gray-900 leading-snug mb-3"
-                    style={{ fontFamily: "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif" }}
-                  >
+                  <h2 className="text-[22px] font-bold text-gray-900 leading-snug mb-3">
                     PODCAST: {post.title}
                   </h2>
 
-                  <p className="text-gray-600 text-[15px] leading-relaxed mb-4">
-                    {post.excerpt ||
-                      post.content?.substring(0, 180) + "..."}
+                  <p className="text-gray-600 text-[16px] leading-relaxed mb-4">
+                    {post.excerpt || post.content?.substring(0, 180) + "..."}
                   </p>
 
                   <Link
                     href={`/post/${post.slug}`}
                     className="text-[#0072BC] font-bold text-sm uppercase hover:underline"
-                    style={{ fontFamily: "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif" }}
                   >
-                    Listen →
+                    Listen -&gt;
                   </Link>
                 </div>
               </article>
@@ -92,7 +79,7 @@ export default function PodcastListing({ posts }: Props) {
           })}
         </div>
 
-        {/* RIGHT – ADS (Sticky) */}
+        {/* RIGHT - ADS (Sticky) */}
         <aside className="space-y-6 sticky top-24 h-fit">
           {[1, 2, 3].map((_, i) => (
             <div key={i} className="relative w-full h-[200px] border">
@@ -106,7 +93,6 @@ export default function PodcastListing({ posts }: Props) {
             </div>
           ))}
         </aside>
-
       </div>
     </section>
   )

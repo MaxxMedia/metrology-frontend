@@ -188,7 +188,6 @@ export default function PostDetailsPage() {
       setError(null)
 
       try {
-        // 1. Fetch industry-talk by slug directly
         let talkRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/slug/${encodeURIComponent(slugValue)}`,
           {
@@ -197,7 +196,6 @@ export default function PostDetailsPage() {
           }
         )
 
-        // 2. Fetch industry-talk by ID
         if (!talkRes.ok) {
           talkRes = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/${encodeURIComponent(slugValue)}`,
@@ -217,7 +215,6 @@ export default function PostDetailsPage() {
           }
         }
 
-        // 3. Fallback: Fetch standard post by slug
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/posts/slug/${encodeURIComponent(slugValue)}`,
           {
@@ -234,7 +231,6 @@ export default function PostDetailsPage() {
           }
         }
 
-        // 4. Fallback: Fetch all industry-talks and find by slug or ID
         const listRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks?limit=100`,
           { cache: "no-store" }
@@ -276,18 +272,19 @@ export default function PostDetailsPage() {
     fetchPost()
   }, [slugValue])
 
-  /* ================= FETCH RELATED INDUSTRY TALKS ================= */
+  /* ================= FETCH RELATED INDUSTRY TALKS (same source as admin) ================= */
   useEffect(() => {
     async function fetchRelated() {
       if (!post || post.category?.slug !== "industry-talks") return
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=industry-talks&limit=5`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks?page=1&limit=5`,
           { cache: "no-store" }
         )
         if (!res.ok) return
         const data = await res.json()
-        const list: Post[] = Array.isArray(data) ? data : data.posts || data.data || []
+        const rawList: any[] = Array.isArray(data) ? data : data.items || data.data || []
+        const list: Post[] = rawList.map((item) => mapTalkToPost(item))
         setRelatedPosts(list.filter((p) => p.id !== post.id).slice(0, 4))
       } catch (err) {
         console.error("Failed to load related interviews:", err)
@@ -335,8 +332,6 @@ export default function PostDetailsPage() {
       </div>
     )
   }
-
-  console.log("🔍 [Render Component] post.author:", post.author)
 
   const embedUrl = getYoutubeEmbed(post.youtubeUrl)
 

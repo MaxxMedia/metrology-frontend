@@ -248,7 +248,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                     </h2>
 
                     {post.guestName && (
-                      <p className="text-sm text-gray-700 font-medium">
+                      <p className="text-sm text-gray-500 font-medium">
                         {post.guestName}
                         {post.companyName && (
                           <span className="text-gray-500 font-normal">, {post.companyName}</span>

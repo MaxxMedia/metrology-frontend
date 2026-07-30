@@ -74,8 +74,8 @@ export default async function EventDetailsPage({
 
   if (!event) {
     return (
-      <div className="max-w-4xl mx-auto p-10">
-        <h1 className="text-2xl font-bold">Event not found</h1>
+      <div className="max-w-4xl mx-auto p-10" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+        <h1 className="text-[24px] font-bold">Event not found</h1>
       </div>
     )
   }
@@ -83,7 +83,7 @@ export default async function EventDetailsPage({
   const upcomingEvents = await getUpcomingEvents(slug)
 
   return (
-    <div className="w-full bg-gray-50">
+    <div className="w-full bg-gray-50" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
       <EventViewTracker slug={slug} />
 
       {/* ================= HEADER ================= */}
@@ -100,9 +100,9 @@ export default async function EventDetailsPage({
           )}
 
           <div className="flex-1">
-            <h1 className="text-2xl md:text-3xl font-bold mb-3">{event.title}</h1>
+            <h1 className="text-[24px] font-bold mb-3">{event.title}</h1>
 
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm mb-2">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-[16px] mb-2">
               <span className="flex items-center gap-2">
                 <Calendar size={14} />
                 {formatDate(event.startDate)} – {formatDate(event.endDate)}
@@ -116,14 +116,14 @@ export default async function EventDetailsPage({
             </div>
 
             {event.location && (
-              <span className="flex items-center gap-2 text-sm">
+              <span className="flex items-center gap-2 text-[16px]">
                 <MapPin size={14} />
                 {event.location}
               </span>
             )}
           </div>
 
-          <div className="text-sm space-y-2 md:text-right">
+          <div className="text-[12px] space-y-2 md:text-right">
             {event.websiteUrl && (
               <span className="flex md:justify-end items-center gap-2">
                 <Globe size={14} />
@@ -147,7 +147,7 @@ export default async function EventDetailsPage({
       </div>
 
       {/* ================= BREADCRUMB ================= */}
-      <div className="max-w-7xl mx-auto px-6 pt-4 text-sm text-gray-500">
+      <div className="max-w-7xl mx-auto px-6 pt-4 text-[12px] text-gray-500">
         <Link href="/" className="hover:underline">Home</Link>
         <span className="mx-2">›</span>
         <Link href="/events" className="hover:underline">Events</Link>
@@ -186,11 +186,11 @@ export default async function EventDetailsPage({
           {event.location && (
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b flex items-center justify-between">
-                <h3 className="text-sm font-semibold">Location</h3>
+                <h3 className="text-[20px] font-semibold">Location</h3>
                 <Link
                   href={event.mapUrl || `https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
                   target="_blank"
-                  className="text-xs text-[#0f5b78] hover:underline"
+                  className="text-[12px] text-[#0f5b78] hover:underline"
                 >
                   Open in Maps ↗
                 </Link>
@@ -208,14 +208,14 @@ export default async function EventDetailsPage({
 
           {/* ENQUIRE FORM */}
           <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <h3 className="text-sm font-semibold mb-3">Enquire Form</h3>
+            <h3 className="text-[20px] font-semibold mb-3">Enquire Form</h3>
             <EventEnquireForm slug={slug} />
           </div>
 
           {/* UPCOMING EVENTS */}
           {upcomingEvents.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-xl p-4">
-              <h3 className="text-sm font-semibold text-[#0f5b78] border-b-2 border-[#0f5b78] inline-block pb-1 mb-4">
+              <h3 className="text-[20px] font-semibold text-[#0f5b78] border-b-2 border-[#0f5b78] inline-block pb-1 mb-4">
                 Upcoming Events
               </h3>
               <div className="space-y-4">
@@ -226,13 +226,13 @@ export default async function EventDetailsPage({
                         <Image src={e.bannerUrl} alt={e.title} fill className="object-cover" unoptimized />
                       </div>
                     )}
-                    <p className="text-sm font-semibold text-gray-900 mb-1">{e.title}</p>
-                    <p className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+                    <p className="text-[15px] font-semibold text-gray-900 mb-1">{e.title}</p>
+                    <p className="flex items-center gap-2 text-[12px] text-gray-500 mb-1">
                       <Calendar size={12} />
                       {formatDate(e.startDate)}
                     </p>
                     {e.location && (
-                      <p className="flex items-center gap-2 text-xs text-gray-500">
+                      <p className="flex items-center gap-2 text-[12px] text-gray-500">
                         <MapPin size={12} />
                         {e.location}
                       </p>

@@ -241,6 +241,9 @@ export default function Footer() {
                 <li><Link href="/news" className="hover:text-black hover:translate-x-1 inline-block transition-all">News</Link></li>
                 <li><Link href="/products" className="hover:text-black hover:translate-x-1 inline-block transition-all">Products</Link></li>
                 <li><Link href="/podcast" className="hover:text-black hover:translate-x-1 inline-block transition-all">Podcast</Link></li>
+                <li><Link href="/packages" className="hover:text-black hover:translate-x-1 inline-block transition-all">Packages &amp; Pricing</Link></li>
+                <li><Link href="/contact" className="hover:text-black hover:translate-x-1 inline-block transition-all">Contact Us</Link></li>
+                <li><Link href="/suppliers" className="hover:text-black hover:translate-x-1 inline-block transition-all">Find a Supplier</Link></li>
               </ul>
             </div>
 
@@ -256,23 +259,8 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* MORE + CALENDAR - Desktop */}
-            <div className="lg:col-span-2">
-              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">More</h5>
-              <ul className="space-y-3 text-sm mb-8">
-                <li><Link href="/packages" className="hover:text-black hover:translate-x-1 inline-block transition-all">Packages &amp; Pricing</Link></li>
-                <li><Link href="/contact" className="hover:text-black hover:translate-x-1 inline-block transition-all">Contact Us</Link></li>
-                <li><Link href="/suppliers" className="hover:text-black hover:translate-x-1 inline-block transition-all">Find a Supplier</Link></li>
-              </ul>
-
-              <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Calendar</h5>
-              <ul className="space-y-3 text-sm">
-                <li><Link href="/events" className="hover:text-black hover:translate-x-1 inline-block transition-all">Events</Link></li>
-              </ul>
-            </div>
-
             {/* LEGAL & POLICIES - Desktop */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-5">
               <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Legal &amp; Policies</h5>
               <div className="grid grid-cols-2 gap-x-8 text-sm">
                 <ul className="space-y-3">
@@ -282,10 +270,10 @@ export default function Footer() {
                   <li><Link href="/cookie-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Cookie Policy</Link></li>
                   <li><Link href="/advertising-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Advertising Policy</Link></li>
                 </ul>
-                <ul className="space-y-3">
-                  <li><Link href="/dpdp-compliance-notice" className="hover:text-black hover:translate-x-1 inline-block transition-all">DPDP Act Compliance Notice</Link></li>
+                <ul className="space-y-5">
+                  <li><Link href="/dpdp-compliance-notice" className="hover:text-black hover:translate-x-1 inline-block transition-all">DPDP Act Compliance </Link></li>
                   <li><Link href="/copyright-ip-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Copyright &amp; IP Policy</Link></li>
-                  <li><Link href="/refund-cancellation-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Refund &amp; Cancellation Policy</Link></li>
+                  <li><Link href="/refund-cancellation-policy" className="hover:text-black hover:translate-x-1 inline-block transition-all">Refund &amp; Cancellation</Link></li>
                 </ul>
               </div>
             </div>

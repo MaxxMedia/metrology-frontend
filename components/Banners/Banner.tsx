@@ -205,7 +205,7 @@ function SquareAd({ ad }: { ad: BannerData }) {
       rel="noopener noreferrer"
     >
       <div className="relative overflow-hidden mx-auto rounded-sm" style={{ width: "300px", height: "250px" }}>
-        <Image src={ad.imageUrl} alt={ad.title} fill sizes="300px" className="object-cover" />
+              <Image src={ad.imageUrl} alt={ad.title} fill sizes="300px" className="object-contain p-2" />
       </div>
     </Link>
   );

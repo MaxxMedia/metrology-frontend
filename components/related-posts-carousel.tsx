@@ -21,9 +21,7 @@ export default function RelatedPostsCarousel() {
   useEffect(() => {
     async function fetchRelated() {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`
-        )
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`)
         const data = await res.json()
         const allPosts = Array.isArray(data.data) ? data.data : []
 
@@ -49,22 +47,19 @@ export default function RelatedPostsCarousel() {
   if (loading) {
     return (
       <section className="bg-white border-b border-gray-200">
-  <div className="max-w-[1320px] mx-auto px-4 py-16">
-        <div className="text-center text-gray-500 text-[16px]">
-          Loading related content...
+        <div className="max-w-[1320px] mx-auto px-4 py-16">
+          <div className="text-center text-gray-500 text-[16px]">
+            Loading related content...
+          </div>
         </div>
-      </div>
       </section>
     )
   }
 
   return (
     <section className="bg-white border-b border-gray-200">
-  <div className="max-w-[1320px] mx-auto px-4 py-16">
-        <h2
-          className="text-3xl md:text-4xl font-bold text-[#003049] mb-10 text-center"
-          style={{ fontFamily: "Oswald, sans-serif" }}
-        >
+      <div className="max-w-[1320px] mx-auto px-4 py-16">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#003049] mb-10 text-center">
           Related Content
         </h2>
 
@@ -74,8 +69,8 @@ export default function RelatedPostsCarousel() {
               post.imageUrl?.startsWith("http")
                 ? post.imageUrl
                 : post.imageUrl
-                ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-                : "/placeholder.svg"
+                  ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
+                  : "/placeholder.svg"
 
             const date = post.publishedAt
               ? new Date(post.publishedAt).toLocaleDateString("en-US", {
@@ -86,9 +81,7 @@ export default function RelatedPostsCarousel() {
               : "Today"
 
             const categoryName =
-              typeof post.category === "object"
-                ? post.category?.name || "LATEST"
-                : "LATEST"
+              typeof post.category === "object" ? post.category?.name || "LATEST" : "LATEST"
 
             return (
               <Link
@@ -109,10 +102,7 @@ export default function RelatedPostsCarousel() {
                 {/* Content */}
                 <div className="p-6 flex flex-col flex-1">
                   {/* Category */}
-                  <span
-                    className="inline-block mb-3 bg-[#0077b6] text-white text-xs font-bold px-3 py-1 uppercase tracking-widest"
-                    style={{ fontFamily: "Oswald, sans-serif" }}
-                  >
+                  <span className="inline-block mb-3 bg-[#0077b6] text-white text-xs font-bold px-3 py-1 uppercase tracking-widest">
                     {categoryName}
                   </span>
 
@@ -122,10 +112,7 @@ export default function RelatedPostsCarousel() {
                   </p>
 
                   {/* Title */}
-                  <h3
-                    className="text-[18px] font-bold text-[#003049] mb-4 line-clamp-2 group-hover:text-[#0077b6] transition-colors"
-                    style={{ fontFamily: "Oswald, sans-serif" }}
-                  >
+                  <h3 className="text-[18px] font-bold text-[#003049] mb-4 line-clamp-2 group-hover:text-[#0077b6] transition-colors">
                     {post.title}
                   </h3>
 
@@ -138,7 +125,7 @@ export default function RelatedPostsCarousel() {
 
                   {/* Read More */}
                   <span className="text-[#d62839] font-bold text-sm uppercase tracking-widest group-hover:text-[#003049] transition-colors">
-                    READ MORE →
+                    READ MORE -&gt;
                   </span>
                 </div>
               </Link>

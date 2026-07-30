@@ -301,12 +301,12 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                   // slot to remount on rotation so the fade actually plays
                   key={`${item.id}-${i}`}
                   href={`/post/${item.slug}`}
-                  className={`flex gap-4 items-start border-b border-gray-200 pb-6 group transition-all duration-500 ease-in-out ${fade
+                  className={`flex gap-4 items-start border-b border-gray-200 pb-6 group transition-all font-bold duration-500 ease-in-out ${fade
                     ? "translate-y-0 opacity-100"
                     : "translate-y-2 opacity-0"
                     }`}
                 >
-                  <div className="relative w-[88px] h-[88px] rounded-md overflow-hidden shrink-0">
+                  <div className="relative font-bold w-[88px] h-[88px] rounded-md overflow-hidden shrink-0">
                     <Image
                       src={thumb}
                       alt={item.title}
@@ -322,18 +322,18 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                       const tag = getTag(item)
                       return tag.text ? (
                         <span
-                          className={`inline-block text-xs font-semibold px-2 py-1 rounded ${tag.color} text-white mb-2`}
+                          className={`inline-block font-bold text-xs font-semibold px-2 py-1 rounded ${tag.color} text-white mb-2`}
                         >
                           {tag.text}
                         </span>
                       ) : null
                     })()}
 
-                    <h3 className="text-[17px] font-semibold leading-snug text-[#121213] group-hover:text-blue-600 transition">
+                    <h3 className="text-[16px] font-bold leading-snug text-[#121213] group-hover:text-blue-600 transition">
                       {item.title}
                     </h3>
 
-                    <div className="flex items-center gap-3 text-xs text-gray-400 mt-2">
+                    <div className="flex items-center gap-3 text-xs text-gray-600 mt-2">
                       <span className="flex items-center gap-1">
                         <AuthorAvatar
                           name={item.author?.name}

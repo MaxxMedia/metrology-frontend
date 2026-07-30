@@ -167,16 +167,10 @@ export default function PaidPackage() {
       >
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative max-w-[1320px] mx-auto px-6 md:px-16 text-center">
-          <h1
-            className="mb-4 text-[#11cbe4]"
-            style={{ fontFamily: "Oswald, sans-serif", fontSize: "48px", fontWeight: 400, lineHeight: "1.1" }}
-          >
+          <h1 className="mb-4 text-[#11cbe4]">
             Choose Your Plan
           </h1>
-          <p
-            className="text-white max-w-[640px] mx-auto"
-            style={{ fontFamily: "Roboto, sans-serif", fontSize: "18px", lineHeight: "28px" }}
-          >
+          <p className="text-white text-[16px] leading-relaxed max-w-[640px] mx-auto">
             Upgrade your listing to unlock stronger visibility, more product capacity,
             and premium placement across the platform. Secure checkout powered by Razorpay.
           </p>
@@ -197,19 +191,13 @@ export default function PaidPackage() {
                 } bg-white flex flex-col`}
               >
                 {isFeatured && (
-                  <div
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#D71920] text-white text-xs font-semibold px-4 py-1"
-                    style={{ fontFamily: "Roboto, sans-serif" }}
-                  >
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#D71920] text-white text-xs font-semibold px-4 py-1">
                     MOST POPULAR
                   </div>
                 )}
 
                 <div className="p-8 border-b border-gray-100">
-                  <h3
-                    className="mb-2"
-                    style={{ fontFamily: "Oswald, sans-serif", fontSize: "26px", fontWeight: 400 }}
-                  >
+                  <h3 className="mb-2">
                     {plan.name}
                   </h3>
                   <div className="flex items-baseline gap-1">

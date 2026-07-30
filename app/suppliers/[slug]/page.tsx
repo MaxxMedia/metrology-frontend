@@ -170,8 +170,8 @@ function GalleryItemCard({ item, title }: { item: any; title?: string }) {
       </div>
       {(name || description) && (
         <div className="p-4">
-          {name && <h4 className="font-medium text-gray-800">{name}</h4>}
-          {description && <p className="text-sm text-gray-600 mt-1">{description}</p>}
+          {name && <h4 className="text-[20px] font-medium text-gray-800">{name}</h4>}
+          {description && <p className="text-[15px] text-gray-600 mt-1">{description}</p>}
         </div>
       )}
     </div>
@@ -207,7 +207,7 @@ export default async function SupplierShowroomPage({
 
   if (!supplierRes.ok) {
     return (
-      <div className="p-10 text-center text-gray-600">
+      <div className="p-10 text-center text-[16px] text-gray-600">
         Supplier not found
       </div>
     )
@@ -351,12 +351,12 @@ export default async function SupplierShowroomPage({
       >
         {!isPaid && (
           <div className="bg-white rounded-lg shadow p-6 sm:p-10 border-t-4 border-red-700">
-            <h1 className="text-2xl sm:text-3xl font-bold text-center text-[#0b3954]">
+            <h1 className="text-[24px] font-bold text-center text-[#0b3954]">
               {supplier.name}
             </h1>
 
             {location && (
-              <p className="flex items-center justify-center gap-2 text-gray-500 mt-2">
+              <p className="flex items-center justify-center gap-2 text-[12px] text-gray-500 mt-2">
                 <MapPin size={16} />
                 {location}
               </p>
@@ -373,7 +373,7 @@ export default async function SupplierShowroomPage({
                 )}
 
                 <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                  <div className="text-sm space-y-3">
+                  <div className="text-[12px] space-y-3">
                     {supplier.tradeNames && supplier.tradeNames.length > 0 && (
                       <p className="text-gray-600">
                         <strong>Trade Names:</strong>{" "}
@@ -425,7 +425,7 @@ export default async function SupplierShowroomPage({
                   social.twitter ||
                   social.youtube) && (
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-600 uppercase mb-3">
+                      <h4 className="text-[12px] font-semibold text-gray-600 uppercase mb-3">
                         Connect
                       </h4>
 
@@ -459,7 +459,7 @@ export default async function SupplierShowroomPage({
 
               <section className="md:col-span-2">
                 <div
-                  className="prose prose-sm max-w-none text-gray-700"
+                  className="prose max-w-none text-[16px] text-gray-700"
                   dangerouslySetInnerHTML={{ __html: supplier.description }}
                 />
               </section>
@@ -472,7 +472,7 @@ export default async function SupplierShowroomPage({
                   return item && item.image && item.image.trim().length > 0
                 }).length > 0) && (
                     <div className="mt-8">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-4">Product Gallery</h3>
+                      <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Product Gallery</h3>
                       <GalleryGrid items={supplier.productGallery as any[]} title="Product" />
                     </div>
                   )}
@@ -482,8 +482,9 @@ export default async function SupplierShowroomPage({
                   return item && item.image && item.image.trim().length > 0
                 }).length > 0) && (
                     <div className="mt-8">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-4">Company Gallery</h3>
-                      <GalleryGridWithLightbox items={supplier.companyGallery as any[]} title="Company" />
+
+                      <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Company Gallery</h3>
+                      <GalleryGrid items={supplier.companyGallery as any[]} title="Company" />
                     </div>
                   )}
 
@@ -492,8 +493,10 @@ export default async function SupplierShowroomPage({
                   return item && item.image && item.image.trim().length > 0
                 }).length > 0) && (
                     <div className="mt-8">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-4">Factory Gallery</h3>
-                      <GalleryGridWithLightbox items={supplier.factoryGallery as any[]} title="Factory" />
+
+
+                      <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Factory Gallery</h3>
+                      <GalleryGrid items={supplier.factoryGallery as any[]} title="Factory" />
                     </div>
                   )}
               </>
@@ -508,6 +511,7 @@ export default async function SupplierShowroomPage({
             industriesServed={supplier.industriesServed}
             exportMarkets={supplier.exportMarkets}
           />
+
 
           {hasValidMap ? (
             <div className="bg-white rounded-lg shadow p-6 h-full">
@@ -565,21 +569,22 @@ export default async function SupplierShowroomPage({
         {/* NEW — after the map */}
         <ProductSuppliesSection productSupplies={supplier.productSupplies} />
 
+
         {showUpsellToOwner && <ClaimCompanyBanner />}
 
         <hr className="my-10 md:my-12" />
 
         {showUpsellToOwner && (
           <div className="text-center py-8 px-6 mb-8 bg-white border border-dashed border-gray-300 rounded-lg">
-            <p className="text-gray-700 font-semibold">
+            <p className="text-[20px] text-gray-700 font-semibold">
               Want to upload your own photos and videos?
             </p>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-[15px] text-gray-500 mt-1">
               Upgrade your plan to add and manage your own gallery content.
             </p>
             <Link
               href="/login"
-              className="inline-block mt-4 bg-[#0b3954] text-white px-6 py-2 text-sm font-semibold uppercase hover:bg-[#092f46] transition"
+              className="inline-block mt-4 bg-[#0b3954] text-white px-6 py-2 text-[15px] font-semibold uppercase hover:bg-[#092f46] transition"
             >
               Purchase a Plan
             </Link>
