@@ -36,6 +36,8 @@ export default function CreatePost() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  const [isPublished, setIsPublished] = useState(true);
+
   /* ================= FETCH AUTHORS & CATEGORIES ================= */
   useEffect(() => {
     Promise.all([
@@ -125,6 +127,7 @@ async function handleImageUpload(file: File) {
         },
         body: JSON.stringify({
           ...form, // ✅ nothing removed, socials included
+          isPublished,
           excerpt,
           authorId: Number(form.authorId),
           categoryId: Number(form.categoryId),
@@ -276,6 +279,21 @@ async function handleImageUpload(file: File) {
           <input name="youtubeUrl" value={form.youtubeUrl} onChange={handleChange} placeholder="YouTube URL" className="w-full p-3 border rounded-lg" />
           <input name="email" value={form.email} onChange={handleChange} placeholder="Contact Email" className="w-full p-3 border rounded-lg" />
           <input name="whatsappNumber" value={form.whatsappNumber} onChange={handleChange} placeholder="WhatsApp Number" className="w-full p-3 border rounded-lg" />
+
+          {/* STATUS */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Publish Status
+            </label>
+            <select
+              value={isPublished ? "published" : "draft"}
+              onChange={(e) => setIsPublished(e.target.value === "published")}
+              className="w-full p-3 border rounded-lg bg-white"
+            >
+              <option value="published">Published (Visible on site)</option>
+              <option value="draft">Save as Draft (Hidden from site)</option>
+            </select>
+          </div>
 
           <button
             type="submit"

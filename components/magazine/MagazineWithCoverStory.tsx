@@ -41,7 +41,7 @@ export default function MagazineWithCoverStory() {
   if (!magazine) return null
 
   return (
-    <section className="bg-[#E9ECEF]">
+    <section className="bg-[#E9ECEF] p-4">
       <div className="max-w-[1320px] mx-auto grid grid-cols-1 lg:grid-cols-[420px_1fr]">
 
         {/* ================= LEFT – LATEST ISSUE ================= */}

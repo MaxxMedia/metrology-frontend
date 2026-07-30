@@ -36,6 +36,7 @@ export default function EditPost() {
   const [categories, setCategories] = useState<any[]>([])
   const [message, setMessage] = useState("")
   const [uploading, setUploading] = useState(false)
+  const [isPublished, setIsPublished] = useState(true)
 
   /* ================= LOAD DATA ================= */
   useEffect(() => {
@@ -67,6 +68,8 @@ export default function EditPost() {
           email: post.email || "",
           whatsappNumber: post.whatsappNumber || "",
         })
+
+        setIsPublished(Boolean(post.publishedAt))
 
         const authorJson = await authorRes.json()
         const categoryJson = await categoryRes.json()
@@ -149,6 +152,7 @@ export default function EditPost() {
           },
           body: JSON.stringify({
             ...form,
+            isPublished,
             authorId: Number(form.authorId),
             categoryId: Number(form.categoryId),
           }),
@@ -266,6 +270,21 @@ export default function EditPost() {
         <input name="youtubeUrl" value={form.youtubeUrl} onChange={handleChange} placeholder="YouTube URL" className="w-full p-3 border rounded" />
         <input name="email" value={form.email} onChange={handleChange} placeholder="Email" className="w-full p-3 border rounded" />
         <input name="whatsappNumber" value={form.whatsappNumber} onChange={handleChange} placeholder="WhatsApp Number" className="w-full p-3 border rounded" />
+
+        {/* STATUS */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
+            Publish Status
+          </label>
+          <select
+            value={isPublished ? "published" : "draft"}
+            onChange={(e) => setIsPublished(e.target.value === "published")}
+            className="w-full p-3 border rounded bg-white"
+          >
+            <option value="published">Published (Visible on site)</option>
+            <option value="draft">Save as Draft (Hidden from site)</option>
+          </select>
+        </div>
 
         <button
           disabled={uploading}

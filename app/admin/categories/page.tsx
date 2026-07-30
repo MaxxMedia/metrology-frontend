@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Edit, FolderOpen, Plus, Search, Trash2, X } from "lucide-react";
+import { ArrowLeft, Edit, Filter, FolderOpen, Plus, Trash2, X } from "lucide-react";
 import AdminPagination, { ADMIN_PAGE_SIZE } from "@/components/admin/AdminPagination";
 
 type Category = {
@@ -16,17 +16,17 @@ export default function CategoryManagement() {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [page, setPage] = useState(1);
-  const [form, setForm] = useState({ name: "", slug: "" });
+  const [form, setForm] = useState({ name: "" });
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  /* ================= RESET PAGE ON SEARCH ================= */
+  /* ================= RESET PAGE ON FILTER CHANGE ================= */
   useEffect(() => {
     setPage(1);
-  }, [search]);
+  }, [selectedCategoryId]);
 
   /* ================= FETCH CATEGORIES ================= */
   const fetchCategories = async () => {
@@ -50,28 +50,18 @@ export default function CategoryManagement() {
 
   /* ================= FORM HANDLERS ================= */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (name === "name" && !editingCategory) {
-      // Auto generate slug from name when adding new
-      const autoSlug = value
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-");
-      setForm({ name: value, slug: autoSlug });
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
+    setForm({ name: e.target.value });
   };
 
   const startEdit = (cat: Category) => {
     setEditingCategory(cat);
-    setForm({ name: cat.name, slug: cat.slug });
+    setForm({ name: cat.name });
     setMessage("");
   };
 
   const cancelEdit = () => {
     setEditingCategory(null);
-    setForm({ name: "", slug: "" });
+    setForm({ name: "" });
     setMessage("");
   };
 
@@ -87,10 +77,19 @@ export default function CategoryManagement() {
         : `${process.env.NEXT_PUBLIC_API_URL}/api/categories`;
       const method = isEditing ? "PUT" : "POST";
 
+      const slug =
+        editingCategory?.slug ||
+        form.name
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .trim()
+          .replace(/\s+/g, "-") ||
+        "category";
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ name: form.name, slug }),
       });
 
       if (res.ok) {
@@ -104,7 +103,7 @@ export default function CategoryManagement() {
         } else {
           setCategories((prev) => [...prev, savedCat]);
         }
-        setForm({ name: "", slug: "" });
+        setForm({ name: "" });
       } else {
         const error = await res.json();
         setMessage(`❌ Failed: ${error.error || error.message || "Unknown error"}`);
@@ -138,7 +137,7 @@ export default function CategoryManagement() {
   };
 
   const filteredCategories = categories.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
+    selectedCategoryId ? c.id === Number(selectedCategoryId) : true
   );
 
   const totalPages = Math.max(1, Math.ceil(filteredCategories.length / ADMIN_PAGE_SIZE));
@@ -199,21 +198,6 @@ export default function CategoryManagement() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">
-                  Slug
-                </label>
-                <input
-                  type="text"
-                  name="slug"
-                  placeholder="e.g. technology"
-                  value={form.slug}
-                  onChange={handleChange}
-                  className="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                  required
-                />
-              </div>
-
               <div className="flex gap-2 pt-2">
                 <button
                   type="submit"
@@ -254,16 +238,22 @@ export default function CategoryManagement() {
                   All Categories ({categories.length})
                 </h2>
                 <div className="relative w-full sm:w-64">
-                  <Search
+                  <Filter
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                     size={16}
                   />
-                  <input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search category..."
-                    className="pl-9 pr-4 py-2 border rounded-lg text-sm w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
+                  <select
+                    value={selectedCategoryId}
+                    onChange={(e) => setSelectedCategoryId(e.target.value)}
+                    className="pl-9 pr-8 py-2 border rounded-lg text-sm w-full bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="">All Categories</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -281,9 +271,6 @@ export default function CategoryManagement() {
                     <thead className="bg-gray-50 border-b">
                       <tr>
                         <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">
-                          ID
-                        </th>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">
                           Name
                         </th>
                         <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">
@@ -299,9 +286,6 @@ export default function CategoryManagement() {
                             editingCategory?.id === cat.id ? "bg-indigo-50/50" : ""
                           }`}
                         >
-                          <td className="px-6 py-4 text-sm font-medium text-gray-600">
-                            #{cat.id}
-                          </td>
                           <td className="px-6 py-4 text-sm font-semibold text-gray-800">
                             {cat.name}
                           </td>

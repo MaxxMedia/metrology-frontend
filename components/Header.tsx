@@ -19,12 +19,13 @@ type User = {
 
 /* ================= MENUS ================= */
 const TOPICS = [
-  { label: "Machining", slug: "machining" },
+  { label: "Machine Tools", slug: "machining" },
   { label: "Cutting Tools", slug: "cuttingtools" },
-  { label: "Surface Engineering", slug: "surfaceengineering" },
-  { label: "Smart Manufacturing", slug: "smartmanufacturing" },
-  { label: "Advanced Manufacturing", slug: "advancedmanufacturing" },
-  { label: "Maintenance & Operations", slug: "maintenance-operations" },
+  { label: "Dies, Moulds & Tooling", slug: "dies-moulds-and-tooling" },
+  { label: "Metrology & Quality", slug: "metrologyandquality" },
+  { label: "Factory Automation", slug: "factory-automation" },
+  { label: "CAD/CAM/CAE", slug: "CAD/CAM/CAE" },
+  { label: "Manufacturing Technologies", slug: "manufacturing-technologies" },
 ]
 
 const RESOURCES = [
