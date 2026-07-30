@@ -12,34 +12,26 @@ export default function ArchiveListing({ posts }: Props) {
     <section className="max-w-[1320px] mx-auto px-[15px] py-12">
       {/* PAGE TITLE */}
       <div className="flex items-center justify-between mb-10">
-        <h1
-          className="text-[36px] font-bold text-[#003B5C]"
-          style={{
-            fontFamily:
-              "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-          }}
-        >
-          Archive
-        </h1>
+        <h1 className="text-[36px] font-bold text-[#003B5C]">Archive</h1>
 
         <Link
           href="/archive"
           className="hidden md:inline-flex items-center gap-2 border border-[#003B5C] px-5 py-2 text-sm font-semibold text-[#003B5C] hover:bg-[#003B5C] hover:text-white transition"
         >
-          SEE MORE ISSUES →
+          SEE MORE ISSUES -&gt;
         </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10">
-        {/* LEFT – ARCHIVE GRID */}
+        {/* LEFT - ARCHIVE GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
           {posts.map((post) => {
             const imageUrl =
               post.imageUrl?.startsWith("http")
                 ? post.imageUrl
                 : post.imageUrl
-                ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-                : "/placeholder.svg"
+                  ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
+                  : "/placeholder.svg"
 
             const date = post.publishedAt
               ? new Date(post.publishedAt).toLocaleDateString("en-US", {
@@ -51,17 +43,17 @@ export default function ArchiveListing({ posts }: Props) {
             return (
               <div key={post.id} className="text-center">
                 {/* COVER IMAGE */}
-               <Link href={`/post/${post.slug}`}>
-  <div className="relative w-full h-[420px] mb-5 shadow-lg overflow-hidden">
-    <Image
-      src={imageUrl}
-      alt={post.title}
-      fill
-      className="object-contain hover:scale-[1.02] transition-transform"
-      sizes="(max-width:768px) 100vw, 400px"
-    />
-  </div>
-</Link>
+                <Link href={`/post/${post.slug}`}>
+                  <div className="relative w-full h-[420px] mb-5 shadow-lg overflow-hidden">
+                    <Image
+                      src={imageUrl}
+                      alt={post.title}
+                      fill
+                      className="object-contain hover:scale-[1.02] transition-transform"
+                      sizes="(max-width:768px) 100vw, 400px"
+                    />
+                  </div>
+                </Link>
 
                 {/* DATE */}
                 <h3 className="text-[18px] font-semibold text-[#6B7280] mb-2">
@@ -72,12 +64,8 @@ export default function ArchiveListing({ posts }: Props) {
                 <Link
                   href={`/post/${post.slug}`}
                   className="text-[#C70000] font-bold text-sm uppercase hover:underline"
-                  style={{
-                    fontFamily:
-                      "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-                  }}
                 >
-                  Read Now →
+                  Read Now -&gt;
                 </Link>
               </div>
             )
@@ -90,20 +78,20 @@ export default function ArchiveListing({ posts }: Props) {
           )}
         </div>
 
-        {/* RIGHT – ADS */}
-       <aside className="space-y-6 sticky top-24 h-fit">
-  {[1, 2, 3].map((_, i) => (
-    <div key={i} className="relative w-full h-[200px] border">
-      <Image
-        src="/advertisement-banner.jpg"
-        alt="Advertisement"
-        fill
-        className="object-cover"
-        sizes="300px"
-      />
-    </div>
-  ))}
-</aside>
+        {/* RIGHT - ADS */}
+        <aside className="space-y-6 sticky top-24 h-fit">
+          {[1, 2, 3].map((_, i) => (
+            <div key={i} className="relative w-full h-[200px] border">
+              <Image
+                src="/advertisement-banner.jpg"
+                alt="Advertisement"
+                fill
+                className="object-cover"
+                sizes="300px"
+              />
+            </div>
+          ))}
+        </aside>
       </div>
 
       {/* MOBILE SEE MORE */}
@@ -112,7 +100,7 @@ export default function ArchiveListing({ posts }: Props) {
           href="/archive"
           className="inline-flex items-center gap-2 bg-[#003B5C] text-white px-6 py-3 text-sm font-semibold"
         >
-          SEE MORE ISSUES →
+          SEE MORE ISSUES -&gt;
         </Link>
       </div>
     </section>

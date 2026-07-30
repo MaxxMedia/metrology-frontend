@@ -137,7 +137,7 @@ export default function SuppliersPage() {
           className="lg:hidden fixed bottom-6 right-6 z-40 bg-[#0b3954] text-white p-4 rounded-full shadow-lg flex items-center gap-2 hover:bg-[#0a2f42] transition-colors"
         >
           <SlidersHorizontal size={20} />
-          <span className="font-semibold">Filters</span>
+          <span className="text-[16px] font-semibold">Filters</span>
         </button>
 
         <div className="w-full grid grid-cols-1 lg:[grid-template-columns:300px_minmax(0,1fr)_360px] gap-6 lg:gap-8">
@@ -158,7 +158,7 @@ export default function SuppliersPage() {
               />
               <div className="fixed inset-y-0 left-0 w-full sm:w-[400px] bg-white z-50 overflow-y-auto lg:hidden">
                 <div className="sticky top-0 bg-white border-b px-4 py-4 flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-[#0b3954]">Filters</h3>
+                  <h3 className="text-[20px] font-bold text-[#0b3954]">Filters</h3>
                   <button onClick={() => setShowFilters(false)} className="text-gray-500 hover:text-gray-700 text-2xl">×</button>
                 </div>
                 <div className="p-4">
@@ -167,7 +167,7 @@ export default function SuppliersPage() {
                 <div className="sticky bottom-0 bg-white border-t p-4">
                   <button
                     onClick={() => setShowFilters(false)}
-                    className="w-full bg-[#0b3954] text-white py-3 rounded font-semibold hover:bg-[#0a2f42] transition-colors"
+                    className="w-full bg-[#0b3954] text-white py-3 rounded text-[15px] font-semibold hover:bg-[#0a2f42] transition-colors"
                   >
                     View Results
                   </button>
@@ -188,14 +188,14 @@ export default function SuppliersPage() {
               />
               <div className="absolute inset-0 bg-black/40" />
               <div className="absolute inset-0 flex items-center justify-center px-4">
-                <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold text-center">
+                <h1 className="text-white text-[24px] font-bold text-center">
                   Find a Tooling Technology Supplier
                 </h1>
               </div>
             </div>
 
             {/* BREADCRUMB */}
-            <div className="text-sm text-gray-600">
+            <div className="text-[12px] text-gray-600">
               <span className="underline cursor-pointer hover:text-gray-800">Home</span>
               <span className="mx-2">›</span>
               <span className="font-medium text-gray-800">Find a Supplier</span>
@@ -204,14 +204,14 @@ export default function SuppliersPage() {
             {/* SEARCH HEADER */}
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-[#0b3954]">Search Results</h2>
-                <p className="text-gray-600 mt-1 text-sm md:text-base">
+                <h2 className="text-[24px] font-bold text-[#0b3954]">Search Results</h2>
+                <p className="text-gray-600 mt-1 text-[12px]">
                   {loading ? "Loading..." : `${total} total supplier${total !== 1 ? "s" : ""}`}
                 </p>
               </div>
 
               <select
-                className="border border-gray-300 px-3 py-2 text-sm rounded focus:outline-none focus:ring-2 focus:ring-[#0b3954]"
+                className="border border-gray-300 px-3 py-2 text-[16px] rounded focus:outline-none focus:ring-2 focus:ring-[#0b3954]"
                 value={sortBy}
                 onChange={e => handleSortChange(e.target.value)}
               >
@@ -226,7 +226,7 @@ export default function SuppliersPage() {
               <div className="flex items-center justify-center py-20">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0b3954] mx-auto mb-4"></div>
-                  <p className="text-gray-600">Loading suppliers...</p>
+                  <p className="text-[16px] text-gray-600">Loading suppliers...</p>
                 </div>
               </div>
             ) : suppliers.length > 0 ? (
@@ -237,8 +237,8 @@ export default function SuppliersPage() {
               </div>
             ) : (
               <div className="text-center py-20">
-                <p className="text-gray-500 text-lg">No suppliers found.</p>
-                <p className="text-gray-400 text-sm mt-1">Try adjusting your filters.</p>
+                <p className="text-[16px] text-gray-500">No suppliers found.</p>
+                <p className="text-[12px] text-gray-400 mt-1">Try adjusting your filters.</p>
               </div>
             )}
              
@@ -246,13 +246,13 @@ export default function SuppliersPage() {
             {/* PAGINATION */}
             {totalPages > 1 && (
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 pb-20 lg:pb-6">
-                <div className="text-sm text-gray-600 sm:hidden">Page {currentPage} of {totalPages}</div>
+                <div className="text-[12px] text-gray-600 sm:hidden">Page {currentPage} of {totalPages}</div>
 
                 <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center">
                   <button
                     onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                     disabled={currentPage === 1}
-                    className={`w-9 h-9 sm:w-10 sm:h-10 border flex items-center justify-center text-sm font-semibold rounded transition-colors
+                    className={`w-9 h-9 sm:w-10 sm:h-10 border flex items-center justify-center text-[12px] font-semibold rounded transition-colors
                       ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-[#0b3954] hover:bg-gray-100"}`}
                   >
                     <ChevronLeft size={16} />
@@ -265,7 +265,7 @@ export default function SuppliersPage() {
                       <button
                         key={page}
                         onClick={() => handlePageChange(page as number)}
-                        className={`w-9 h-9 sm:w-10 sm:h-10 border text-sm font-semibold rounded transition-colors
+                        className={`w-9 h-9 sm:w-10 sm:h-10 border text-[12px] font-semibold rounded transition-colors
                           ${page === currentPage ? "bg-[#0b3954] text-white" : "bg-white text-[#0b3954] hover:bg-gray-100"}`}
                       >
                         {page}
@@ -276,14 +276,14 @@ export default function SuppliersPage() {
                   <button
                     onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                     disabled={currentPage === totalPages}
-                    className={`w-9 h-9 sm:w-10 sm:h-10 border flex items-center justify-center text-sm font-semibold rounded transition-colors
+                    className={`w-9 h-9 sm:w-10 sm:h-10 border flex items-center justify-center text-[12px] font-semibold rounded transition-colors
                       ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-[#0b3954] hover:bg-gray-100"}`}
                   >
                     <ChevronRight size={16} />
                   </button>
                 </div>
 
-                <div className="hidden sm:block text-sm text-gray-600">Page {currentPage} of {totalPages}</div>
+                <div className="hidden sm:block text-[12px] text-gray-600">Page {currentPage} of {totalPages}</div>
               </div>
             )}
              

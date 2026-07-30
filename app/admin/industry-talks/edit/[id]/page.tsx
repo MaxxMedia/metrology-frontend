@@ -381,24 +381,42 @@ export default function EditIndustryTalkPage() {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  async function uploadFile(file: File, onDone: (url: string) => void) {
+  async function uploadFile(file: File, onDone: (url: string) => void): Promise<void> {
     setUploading(true)
     setMessage("Uploading...")
     try {
       const fd = new FormData()
       fd.append("image", file)
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
         method: "POST",
         body: fd,
       })
+
+      const contentType = res.headers.get("content-type") || ""
+
+      if (!contentType.includes("application/json")) {
+        const text = await res.text()
+
+        console.error("UPLOAD SERVER ERROR:", {
+          status: res.status,
+          statusText: res.statusText,
+          response: text,
+        })
+
+        throw new Error(`Upload API returned ${res.status} ${res.statusText}`)
+      }
+
       const data = await res.json()
+
       if (res.ok && data.imageUrl) {
         onDone(data.imageUrl)
         setMessage("")
       } else {
-        throw new Error()
+        throw new Error(data.message || "Upload failed")
       }
-    } catch {
+    } catch (err) {
+      console.error(err)
       setMessage("Upload failed")
     } finally {
       setUploading(false)
@@ -528,34 +546,8 @@ export default function EditIndustryTalkPage() {
       )
     )
 
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/industry-talks/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            // Do NOT set Content-Type manually for FormData — the browser
-            // needs to set it (including the multipart boundary) itself.
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: fd,
-        }
-      )
+ 
 
-      const data = await res.json()
-      setLoading(false)
-
-      if (res.ok) {
-        setMessage(status === "PUBLISHED" ? "Interview updated & published!" : "Draft updated!")
-        setTimeout(() => router.push("/admin/industry-talks"), 900)
-      } else {
-        setMessage(data?.message || data?.errors?.[0]?.msg || "Update failed")
-      }
-    } catch (err) {
-      console.error(err)
-      setLoading(false)
-      setMessage("Network error")
-    }
   }
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {

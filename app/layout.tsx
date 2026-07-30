@@ -10,7 +10,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter-tight",
   display: "swap",
 })
@@ -167,7 +167,7 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en" className={interTight.variable} suppressHydrationWarning>
+    <html lang="en" className={interTight.variable}>
       <head>
         {/* JSON-LD Structured Data */}
         <script

@@ -196,11 +196,11 @@ export default function VideosSection({ posts }: Props) {
       <div className="max-w-[1320px] mx-auto px-4">
         {/* HEADER */}
         <div className="flex items-center justify-between mb-12">
-          <h2 className="text-[36px] font-semibold">Featured Videos</h2>
+          <h2 className="text-[24px] font-semibold">Featured Videos</h2>
 
           <Link
             href="/videos"
-            className="text-sm font-medium flex items-center gap-2 hover:underline"
+            className="text-[12px] font-medium flex items-center gap-2 hover:underline"
           >
             View All →
           </Link>
@@ -262,17 +262,17 @@ export default function VideosSection({ posts }: Props) {
                 <div className="absolute bottom-6 left-6 max-w-[85%]">
                   {featuredTag?.text && (
                     <span
-                      className={`${featuredTag.color} text-xs font-bold px-3 py-1 rounded`}
+                      className={`${featuredTag.color} text-[12px] font-bold px-3 py-1 rounded`}
                     >
                       {featuredTag.text}
                     </span>
                   )}
 
-                  <h3 className="text-[28px] font-semibold mt-4 leading-snug">
+                  <h3 className="text-[24px] font-semibold mt-4 leading-snug">
                     {selectedVideo?.title}
                   </h3>
 
-                  <div className="flex items-center gap-4 text-sm text-gray-300 mt-3">
+                  <div className="flex items-center gap-4 text-[12px] text-gray-300 mt-3">
                     <AuthorMeta video={selectedVideo} />
                     <span>{date(selectedVideo?.createdAt)}</span>
                     {selectedVideo?.views !== undefined && selectedVideo?.views !== null && (
@@ -338,17 +338,17 @@ export default function VideosSection({ posts }: Props) {
                   <div className="flex-1 min-w-0">
                     {tag.text && (
                       <span
-                        className={`${tag.color} text-[10px] font-bold px-2 py-0.5 rounded inline-block uppercase tracking-wide w-fit mb-1`}
+                        className={`${tag.color} text-[12px] font-bold px-2 py-0.5 rounded inline-block uppercase tracking-wide w-fit mb-1`}
                       >
                         {tag.text}
                       </span>
                     )}
 
-                    <h4 className="text-[14px] font-semibold leading-snug line-clamp-2 group-hover:text-gray-300 transition">
+                    <h4 className="text-[20px] font-semibold leading-snug line-clamp-2 group-hover:text-gray-300 transition">
                       {video.title}
                     </h4>
 
-                    <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1 flex-wrap">
+                    <div className="flex items-center gap-1.5 text-[12px] text-gray-400 mt-1 flex-wrap">
                       <AuthorMeta video={video} />
                       <span>•</span>
                       <span>{date(video.createdAt)}</span>

@@ -21,11 +21,8 @@ export default function SupplierAds() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/banners?placement=SIDEBAR`
       )
-      const data = await res.json();
-
-      console.log("SIDEBAR ADS:", data);
-
-      setBanners(Array.isArray(data) ? data.slice(0, 3) : []);
+      const data = await res.json()
+      setBanners(Array.isArray(data) ? data.slice(0, 3) : [])
     }
 
     fetchSidebarAds()
@@ -46,13 +43,16 @@ function Ad({ ad }: { ad: Banner }) {
   return (
     <Link
       href={ad.targetUrl || "#"}
-      className="block bg-white"
       target="_blank"
+      className="block w-[300px] h-[250px] mx-auto overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 bg-white border border-gray-200"
     >
-      <div
-        className="relative overflow-hidden mx-auto"
-        style={{ width: "300px", height: "250px" }}
-      >
+      {/*
+        Fixed 300x250 box for every ad, no exceptions.
+        object-cover fills the box completely (crops the image
+        as needed) so there's never yellow/empty space — every
+        card ends up exactly the same size and height.
+      */}
+      <div className="relative w-full h-full">
         <Image
           src={ad.imageUrl}
           alt={ad.title}
@@ -70,13 +70,9 @@ function RecruiterAd({ src }: { src: string }) {
   return (
     <Link
       href="/signup?role=recruiter"
-      className="relative block group overflow-hidden"
+      className="relative block group overflow-hidden w-[300px] h-[250px] mx-auto"
     >
-      <div
-        className="relative overflow-hidden mx-auto"
-        style={{ width: "300px", height: "250px" }}
-      >
-        {/* IMAGE */}
+      <div className="relative w-full h-full">
         <Image
           src={src}
           alt="Hire Candidates"
@@ -85,10 +81,8 @@ function RecruiterAd({ src }: { src: string }) {
           className="object-cover"
         />
 
-        {/* DARK OVERLAY */}
         <div className="absolute inset-0 bg-black/50 group-hover:bg-black/60 transition" />
 
-        {/* TEXT CONTENT */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <h3 className="text-white text-xl font-bold mb-2">
             Hiring Talent?
@@ -97,7 +91,7 @@ function RecruiterAd({ src }: { src: string }) {
             Register your company & post jobs
           </p>
 
-          <span className="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold group-hover:bg-indigo-700 transition">
+          <span className="inline-block bg-indigo-600 text-white px-4 py-2 text-sm font-semibold group-hover:bg-indigo-700 transition">
             Hire Candidates
           </span>
         </div>

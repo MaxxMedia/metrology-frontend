@@ -14,19 +14,12 @@ export default function NewsProductsSection({
   productPosts,
 }: NewsProductsSectionProps) {
   return (
-    <section className="py-12 px-4 bg-white font-['Roboto',system-ui,apple-system]">
+    <section className="py-12 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          
-          {/* 📰 News Column */}
+          {/* News Column */}
           <div>
-            <h2
-              className="text-[28px] font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200"
-              style={{
-                fontFamily:
-                  "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-              }}
-            >
+            <h2 className="text-[28px] font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200">
               News
             </h2>
 
@@ -38,12 +31,7 @@ export default function NewsProductsSection({
                   </span>
                   <Link
                     href={`/post/${post.slug}`}
-                    className="text-gray-900 hover:text-[#006E6D] transition-all leading-snug text-[16px] font-semibold"
-                    style={{
-                      fontFamily:
-                        "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-                      lineHeight: "1.3",
-                    }}
+                    className="text-gray-900 hover:text-[#006E6D] transition-all leading-[1.3] text-[16px] font-semibold"
                   >
                     {post.title}
                   </Link>
@@ -52,15 +40,9 @@ export default function NewsProductsSection({
             </ol>
           </div>
 
-          {/* 🏭 Products Column */}
+          {/* Products Column */}
           <div>
-            <h2
-              className="text-[28px] font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200"
-              style={{
-                fontFamily:
-                  "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-              }}
-            >
+            <h2 className="text-[28px] font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200">
               Products
             </h2>
 
@@ -70,8 +52,8 @@ export default function NewsProductsSection({
                   post.imageUrl && post.imageUrl.startsWith("http")
                     ? post.imageUrl
                     : post.imageUrl
-                    ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-                    : "/placeholder.svg";
+                      ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
+                      : "/placeholder.svg";
 
                 const date = post.publishedAt
                   ? new Date(post.publishedAt).toLocaleDateString("en-US", {
@@ -83,7 +65,6 @@ export default function NewsProductsSection({
 
                 return (
                   <div key={post.id} className="flex gap-4">
-                    
                     {/* Product Image */}
                     <div className="relative w-24 h-24 shrink-0 border border-gray-200 rounded-md overflow-hidden">
                       <Image
@@ -97,47 +78,23 @@ export default function NewsProductsSection({
 
                     {/* Content */}
                     <div className="flex-1">
-                      <div
-                        className="text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide"
-                        style={{
-                          fontFamily:
-                            "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-                        }}
-                      >
+                      <div className="text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide">
                         {date}
                       </div>
 
-                      <h3
-                        className="text-[16px] font-bold text-gray-900 mb-2 line-clamp-2 leading-snug"
-                        style={{
-                          fontFamily:
-                            "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-                        }}
-                      >
+                      <h3 className="text-[16px] font-bold text-gray-900 mb-2 line-clamp-2 leading-snug">
                         {post.title}
                       </h3>
 
-                      <p
-                        className="text-[14px] text-gray-600 mb-3 leading-snug line-clamp-2"
-                        style={{
-                          fontFamily:
-                            "Roboto, system-ui, apple-system, sans-serif",
-                        }}
-                      >
-                        {post.excerpt ||
-                          post.content?.substring(0, 100) ||
-                          ""}
+                      <p className="text-[16px] text-gray-600 mb-3 leading-relaxed line-clamp-2">
+                        {post.excerpt || post.content?.substring(0, 100) || ""}
                       </p>
 
                       <Link
                         href={`/post/${post.slug}`}
                         className="text-[#006E6D] font-bold text-xs hover:text-[#005956] uppercase tracking-wide"
-                        style={{
-                          fontFamily:
-                            "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-                        }}
                       >
-                        Read More ›
+                        Read More -&gt;
                       </Link>
                     </div>
                   </div>
@@ -146,9 +103,8 @@ export default function NewsProductsSection({
             </div>
           </div>
 
-          {/* 📢 Advertisement Column */}
+          {/* Advertisement Column */}
           <div className="space-y-6">
-            
             {/* Ad 1 */}
             <div className="border border-gray-300 overflow-hidden">
               <div className="relative w-full h-48">
@@ -167,23 +123,9 @@ export default function NewsProductsSection({
 
             {/* Ad 2 */}
             <div className="bg-orange-500 p-4 text-white rounded-md">
-              <h4
-                className="font-bold text-[16px] mb-1"
-                style={{
-                  fontFamily:
-                    "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-                }}
-              >
-                SWAP ToolingVERSION FASTER
-              </h4>
+              <h4 className="font-bold text-[16px] mb-1">SWAP ToolingVERSION FASTER</h4>
 
-              <p
-                className="text-[14px] mb-3"
-                style={{
-                  fontFamily:
-                    "Roboto, system-ui, apple-system, sans-serif",
-                }}
-              >
+              <p className="text-[16px] mb-3 leading-relaxed">
                 Directly Through the Parting Line
               </p>
 
@@ -201,18 +143,9 @@ export default function NewsProductsSection({
                 <span className="bg-yellow-400 text-orange-600 px-2 py-1 rounded font-bold text-xs">
                   IC
                 </span>
-                <span
-                  className="font-bold text-xs"
-                  style={{
-                    fontFamily:
-                      "Oswald, Helvetica Neue, Helvetica, Arial, sans-serif",
-                  }}
-                >
-                  INSERT CHANGER
-                </span>
+                <span className="font-bold text-xs">INSERT CHANGER</span>
               </div>
             </div>
-
           </div>
         </div>
       </div>

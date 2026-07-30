@@ -32,10 +32,7 @@ export default function AdvertisementSection({
   return (
     <div className="space-y-6">
       <div>
-        <h3
-          className="text-lg font-semibold text-[#003049] mb-4 border-b border-gray-300 pb-2 uppercase"
-          style={{ fontFamily: "Oswald, sans-serif" }}
-        >
+        <h3 className="text-lg font-semibold text-[#003049] mb-4 border-b border-gray-300 pb-2 uppercase">
           Advertisement
         </h3>
       </div>
