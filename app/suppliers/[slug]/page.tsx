@@ -486,6 +486,7 @@ export default async function SupplierShowroomPage({
                       <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Company Gallery</h3>
 
                       <GalleryGridWithLightbox items={supplier.companyGallery as any[]} title="Company" />
+
                     </div>
                   )}
 
