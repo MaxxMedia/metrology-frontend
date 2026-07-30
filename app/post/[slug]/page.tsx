@@ -1,3 +1,4 @@
+// app/post/[slug]/page.tsx
 "use client"
 
 import { useEffect, useState } from "react"
@@ -10,6 +11,8 @@ import RelatedPostsCarousel from "@/components/related-posts-carousel"
 import ContentGateModal from "@/components/content-gate-modal"
 import PostViewCounter from "@/components/PostViewCounter"
 import SupplierAds from "@/components/SupplierAds"
+import { CommentsSection } from "@/components/comments-section"
+import { UserAvatar } from "@/components/user-avatar"
 
 /* ================= TYPES ================= */
 type Author = {
@@ -89,28 +92,6 @@ function getYoutubeEmbed(url?: string) {
   return null
 }
 
-function timeAgo(date: string) {
-  const seconds = Math.floor(
-    (Date.now() - new Date(date).getTime()) / 1000
-  )
-
-  if (seconds < 60) return "Just now"
-
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60)
-    return `${minutes} minute${minutes > 1 ? "s" : ""} ago`
-
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24)
-    return `${hours} hour${hours > 1 ? "s" : ""} ago`
-
-  const days = Math.floor(hours / 24)
-  if (days < 7)
-    return `${days} day${days > 1 ? "s" : ""} ago`
-
-  return new Date(date).toLocaleDateString()
-}
-
 /* ================= PAGE ================= */
 export default function PostDetailsPage() {
   const router = useRouter()
@@ -124,11 +105,8 @@ export default function PostDetailsPage() {
   const [userSubmitted, setUserSubmitted] = useState(false)
   const [relatedPosts, setRelatedPosts] = useState<Post[]>([])
   const [comments, setComments] = useState<Comment[]>([])
-  const [comment, setComment] = useState("")
-  const [postingComment, setPostingComment] = useState(false)
-  const [commentError, setCommentError] = useState<string | null>(null)
 
-  /* ================= STEP 4: CHECK LOGIN ================= */
+  /* ================= CHECK LOGIN ================= */
   const token =
     typeof window !== "undefined"
       ? localStorage.getItem("token")
@@ -235,87 +213,17 @@ export default function PostDetailsPage() {
     fetchComments()
   }, [post])
 
-  /* ================= STEP 5: SUBMIT COMMENT (FIXED) ================= */
-  const submitComment = async () => {
-    if (!comment.trim()) {
-      setCommentError("Please enter a comment")
-      return
-    }
-
-    if (!isLoggedIn) {
-      router.push("/login")
-      return
-    }
-
-    setCommentError(null)
-    setPostingComment(true)
-
-    try {
-      console.log("🚀 Submitting comment for post:", post?.id)
-      console.log("🔑 Token present:", !!token)
-      console.log("📝 Comment content:", comment.trim())
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post?.id}/comments`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            content: comment.trim(),
-          }),
-        }
-      )
-
-      console.log("📊 Response status:", response.status)
-
-      // Try to get the response body
-      let responseData
-      const responseText = await response.text()
-      
-      try {
-        responseData = JSON.parse(responseText)
-        console.log("📦 Response data:", responseData)
-      } catch (e) {
-        console.log("📦 Response text (non-JSON):", responseText)
-        responseData = { message: responseText }
-      }
-
-      if (!response.ok) {
-        const errorMessage = responseData?.error || responseData?.message || `Server error: ${response.status}`
-        throw new Error(errorMessage)
-      }
-
-      // If we got here, the comment was created successfully
-      const newComment = responseData
-      console.log("✅ Comment posted successfully:", newComment)
-
-      setComments((prev) => [newComment, ...prev])
-      setComment("")
-      setCommentError(null)
-    } catch (err) {
-      console.error("❌ Comment submission error:", err)
-      const errorMessage = err instanceof Error ? err.message : "Failed to post comment"
-      setCommentError(errorMessage)
-      // Don't show alert for 401 as we want to redirect to login
-      if (errorMessage.includes("401") || errorMessage.toLowerCase().includes("unauthorized")) {
-        router.push("/login")
-      } else {
-        alert(`Failed to post comment: ${errorMessage}`)
-      }
-    } finally {
-      setPostingComment(false)
-    }
-  }
-
   /* ================= CONTENT GATE ================= */
   useEffect(() => {
     if (userSubmitted || !post || loading) return
     const timer = setTimeout(() => setShowGate(true), 9000)
     return () => clearTimeout(timer)
   }, [userSubmitted, post, loading])
+
+  /* ================= HANDLE COMMENT ADDED ================= */
+  const handleCommentAdded = (newComment: Comment) => {
+    setComments((prev) => [newComment, ...prev])
+  }
 
   /* ================= LOADING STATE ================= */
   if (loading) {
@@ -368,7 +276,6 @@ export default function PostDetailsPage() {
     : "Today"
 
   const author = post.author
-  /* ================= STEP 6: REPLACE COMMENT COUNT ================= */
   const commentCount = comments.length
 
   /* ================= DEFAULT LAYOUT ================= */
@@ -412,15 +319,11 @@ export default function PostDetailsPage() {
               {/* Author with avatar */}
               {author && (
                 <span className="flex items-center gap-1.5 font-medium text-gray-700">
-                  <div className="relative w-5 h-5 rounded-full overflow-hidden">
-                    <Image
-                      src={author.avatarUrl || "/avatar-placeholder.png"}
-                      alt={author.name}
-                      fill
-                      className="object-cover"
-                      sizes="20px"
-                    />
-                  </div>
+                  <UserAvatar
+                    name={author.name}
+                    imageUrl={author.avatarUrl}
+                    size="xs"
+                  />
                   {author.name}
                 </span>
               )}
@@ -465,10 +368,10 @@ export default function PostDetailsPage() {
               <span className="text-gray-300">|</span>
               
               {/* Comments */}
-              <span className="flex items-center gap-1">
+              {/* <span className="flex items-center gap-1">
                 <MessageCircle size={12} />
                 {commentCount} Comments
-              </span>
+              </span> */}
             </div>
 
             {/* EXCERPT */}
@@ -488,97 +391,13 @@ export default function PostDetailsPage() {
               />
 
               {/* COMMENTS SECTION */}
-              <div className="mt-12 pt-8 border-t border-gray-200">
-                <h3 className="text-xl font-bold text-[#003049] mb-6">
-                  Comments ({commentCount})
-                </h3>
-
-                {/* Comment Input */}
-                <div className="mb-8">
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder={isLoggedIn ? "Write a comment..." : "Please login to comment"}
-                    className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003B5C] focus:border-transparent resize-y min-h-[100px]"
-                    disabled={!isLoggedIn || postingComment}
-                  />
-                  {commentError && (
-                    <p className="text-red-500 text-sm mt-2">{commentError}</p>
-                  )}
-                  <button
-                    onClick={submitComment}
-                    disabled={!comment.trim() || postingComment || !isLoggedIn}
-                    className="mt-3 bg-[#003B5C] text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-[#002d47] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {postingComment ? "Posting..." : "Post Comment"}
-                  </button>
-                  {!isLoggedIn && (
-                    <p className="text-sm text-gray-500 mt-2">
-                      <button
-                        onClick={() => router.push("/login")}
-                        className="text-[#003B5C] hover:underline font-medium"
-                      >
-                        Login
-                      </button>{" "}
-                      to join the conversation
-                    </p>
-                  )}
-                </div>
-
-                {/* Comments List */}
-                <div className="space-y-6">
-                  {comments.length === 0 ? (
-                    <div className="text-center py-10 border rounded-xl bg-gray-50">
-                      <MessageCircle
-                        size={42}
-                        className="mx-auto text-gray-400 mb-3"
-                      />
-                      <h3 className="font-semibold text-lg">
-                        No comments yet
-                      </h3>
-                      <p className="text-gray-500 mt-2">
-                        Start the discussion by posting the first comment.
-                      </p>
-                    </div>
-                  ) : (
-                    comments.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
-                      >
-                        <div className="relative w-12 h-12 flex-shrink-0">
-                          <Image
-                            src={item.user.avatarUrl || "/avatar-placeholder.png"}
-                            alt={item.user.fullName}
-                            fill
-                            className="rounded-full object-cover"
-                            sizes="48px"
-                          />
-                        </div>
-
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-semibold text-gray-900">
-                              {item.user.fullName}
-                            </h4>
-                            <span className="text-xs text-gray-500">
-                              @{item.user.username}
-                            </span>
-                          </div>
-
-                          <p className="text-xs text-gray-500 mt-1">
-                            {timeAgo(item.createdAt)}
-                          </p>
-
-                          <p className="mt-3 text-gray-700 leading-7 whitespace-pre-wrap break-words">
-                            {item.content}
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
+              {/* <CommentsSection
+                postId={post.id}
+                initialComments={comments}
+                isLoggedIn={isLoggedIn}
+                token={token}
+                onCommentAdded={handleCommentAdded}
+              /> */}
 
               <div className="mt-10 pt-6 border-t border-gray-100">
                 <ShareSection post={post} />
@@ -621,15 +440,11 @@ export default function PostDetailsPage() {
                       About the Author
                     </h3>
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="relative w-14 h-14 shrink-0">
-                        <Image
-                          src={author.avatarUrl || "/avatar-placeholder.png"}
-                          alt={author.name}
-                          fill
-                          className="rounded-full border border-gray-200 object-cover"
-                          sizes="56px"
-                        />
-                      </div>
+                      <UserAvatar
+                        name={author.name}
+                        imageUrl={author.avatarUrl}
+                        size="lg"
+                      />
                       <div>
                         <p className="text-sm font-bold text-gray-900">{author.name}</p>
                         {author.role && (
