@@ -91,36 +91,51 @@ function getPageList(current: number, total: number): (number | "...")[] {
   return result
 }
 
+// Resolve a single "category key" for a post - used for BOTH the
+// sidebar counts and the actual filtering, so they always agree.
+function getCategoryKey(p: IndustryTalk): string {
+  if (p.industryName) return p.industryName
+  if (p.industry?.name) return p.industry.name
+  if (p.interviewType) return p.interviewType
+  return "Uncategorized"
+}
+
+const ALL_TALKS = "All Talks"
+
 // ---------- component ----------
 export default function IndustryTalkListing({ post: allPosts }: { post: IndustryTalk[] }) {
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedCategory, setSelectedCategory] = useState<string>(ALL_TALKS)
 
-  const total = allPosts.length
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
-  const posts = allPosts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
-
-  // Build category counts from industry names
+  // Build category counts from industry names (always based on the FULL list,
+  // so counts don't shrink as soon as you filter)
   const categoryCounts = allPosts.reduce<Record<string, number>>((acc, p) => {
-    // Use industryName if available, fallback to Industry.name or interviewType
-    let key = "Uncategorized"
-    
-    if (p.industryName) {
-      key = p.industryName
-    } else if (p.industry?.name) {
-      key = p.industry.name
-    } else if (p.interviewType) {
-      key = p.interviewType
-    }
-    
+    const key = getCategoryKey(p)
     acc[key] = (acc[key] || 0) + 1
     return acc
   }, {})
 
+  // Apply the active category filter before paginating
+  const filteredPosts =
+    selectedCategory === ALL_TALKS
+      ? allPosts
+      : allPosts.filter(p => getCategoryKey(p) === selectedCategory)
+
+  const total = filteredPosts.length
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const posts = filteredPosts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
+  // Popular talks stay based on the full, unfiltered list
   const popular = allPosts.slice(0, 3)
 
   const pageList = getPageList(currentPage, totalPages)
   const hasPrev = currentPage > 1
   const hasNext = currentPage < totalPages
+
+  function handleCategoryClick(name: string) {
+    setSelectedCategory(name)
+    setCurrentPage(1)
+  }
 
   return (
     <>
@@ -184,6 +199,22 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
 
           {/* LEFT COLUMN */}
           <div className="space-y-5">
+            {selectedCategory !== ALL_TALKS && (
+              <div className="flex items-center justify-between bg-[#0F5B78]/5 border border-[#0F5B78]/20 rounded-lg px-4 py-2.5 mb-1">
+                <p className="text-sm text-gray-700">
+                  Showing <span className="font-semibold text-[#0F5B78]">{selectedCategory}</span>{" "}
+                  <span className="text-gray-500">({total})</span>
+                </p>
+                <button
+                  type="button"
+                  onClick={() => handleCategoryClick(ALL_TALKS)}
+                  className="text-xs font-semibold text-[#0F5B78] hover:underline"
+                >
+                  Clear filter
+                </button>
+              </div>
+            )}
+
             {posts.map((post, i) => {
               const talkSlug = post.slug || post.id
               const imageUrl =
@@ -221,7 +252,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                       src={imageUrl}
                       alt={post.title}
                       fill
-                      className="object-cover"
+                      className="object-fill"
                       sizes="160px"
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -347,27 +378,58 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
           {/* RIGHT COLUMN */}
           <aside className="space-y-6 h-fit lg:sticky lg:top-24">
 
-            {/* CATEGORIES - Now showing Industry Names */}
+            {/* CATEGORIES - clickable filter */}
             <div className="bg-white border border-gray-100 rounded-xl p-5">
               <h3 className="text-base font-bold text-gray-900 border-b-2 border-[#0F5B78] inline-block pb-1 mb-4">
                 Categories
               </h3>
               <ul className="space-y-1">
-                <li className="flex items-center justify-between px-3 py-2 rounded-lg bg-black/5 text-[#0F5B78] font-semibold text-sm">
-                  <span>All Talks</span>
-                  <span className="bg-white text-[#0F5B78] text-xs font-bold px-2 py-0.5 rounded-full">
-                    {total}
-                  </span>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleCategoryClick(ALL_TALKS)}
+                    className={
+                      selectedCategory === ALL_TALKS
+                        ? "w-full flex items-center justify-between px-3 py-2 rounded-lg bg-black/5 text-[#0F5B78] font-semibold text-sm text-left"
+                        : "w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 text-sm hover:bg-gray-50 text-left"
+                    }
+                  >
+                    <span>All Talks</span>
+                    <span
+                      className={
+                        selectedCategory === ALL_TALKS
+                          ? "bg-white text-[#0F5B78] text-xs font-bold px-2 py-0.5 rounded-full"
+                          : "text-gray-400 text-xs font-medium"
+                      }
+                    >
+                      {allPosts.length}
+                    </span>
+                  </button>
                 </li>
                 {Object.entries(categoryCounts)
                   .sort(([a], [b]) => a.localeCompare(b))
                   .map(([name, count]) => (
-                    <li
-                      key={name}
-                      className="flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 text-sm hover:bg-gray-50"
-                    >
-                      <span>{name}</span>
-                      <span className="text-gray-400 text-xs font-medium">{count}</span>
+                    <li key={name}>
+                      <button
+                        type="button"
+                        onClick={() => handleCategoryClick(name)}
+                        className={
+                          selectedCategory === name
+                            ? "w-full flex items-center justify-between px-3 py-2 rounded-lg bg-black/5 text-[#0F5B78] font-semibold text-sm text-left"
+                            : "w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 text-sm hover:bg-gray-50 text-left"
+                        }
+                      >
+                        <span>{name}</span>
+                        <span
+                          className={
+                            selectedCategory === name
+                              ? "bg-white text-[#0F5B78] text-xs font-bold px-2 py-0.5 rounded-full"
+                              : "text-gray-400 text-xs font-medium"
+                          }
+                        >
+                          {count}
+                        </span>
+                      </button>
                     </li>
                   ))}
               </ul>
@@ -396,7 +458,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
                         className="flex items-center gap-3 group"
                       >
                         <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 bg-gray-100">
-                          <Image src={imageUrl} alt={post.title} fill className="object-cover" />
+                          <Image src={imageUrl} alt={post.title} fill className="object-fill" />
                         </div>
                         <p className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-[#0F5B78]">
                           {post.title}

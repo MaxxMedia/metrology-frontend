@@ -44,21 +44,26 @@ function Ad({ ad }: { ad: Banner }) {
     <Link
       href={ad.targetUrl || "#"}
       target="_blank"
-      className="block w-[300px] h-[250px] mx-auto overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 bg-white border border-gray-200"
+      className="block w-full overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 bg-white border border-gray-200"
     >
       {/*
-        Fixed 300x250 box for every ad, no exceptions.
-        object-cover fills the box completely (crops the image
-        as needed) so there's never yellow/empty space — every
-        card ends up exactly the same size and height.
+        Fills the FULL WIDTH of its container - no fixed 300px box, so no
+        side white space regardless of how wide the sidebar column is.
+        Height is derived from the 300:250 aspect ratio, so proportions
+        stay consistent at any width.
+
+        object-fill (not object-cover) shows the ENTIRE image with nothing
+        cropped - it stretches to exactly fill the box instead. If a
+        particular banner looks stretched, the real fix is asking whoever
+        uploads it to export closer to a 300x250 (6:5) ratio.
       */}
-      <div className="relative w-full h-full">
+      <div className="relative w-full" style={{ aspectRatio: "200 / 150" }}>
         <Image
           src={ad.imageUrl}
           alt={ad.title}
           fill
           sizes="300px"
-          className="object-cover"
+          className="object-fill"
         />
       </div>
     </Link>
@@ -70,9 +75,9 @@ function RecruiterAd({ src }: { src: string }) {
   return (
     <Link
       href="/signup?role=recruiter"
-      className="relative block group overflow-hidden w-[300px] h-[250px] mx-auto"
+      className="relative block group overflow-hidden w-full"
     >
-      <div className="relative w-full h-full">
+      <div className="relative w-full" style={{ aspectRatio: "300 / 250" }}>
         <Image
           src={src}
           alt="Hire Candidates"

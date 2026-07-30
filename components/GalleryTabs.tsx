@@ -93,6 +93,46 @@ function toEmbedUrl(url: string): string {
 }
 
 /**
+ * Extracts a real thumbnail image for a video URL. Currently supports
+ * YouTube (via img.youtube.com). Returns an empty string for
+ * unsupported hosts (Vimeo, direct files, etc.) so the caller can
+ * fall back to a placeholder.
+ */
+function getVideoThumbnail(url: string): string {
+  const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/)
+  if (yt) return `https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg`
+  return ""
+}
+
+/**
+ * Downloads a file by fetching it as a blob and triggering a save
+ * dialog, instead of just navigating to the URL (which would open it
+ * in-browser for PDFs). Falls back to opening in a new tab if the
+ * fetch fails (e.g. CORS-restricted host).
+ */
+async function downloadFile(url: string, filename?: string) {
+  try {
+    const response = await fetch(url)
+    const blob = await response.blob()
+
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+
+    const defaultName = filename || decodeURIComponent(url.split('/').pop() || 'document')
+    link.download = defaultName
+
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    setTimeout(() => URL.revokeObjectURL(link.href), 100)
+  } catch (error) {
+    console.error('Download error:', error)
+    window.open(url, '_blank')
+  }
+}
+
+/**
  * Pulls individual items out of a machinery-list HTML blob (from a rich
  * text editor). Prefers <li> items; falls back to splitting on line
  * breaks/paragraphs if the content isn't a list. Returns plain strings.
@@ -255,11 +295,11 @@ function ImageGridWithLightbox({
 }
 
 /* ------------------------------------------------------------------ */
-/* Document viewer: Product Catalogues / Company Brochure /            */
-/* Certifications. Nothing auto-opens/downloads. "View" -> small       */
-/* popup with ✕ close. "Download" only fires when clicked.             */
-/* Non-PDF files are routed through Google's viewer since browsers     */
-/* can't render Word/Excel/PowerPoint directly in an iframe.           */
+/* Document viewer: Company Brochure / Certifications. Nothing         */
+/* auto-opens/downloads. "View" -> small popup with ✕ close.           */
+/* "Download" only fires when clicked. Non-PDF files are routed        */
+/* through Google's viewer since browsers can't render Word/Excel/     */
+/* PowerPoint directly in an iframe.                                   */
 /* ------------------------------------------------------------------ */
 export function DocumentViewer({
   documents,
@@ -271,28 +311,6 @@ export function DocumentViewer({
   allowDownload?: boolean
 }) {
   const [previewDoc, setPreviewDoc] = useState<string | null>(null)
-
-  const handleDownload = async (url: string, filename?: string) => {
-    try {
-      const response = await fetch(url)
-      const blob = await response.blob()
-
-      const link = document.createElement('a')
-      link.href = URL.createObjectURL(blob)
-
-      const defaultName = filename || decodeURIComponent(url.split('/').pop() || 'document.pdf')
-      link.download = defaultName
-
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      setTimeout(() => URL.revokeObjectURL(link.href), 100)
-    } catch (error) {
-      console.error('Download error:', error)
-      window.open(url, '_blank')
-    }
-  }
 
   const getExtension = (url: string) => url.split('.').pop()?.toLowerCase().split('?')[0] || ''
 
@@ -380,7 +398,7 @@ export function DocumentViewer({
 
               {allowDownload && (
                 <button
-                  onClick={() => handleDownload(doc)}
+                  onClick={() => downloadFile(doc, getDisplayName(doc))}
                   className="p-1.5 text-gray-500 hover:text-green-600 transition rounded-lg hover:bg-green-50"
                   title="Download"
                 >
@@ -411,7 +429,7 @@ export function DocumentViewer({
               <div className="flex items-center gap-2 shrink-0">
                 {allowDownload && (
                   <button
-                    onClick={() => handleDownload(previewDoc)}
+                    onClick={() => downloadFile(previewDoc, getDisplayName(previewDoc))}
                     className="flex items-center gap-1 px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition"
                   >
                     <Download className="w-3 h-3" />
@@ -525,7 +543,111 @@ function ProductShowcase({ items }: { items: SectionItem[] }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Catalogue cards (grid layout, with preview popup + view-all toggle) */
+/* Video showcase: EXACT same layout as ProductShowcase — thumbnail    */
+/* rail + large video player + info panel. Selecting a different       */
+/* thumbnail swaps the video AND swaps the title/description, paired   */
+/* from productItems by index. If there are fewer products than       */
+/* videos, it cycles back to the start instead of going blank.         */
+/* ------------------------------------------------------------------ */
+function VideoShowcase({ videos, productItems }: { videos: string[]; productItems: SectionItem[] }) {
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [thumbStart, setThumbStart] = useState(0)
+  const THUMBS_VISIBLE = 4
+
+  const filtered = (videos || []).filter(Boolean)
+  if (filtered.length === 0) return null
+
+  const selectedVideo = filtered[selectedIndex]
+  const selectedProduct =
+    productItems.length > 0 ? productItems[selectedIndex % productItems.length] : undefined
+
+  const visibleThumbs = filtered.slice(thumbStart, thumbStart + THUMBS_VISIBLE)
+
+  const scrollThumbsUp = () => setThumbStart((s) => Math.max(0, s - 1))
+  const scrollThumbsDown = () =>
+    setThumbStart((s) => Math.min(Math.max(0, filtered.length - THUMBS_VISIBLE), s + 1))
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr] gap-6">
+        {/* Thumbnail rail */}
+        <div className="flex md:flex-col items-center gap-2 order-2 md:order-1">
+          {filtered.length > THUMBS_VISIBLE && (
+            <button
+              onClick={scrollThumbsUp}
+              disabled={thumbStart === 0}
+              className="p-1 rounded text-gray-400 hover:text-gray-600 disabled:opacity-30"
+              aria-label="Scroll thumbnails up"
+            >
+              <ChevronUp className="w-4 h-4" />
+            </button>
+          )}
+          {visibleThumbs.map((url, i) => {
+            const realIndex = thumbStart + i
+            const thumbnail = getVideoThumbnail(url)
+            return (
+              <button
+                key={realIndex}
+                onClick={() => setSelectedIndex(realIndex)}
+                className={`relative w-14 h-14 rounded-lg overflow-hidden border-2 transition shrink-0 bg-gray-900 ${selectedIndex === realIndex
+                  ? "border-red-600"
+                  : "border-gray-200 hover:border-gray-300"
+                  }`}
+              >
+                {thumbnail ? (
+                  <img
+                    src={thumbnail}
+                    alt={`Video ${realIndex + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <PlayCircle className="w-5 h-5 text-white/70" />
+                  </div>
+                )}
+              </button>
+            )
+          })}
+          {filtered.length > THUMBS_VISIBLE && (
+            <button
+              onClick={scrollThumbsDown}
+              disabled={thumbStart + THUMBS_VISIBLE >= filtered.length}
+              className="p-1 rounded text-gray-400 hover:text-gray-600 disabled:opacity-30"
+              aria-label="Scroll thumbnails down"
+            >
+              <ChevronDown className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Main video player */}
+        <div className="rounded-lg overflow-hidden border border-gray-200 bg-black aspect-square order-1 md:order-2">
+          <iframe
+            key={selectedVideo}
+            src={toEmbedUrl(selectedVideo)}
+            className="w-full h-full"
+            allowFullScreen
+            title={selectedProduct?.name || "Selected video"}
+          />
+        </div>
+
+        {/* Info panel — swaps per selected video, cycling product data */}
+        <div className="flex flex-col justify-center order-3">
+          {selectedProduct?.name && (
+            <h3 className="text-lg font-bold text-gray-800">{selectedProduct.name}</h3>
+          )}
+          {selectedProduct?.description && (
+            <p className="text-sm text-gray-600 mt-3 leading-relaxed">{selectedProduct.description}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Catalogue cards (grid layout, with preview popup, download button,  */
+/* and view-all toggle)                                                */
 /* ------------------------------------------------------------------ */
 function CatalogueCards({ documents, title = "Product Catalogues" }: { documents: string[]; title?: string }) {
   const [previewDoc, setPreviewDoc] = useState<string | null>(null)
@@ -568,13 +690,22 @@ function CatalogueCards({ documents, title = "Product Catalogues" }: { documents
               <p className="text-xs font-medium text-gray-800 truncate">{getDisplayName(doc)}</p>
               <p className="text-[11px] text-gray-400">{getFileType(doc)}</p>
             </div>
-            <button
-              onClick={() => setPreviewDoc(doc)}
-              className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 transition w-full justify-center"
-            >
-              <Eye className="w-3 h-3" />
-              Preview
-            </button>
+            <div className="flex items-center gap-2 w-full">
+              <button
+                onClick={() => setPreviewDoc(doc)}
+                className="flex-1 flex items-center gap-1 px-2 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 transition justify-center"
+              >
+                <Eye className="w-3 h-3" />
+                Preview
+              </button>
+              <button
+                onClick={() => downloadFile(doc, getDisplayName(doc))}
+                className="flex-1 flex items-center gap-1 px-2 py-1 text-xs font-medium bg-green-600 text-white rounded hover:bg-green-700 transition justify-center"
+              >
+                <Download className="w-3 h-3" />
+                Download
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -599,90 +730,25 @@ function CatalogueCards({ documents, title = "Product Catalogues" }: { documents
           >
             <div className="flex items-center justify-between bg-gray-50 px-4 py-2 border-b border-gray-200">
               <span className="text-sm font-medium text-gray-700 truncate">{getDisplayName(previewDoc)}</span>
-              <button
-                onClick={() => setPreviewDoc(null)}
-                aria-label="Close"
-                className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-full transition"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => downloadFile(previewDoc, getDisplayName(previewDoc))}
+                  className="flex items-center gap-1 px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition"
+                >
+                  <Download className="w-3 h-3" />
+                  Download
+                </button>
+                <button
+                  onClick={() => setPreviewDoc(null)}
+                  aria-label="Close"
+                  className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-full transition"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
             <div className="p-3 bg-white flex-1 overflow-hidden">
               <iframe src={getPreviewSrc(previewDoc)} className="w-full h-[65vh] rounded border border-gray-200" title="Document preview" />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/* Video cards (list layout, with player popup + view-all toggle)      */
-/* ------------------------------------------------------------------ */
-function ProductVideoCards({ videos, title = "Product Videos" }: { videos: string[]; title?: string }) {
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
-  const [showAll, setShowAll] = useState(false)
-  const VISIBLE = 3
-
-  const filtered = (videos || []).filter(Boolean)
-  if (filtered.length === 0) return null
-
-  const visibleVideos = showAll ? filtered : filtered.slice(0, VISIBLE)
-
-  const getDisplayName = (url: string) => {
-    const raw = url.split('/').pop() || 'Video'
-    try {
-      return decodeURIComponent(raw).replace(/\.[^/.]+$/, '')
-    } catch {
-      return raw
-    }
-  }
-
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-      <h4 className="text-sm font-semibold text-gray-700 mb-4">{title}</h4>
-      <div className="space-y-2">
-        {visibleVideos.map((url, i) => (
-          <button
-            key={i}
-            onClick={() => setSelectedVideo(url)}
-            className="w-full flex items-center gap-3 border border-gray-200 rounded-lg p-2 hover:bg-gray-50 transition text-left"
-          >
-            <div className="w-12 h-12 rounded bg-gray-900 flex items-center justify-center shrink-0">
-              <PlayCircle className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-sm text-gray-700 truncate">{getDisplayName(url)}</span>
-          </button>
-        ))}
-      </div>
-
-      {filtered.length > VISIBLE && (
-        <button
-          onClick={() => setShowAll((s) => !s)}
-          className="mt-4 w-full text-center text-xs font-semibold text-red-600 border border-red-200 rounded-lg py-2 hover:bg-red-50 transition"
-        >
-          {showAll ? "Show less" : `View all videos (${filtered.length})`}
-        </button>
-      )}
-
-      {selectedVideo && (
-        <div
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
-          onClick={() => setSelectedVideo(null)}
-        >
-          <div className="bg-black rounded-lg overflow-hidden max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-end p-2 bg-black">
-              <button
-                onClick={() => setSelectedVideo(null)}
-                aria-label="Close"
-                className="p-1.5 text-white hover:bg-white/10 rounded-full transition"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="aspect-video">
-              <iframe src={toEmbedUrl(selectedVideo)} className="w-full h-full" allowFullScreen title="Product video" />
             </div>
           </div>
         </div>
@@ -736,6 +802,7 @@ export default function GalleryTabs({
   const hasCapabilitiesContent = hasManufacturingContent || hasMachineryContent
 
   const hasProductVideos = (videoGallery || []).filter(Boolean).length > 0
+  const productItems = toSectionItems(productGallery)
 
   return (
     <div>
@@ -796,20 +863,22 @@ export default function GalleryTabs({
 
               {activeProductSubTab === "products" && (
                 <div className="space-y-6">
+                  {/* 1. Product images */}
                   {productGallery && hasGalleryItems(productGallery) ? (
-                    <ProductShowcase items={toSectionItems(productGallery)} />
+                    <ProductShowcase items={productItems} />
                   ) : (
                     <EmptyState message="No product images available" />
                   )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {productCatalogues && productCatalogues.filter(Boolean).length > 0 && (
-                      <CatalogueCards documents={productCatalogues} title="Product Catalogues" />
-                    )}
-                    {hasProductVideos && (
-                      <ProductVideoCards videos={videoGallery!} title="Product Videos" />
-                    )}
-                  </div>
+                  {/* 2. Videos — same showcase layout, content cycles per video */}
+                  {hasProductVideos && (
+                    <VideoShowcase videos={videoGallery!} productItems={productItems} />
+                  )}
+
+                  {/* 3. Product catalogues — downloadable */}
+                  {productCatalogues && productCatalogues.filter(Boolean).length > 0 && (
+                    <CatalogueCards documents={productCatalogues} title="Product Catalogues" />
+                  )}
                 </div>
               )}
 
@@ -877,7 +946,6 @@ export default function GalleryTabs({
             <SplitGallerySection
               heading={companyIntro?.heading ?? "Get to Know Our Company"}
               description={companyIntro?.description}
-              // ctaLabel={companyIntro?.ctaLabel ?? "Know More About Us"}
               ctaHref={companyIntro?.ctaHref ?? (companySlug ? `/company/${companySlug}` : undefined)}
               items={toSectionItems(companyGallery)}
             />
@@ -903,7 +971,6 @@ export default function GalleryTabs({
           <SplitGallerySection
             heading={industryIntro?.heading ?? "Our Facilities"}
             description={industryIntro?.description}
-            // ctaLabel={industryIntro?.ctaLabel ?? "Explore Facilities"}
             ctaHref={industryIntro?.ctaHref ?? (companySlug ? `/company/${companySlug}` : undefined)}
             items={toSectionItems(factoryGallery)}
           />
