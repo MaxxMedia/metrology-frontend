@@ -283,7 +283,7 @@ export default function PublicFeedPage() {
             Explore Jobs
           </h2>
 
-          <p className="mt-3 text-lg text-gray-600 max-w-2xl">
+          <p className="mt-3 text-sm text-gray-600 max-w-2xl">
             Browse the latest manufacturing, engineering, tooling,
             automation, and industrial technology opportunities from
             employers around the world.
