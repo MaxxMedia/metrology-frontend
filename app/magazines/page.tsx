@@ -35,7 +35,7 @@ export default async function MagazinesPage() {
   })
 
   return (
-    <>
+    <div className="space-y-16 ">
       {/* Top Section */}
       <MagazineWithCoverStory />
 
@@ -44,8 +44,6 @@ export default async function MagazinesPage() {
 
       {/* Archive Section */}
       <MagazineArchive />
-    </>
-
+    </div>
   )
 }
-
