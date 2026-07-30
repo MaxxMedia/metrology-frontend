@@ -114,7 +114,7 @@ export default function PostsList() {
     load()
   }, [page, debouncedSearch, categorySlug, statusFilter])
 
-  /* ================= TOGGLE PUBLISH STATUS ================= */
+  /* ================= TOGGLE PUBLISH / DRAFT STATUS ================= */
 
   async function togglePublishStatus(id: number, currentlyPublished: boolean) {
     const token = localStorage.getItem("token")
@@ -231,7 +231,7 @@ export default function PostsList() {
       ),
     }),
 
-    /* STATUS COLUMN WITH INSTANT TOGGLE */
+    /* STATUS COLUMN WITH TOGGLE */
     columnHelper.display({
       id: "published",
       header: "Status",
@@ -240,12 +240,12 @@ export default function PostsList() {
         return (
           <button
             onClick={() => togglePublishStatus(info.row.original.id, isPublished)}
-            className={`px-3 py-1 text-xs font-semibold rounded-full border transition flex items-center gap-1.5 ${
+            className={`px-3 py-1 text-xs font-semibold rounded-full border transition flex items-center gap-1.5 cursor-pointer ${
               isPublished
                 ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
                 : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
             }`}
-            title="Click to toggle status"
+            title="Click to toggle status (Published / Draft)"
           >
             <span className={`w-2 h-2 rounded-full ${isPublished ? "bg-green-500" : "bg-amber-500"}`} />
             {isPublished ? "Published" : "Draft"}

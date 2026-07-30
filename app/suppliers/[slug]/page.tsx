@@ -484,7 +484,9 @@ export default async function SupplierShowroomPage({
                     <div className="mt-8">
 
                       <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Company Gallery</h3>
-                      <GalleryGrid items={supplier.companyGallery as any[]} title="Company" />
+
+                      <GalleryGridWithLightbox items={supplier.companyGallery as any[]} title="Company" />
+
                     </div>
                   )}
 
@@ -493,16 +495,16 @@ export default async function SupplierShowroomPage({
                   return item && item.image && item.image.trim().length > 0
                 }).length > 0) && (
                     <div className="mt-8">
-
-
                       <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Factory Gallery</h3>
-                      <GalleryGrid items={supplier.factoryGallery as any[]} title="Factory" />
+
+                      <GalleryGridWithLightbox items={supplier.factoryGallery as any[]} title="Factory" />
                     </div>
                   )}
               </>
             )}
           </div>
         )}
+
 
         {/* NEW — Brands/Industries card and Location Map card, same row */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -511,7 +513,6 @@ export default async function SupplierShowroomPage({
             industriesServed={supplier.industriesServed}
             exportMarkets={supplier.exportMarkets}
           />
-
 
           {hasValidMap ? (
             <div className="bg-white rounded-lg shadow p-6 h-full">
@@ -532,6 +533,7 @@ export default async function SupplierShowroomPage({
                   className="w-full h-full"
                 />
               </div>
+
               {location && (
                 <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
                   <MapPin size={12} />
@@ -568,7 +570,6 @@ export default async function SupplierShowroomPage({
 
         {/* NEW — after the map */}
         <ProductSuppliesSection productSupplies={supplier.productSupplies} />
-
 
         {showUpsellToOwner && <ClaimCompanyBanner />}
 

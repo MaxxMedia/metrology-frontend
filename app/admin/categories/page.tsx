@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Edit, FolderOpen, Plus, Search, Trash2, X } from "lucide-react";
+import { ArrowLeft, Filter, FolderOpen, Plus, Trash2 } from "lucide-react";
 import AdminPagination, { ADMIN_PAGE_SIZE } from "@/components/admin/AdminPagination";
 
 type Category = {
@@ -16,17 +16,16 @@ export default function CategoryManagement() {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [page, setPage] = useState(1);
-  const [form, setForm] = useState({ name: "", slug: "" });
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [form, setForm] = useState({ name: "" });
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  /* ================= RESET PAGE ON SEARCH ================= */
+  /* ================= RESET PAGE ON FILTER CHANGE ================= */
   useEffect(() => {
     setPage(1);
-  }, [search]);
+  }, [selectedCategoryId]);
 
   /* ================= FETCH CATEGORIES ================= */
   const fetchCategories = async () => {
@@ -50,29 +49,7 @@ export default function CategoryManagement() {
 
   /* ================= FORM HANDLERS ================= */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (name === "name" && !editingCategory) {
-      // Auto generate slug from name when adding new
-      const autoSlug = value
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-");
-      setForm({ name: value, slug: autoSlug });
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const startEdit = (cat: Category) => {
-    setEditingCategory(cat);
-    setForm({ name: cat.name, slug: cat.slug });
-    setMessage("");
-  };
-
-  const cancelEdit = () => {
-    setEditingCategory(null);
-    setForm({ name: "", slug: "" });
-    setMessage("");
+    setForm({ name: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,30 +58,25 @@ export default function CategoryManagement() {
     setIsSubmitting(true);
 
     try {
-      const isEditing = Boolean(editingCategory);
-      const url = isEditing
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/categories/${editingCategory?.id}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/api/categories`;
-      const method = isEditing ? "PUT" : "POST";
+      const slug =
+        form.name
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .trim()
+          .replace(/\s+/g, "-") ||
+        "category";
 
-      const res = await fetch(url, {
-        method,
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ name: form.name, slug }),
       });
 
       if (res.ok) {
         const savedCat = await res.json();
-        setMessage(`✅ Category ${isEditing ? "updated" : "created"} successfully!`);
-        if (isEditing) {
-          setCategories((prev) =>
-            prev.map((c) => (c.id === editingCategory?.id ? savedCat : c))
-          );
-          setEditingCategory(null);
-        } else {
-          setCategories((prev) => [...prev, savedCat]);
-        }
-        setForm({ name: "", slug: "" });
+        setMessage(`✅ Category created successfully!`);
+        setCategories((prev) => [...prev, savedCat]);
+        setForm({ name: "" });
       } else {
         const error = await res.json();
         setMessage(`❌ Failed: ${error.error || error.message || "Unknown error"}`);
@@ -127,7 +99,6 @@ export default function CategoryManagement() {
 
       if (res.ok) {
         setCategories((prev) => prev.filter((c) => c.id !== id));
-        if (editingCategory?.id === id) cancelEdit();
       } else {
         const error = await res.json();
         alert(`Failed to delete category: ${error.error || error.message || "Error occurred"}`);
@@ -138,7 +109,7 @@ export default function CategoryManagement() {
   };
 
   const filteredCategories = categories.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
+    selectedCategoryId ? c.id === Number(selectedCategoryId) : true
   );
 
   const totalPages = Math.max(1, Math.ceil(filteredCategories.length / ADMIN_PAGE_SIZE));
@@ -171,16 +142,8 @@ export default function CategoryManagement() {
           <div className="bg-white p-6 rounded-2xl shadow border h-fit">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-800">
-                {editingCategory ? "Edit Category" : "Add New Category"}
+                Add New Category
               </h2>
-              {editingCategory && (
-                <button
-                  onClick={cancelEdit}
-                  className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
-                >
-                  <X size={16} /> Cancel
-                </button>
-              )}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -199,36 +162,13 @@ export default function CategoryManagement() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">
-                  Slug
-                </label>
-                <input
-                  type="text"
-                  name="slug"
-                  placeholder="e.g. technology"
-                  value={form.slug}
-                  onChange={handleChange}
-                  className="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                  required
-                />
-              </div>
-
               <div className="flex gap-2 pt-2">
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  {editingCategory ? (
-                    <>
-                      <Edit size={16} /> Update Category
-                    </>
-                  ) : (
-                    <>
-                      <Plus size={16} /> Create Category
-                    </>
-                  )}
+                  <Plus size={16} /> Create Category
                 </button>
               </div>
             </form>
@@ -254,16 +194,22 @@ export default function CategoryManagement() {
                   All Categories ({categories.length})
                 </h2>
                 <div className="relative w-full sm:w-64">
-                  <Search
+                  <Filter
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                     size={16}
                   />
-                  <input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search category..."
-                    className="pl-9 pr-4 py-2 border rounded-lg text-sm w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
+                  <select
+                    value={selectedCategoryId}
+                    onChange={(e) => setSelectedCategoryId(e.target.value)}
+                    className="pl-9 pr-8 py-2 border rounded-lg text-sm w-full bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="">All Categories</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -281,9 +227,6 @@ export default function CategoryManagement() {
                     <thead className="bg-gray-50 border-b">
                       <tr>
                         <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">
-                          ID
-                        </th>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">
                           Name
                         </th>
                         <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">
@@ -295,25 +238,13 @@ export default function CategoryManagement() {
                       {paginatedCategories.map((cat) => (
                         <tr
                           key={cat.id}
-                          className={`hover:bg-gray-50 transition ${
-                            editingCategory?.id === cat.id ? "bg-indigo-50/50" : ""
-                          }`}
+                          className="hover:bg-gray-50 transition"
                         >
-                          <td className="px-6 py-4 text-sm font-medium text-gray-600">
-                            #{cat.id}
-                          </td>
                           <td className="px-6 py-4 text-sm font-semibold text-gray-800">
                             {cat.name}
                           </td>
                           <td className="px-6 py-4 text-sm text-right">
                             <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => startEdit(cat)}
-                                className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition"
-                                title="Edit Category"
-                              >
-                                <Edit size={16} />
-                              </button>
                               <button
                                 onClick={() => handleDelete(cat.id, cat.name)}
                                 className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition"

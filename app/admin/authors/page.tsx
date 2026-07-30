@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ArrowLeft, Edit, Plus, Search, Trash2, Upload, User as UserIcon, X } from "lucide-react";
+import { ArrowLeft, Edit, Filter, Plus, Trash2, Upload, User as UserIcon, X } from "lucide-react";
 import AdminPagination, { ADMIN_PAGE_SIZE } from "@/components/admin/AdminPagination";
 
 type Author = {
@@ -18,7 +18,7 @@ export default function AuthorManagement() {
 
   const [authors, setAuthors] = useState<Author[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [selectedAuthorId, setSelectedAuthorId] = useState("");
   const [page, setPage] = useState(1);
   const [form, setForm] = useState({
     name: "",
@@ -30,10 +30,10 @@ export default function AuthorManagement() {
   const [uploading, setUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  /* ================= RESET PAGE ON SEARCH ================= */
+  /* ================= RESET PAGE ON FILTER CHANGE ================= */
   useEffect(() => {
     setPage(1);
-  }, [search]);
+  }, [selectedAuthorId]);
 
   /* ================= FETCH AUTHORS ================= */
   const fetchAuthors = async () => {
@@ -161,10 +161,8 @@ export default function AuthorManagement() {
     }
   };
 
-  const filteredAuthors = authors.filter(
-    (a) =>
-      a.name.toLowerCase().includes(search.toLowerCase()) ||
-      (a.bio && a.bio.toLowerCase().includes(search.toLowerCase()))
+  const filteredAuthors = authors.filter((a) =>
+    selectedAuthorId ? a.id === Number(selectedAuthorId) : true
   );
 
   const totalPages = Math.max(1, Math.ceil(filteredAuthors.length / ADMIN_PAGE_SIZE));
@@ -321,16 +319,22 @@ export default function AuthorManagement() {
                   All Authors ({authors.length})
                 </h2>
                 <div className="relative w-full sm:w-64">
-                  <Search
+                  <Filter
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                     size={16}
                   />
-                  <input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search author..."
-                    className="pl-9 pr-4 py-2 border rounded-lg text-sm w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
+                  <select
+                    value={selectedAuthorId}
+                    onChange={(e) => setSelectedAuthorId(e.target.value)}
+                    className="pl-9 pr-8 py-2 border rounded-lg text-sm w-full bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="">All Authors</option>
+                    {authors.map((author) => (
+                      <option key={author.id} value={author.id}>
+                        {author.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -348,10 +352,7 @@ export default function AuthorManagement() {
                     <thead className="bg-gray-50 border-b">
                       <tr>
                         <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">
-                          Author
-                        </th>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">
-                          Bio
+                          Name
                         </th>
                         <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">
                           Actions
@@ -385,12 +386,8 @@ export default function AuthorManagement() {
                                 <p className="font-semibold text-gray-800">
                                   {author.name}
                                 </p>
-                                <p className="text-xs text-gray-400">ID: #{author.id}</p>
                               </div>
                             </div>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
-                            {author.bio || <span className="text-gray-400 italic">No bio</span>}
                           </td>
                           <td className="px-6 py-4 text-sm text-right">
                             <div className="flex justify-end gap-2">
