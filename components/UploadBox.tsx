@@ -1,4 +1,3 @@
-// components/UploadBox.tsx
 "use client"
 
 import { useState, useRef } from "react"
@@ -11,7 +10,8 @@ interface UploadBoxProps {
   onUpload: (file: File) => Promise<void>
   accept?: string
   className?: string
-  height?: string // Added height prop support
+  height?: string
+  uploadType?: "image" | "document"
 }
 
 export default function UploadBox({
@@ -20,25 +20,46 @@ export default function UploadBox({
   onUpload,
   accept = "image/*,application/pdf",
   className = "",
-  height = "aspect-video" // Default height
+  height = "aspect-video",
+  uploadType = "image"
 }: UploadBoxProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [preview, setPreview] = useState<string>(value || "")
+  const [uploadError, setUploadError] = useState<string>("")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Validate file type against accept prop
+    // Validate file type against accept prop.
+    // `accept` may contain MIME types ("image/*", "application/pdf"),
+    // wildcard MIME categories ("image/*"), or file extensions (".pdf", ".doc", ".docx").
+    // The old version only ever compared file.type against the raw accept token,
+    // which meant extension-based accept strings like ".pdf,.doc,.docx" could
+    // never match a real file (file.type is "application/pdf", not ".pdf"),
+    // so every document upload was rejected even when valid.
     if (accept) {
-      const acceptedTypes = accept.split(',').map(t => t.trim())
+      const acceptedTypes = accept.split(',').map(t => t.trim().toLowerCase())
+      const fileName = file.name.toLowerCase()
+      const fileType = file.type.toLowerCase()
+
       const isValidType = acceptedTypes.some(type => {
+        if (!type) return false
+
+        // Extension-based check, e.g. ".pdf", ".doc", ".docx"
+        if (type.startsWith('.')) {
+          return fileName.endsWith(type)
+        }
+
+        // Wildcard MIME category, e.g. "image/*"
         if (type.includes('/*')) {
           const category = type.split('/')[0]
-          return file.type.startsWith(category + '/')
+          return fileType.startsWith(category + '/')
         }
-        return file.type === type
+
+        // Exact MIME type, e.g. "application/pdf"
+        return fileType === type
       })
 
       if (!isValidType) {
@@ -47,31 +68,128 @@ export default function UploadBox({
       }
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("File size must be less than 5MB")
+    // Size limit: 10MB for documents, 5MB for images
+    const maxSize = uploadType === "document" ? 10 * 1024 * 1024 : 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      alert(`File size must be less than ${maxSize / (1024 * 1024)}MB`)
       return
     }
 
     setIsUploading(true)
+    setUploadError("")
 
     try {
+      // Upload using the appropriate endpoint
+      const url = await uploadFile(file, uploadType)
+
+      // Show preview for images only
       if (file.type.startsWith("image/")) {
         const reader = new FileReader()
         reader.onloadend = () => {
           setPreview(reader.result as string)
         }
         reader.readAsDataURL(file)
+      } else {
+        // For documents, show filename as preview
+        setPreview(file.name)
       }
 
+      // Call the parent's onUpload with the file
       await onUpload(file)
-    } catch (error) {
+    } catch (error: any) {
       console.error("Upload error:", error)
-      alert("Failed to upload file")
+      const errorMessage = error.message || "Failed to upload file"
+      setUploadError(errorMessage)
+      alert(errorMessage)
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) {
         fileInputRef.current.value = ""
       }
+    }
+  }
+
+  const uploadFile = async (file: File, type: "image" | "document"): Promise<string> => {
+    const formData = new FormData()
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
+    if (!apiUrl) {
+      throw new Error("API URL is not configured")
+    }
+
+    if (type === "document") {
+      formData.append("document", file)
+      const endpoint = `${apiUrl}/api/upload/document`
+
+      console.log(`📄 Uploading document to: ${endpoint}`)
+      console.log(`📄 File: ${file.name}, Type: ${file.type}, Size: ${file.size} bytes`)
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        body: formData,
+      })
+
+      console.log(`📄 Response status: ${res.status}`)
+
+      if (!res.ok) {
+        // Try to parse error response, but handle HTML responses gracefully
+        let errorMessage = `Upload failed with status ${res.status}`
+        try {
+          const contentType = res.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const errorData = await res.json()
+            errorMessage = errorData.error || errorMessage
+          } else {
+            // HTML response - just use status
+            errorMessage = `Server error (${res.status}). Please try again.`
+          }
+        } catch (parseError) {
+          // If parsing fails, use status
+          errorMessage = `Server error (${res.status}). Please try again.`
+        }
+        throw new Error(errorMessage)
+      }
+
+      const data = await res.json()
+      if (!data.documentUrl) {
+        throw new Error("No document URL returned from server")
+      }
+      return data.documentUrl
+    } else {
+      formData.append("image", file)
+      const endpoint = `${apiUrl}/api/upload`
+
+      console.log(`🖼️ Uploading image to: ${endpoint}`)
+      console.log(`🖼️ File: ${file.name}, Type: ${file.type}, Size: ${file.size} bytes`)
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        body: formData,
+      })
+
+      console.log(`🖼️ Response status: ${res.status}`)
+
+      if (!res.ok) {
+        let errorMessage = `Upload failed with status ${res.status}`
+        try {
+          const contentType = res.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const errorData = await res.json()
+            errorMessage = errorData.error || errorMessage
+          } else {
+            errorMessage = `Server error (${res.status}). Please try again.`
+          }
+        } catch (parseError) {
+          errorMessage = `Server error (${res.status}). Please try again.`
+        }
+        throw new Error(errorMessage)
+      }
+
+      const data = await res.json()
+      if (!data.imageUrl) {
+        throw new Error("No image URL returned from server")
+      }
+      return data.imageUrl
     }
   }
 
@@ -82,11 +200,13 @@ export default function UploadBox({
     }
   }
 
+  const isImagePreview = preview && (preview.startsWith("data:image") || preview.match(/\.(jpeg|jpg|png|webp)$/i))
+
   return (
     <div className={`w-full ${className}`}>
       {preview ? (
         <div className="relative group">
-          {preview.startsWith("data:image") || preview.match(/\.(jpeg|jpg|png|webp)$/i) ? (
+          {isImagePreview ? (
             <div className={`relative w-full ${height} rounded-lg border border-gray-200 overflow-hidden bg-gray-50`}>
               <Image
                 src={preview}
@@ -96,9 +216,9 @@ export default function UploadBox({
               />
             </div>
           ) : (
-            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200 min-h-[60px]">
               <span className="text-sm text-gray-700 truncate flex-1">
-                {preview.split("/").pop() || "Uploaded file"}
+                {preview}
               </span>
             </div>
           )}
@@ -119,6 +239,9 @@ export default function UploadBox({
           <p className="text-sm text-gray-600 text-center px-4">
             {label}
           </p>
+          {uploadError && (
+            <p className="text-xs text-red-500 mt-1">{uploadError}</p>
+          )}
           <input
             ref={fileInputRef}
             type="file"

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import GalleryCard from "./GalleryCard"
 
 export type SectionItem = {
@@ -20,7 +20,7 @@ type SplitGallerySectionProps = {
 }
 
 // Reusable left-info / right-cards layout shared by Company Gallery
-// and Industry Gallery, so both sections look like one component
+// and Facilities Gallery, so both sections look like one component
 // with different content fed in.
 export default function SplitGallerySection({
     heading,
@@ -31,6 +31,8 @@ export default function SplitGallerySection({
     cardsPerPage = 3,
 }: SplitGallerySectionProps) {
     const [page, setPage] = useState(0)
+    const [selected, setSelected] = useState<SectionItem | null>(null)
+
     const totalPages = Math.max(1, Math.ceil(items.length / cardsPerPage))
     const start = page * cardsPerPage
     const visibleItems = items.slice(start, start + cardsPerPage)
@@ -71,20 +73,71 @@ export default function SplitGallerySection({
                     {description && <p className="text-sm text-gray-600 mt-3">{description}</p>}
                     {ctaLabel && ctaHref && (
                         <a
-                        href = { ctaHref }
-              className="inline-flex items-center gap-1 mt-5 text-sm font-medium border border-gray-300 rounded-lg px-4 py-2 w-fit hover:border-gray-400 hover:bg-gray-50 transition"
-            >
-                    {ctaLabel} →
-                </a>
-          )}
+                            href={ctaHref}
+                            className="inline-flex items-center gap-1 mt-5 text-sm font-medium border border-gray-300 rounded-lg px-4 py-2 w-fit hover:border-gray-400 hover:bg-gray-50 transition"
+                        >
+                            {ctaLabel} →
+                        </a>
+                    )}
+                </div>
+
+                <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {visibleItems.map((item, idx) => (
+                        <div
+                            key={start + idx}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => setSelected(item)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") setSelected(item)
+                            }}
+                            className="cursor-pointer"
+                        >
+                            <GalleryCard image={item.image} title={item.name} description={item.description} />
+                        </div>
+                    ))}
+                </div>
             </div>
 
-            <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {visibleItems.map((item, idx) => (
-                    <GalleryCard key={start + idx} image={item.image} title={item.name} description={item.description} />
-                ))}
-            </div>
-        </div>
-    </div >
-  )
+            {
+                selected && (
+                    <div
+                        className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"
+                        onClick={() => setSelected(null)}
+                    >
+                        <div
+                            className="bg-white rounded-lg overflow-hidden max-w-md w-full max-h-[80vh] overflow-y-auto"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="relative bg-black">
+                                <img
+                                    src={selected.image}
+                                    alt={selected.name || heading}
+                                    className="w-full max-h-[50vh] object-contain"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setSelected(null)}
+                                    aria-label="Close"
+                                    className="absolute top-2 right-2 rounded-full bg-black/50 hover:bg-black/70 text-white p-1.5"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                            {(selected.name || selected.description) && (
+                                <div className="p-4">
+                                    {selected.name && (
+                                        <h4 className="font-semibold text-gray-800">{selected.name}</h4>
+                                    )}
+                                    {selected.description && (
+                                        <p className="text-sm text-gray-600 mt-1">{selected.description}</p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )
+            }
+        </div >
+    )
 }

@@ -754,7 +754,7 @@ export default function JobDetailPage() {
               <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">
                 Similar jobs
               </h3>
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-gray-300">
                 {otherJobs.map((item) => (
                   <Link
                     key={item.id}
@@ -793,6 +793,7 @@ export default function JobDetailPage() {
         <div className="space-y-4">
 
           {/* People also viewed */}
+          
           {otherJobs.length > 0 && (
             <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
               <h3 className="text-sm font-bold text-gray-900 mb-4">
@@ -800,6 +801,7 @@ export default function JobDetailPage() {
               </h3>
 
               <div className="space-y-1">
+                <div className="divide-y divide-gray-300">
                 {otherJobs.slice(0, 3).map((item) => (
                   <Link
                     key={item.id}
@@ -826,15 +828,20 @@ export default function JobDetailPage() {
                   </Link>
                 ))}
               </div>
+              </div>
 
               {otherJobs.length > 3 && (
-                <button className="flex items-center gap-1 text-sm font-semibold text-blue-700 hover:text-blue-800 mt-2">
-                  Show more jobs
-                  <ChevronRight size={14} />
-                </button>
+                <Link href="/feed">
+                  <button className="flex items-center gap-1 text-sm font-semibold text-blue-700 hover:text-blue-800 mt-2">
+                    Show more jobs
+                    <ChevronRight size={14} />
+                  </button>
+                </Link>
+             
               )}
             </div>
           )}
+         
 
           {/* Job insights */}
           <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
@@ -842,24 +849,32 @@ export default function JobDetailPage() {
               Job insights
             </h3>
 
-            <div className="space-y-4">
-              <InsightRow
-                icon={<FileText size={15} className="text-gray-400" />}
-                title={`${applicants} applicants`}
-                subtitle="Viewed recently"
-              />
-              {job.experience && (
+            <div className="divide-y divide-gray-300">
+              <div className="py-3 first:pt-0">
                 <InsightRow
-                  icon={<TrendingUp size={15} className="text-gray-400" />}
-                  title="Experience level"
-                  subtitle={job.experience}
+                  icon={<FileText size={15} className="text-gray-400" />}
+                  title={`${applicants} applicants`}
+                  subtitle="Viewed recently"
                 />
+              </div>
+
+              {job.experience && (
+                <div className="py-3">
+                  <InsightRow
+                    icon={<TrendingUp size={15} className="text-gray-400" />}
+                    title="Experience level"
+                    subtitle={job.experience}
+                  />
+                </div>
               )}
-              <InsightRow
-                icon={<MapPin size={15} className="text-gray-400" />}
-                title="Location"
-                subtitle={job.location}
-              />
+
+              <div className="py-3 last:pb-0">
+                <InsightRow
+                  icon={<MapPin size={15} className="text-gray-400" />}
+                  title="Location"
+                  subtitle={job.location}
+                />
+              </div>
             </div>
           </div>
 
@@ -886,11 +901,43 @@ export default function JobDetailPage() {
             <h3 className="text-sm font-bold text-gray-900 mb-4">
               Explore more
             </h3>
-            <div className="space-y-4">
-              <ExploreRow icon={<Briefcase size={15} />} title="Browse all jobs" subtitle="Find the right opportunity" href="/jobs" />
-              <ExploreRow icon={<IndianRupee size={15} />} title="Salary insights" subtitle="Check salary trends" href="/salary" />
-              <ExploreRow icon={<Star size={15} />} title="Resume review" subtitle="Get expert feedback" href="/resume" />
-              <ExploreRow icon={<Lightbulb size={15} />} title="Interview prep" subtitle="Practice and get tips" href="/interview-prep" />
+
+            <div className="divide-y divide-gray-200">
+              <div className="py-4 first:pt-0">
+                <ExploreRow
+                  icon={<Briefcase size={15} />}
+                  title="Browse all jobs"
+                  subtitle="Find the right opportunity"
+                  href="/jobs"
+                />
+              </div>
+
+              <div className="py-4">
+                <ExploreRow
+                  icon={<IndianRupee size={15} />}
+                  title="Salary insights"
+                  subtitle="Check salary trends"
+                  href="/salary"
+                />
+              </div>
+
+              <div className="py-4">
+                <ExploreRow
+                  icon={<Star size={15} />}
+                  title="Resume review"
+                  subtitle="Get expert feedback"
+                  href="/resume"
+                />
+              </div>
+
+              <div className="py-4 last:pb-0">
+                <ExploreRow
+                  icon={<Lightbulb size={15} />}
+                  title="Interview prep"
+                  subtitle="Practice and get tips"
+                  href="/interview-prep"
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -14,9 +14,17 @@ import {
 } from "lucide-react"
 import ClaimCompanyBanner from "@/components/ClaimCompanyBanner"
 import GalleryTabs from "@/components/GalleryTabs"
+import GalleryGridWithLightbox from "@/components/GalleryGridWithLightbox"
+import {
+  BrandsAndIndustries,
+  ProductSuppliesSection,
+  CertificationsSection,
+} from "@/components/SupplierExtraDetails"
 import SupplierPromotionBanner from "@/components/SupplierPromotionBanner"
 import Link from "next/link"
 import { cookies } from "next/headers"
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 type JwtPayload = {
   id: number
@@ -28,6 +36,9 @@ type JwtPayload = {
 async function getCurrentUser(): Promise<JwtPayload | null> {
   const cookieStore = await cookies()
   const token = cookieStore.get("token")?.value
+
+  console.log("[getCurrentUser] token present?", Boolean(token))
+
   if (!token) return null
 
   try {
@@ -35,14 +46,24 @@ async function getCurrentUser(): Promise<JwtPayload | null> {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     })
+
+    console.log("[getCurrentUser] /me status:", res.status)
+
+    if (!res.ok) {
+      const errBody = await res.text()
+      console.log("[getCurrentUser] /me error body:", errBody)
+      return null
+    }
+
     if (!res.ok) return null
     const data = await res.json()
-    return data.user as JwtPayload
-  } catch {
+    return data as JwtPayload
+    // return data.user as JwtPayload
+  } catch (err) {
+    console.log("[getCurrentUser] fetch threw:", err)
     return null
   }
 }
-
 type Article = {
   id: number
   title: string
@@ -89,6 +110,18 @@ type Supplier = {
     youtube?: string
     whatsapp?: string
   }
+  companyBrochure?: string[]
+  certifications?: string[]
+  brandsRepresented?: string[]
+  industriesServed?: string[]
+  exportMarkets?: string[]
+  manufacturingCapabilities?: string | null
+  manufacturingCapabilityImages?: string[]
+  manufacturingCapabilityVideos?: string[]
+  machineryList?: string | null
+  machineryImages?: string[]
+  qualityStandards?: string | null
+  productSupplies?: string[]
   Company?: {
     id: number
     name: string
@@ -100,19 +133,16 @@ type Supplier = {
   }
 }
 
-// Helper to get image from gallery item (supports both formats)
 function getGalleryImage(item: any): string {
   if (typeof item === 'string') return item
   return item?.image || ''
 }
 
-// Helper to get name from gallery item (supports both formats)
 function getGalleryName(item: any): string {
   if (typeof item === 'string') return ''
   return item?.name || ''
 }
 
-// Helper to get description from gallery item (supports both formats)
 function getGalleryDescription(item: any): string {
   if (typeof item === 'string') return ''
   return item?.description || ''
@@ -219,6 +249,9 @@ export default async function SupplierShowroomPage({
 
   const companySlug = supplier.Company?.slug || supplier.slug
 
+  // Some components may not have proper TS prop typings; cast to any to avoid IntrinsicAttributes errors
+  const GalleryTabsAny: any = GalleryTabs
+
   const location = supplier.Company?.location || ""
 
   function getMapEmbedUrl(googleMapUrl?: string | null, location?: string): string | null {
@@ -284,6 +317,7 @@ export default async function SupplierShowroomPage({
 
   const limitedBannerImages = bannerImages.slice(0, bannerLimit);
 
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="relative bg-black h-[140px] sm:h-[170px] md:h-[200px]" />
@@ -292,6 +326,9 @@ export default async function SupplierShowroomPage({
         <div className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 -mt-6 sm:-mt-10 md:-mt-14">
           <SupplierPromotionBanner
             planTier={normalizedPlanTier}
+            companyId={supplier.Company?.id}
+            isLoggedIn={isLoggedIn}
+            isCandidate={currentUser?.role === "candidate"}
             name={supplier.name}
             location={supplier.Company?.location}
             logoUrl={supplier.logoUrl}
@@ -302,7 +339,7 @@ export default async function SupplierShowroomPage({
             website={websiteLink}
             socialLinks={supplier.socialLinks}
             slug={supplier.slug}
-            showQuoteButton={false}
+            showQuoteButton={showQuoteButton}
             coverImageUrl={limitedBannerImages}
           />
         </div>
@@ -428,7 +465,6 @@ export default async function SupplierShowroomPage({
               </section>
             </div>
 
-            {/* Gallery sections for free plan - show images without upgrade prompt */}
             {!isPaid && (
               <>
                 {(supplier.productGallery && (supplier.productGallery as any[]).filter(item => {
@@ -446,8 +482,10 @@ export default async function SupplierShowroomPage({
                   return item && item.image && item.image.trim().length > 0
                 }).length > 0) && (
                     <div className="mt-8">
+
                       <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Company Gallery</h3>
-                      <GalleryGrid items={supplier.companyGallery as any[]} title="Company" />
+
+                      <GalleryGridWithLightbox items={supplier.companyGallery as any[]} title="Company" />
                     </div>
                   )}
 
@@ -457,7 +495,8 @@ export default async function SupplierShowroomPage({
                 }).length > 0) && (
                     <div className="mt-8">
                       <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Factory Gallery</h3>
-                      <GalleryGrid items={supplier.factoryGallery as any[]} title="Factory" />
+
+                      <GalleryGridWithLightbox items={supplier.factoryGallery as any[]} title="Factory" />
                     </div>
                   )}
               </>
@@ -465,77 +504,71 @@ export default async function SupplierShowroomPage({
           </div>
         )}
 
-        {isPaid && (
-          <>
-            <div
-              className="prose max-w-none text-[16px] text-gray-700"
-              dangerouslySetInnerHTML={{ __html: supplier.description }}
-            />
 
-            {showQuoteButton && (
-              <div className="mt-6 flex justify-start">
-                <QuoteRequestButton
-                  supplierSlug={supplier.slug}
-                  supplierName={supplier.name}
+        {/* NEW — Brands/Industries card and Location Map card, same row */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <BrandsAndIndustries
+            brandsRepresented={supplier.brandsRepresented}
+            industriesServed={supplier.industriesServed}
+            exportMarkets={supplier.exportMarkets}
+          />
+
+          {hasValidMap ? (
+            <div className="bg-white rounded-lg shadow p-6 h-full">
+              <h4 className="text-sm font-semibold text-gray-600 uppercase mb-3 flex items-center gap-2">
+                <MapPin size={16} />
+                Location Map
+              </h4>
+              <div className="rounded-lg overflow-hidden border border-gray-200 h-[300px] relative">
+                <iframe
+                  src={mapEmbedUrl}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Supplier Location"
+                  className="w-full h-full"
                 />
               </div>
-            )}
-          </>
-        )}
 
-        {hasValidMap && (
-          <div className="mt-8 bg-white rounded-lg shadow p-6">
-            <h4 className="text-[20px] font-semibold text-black-600 uppercase mb-3 flex items-center gap-2">
-              <MapPin size={16} />
-              Location Map
-            </h4>
-            <div className="rounded-lg overflow-hidden border border-gray-200 h-[300px] relative">
-              <iframe
-                src={mapEmbedUrl}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Supplier Location"
-                className="w-full h-full"
-              />
+              {location && (
+                <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                  <MapPin size={12} />
+                  {location}
+                </p>
+              )}
+              <a
+                href={supplier.googleMapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-3 text-blue-600 hover:underline text-sm"
+              >
+                Open in Google Maps →
+              </a>
             </div>
-            {location && (
-              <p className="text-[12px] text-gray-500 mt-2 flex items-center gap-1">
-                <MapPin size={12} />
-                {location}
-              </p>
-            )}
-            <a
-              href={supplier.googleMapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mt-3 text-blue-600 hover:underline text-[15px]"
-            >
-              Open in Google Maps →
-            </a>
-          </div>
-        )}
+          ) : location ? (
+            <div className="bg-white rounded-lg shadow p-6 h-full">
+              <h4 className="text-sm font-semibold text-gray-600 uppercase mb-3 flex items-center gap-2">
+                <MapPin size={16} />
+                Location
+              </h4>
+              <p className="text-gray-700">{location}</p>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-3 text-blue-600 hover:underline text-sm"
+              >
+                View on Google Maps →
+              </a>
+            </div>
+          ) : null}
+        </div>
 
-        {!hasValidMap && location && (
-          <div className="mt-8 bg-white rounded-lg shadow p-6">
-            <h4 className="text-[20px] font-semibold text-gray-600 uppercase mb-3 flex items-center gap-2">
-              <MapPin size={16} />
-              Location
-            </h4>
-            <p className="text-[15px] text-gray-700">{location}</p>
-            <a
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mt-3 text-blue-600 hover:underline text-[15px]"
-            >
-              View on Google Maps →
-            </a>
-          </div>
-        )}
+        {/* NEW — after the map */}
+        <ProductSuppliesSection productSupplies={supplier.productSupplies} />
 
         {showUpsellToOwner && <ClaimCompanyBanner />}
 
@@ -558,7 +591,7 @@ export default async function SupplierShowroomPage({
           </div>
         )}
 
-        <GalleryTabs
+        <GalleryTabsAny
           videoGallery={supplier.videoGallery}
           productGallery={supplier.productGallery}
           companyGallery={supplier.companyGallery}
@@ -566,6 +599,13 @@ export default async function SupplierShowroomPage({
           productCatalogues={supplier.productCatalogues}
           isPaid={isPaid}
           companySlug={companySlug}
+          companyBrochure={supplier.companyBrochure}
+          manufacturingCapabilities={supplier.manufacturingCapabilities}
+          manufacturingCapabilityImages={supplier.manufacturingCapabilityImages}
+          manufacturingCapabilityVideos={supplier.manufacturingCapabilityVideos}
+          machineryList={supplier.machineryList}
+          machineryImages={supplier.machineryImages}
+          qualityStandards={supplier.qualityStandards}
         />
 
         {articles.length > 0 && (
@@ -574,6 +614,9 @@ export default async function SupplierShowroomPage({
             <CompanyArticlesCarousel articles={articles} />
           </>
         )}
+
+        {/* NEW — very bottom of the page */}
+        <CertificationsSection certifications={supplier.certifications} />
       </div>
     </div>
   )

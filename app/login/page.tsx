@@ -1,8 +1,17 @@
-import AuthHero from "@/components/AuthHero"
-import LoginForm from "@/components/LoginForm"
-import Image from "next/image"
+import AuthHero from "@/components/AuthHero";
+import LoginForm from "@/components/LoginForm";
+import Image from "next/image";
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    redirect?: string;
+    role?: string;
+  }>;
+}) {
+  const params = await searchParams;
+
   return (
     <>
       <AuthHero title="Login" />
@@ -10,13 +19,11 @@ export default function LoginPage() {
       <section className="py-28">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 bg-white rounded-[20px] shadow-xl overflow-hidden">
-            
-            {/* Left */}
-            <div className="flex items-center justify-center p-14">
-              <LoginForm />
-            </div>
 
-            {/* Right image */}
+            <LoginForm
+              {...({ redirect: params.redirect, role: params.role } as any)}
+            />
+
             <div className="hidden lg:block relative">
               <Image
                 src="/images/login.png"
@@ -30,5 +37,5 @@ export default function LoginPage() {
         </div>
       </section>
     </>
-  )
+  );
 }

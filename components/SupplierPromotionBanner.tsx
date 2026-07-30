@@ -1,9 +1,8 @@
-// components/SupplierPromotionBanner.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
-    // BadgeCheck,
     MapPin,
     Phone,
     Mail,
@@ -19,7 +18,6 @@ import {
 import type { PlanTier } from "@/lib/packages";
 import QuoteRequestButton from "./QuteRequestForm";
 
-
 type SocialLinks = {
     facebook?: string;
     linkedin?: string;
@@ -30,6 +28,9 @@ type SocialLinks = {
 
 type Props = {
     planTier: PlanTier;
+    companyId?: number;
+    isLoggedIn?: boolean;
+    isCandidate?: boolean;
     name: string;
     location?: string;
     logoUrl?: string;
@@ -75,21 +76,6 @@ const TIER_STYLES: Record<Exclude<PlanTier, "free">, TierStyles> = {
         gradient: "from-slate-700 to-slate-950",
     },
 };
-
-function ContactItem({
-    icon,
-    children,
-}: {
-    icon: React.ReactNode;
-    children: React.ReactNode;
-}) {
-    return (
-        <span className="flex items-center gap-1.5 text-white/90 text-xs sm:text-sm drop-shadow">
-            {icon}
-            <span className="truncate">{children}</span>
-        </span>
-    );
-}
 
 function CoverImageCarousel({ images, name }: { images: string[]; name: string }) {
     const [index, setIndex] = useState(0);
@@ -150,8 +136,108 @@ function CoverImageCarousel({ images, name }: { images: string[]; name: string }
     );
 }
 
+function ConnectButton({
+    companyId,
+    isLoggedIn,
+    isCandidate,
+    className,
+}: {
+    companyId?: number;
+    isLoggedIn?: boolean;
+    isCandidate?: boolean;
+    className?: string;
+}) {
+    const router = useRouter();
+    const [connected, setConnected] = useState(false);
+
+    function authHeaders(): HeadersInit {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    useEffect(() => {
+        if (!isCandidate || !companyId) return;
+
+        let cancelled = false;
+
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/companies/${companyId}/connect/status`, {
+            headers: authHeaders(),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (!cancelled) setConnected(Boolean(data?.data?.connected));
+            })
+            .catch(() => { });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [isCandidate, companyId]);
+
+    async function handleClick() {
+        if (!companyId) return;
+
+        if (!isLoggedIn) {
+            router.push(
+                `/login?role=candidate&redirect=${encodeURIComponent(window.location.pathname)}`
+            );
+            return;
+        }
+
+        if (!isCandidate) {
+            alert("Only candidates can connect with companies. Please log in with a candidate account.");
+            router.push(
+                `/login?role=candidate&redirect=${encodeURIComponent(window.location.pathname)}`
+            );
+            return;
+        }
+
+        const next = !connected;
+        setConnected(next);
+
+        try {
+            const method = next ? "POST" : "DELETE";
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/companies/${companyId}/connect`,
+                {
+                    method,
+                    headers: authHeaders(),
+                }
+            );
+            if (!res.ok) {
+                setConnected(!next);
+                if (res.status === 401) {
+                    alert("Your session has expired. Please log in again.");
+                    router.push(
+                        `/login?role=candidate&redirect=${encodeURIComponent(window.location.pathname)}`
+                    );
+                }
+            }
+        } catch {
+            setConnected(!next);
+        }
+    }
+
+    return (
+        <button
+            type="button"
+            onClick={handleClick}
+            disabled={!companyId}
+            className={
+                className ||
+                "w-full md:w-auto inline-flex items-center justify-center gap-2 border border-[#0b3954] text-[#0b3954] px-6 py-2.5 text-sm font-semibold uppercase tracking-wide hover:bg-[#0b3954] hover:text-white transition rounded disabled:opacity-60"
+            }
+        >
+            {connected ? "Connected" : "Connect"}
+        </button>
+    );
+}
+
 export default function SupplierPromotionBanner({
     planTier,
+    companyId,
+    isLoggedIn,
+    isCandidate,
     name,
     location,
     logoUrl,
@@ -186,6 +272,8 @@ export default function SupplierPromotionBanner({
 
     const images = (coverImageUrl || []).filter(Boolean);
 
+    const showActions = (showQuoteButton && slug) || companyId;
+
     return (
         <div
             className={`w-full overflow-hidden rounded-2xl border ${tier.accent} shadow-xl bg-white mb-8 md:mb-10`}
@@ -195,19 +283,16 @@ export default function SupplierPromotionBanner({
                 <div className={`absolute inset-0 bg-gradient-to-br ${tier.gradient}`} />
                 <CoverImageCarousel images={images} name={name} />
 
-                {/* Strong gradient across the WHOLE image */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10" />
 
                 <div className="absolute top-4 left-4 sm:top-5 sm:left-5">
                     <div
                         className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold shadow-lg ${tier.badgeBg} ${tier.badgeText}`}
                     >
-                        {/* <BadgeCheck className="w-4 h-4" /> */}
                         {tier.label}
                     </div>
                 </div>
 
-                {/* Logo + name + tagline + location sit ON the image, bottom-left */}
                 <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 md:p-6 text-white">
                     <div className="flex items-end gap-3 sm:gap-4">
                         {logoUrl && (
@@ -216,7 +301,6 @@ export default function SupplierPromotionBanner({
                                 alt={`${name} logo`}
                                 className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg bg-white object-contain p-1.5 shadow-lg shrink-0"
                             />
-
                         )}
                         <div className="min-w-0">
                             <h2 className="text-lg sm:text-2xl md:text-3xl font-bold leading-tight drop-shadow-lg truncate sm:whitespace-normal">
@@ -239,12 +323,11 @@ export default function SupplierPromotionBanner({
             </div>
 
             {/* ===== SOLID INFO PANEL ===== */}
-            {(hasContactInfo || hasSocial || (showQuoteButton && slug)) && (
+            {(hasContactInfo || hasSocial || showActions) && (
                 <div className="bg-white border-t-2 border-gray-100 px-4 sm:px-6 py-4 sm:py-5">
                     <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-6 items-start md:items-center">
                         {/* LEFT COLUMN: contact details + social */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-700 min-w-0">
-
                             {phoneNumber && (
                                 <span className="flex items-center gap-2 min-w-0">
                                     <Phone className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -260,89 +343,87 @@ export default function SupplierPromotionBanner({
                             {website && (
                                 <span className="flex items-center gap-2 min-w-0">
                                     <Globe className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                                    <a
-                                        href={website}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="truncate text-blue-600 hover:underline"
+<a
+                                    href={website}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="truncate text-blue-600 hover:underline"
                                     >
-                                        {website}
-                                    </a>
+                                    {website}
+                                </a>
                                 </span>
                             )}
-                            {social.whatsapp && (
-                                <span className="flex items-center gap-2 min-w-0">
-                                    <MessageCircle className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                                    <a
-                                        href={
-                                            social.whatsapp.startsWith("http")
-                                                ? social.whatsapp
-                                                : `https://wa.me/${social.whatsapp.replace(/[^\d]/g, "")}`
-                                        }
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="truncate text-blue-600 hover:underline"
+                        {social.whatsapp && (
+                            <span className="flex items-center gap-2 min-w-0">
+                                <MessageCircle className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+<a
+                                href={
+                                    social.whatsapp.startsWith("http")
+                                        ? social.whatsapp
+                                        : `https://wa.me/${social.whatsapp.replace(/[^\d]/g, "")}`
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="truncate text-blue-600 hover:underline"
                                     >
-                                        WhatsApp
-                                    </a>
+                                WhatsApp
+                            </a>
                                 </span>
                             )}
-                            {tradeNames && tradeNames.length > 0 && (
-                                <span className="flex items-start gap-2 sm:col-span-2 min-w-0">
-                                    <span className="text-gray-400 shrink-0">Trade Names:</span>
-                                    <span className="truncate">{tradeNames.join(", ")}</span>
-                                </span>
-                            )}
+                    {tradeNames && tradeNames.length > 0 && (
+                        <span className="flex items-start gap-2 sm:col-span-2 min-w-0">
+                            <span className="text-gray-400 shrink-0">Trade Names:</span>
+                            <span className="truncate">{tradeNames.join(", ")}</span>
+                        </span>
+                    )}
 
-                            {hasSocial && (
-                                <div className="flex gap-3 sm:col-span-2 pt-1">
-                                    {social.facebook && (
-                                        <a href={social.facebook} target="_blank" rel="noopener noreferrer">
-                                            <LucideFacebook className="w-4.5 h-4.5 text-gray-400 hover:text-[#3b5998]" />
-                                        </a>
-                                    )}
-                                    {social.linkedin && (
-                                        <a href={social.linkedin} target="_blank" rel="noopener noreferrer">
-                                            <LucideLinkedin className="w-4.5 h-4.5 text-gray-400 hover:text-[#0077b5]" />
-                                        </a>
-                                    )}
-                                    {social.twitter && (
-                                        <a href={social.twitter} target="_blank" rel="noopener noreferrer">
-                                            <LucideTwitter className="w-4.5 h-4.5 text-gray-400 hover:text-black" />
-                                        </a>
-                                    )}
-                                    {social.youtube && (
-                                        <a href={social.youtube} target="_blank" rel="noopener noreferrer">
-                                            <LucideYoutube className="w-4.5 h-4.5 text-gray-400 hover:text-red-600" />
-                                        </a>
-                                    )}
-                                </div>
+                    {hasSocial && (
+                        <div className="flex gap-3 sm:col-span-2 pt-1">
+                            {social.facebook && (
+                                <a href={social.facebook} target="_blank" rel="noopener noreferrer">
+                                    <LucideFacebook className="w-4.5 h-4.5 text-gray-400 hover:text-[#3b5998]" />
+                                </a>
                             )}
-
-                            {/* ✅ QUOTE REQUEST BUTTON - IN THE SAME ROW AS CONTACT ITEMS */}
-                            {showQuoteButton && slug && (
-                                <div className="ml-auto shrink-0">
-                                    <QuoteRequestButton
-                                        supplierSlug={slug}
-                                        supplierName={name}
-                                    />
-                                </div>
+                            {social.linkedin && (
+                                <a href={social.linkedin} target="_blank" rel="noopener noreferrer">
+                                    <LucideLinkedin className="w-4.5 h-4.5 text-gray-400 hover:text-[#0077b5]" />
+                                </a>
+                            )}
+                            {social.twitter && (
+                                <a href={social.twitter} target="_blank" rel="noopener noreferrer">
+                                    <LucideTwitter className="w-4.5 h-4.5 text-gray-400 hover:text-black" />
+                                </a>
+                            )}
+                            {social.youtube && (
+                                <a href={social.youtube} target="_blank" rel="noopener noreferrer">
+                                    <LucideYoutube className="w-4.5 h-4.5 text-gray-400 hover:text-red-600" />
+                                </a>
                             )}
                         </div>
-
-                        {/* RIGHT COLUMN: button */}
-                        {showQuoteButton && slug && (
-                            <div className="shrink-0 w-full md:w-auto">
-                                <QuoteRequestButton
-                                    supplierSlug={slug}
-                                    supplierName={name}
-                                    className="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-[#0b3954] text-white px-6 py-2.5 text-sm font-semibold uppercase tracking-wide hover:bg-[#092f46] transition rounded"
-                                />
-                            </div>
-                        )}
-                    </div>
+                    )}
                 </div>
-            )}
+
+                        {/* RIGHT COLUMN: exactly two buttons — Quote + Connect */}
+            {showActions ? (
+                <div className="flex flex-col sm:flex-row gap-2 shrink-0 w-full md:w-auto">
+                    {showQuoteButton && slug && (
+                        <QuoteRequestButton
+                            supplierSlug={slug}
+                            supplierName={name}
+                            className="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-[#0b3954] text-white px-6 py-2.5 text-sm font-semibold uppercase tracking-wide hover:bg-[#092f46] transition rounded"
+                        />
+                    )}
+                    <ConnectButton
+                        companyId={companyId}
+                        isLoggedIn={isLoggedIn}
+                        isCandidate={isCandidate}
+                    />
+                </div>
+            ) : null}
         </div>
+                </div >
+            )
+}
+        </div >
     );
 }
