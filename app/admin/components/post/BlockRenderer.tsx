@@ -3,6 +3,8 @@
 
 import { ContentBlock } from "../types";
 
+type ImageBlock = Extract<ContentBlock, { type: "image" }>;
+
 interface Props {
   blocks: ContentBlock[];
 }
@@ -39,7 +41,9 @@ export default function BlockRenderer({ blocks }: Props) {
         // Check if this is a paired image
         if (block.type === 'image' && (block as any)._isPair) {
           const currentBlock = block as any;
-          const nextBlock = blocks.find(b => b.id === currentBlock._pairedWith);
+          const nextBlock = blocks.find(
+            (b): b is ImageBlock => b.type === 'image' && b.id === currentBlock._pairedWith
+          );
           if (nextBlock) {
             return (
               <div key={`pair-${index}`} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
