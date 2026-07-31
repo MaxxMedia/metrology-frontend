@@ -19,6 +19,8 @@ type User = {
   username?: string
 }
 
+
+
 export default function Header() {
   const [openMega, setOpenMega] = useState<MegaType>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
