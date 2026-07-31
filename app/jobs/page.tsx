@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
-import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState, Suspense } from "react"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import {
   MapPin,
@@ -46,8 +46,10 @@ type Readiness = {
   resume?: { fileUrl?: string; fileName?: string } | null
 }
 
-export default function JobDetailPage() {
-  const { slug } = useParams<{ slug: string }>()
+function JobDetailContent() {
+  const params = useParams<{ slug?: string }>()
+  const searchParams = useSearchParams()
+  const slug = params?.slug || searchParams?.get("slug")
   const router = useRouter()
 
   const [job, setJob] = useState<any>(null)
@@ -384,6 +386,7 @@ export default function JobDetailPage() {
   const profileIncomplete = isCandidate && readiness ? !readiness.isReady : false
   const applyDisabled =
     checkingApplyStatus || applying || checkingReadiness || profileIncomplete
+  const externalUrl = job.applyUrl || job.linkedinUrl
 
   return (
     <div className="min-h-screen bg-[#F4F2EE]" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
@@ -471,14 +474,14 @@ export default function JobDetailPage() {
                         Applied
                       </button>
                     ) : job.isExternal ? (
-                      job.applyUrl && (
+                      externalUrl && (
                         <a
-                          href={job.applyUrl}
+                          href={externalUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors text-[15px]"
                         >
-                          Easy Apply
+                          Apply on LinkedIn
                         </a>
                       )
                     ) : (
@@ -628,7 +631,7 @@ export default function JobDetailPage() {
                 </div>
               </div>
 
-       
+
             </div>
 
             <p className="text-[16px] text-black-500 leading-relaxed mt-4">
@@ -898,6 +901,27 @@ export default function JobDetailPage() {
 
       {/* ✅ REMOVED: <ApplyModal /> — no popup anymore, apply is one-click */}
     </div>
+  )
+}
+
+// ✅ ADDED: default export wraps the client component in Suspense so
+// useSearchParams() doesn't break static export / build.
+export default function JobDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#F4F2EE] flex items-center justify-center" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
+            <p className="text-[16px] text-gray-500 font-medium">
+              Loading job details...
+            </p>
+          </div>
+        </div>
+      }
+    >
+      <JobDetailContent />
+    </Suspense>
   )
 }
 

@@ -98,7 +98,11 @@ export default function SavedJobsPage() {
               className="bg-white rounded-lg shadow-sm p-5"
             >
               <Link
-                href={`/company/${saved.Job.Company?.slug ?? ""}`}
+                href={
+                  saved.Job.Company?.slug
+                    ? `/company/${saved.Job.Company.slug}`
+                    : `/jobs/${saved.Job.slug}`
+                }
                 className="font-semibold text-sm text-blue-600 hover:underline"
               >
                 {saved.Job.Company?.name || saved.Job.companyName || "Company"}
