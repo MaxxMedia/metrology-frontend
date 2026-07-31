@@ -35,60 +35,82 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
   const [activeTab, setActiveTab] = useState<"recent" | "popular" | "company">("recent");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchSidebarData() {
-      setLoading(true);
-      try {
-        // Fetch recent posts (latest 5)
-        const recentRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=5&page=1`
-        );
+  // Better error handling and loading states
+useEffect(() => {
+  async function fetchSidebarData() {
+    setLoading(true);
+    try {
+      // Fetch recent posts
+      const recentRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=5&page=1`
+      );
+      if (recentRes.ok) {
         const recentData = await recentRes.json();
-        const recentList = recentData.data || recentData || [];
+        const recentList = recentData.data || [];
         setRecentPosts(
           recentList
             .filter((p: any) => p.id !== currentPostId)
             .slice(0, 5)
         );
+      }
 
-        // Fetch popular posts (by views)
+      // Fetch popular posts - with fallback if endpoint fails
+      try {
         const popularRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/posts/popular?limit=5`
         );
         if (popularRes.ok) {
           const popularData = await popularRes.json();
-          const popularList = popularData.data || popularData || [];
+          const popularList = popularData.data || [];
           setPopularPosts(
             popularList
               .filter((p: any) => p.id !== currentPostId)
               .slice(0, 5)
           );
-        }
-
-        // Fetch company/industry posts based on category
-        if (categorySlug) {
-          const companyRes = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${categorySlug}&limit=5`
+        } else {
+          // Fallback: get popular from main endpoint with view sorting
+          const fallbackRes = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=10&page=1`
           );
-          if (companyRes.ok) {
-            const companyData = await companyRes.json();
-            const companyList = companyData.data || companyData || [];
-            setCompanyPosts(
-              companyList
-                .filter((p: any) => p.id !== currentPostId)
-                .slice(0, 5)
-            );
+          if (fallbackRes.ok) {
+            const fallbackData = await fallbackRes.json();
+            const sorted = (fallbackData.data || [])
+              .sort((a: any, b: any) => (b.views || 0) - (a.views || 0))
+              .filter((p: any) => p.id !== currentPostId)
+              .slice(0, 5);
+            setPopularPosts(sorted);
           }
         }
-      } catch (error) {
-        console.error("Failed to fetch sidebar data:", error);
-      } finally {
-        setLoading(false);
+      } catch (err) {
+        console.error("Failed to fetch popular posts:", err);
+        // Set empty array so UI doesn't break
+        setPopularPosts([]);
       }
-    }
 
-    fetchSidebarData();
-  }, [currentPostId, categorySlug]);
+      // Fetch company posts
+      if (categorySlug) {
+        const companyRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${categorySlug}&limit=5`
+        );
+        if (companyRes.ok) {
+          const companyData = await companyRes.json();
+          const companyList = companyData.data || [];
+          setCompanyPosts(
+            companyList
+              .filter((p: any) => p.id !== currentPostId)
+              .slice(0, 5)
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch sidebar data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchSidebarData();
+}, [currentPostId, categorySlug]);
 
   const getImageUrl = (post: Post) => {
     if (!post.imageUrl) return "/placeholder.svg";

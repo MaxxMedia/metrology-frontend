@@ -354,7 +354,7 @@ export default function PostDetailsPage() {
               </nav>
 
               {/* HERO IMAGE */}
-              <div className="relative w-full max-w-[700px] bg-gray-100 rounded-2xl overflow-hidden border border-gray-100">
+              <div className="relative w-full max-w-[800px] bg-gray-100 rounded-2xl overflow-hidden border border-gray-100">
                 <div style={{ aspectRatio: "16/9", width: "100%", position: "relative" }}>
                   <Image
                     src={imageUrl}
