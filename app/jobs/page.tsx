@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import {
@@ -46,7 +46,7 @@ type Readiness = {
   resume?: { fileUrl?: string; fileName?: string } | null
 }
 
-export default function JobDetailPage() {
+function JobDetailContent() {
   const params = useParams<{ slug?: string }>()
   const searchParams = useSearchParams()
   const slug = params?.slug || searchParams?.get("slug")
@@ -901,6 +901,27 @@ export default function JobDetailPage() {
 
       {/* ✅ REMOVED: <ApplyModal /> — no popup anymore, apply is one-click */}
     </div>
+  )
+}
+
+// ✅ ADDED: default export wraps the client component in Suspense so
+// useSearchParams() doesn't break static export / build.
+export default function JobDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#F4F2EE] flex items-center justify-center" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
+            <p className="text-[16px] text-gray-500 font-medium">
+              Loading job details...
+            </p>
+          </div>
+        </div>
+      }
+    >
+      <JobDetailContent />
+    </Suspense>
   )
 }
 
