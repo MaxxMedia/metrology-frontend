@@ -12,7 +12,7 @@ import RelatedPostsCarousel from "@/components/related-posts-carousel"
 import ContentGateModal from "@/components/content-gate-modal"
 import PostViewCounter from "@/components/PostViewCounter"
 import SupplierAds from "@/components/SupplierAds"
-import { CommentsSection } from "@/components/comments-section"
+// import { CommentsSection } from "@/components/comments-section"
 import { UserAvatar } from "@/components/user-avatar"
 import BlockRenderer from "@/app/admin/components/post/BlockRenderer"
 import PostSidebar from "@/components/posts/PostSidebar"
@@ -526,7 +526,7 @@ export default function PostDetailsPage() {
               )}
 
               {/* COMMENTS */}
-              <div className="mt-10 pt-6 border-t border-gray-200">
+              {/* <div className="mt-10 pt-6 border-t border-gray-200">
                 <CommentsSection
                   postId={post.id}
                   initialComments={comments}
@@ -534,7 +534,7 @@ export default function PostDetailsPage() {
                   token={token}
                   onCommentAdded={handleCommentAdded}
                 />
-              </div>
+              </div> */}
             </article>
 
             {/* RIGHT: Sidebar - Sticky, sits alongside the main column */}
