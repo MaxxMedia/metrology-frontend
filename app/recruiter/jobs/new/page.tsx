@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { Building2, CheckCircle, Lock } from "lucide-react"
 
 const EMPLOYMENT_TYPES = [
   { value: "FULL_TIME", label: "Full-time" },
@@ -46,7 +47,6 @@ const DEFAULT_BENEFITS = [
 
 type FormState = {
   title: string
-  companyName: string
   location: string
   employmentType: string
   workplaceType: string
@@ -74,7 +74,6 @@ type FormState = {
 
 const initialForm: FormState = {
   title: "",
-  companyName: "",
   location: "",
   employmentType: "FULL_TIME",
   workplaceType: "ON_SITE",
@@ -101,7 +100,6 @@ const initialForm: FormState = {
 }
 
 const REQUIRED_FIELDS: { key: keyof FormState; label: string }[] = [
-  { key: "companyName", label: "Company name" },
   { key: "title", label: "Job title" },
   { key: "location", label: "Job location" },
   { key: "employmentType", label: "Employment type" },
@@ -122,12 +120,70 @@ export default function CreateJobPage() {
   const router = useRouter()
 
   const [loading, setLoading] = useState(false)
+  const [loadingProfile, setLoadingProfile] = useState(true)
   const [form, setForm] = useState<FormState>(initialForm)
   const [customBenefit, setCustomBenefit] = useState("")
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
 
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null
+  // ✅ Company state
+  const [company, setCompany] = useState<{
+    id: number
+    name: string
+    logoUrl?: string
+    website?: string
+    isVerified?: boolean
+    location?: string
+  } | null>(null)
+
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+
+  // ✅ Fetch recruiter's profile and company
+  useEffect(() => {
+    if (!token) return
+
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/recruiters/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+
+        if (res.ok) {
+          const data = await res.json()
+          
+          // ✅ If user has company, set it
+          if (data.Company) {
+            setCompany({
+              id: data.Company.id,
+              name: data.Company.name,
+              logoUrl: data.Company.logoUrl,
+              website: data.Company.website,
+              isVerified: data.Company.isVerified,
+              location: data.Company.location,
+            })
+
+            // ✅ Auto-populate location from company if not set
+            if (data.Company.location) {
+              setForm(prev => ({
+                ...prev,
+                location: data.Company.location || prev.location,
+              }))
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch profile:", err)
+      } finally {
+        setLoadingProfile(false)
+      }
+    }
+
+    fetchProfile()
+  }, [token])
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm(prev => ({ ...prev, [key]: value }))
@@ -166,6 +222,24 @@ export default function CreateJobPage() {
     setCustomBenefit("")
   }
 
+  // ✅ Generate unique slug with timestamp + random
+  const generateUniqueSlug = (title: string): string => {
+    const baseSlug = title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+    
+    if (!baseSlug) {
+      return `job-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    }
+    
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 6);
+    return `${baseSlug}-${timestamp}-${random}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -184,19 +258,22 @@ export default function CreateJobPage() {
     setLoading(true)
 
     try {
+      const slug = generateUniqueSlug(form.title);
+
+      const payload = {
+        ...form,
+        slug,
+        companyId: company?.id, // ✅ Send company ID
+        companyName: company?.name, // ✅ Send company name
+      }
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/jobs`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          ...form,
-          slug: form.title
-            .toLowerCase()
-            .replace(/\s+/g, "-")
-            .replace(/[^\w-]+/g, ""),
-        }),
+        body: JSON.stringify(payload),
       })
 
       const data = await res.json()
@@ -219,6 +296,17 @@ export default function CreateJobPage() {
     .split("\n")
     .map(l => l.trim())
     .filter(Boolean)
+
+  if (loadingProfile) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -244,19 +332,71 @@ export default function CreateJobPage() {
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start">
-            {/* ================= MAIN COLUMN ================= */}
             <div className="space-y-6">
 
-              {/* 1. Company details */}
+              {/* 1. Company details (Auto-filled, read-only) */}
               <Section number={1} title="Company details">
-                <Input
-                  label="Company name"
-                  required
-                  name="companyName"
-                  error={errors.companyName}
-                  value={form.companyName}
-                  onChange={v => update("companyName", v)}
-                />
+                {company ? (
+                  <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      {/* Company Logo */}
+                      <div className="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                        {company.logoUrl ? (
+                          <img
+                            src={company.logoUrl}
+                            alt={company.name}
+                            className="w-10 h-10 rounded-lg object-cover"
+                          />
+                        ) : (
+                          <Building2 className="w-6 h-6 text-indigo-600" />
+                        )}
+                      </div>
+
+                      {/* Company Info */}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-semibold text-gray-900">
+                            {company.name}
+                          </h3>
+                          {company.isVerified && (
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          )}
+                        </div>
+
+                        {company.website && (
+                          <a
+                            href={company.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-indigo-600 hover:underline"
+                          >
+                            {company.website}
+                          </a>
+                        )}
+
+                        {company.location && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            📍 {company.location}
+                          </p>
+                        )}
+                      </div>
+
+                      <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    </div>
+
+                    <p className="text-xs text-green-600 mt-3 flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" />
+                      This job will be posted under your company profile
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p className="text-sm text-yellow-800">
+                      No company associated with your account. Please create a
+                      company first.
+                    </p>
+                  </div>
+                )}
               </Section>
 
               {/* 2. Job details */}
@@ -559,7 +699,7 @@ export default function CreateJobPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !company}
                   className="px-5 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60"
                 >
                   {loading ? "Creating..." : "Create Job"}
@@ -576,11 +716,11 @@ export default function CreateJobPage() {
 
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-10 h-10 rounded-md bg-indigo-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
-                    {form.companyName ? form.companyName[0].toUpperCase() : "?"}
+                    {company ? company.name[0].toUpperCase() : "?"}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">
-                      {form.companyName || "Company name"}
+                      {company?.name || "Company name"}
                     </p>
                     {form.companySize && (
                       <p className="text-xs text-gray-400">{form.companySize}</p>
