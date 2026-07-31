@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { Calendar, Eye, MessageCircle, ChevronRight, Facebook, Twitter, Instagram, Linkedin, Mail } from "lucide-react"
+import { Calendar, Eye, ChevronRight, Facebook, Twitter, Instagram, Linkedin, Mail } from "lucide-react"
 
 import ShareSection from "@/components/share-section"
 import RelatedPostsCarousel from "@/components/related-posts-carousel"
@@ -83,6 +83,14 @@ type Post = {
     highlightQuote?: string
   }[]
 }
+
+/* ================= DEFAULT AUTHOR ================= */
+// Used ONLY for the avatar + name shown in the meta row right under the
+// title. Every other author-related block (bio card, sidebar "About the
+// Author", profile link) still checks the REAL post.author and hides
+// itself entirely when there isn't one — this default never leaks there.
+const DEFAULT_AUTHOR_NAME = "Tooling Trends"
+const DEFAULT_AUTHOR_AVATAR = "/images/tooling-trends-avatar.png"
 
 /* ================= YOUTUBE HELPERS ================= */
 function getYoutubeEmbed(url?: string) {
@@ -300,8 +308,10 @@ export default function PostDetailsPage() {
     })
     : "Today"
 
+  // The REAL author — stays possibly undefined. Every block below except
+  // the meta-row avatar checks THIS, so they hide themselves when there's
+  // no real author (bio card, sidebar card, profile link).
   const author = post.author
-  const commentCount = comments.length
 
   const relatedImageUrl = (p: Post) =>
     p.imageUrl?.startsWith("http")
@@ -367,17 +377,19 @@ export default function PostDetailsPage() {
                 {post.title}
               </h1>
 
-              {/* META INFO */}
+              {/* META INFO — only place the "Tooling Trends" fallback applies */}
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500">
-                {author && (
-                  <Link
-                    href={author.profileUrl || "#"}
-                    className="flex items-center gap-2 font-medium text-gray-700 hover:text-[#003049]"
-                  >
-                    <UserAvatar name={author.name} imageUrl={author.avatarUrl} size="xs" />
-                    {author.name}
-                  </Link>
-                )}
+                <Link
+                  href={author?.profileUrl || "#"}
+                  className="flex items-center gap-2 font-medium text-gray-700 hover:text-[#003049]"
+                >
+                  <UserAvatar
+                    name={author?.name || DEFAULT_AUTHOR_NAME}
+                    imageUrl={author?.avatarUrl || DEFAULT_AUTHOR_AVATAR}
+                    size="xs"
+                  />
+                  {author?.name || DEFAULT_AUTHOR_NAME}
+                </Link>
 
                 <span className="text-gray-300">•</span>
 
@@ -404,12 +416,6 @@ export default function PostDetailsPage() {
                     </span>
                   </>
                 )}
-
-                <span className="text-gray-300">•</span>
-                <span className="flex items-center gap-1">
-                  <MessageCircle size={14} className="text-gray-400" />
-                  {commentCount === 0 ? "No Comments" : `${commentCount} Comments`}
-                </span>
               </div>
 
               {/* EXCERPT */}
@@ -481,7 +487,7 @@ export default function PostDetailsPage() {
                 <ShareSection post={post} />
               </div>
 
-              {/* AUTHOR BIO */}
+              {/* AUTHOR BIO — reverted: hides entirely if there's no real author */}
               {author && (
                 <div className="mt-8 bg-gray-50 border border-gray-200 rounded-xl p-6 flex flex-col sm:flex-row items-start gap-4">
                   <UserAvatar name={author.name} imageUrl={author.avatarUrl} size="lg" />
@@ -540,7 +546,7 @@ export default function PostDetailsPage() {
             {/* RIGHT: Sidebar - Sticky, sits alongside the main column */}
             <div className="w-full overflow-hidden">
               <div className="lg:sticky lg:top-6 space-y-6">
-                {/* Author Card */}
+                {/* Author Card — reverted: hides entirely if there's no real author */}
                 {author && (
                   <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
                     <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
