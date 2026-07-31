@@ -631,7 +631,7 @@ export default function JobDetailPage() {
        
             </div>
 
-            <p className="text-xs text-gray-500 leading-relaxed mt-4">
+            <p className="text-[16px] text-gray-700 leading-relaxed mt-4">
               {company.description ||
                 "More information about this company is not available at the moment."}
             </p>
