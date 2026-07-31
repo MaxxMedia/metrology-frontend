@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import UploadBox from "@/components/UploadBox"
+import { ARTICLE_TOPICS } from "@/lib/topic"
 
 export default function EditRecruiterArticlePage() {
   const { id } = useParams()
@@ -13,6 +14,7 @@ export default function EditRecruiterArticlePage() {
   const [content, setContent] = useState("")
   const [imageUrl, setImageUrl] = useState("")
   const [badge, setBadge] = useState("")
+  const [categorySlug, setCategorySlug] = useState("")
   const [uploading, setUploading] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -50,7 +52,9 @@ export default function EditRecruiterArticlePage() {
       setExcerpt(article.excerpt || "")
       setContent(article.content || "")
       setImageUrl(article.imageUrl || "")
-      setBadge(article.badge || "") // ✅ set badge
+      setBadge(article.badge || "")
+      // ✅ prefill topic category from the article's linked category
+      setCategorySlug(article.category?.slug || "")
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -91,6 +95,12 @@ export default function EditRecruiterArticlePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!categorySlug) {
+      setError("Please select a topic category.")
+      return
+    }
+
     setSaving(true)
     setError("")
 
@@ -110,7 +120,8 @@ export default function EditRecruiterArticlePage() {
             excerpt,
             content,
             imageUrl,
-            badge: badge.trim() || null, // ✅ send badge
+            badge: badge.trim() || null,
+            categorySlug,
           }),
         }
       )
@@ -146,6 +157,26 @@ export default function EditRecruiterArticlePage() {
           required
         />
 
+        {/* TOPIC CATEGORY */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Topic Category
+          </label>
+          <select
+            className="w-full border p-2 rounded bg-white"
+            value={categorySlug}
+            onChange={(e) => setCategorySlug(e.target.value)}
+            required
+          >
+            <option value="">Select a topic</option>
+            {ARTICLE_TOPICS.map((t) => (
+              <option key={t.slug} value={t.slug}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <textarea
           placeholder="Short excerpt"
           className="w-full border p-2 rounded"
@@ -161,7 +192,6 @@ export default function EditRecruiterArticlePage() {
           required
         />
 
-        {/* 🔥 BADGE INPUT */}
         <input
           type="text"
           placeholder="Badge (optional) e.g. FEATURED, TRENDING"
@@ -170,7 +200,6 @@ export default function EditRecruiterArticlePage() {
           onChange={(e) => setBadge(e.target.value.toUpperCase())}
         />
 
-        {/* IMAGE UPLOAD */}
         <UploadBox
           label="Article Image"
           value={imageUrl}
@@ -180,9 +209,7 @@ export default function EditRecruiterArticlePage() {
         />
 
         {uploading && (
-          <p className="text-sm text-gray-500 mt-2">
-            Uploading image...
-          </p>
+          <p className="text-sm text-gray-500 mt-2">Uploading image...</p>
         )}
 
         <button

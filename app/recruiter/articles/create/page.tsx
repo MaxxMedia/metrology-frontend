@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import UploadBox from "@/components/UploadBox";
+import { ARTICLE_TOPICS } from "@/lib/topic";
 import {
   fetchArticlePostingEligibility,
   type ContentLimitEligibility,
@@ -18,6 +19,7 @@ export default function CreateRecruiterArticlePage() {
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [badge, setBadge] = useState("");
+  const [categorySlug, setCategorySlug] = useState("");
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -37,7 +39,6 @@ export default function CreateRecruiterArticlePage() {
         setEligibility(data);
       } catch (err) {
         console.error("Eligibility Error:", err);
-
       }
     }
 
@@ -63,10 +64,7 @@ export default function CreateRecruiterArticlePage() {
 
       console.log("Upload URL:", url);
       console.log("Upload Status:", res.status);
-      console.log(
-        "Upload Content-Type:",
-        res.headers.get("content-type")
-      );
+      console.log("Upload Content-Type:", res.headers.get("content-type"));
 
       const text = await res.text();
 
@@ -98,6 +96,11 @@ export default function CreateRecruiterArticlePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!categorySlug) {
+      setError("Please select a topic category.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -118,15 +121,13 @@ export default function CreateRecruiterArticlePage() {
           content,
           imageUrl,
           badge: badge.trim() || null,
+          categorySlug,
         }),
       });
 
       console.log("Article URL:", url);
       console.log("Article Status:", res.status);
-      console.log(
-        "Article Content-Type:",
-        res.headers.get("content-type")
-      );
+      console.log("Article Content-Type:", res.headers.get("content-type"));
 
       const text = await res.text();
 
@@ -154,9 +155,7 @@ export default function CreateRecruiterArticlePage() {
 
   return (
     <div className="max-w-3xl mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-6">
-        Create Article
-      </h1>
+      <h1 className="text-2xl font-bold mb-6">Create Article</h1>
 
       {eligibility && !eligibility.canCreate && (
         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
@@ -187,6 +186,26 @@ export default function CreateRecruiterArticlePage() {
           required
         />
 
+        {/* TOPIC CATEGORY — determines which nav dropdown this article shows under */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Topic Category
+          </label>
+          <select
+            className="w-full border p-2 rounded bg-white"
+            value={categorySlug}
+            onChange={(e) => setCategorySlug(e.target.value)}
+            required
+          >
+            <option value="">Select a topic</option>
+            {ARTICLE_TOPICS.map((t) => (
+              <option key={t.slug} value={t.slug}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <textarea
           placeholder="Short excerpt"
           className="w-full border p-2 rounded"
@@ -207,9 +226,7 @@ export default function CreateRecruiterArticlePage() {
           placeholder="Badge (optional) e.g. FEATURED, TRENDING"
           className="w-full border p-2 rounded"
           value={badge}
-          onChange={(e) =>
-            setBadge(e.target.value.toUpperCase())
-          }
+          onChange={(e) => setBadge(e.target.value.toUpperCase())}
         />
 
         <UploadBox
@@ -221,9 +238,7 @@ export default function CreateRecruiterArticlePage() {
         />
 
         {uploading && (
-          <p className="text-sm text-gray-500">
-            Uploading image...
-          </p>
+          <p className="text-sm text-gray-500">Uploading image...</p>
         )}
 
         <ContentSubmissionPolicy

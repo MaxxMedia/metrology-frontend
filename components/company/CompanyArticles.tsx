@@ -24,25 +24,99 @@ const CATEGORY_COLORS: Record<string, string> = {
   "latest-issue": "bg-[#F69C00]",
 };
 
+/* ================= HELPERS ================= */
+
+// The API sometimes returns author: null (e.g. company-submitted
+// articles that instead carry Company / guestName / createdBy info).
+// Never assume post.author is an object — always guard it.
+function getAuthorName(post: Post): string {
+  if (post.author && typeof post.author === "object") {
+    return post.author.name || "rstheme";
+  }
+  if (typeof post.author === "string" && (post.author as string).trim()) {
+    return post.author as string;
+  }
+  // Fall back to company name if this is a company-submitted article
+  const company = (post as any).Company || (post as any).company;
+  if (company?.name) return company.name;
+  return "rstheme";
+}
+
+function getCategorySlug(post: Post): string {
+  return typeof post.category === "object"
+    ? post.category?.slug?.toLowerCase() || ""
+    : String(post.category || "").toLowerCase();
+}
+
+function getCategoryName(post: Post): string {
+  return typeof post.category === "object"
+    ? post.category?.name || ""
+    : String(post.category || "");
+}
+
 /* ================= COMPONENT ================= */
 
 export default function CompanyArticles() {
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [index, setIndex] = useState(0);
   const [fade, setFade] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   /* ================= FETCH APPROVED ARTICLES ================= */
 
   useEffect(() => {
     (async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/articles/approved`
+      setLoading(true);
+      setError(null);
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      if (!apiUrl) {
+        console.error(
+          "[CompanyArticles] NEXT_PUBLIC_API_URL is not set — check your .env"
         );
+        setError("Missing API URL configuration");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`${apiUrl}/api/articles/approved`, {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          const body = await res.text().catch(() => "");
+          console.error(
+            `[CompanyArticles] Fetch failed: ${res.status} ${res.statusText}`,
+            body
+          );
+          setError(`Failed to load articles (${res.status})`);
+          setAllPosts([]);
+          return;
+        }
+
         const data = await res.json();
-        setAllPosts(Array.isArray(data) ? data : []);
+
+        // API may return either a bare array or { data: [...] }
+        const list: Post[] = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.data)
+            ? data.data
+            : [];
+
+        if (list.length === 0) {
+          console.warn("[CompanyArticles] API returned an empty list", data);
+        }
+
+        setAllPosts(list);
       } catch (err) {
-        console.error("Failed to load approved articles", err);
+        console.error("[CompanyArticles] Failed to load approved articles", err);
+        setError("Failed to load articles");
+        setAllPosts([]);
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
@@ -52,9 +126,6 @@ export default function CompanyArticles() {
   const visiblePosts = useMemo(() => {
     if (allPosts.length === 0) return [];
 
-    // Cap the window at however many unique posts actually exist —
-    // this is what was causing duplicate keys / a post silently
-    // disappearing when allPosts.length was less than 3.
     const windowSize = Math.min(3, allPosts.length);
     const result: Post[] = [];
 
@@ -68,7 +139,6 @@ export default function CompanyArticles() {
   /* ================= ROTATION ================= */
 
   useEffect(() => {
-    // Nothing to rotate in if we're already showing everything we have.
     if (allPosts.length <= 3) return;
 
     const timer = setInterval(() => {
@@ -82,6 +152,34 @@ export default function CompanyArticles() {
 
     return () => clearInterval(timer);
   }, [allPosts.length]);
+
+  /* ================= RENDER GUARDS ================= */
+
+  // Previously this just returned null on empty/loading with zero
+  // visual feedback, which is indistinguishable from "silently broken".
+  if (loading) {
+    return (
+      <section className="pt-4 sm:pt-8 w-full">
+        <div className="max-w-[1320px] mx-auto px-4">
+          <div className="bg-[#F7F7F7] rounded-md px-6 py-10 text-center text-sm text-gray-400">
+            Loading articles…
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="pt-4 sm:pt-8 w-full">
+        <div className="max-w-[1320px] mx-auto px-4">
+          <div className="bg-[#F7F7F7] rounded-md px-6 py-10 text-center text-sm text-red-500">
+            {error}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   if (!visiblePosts.length) return null;
 
@@ -116,15 +214,8 @@ export default function CompanyArticles() {
           {/* POSTS GRID */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
             {visiblePosts.map((post, i) => {
-              const slug =
-                typeof post.category === "object"
-                  ? post.category?.slug || ""
-                  : "";
-
-              const categoryName =
-                typeof post.category === "object"
-                  ? post.category?.name || ""
-                  : "";
+              const slug = getCategorySlug(post);
+              const categoryName = getCategoryName(post);
 
               const badge = post.badge?.trim();
               const tagText = badge || categoryName;
@@ -132,8 +223,7 @@ export default function CompanyArticles() {
               let tagClass = "bg-[#9CA3AF]";
 
               if (badge) {
-                tagClass =
-                  BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]";
+                tagClass = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]";
               } else {
                 const match = Object.keys(CATEGORY_COLORS).find((key) =>
                   slug.includes(key)
@@ -144,8 +234,8 @@ export default function CompanyArticles() {
               const imageUrl = post.imageUrl?.startsWith("http")
                 ? post.imageUrl
                 : post.imageUrl
-                ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-                : "/placeholder.jpg";
+                  ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
+                  : "/placeholder.jpg";
 
               return (
                 <div
@@ -159,37 +249,22 @@ export default function CompanyArticles() {
                   >
                     <Image
                       src={imageUrl}
-                      alt={post.title.slice(0, 20)}
+                      alt={post.title?.slice(0, 20) || "Article"}
                       fill
                       sizes="(max-width: 640px) 72px, 96px"
-                      className={`object-cover text-[16px] transition-all duration-500 ease-in-out ${
-                        fade
+                      className={`object-cover text-[16px] transition-all duration-500 ease-in-out ${fade
                           ? "opacity-100 scale-100 translate-x-0"
                           : "opacity-0 scale-95 -translate-x-2"
-                      }`}
-                      onError={(e) => {
-                        // If image fails to load, show a fallback
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = "none";
-                        const parent = target.parentElement;
-                        if (parent) {
-                          const fallback = document.createElement("div");
-                          fallback.className =
-                            "w-full h-full text-[16px] flex items-center justify-center bg-gray-200 text-gray-500 text-[12px]";
-                          fallback.textContent = "No image";
-                          parent.appendChild(fallback);
-                        }
-                      }}
+                        }`}
                     />
                   </Link>
 
                   {/* content */}
                   <div
-                    className={`flex flex-col text-[16px] gap-2 min-w-0 transition-all duration-500 ease-in-out ${
-                      fade
+                    className={`flex flex-col text-[16px] gap-2 min-w-0 transition-all duration-500 ease-in-out ${fade
                         ? "translate-y-0 opacity-100"
                         : "translate-y-2 opacity-0"
-                    }`}
+                      }`}
                   >
                     {tagText && (
                       <span
@@ -206,11 +281,7 @@ export default function CompanyArticles() {
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[#616C74]">
                       <span>
                         By{" "}
-                        <span className="font-medium">
-                          {typeof post.author === "object"
-                            ? post.author?.name || "rstheme"
-                            : post.author || "rstheme"}
-                        </span>
+                        <span className="font-medium">{getAuthorName(post)}</span>
                       </span>
                       <span>{post.views?.toLocaleString() || 0} Views</span>
                     </div>
