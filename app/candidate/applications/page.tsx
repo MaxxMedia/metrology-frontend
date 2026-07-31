@@ -13,7 +13,8 @@ type Application = {
     title: string
     slug: string
     location: string
-    Company: {
+    companyName?: string
+    Company?: {
       name: string
       slug: string
     }
@@ -80,10 +81,14 @@ export default function MyApplicationsPage() {
             >
               {/* HEADER */}
               <Link
-               href={`/company/${app.Job?.Company?.slug ?? ""}`}
+                href={
+                  app.Job?.Company?.slug
+                    ? `/company/${app.Job.Company.slug}`
+                    : `/jobs/${app.Job?.slug ?? ""}`
+                }
                 className="font-semibold text-sm text-blue-600 hover:underline"
               >
-               {app.Job?.Company?.name ?? "Unknown Company"}
+                {app.Job?.Company?.name || app.Job?.companyName || "Company"}
               </Link>
 
               {/* TITLE */}

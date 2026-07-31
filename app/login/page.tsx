@@ -16,21 +16,30 @@ export default async function LoginPage({
     <>
       <AuthHero title="Login" />
 
-      <section className="py-28">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 bg-white rounded-[20px] shadow-xl overflow-hidden">
+      <section className="py-16 md:py-24">
+        <div className="max-w-[1100px] mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 bg-white rounded-2xl shadow-[0_8px_40px_rgba(10,43,87,0.08)] border border-gray-100 overflow-hidden">
 
-            <LoginForm
-              {...({ redirect: params.redirect, role: params.role } as any)}
-            />
+            {/* FORM SIDE */}
+            <div className="flex items-center justify-center px-8 py-12 sm:px-12 sm:py-16">
+              <div className="w-full max-w-[380px]">
+                <LoginForm
+                  {...({ redirect: params.redirect, role: params.role } as any)}
+                />
+              </div>
+            </div>
 
-            <div className="hidden lg:block relative">
+            {/* IMAGE SIDE */}
+            <div className="hidden lg:block relative min-h-[560px]">
               <Image
                 src="/images/login.png"
                 alt="Login"
                 fill
                 className="object-cover"
+                priority
               />
+              {/* subtle gradient so the panel reads as one designed surface, not a stock photo dropped in */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A2B57]/30 via-transparent to-transparent" />
             </div>
 
           </div>

@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import {
   MapPin,
@@ -47,7 +47,9 @@ type Readiness = {
 }
 
 export default function JobDetailPage() {
-  const { slug } = useParams<{ slug: string }>()
+  const params = useParams<{ slug?: string }>()
+  const searchParams = useSearchParams()
+  const slug = params?.slug || searchParams?.get("slug")
   const router = useRouter()
 
   const [job, setJob] = useState<any>(null)
@@ -384,6 +386,7 @@ export default function JobDetailPage() {
   const profileIncomplete = isCandidate && readiness ? !readiness.isReady : false
   const applyDisabled =
     checkingApplyStatus || applying || checkingReadiness || profileIncomplete
+  const externalUrl = job.applyUrl || job.linkedinUrl
 
   return (
     <div className="min-h-screen bg-[#F4F2EE]" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
@@ -471,14 +474,14 @@ export default function JobDetailPage() {
                         Applied
                       </button>
                     ) : job.isExternal ? (
-                      job.applyUrl && (
+                      externalUrl && (
                         <a
-                          href={job.applyUrl}
+                          href={externalUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors text-[15px]"
                         >
-                          Easy Apply
+                          Apply on LinkedIn
                         </a>
                       )
                     ) : (
@@ -628,7 +631,7 @@ export default function JobDetailPage() {
                 </div>
               </div>
 
-       
+
             </div>
 
             <p className="text-[16px] text-black-500 leading-relaxed mt-4">
