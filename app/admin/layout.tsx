@@ -223,12 +223,12 @@ export default function AdminLayout({
                     icon={<ShieldCheck size={16} />}
                     active={pathname === "/admin/Users/custom-role-templates"}
                   />
-    <SidebarLink
+    {/* <SidebarLink
                     href="/admin/Users/sub-admin-tracking"
                     label="Sub Admin Tracking"
                     icon={<FileText size={16} />}
                     active={pathname === "/admin/Users/sub-admin-tracking"}
-                  />
+                  /> */}
                 </div>
               )}
             </div>
@@ -331,7 +331,7 @@ export default function AdminLayout({
               localStorage.removeItem("token")
               localStorage.removeItem("user")
               localStorage.removeItem("permissions")
-              router.push("/admin/login")
+              router.push("/login")
             }}
             className="flex items-center gap-3 text-sm font-medium text-white/90 hover:text-red-300 transition"
           >

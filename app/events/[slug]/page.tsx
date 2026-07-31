@@ -93,8 +93,8 @@ export default async function EventDetailsPage({
         )}
         <div className="relative max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row md:items-center gap-6">
           {event.logoUrl && (
-            <div className="bg-white p-2 rounded-lg w-24 flex-shrink-0">
-              <Image src={event.logoUrl} alt={event.title} width={90} height={50} className="object-contain" />
+            <div className="p-2 border bg-gray-500 rounded-4xl w-24 flex-shrink-0">
+              <Image src={event.logoUrl} alt={event.title} width={90} height={50} className="object-contain rounded-sm" />
 
             </div>
           )}
