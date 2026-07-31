@@ -26,8 +26,10 @@ type Article = {
   title: string
   views: number
   shares: number
-  Company?: Company
+  Company?: Company | null
 }
+
+const NO_COMPANY_ID = -1 // sentinel bucket id for articles without a Company
 
 /* ================= PAGE ================= */
 
@@ -143,9 +145,13 @@ export default function AdminArticlesPage() {
 
   const companies = useMemo(() => {
     const map = new Map<number, { company: Company; count: number }>()
+    let noCompanyCount = 0
 
     articles.forEach(article => {
-      if (!article.Company) return
+      if (!article.Company) {
+        noCompanyCount++
+        return
+      }
 
       if (!map.has(article.Company.id)) {
         map.set(article.Company.id, {
@@ -157,11 +163,25 @@ export default function AdminArticlesPage() {
       }
     })
 
-    return Array.from(map.values())
+    const list = Array.from(map.values())
+
+    // Add a synthetic "Independent" bucket so company-less articles
+    // (e.g. editorial posts with no companyId) are still selectable.
+    if (noCompanyCount > 0) {
+      list.push({
+        company: { id: NO_COMPANY_ID, name: "Independent / No Company", eligibility: null },
+        count: noCompanyCount,
+      })
+    }
+
+    return list
   }, [articles])
 
   const filteredArticles = useMemo(() => {
     if (!selectedCompanyId) return []
+    if (selectedCompanyId === NO_COMPANY_ID) {
+      return articles.filter(a => !a.Company)
+    }
     return articles.filter(a => a.Company?.id === selectedCompanyId)
   }, [articles, selectedCompanyId])
 
@@ -194,10 +214,9 @@ export default function AdminArticlesPage() {
             key={tab}
             onClick={() => setStatus(tab as any)}
             className={`px-5 py-2 rounded-md text-sm font-medium transition
-              ${
-                status === tab
-                  ? "bg-[#0A2B57] text-white shadow"
-                  : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-100"
+              ${status === tab
+                ? "bg-[#0A2B57] text-white shadow"
+                : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-100"
               }
             `}
           >
@@ -218,10 +237,9 @@ export default function AdminArticlesPage() {
                 key={company.id}
                 onClick={() => setSelectedCompanyId(company.id)}
                 className={`p-3 rounded-md cursor-pointer flex flex-col justify-between transition gap-1
-                  ${
-                    selectedCompanyId === company.id
-                      ? "bg-blue-50 text-[#0A2B57] font-medium"
-                      : "hover:bg-gray-100 text-gray-700"
+                  ${selectedCompanyId === company.id
+                    ? "bg-blue-50 text-[#0A2B57] font-medium"
+                    : "hover:bg-gray-100 text-gray-700"
                   }`}
               >
                 <div className="flex justify-between items-center w-full">
@@ -254,7 +272,7 @@ export default function AdminArticlesPage() {
             <p className="text-gray-500">Select a company to view articles</p>
           )}
 
-          {selectedCompanyId && !loading && (
+          {selectedCompanyId && selectedCompanyId !== NO_COMPANY_ID && !loading && (
             (() => {
               const selectedComp = companies.find(c => c.company.id === selectedCompanyId)?.company
               if (!selectedComp || !selectedComp.eligibility) return null
@@ -272,8 +290,8 @@ export default function AdminArticlesPage() {
                   <div className="bg-white/90 px-4 py-2 rounded-lg border border-blue-150 shadow-sm text-right">
                     <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Article Limit Usage (Yearly)</p>
                     <p className="text-lg font-bold text-indigo-900 mt-0.5">
-                      {elig.isUnlimited 
-                        ? "Unlimited" 
+                      {elig.isUnlimited
+                        ? "Unlimited"
                         : `${elig.articlesThisYear ?? 0} of ${elig.effectiveLimit ?? 0} articles used`}
                     </p>
                   </div>
