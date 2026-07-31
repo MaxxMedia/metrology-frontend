@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, X, ChevronDown } from "lucide-react"
-import { useState, useEffect } from "react"
+import { Menu, X, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
 import type { Post } from "@/types/Post"
 import { ARTICLE_TOPICS as TOPICS, RESOURCE_TOPICS as RESOURCES } from "@/lib/topic"
 
@@ -33,10 +33,20 @@ export default function Header() {
   const [postsCache, setPostsCache] = useState<Record<string, Post[]>>({})
   const [postsLoading, setPostsLoading] = useState(false)
 
-  const [activeSlug, setActiveSlug] = useState("machine-tools") // 👈 updated
+  const [activeSlug, setActiveSlug] = useState("machine") // 👈 updated
   const [showHighlight, setShowHighlight] = useState(true)
 
   const container = "max-w-[1320px] mx-auto px-4 md:px-6 lg:px-[15px]"
+
+  // ✅ CHANGED: one generic slider ref/handler shared by events, suppliers, and articles
+  const contentScrollRef = useRef<HTMLDivElement>(null)
+
+  function scrollContent(direction: "left" | "right") {
+    const el = contentScrollRef.current
+    if (!el) return
+    const amount = el.clientWidth * 0.9
+    el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" })
+  }
 
   useEffect(() => {
     const loadUser = () => {
@@ -62,8 +72,9 @@ export default function Header() {
 
     setPostsLoading(true)
     try {
+      // ✅ FIXED: limit=4 -> limit=6
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(slug)}&limit=4`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(slug)}&limit=6`
       )
       const data = await res.json()
       const posts: Post[] = Array.isArray(data?.data) ? data.data : []
@@ -86,7 +97,7 @@ export default function Header() {
   }, [])
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/suppliers?limit=4`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/suppliers?limit=6`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -101,6 +112,11 @@ export default function Header() {
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "unset"
   }, [isMenuOpen])
+
+  // ✅ ADDED: snap the slider back to the start whenever the topic/category changes
+  useEffect(() => {
+    contentScrollRef.current?.scrollTo({ left: 0 })
+  }, [activeSlug, openMega])
 
   const slugOf = (post: Post) =>
     typeof post.category === "object"
@@ -131,6 +147,12 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
+      {/* ✅ ADDED: hides the scrollbar on the suppliers slider (webkit) */}
+      <style jsx global>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
 
       {/* ================= TOP BAR ================= */}
       <div className="flex h-[90px] w-full">
@@ -159,48 +181,50 @@ export default function Header() {
               <button
                 onMouseEnter={() => {
                   setOpenMega("topics")
-                  setActiveSlug("machine-tools") // 👈 updated
+                  setActiveSlug("machine") // 👈 updated
+                  fetchPostsForSlug("machine") // ✅ load default tab's data immediately
                 }}
                 className="group relative flex items-center gap-1 uppercase"
               >
                 Topics <ChevronDown size={14} />
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-white transition-all group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#B30F24] transition-all group-hover:w-full" />
               </button>
 
               <button
                 onMouseEnter={() => {
                   setOpenMega("resources")
                   setActiveSlug("webinars")
+                  fetchPostsForSlug("webinars") // ✅ load default tab's data immediately
                 }}
                 className="group relative flex items-center gap-1 uppercase"
               >
                 Resources <ChevronDown size={14} />
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-white transition-all group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#B30F24] transition-all group-hover:w-full" />
               </button>
 
               <Link href="/magazines" className="group relative">
                 Magazine
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-white transition-all group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#B30F24] transition-all group-hover:w-full" />
               </Link>
 
               <Link href="/suppliers" className="group relative">
                 Directory
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-white transition-all group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#B30F24] transition-all group-hover:w-full" />
               </Link>
 
               <Link href="/industry-talks" className="group relative">
                 Industry Talks
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-white transition-all group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#B30F24] transition-all group-hover:w-full" />
               </Link>
 
               <Link href="/events" className="group relative">
                 Events
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-white transition-all group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#B30F24] transition-all group-hover:w-full" />
               </Link>
 
               <Link href="/feed" className="group relative">
                 Jobs
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-white transition-all group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#B30F24] transition-all group-hover:w-full" />
               </Link>
 
             </nav>
@@ -346,127 +370,167 @@ export default function Header() {
               ))}
             </aside>
 
-            <div className="grid grid-cols-4 gap-6 h-full content-start">
+            {/* ✅ CHANGED: one unified horizontal slider for events, suppliers,
+                and articles — same row-of-6 layout for every nav item, with
+                the prev/next arrows anchored to the top-right corner */}
+            <div className="relative h-full">
 
-              {openMega === "resources" && activeSlug === "events" ? (
+              <div className="flex items-center justify-end gap-3 mb-3">
+                <button
+                  onClick={() => scrollContent("left")}
+                  aria-label="Scroll left"
+                  className="text-white/70 hover:text-white transition-colors"
+                >
+                  <ChevronLeft size={22} />
+                </button>
+                <button
+                  onClick={() => scrollContent("right")}
+                  aria-label="Scroll right"
+                  className="text-white/70 hover:text-white transition-colors"
+                >
+                  <ChevronRight size={22} />
+                </button>
+              </div>
 
-                events.length === 0 ? (
-                  <p className="text-white col-span-4">No upcoming events available.</p>
-                ) : (
-                  events.slice(0, 4).map(event => (
-                    <div key={event.id} className="text-white flex flex-col">
+              <div
+                ref={contentScrollRef}
+                className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-hide"
+                style={{ scrollbarWidth: "none" }}
+              >
 
-                      <Link href={`/events/${event.slug}`} className="block">
-                        <div className="relative w-full h-40 mb-3 bg-white rounded overflow-hidden">
-                          {event.logoUrl ? (
-                            <Image
-                              src={event.logoUrl}
-                              alt={event.title}
-                              fill
-                              className="object-contain p-2"
-                              sizes="(max-width:1280px) 25vw, 300px"
-                            />
-                          ) : (
-                            <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-xs">
-                              No Image
-                            </div>
-                          )}
-                        </div>
-                      </Link>
+                {openMega === "resources" && activeSlug === "events" ? (
 
-                      <p className="text-xs text-gray-300 mb-1">
-                        {new Date(event.startDate).toLocaleDateString()} &ndash;{" "}
-                        {new Date(event.endDate).toLocaleDateString()}
-                      </p>
-
-                      <h4 className="text-sm font-semibold hover:text-[#B30F24] line-clamp-2">
-                        <Link href={`/events/${event.slug}`}>{event.title}</Link>
-                      </h4>
-
-                      {event.location && (
-                        <p className="text-xs text-gray-400 mt-1">📍 {event.location}</p>
-                      )}
-
-                    </div>
-                  ))
-                )
-
-              ) : openMega === "resources" && activeSlug === "suppliers" ? (
-
-                suppliers.length === 0 ? (
-                  <p className="text-white col-span-4">No suppliers available.</p>
-                ) : (
-                  suppliers.slice(0, 4).map(supplier => (
-                    <div key={supplier.id} className="text-white flex flex-col">
-
-                      <Link href={`/suppliers/${supplier.slug}`} className="block">
-                        <div className="relative w-full h-40 mb-3 bg-white rounded overflow-hidden">
-                          {supplier.logoUrl ? (
-                            <Image
-                              src={supplier.logoUrl}
-                              alt={supplier.name}
-                              fill
-                              className="object-contain p-2"
-                              sizes="(max-width:1280px) 25vw, 300px"
-                            />
-                          ) : (
-                            <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-xs">
-                              No Image
-                            </div>
-                          )}
-                        </div>
-                      </Link>
-
-                      <h4 className="text-sm font-semibold hover:text-[#B30F24] line-clamp-2">
-                        <Link href={`/suppliers/${supplier.slug}`}>{supplier.name}</Link>
-                      </h4>
-
-                      <p className="text-xs text-gray-300 mt-2 line-clamp-2">{supplier.description}</p>
-
-                    </div>
-                  ))
-                )
-
-              ) : (
-
-                postsLoading ? (
-                  <div className="col-span-4 flex items-center justify-center py-10">
-                    <div className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : activePosts.length === 0 ? (
-                  <p className="text-white/60 col-span-4 text-sm">No articles found for this topic.</p>
-                ) : (
-                  activePosts.map(post => (
-                    <article key={post.id}>
-                      <Link href={`/post/${post.slug}`}>
-                        <div className="relative w-full h-40 mb-3">
-                          <Image
-                            src={post.imageUrl || "/placeholder.svg"}
-                            alt={post.title}
-                            fill
-                            className="object-cover rounded hover:opacity-90 transition-opacity"
-                          />
-                        </div>
-                      </Link>
-
-                      <h5 className="text-[10px] uppercase text-red-500 font-bold tracking-wide mb-1">
-                        {post.badge}
-                      </h5>
-
-                      <h4 className="text-sm font-semibold text-white leading-snug hover:text-[#B30F24]">
-                        <Link href={`/post/${post.slug}`}>
-                          {post.title}
+                  events.length === 0 ? (
+                    <p className="text-white">No upcoming events available.</p>
+                  ) : (
+                    events.slice(0, 6).map(event => (
+                      <div
+                        key={event.id}
+                        className="text-white flex flex-col shrink-0 snap-start"
+                        style={{ width: "calc((100% - 5 * 1.5rem) / 6)", minWidth: "160px" }}
+                      >
+                        <Link href={`/events/${event.slug}`} className="block">
+                          <div className="relative w-full h-40 mb-3 bg-white rounded overflow-hidden">
+                            {event.logoUrl ? (
+                              <Image
+                                src={event.logoUrl}
+                                alt={event.title}
+                                fill
+                                className="object-contain p-2"
+                                sizes="200px"
+                              />
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-xs">
+                                No Image
+                              </div>
+                            )}
+                          </div>
                         </Link>
-                      </h4>
 
-                      <p className="text-xs text-gray-300 mt-2 leading-relaxed line-clamp-2">
-                        {post.excerpt}
-                      </p>
-                    </article>
-                  ))
-                )
+                        <p className="text-xs text-gray-300 mb-1">
+                          {new Date(event.startDate).toLocaleDateString()} &ndash;{" "}
+                          {new Date(event.endDate).toLocaleDateString()}
+                        </p>
 
-              )}
+                        <h4 className="text-sm font-semibold hover:text-[#B30F24] line-clamp-2">
+                          <Link href={`/events/${event.slug}`}>{event.title}</Link>
+                        </h4>
+
+                        {event.location && (
+                          <p className="text-xs text-gray-400 mt-1">📍 {event.location}</p>
+                        )}
+                      </div>
+                    ))
+                  )
+
+                ) : openMega === "resources" && activeSlug === "suppliers" ? (
+
+                  // ⏸ package filter removed for now — showing all suppliers.
+                  // add back later: suppliers.filter((s: any) => s.package && s.package !== "free")
+                  suppliers.length === 0 ? (
+                    <p className="text-white">No suppliers available.</p>
+                  ) : (
+                    suppliers
+                      .slice(0, 6)
+                      .map(supplier => (
+                        <div
+                          key={supplier.id}
+                          className="text-white flex flex-col shrink-0 snap-start"
+                          style={{ width: "calc((100% - 5 * 1.5rem) / 6)", minWidth: "160px" }}
+                        >
+                          <Link href={`/suppliers/${supplier.slug}`} className="block">
+                            <div className="relative w-full h-40 mb-3 bg-white rounded overflow-hidden">
+                              {supplier.logoUrl ? (
+                                <Image
+                                  src={supplier.logoUrl}
+                                  alt={supplier.name}
+                                  fill
+                                  className="object-contain p-2"
+                                  sizes="200px"
+                                />
+                              ) : (
+                                <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-xs">
+                                  No Image
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+
+                          <h4 className="text-sm font-semibold hover:text-[#B30F24] line-clamp-2">
+                            <Link href={`/suppliers/${supplier.slug}`}>{supplier.name}</Link>
+                          </h4>
+
+                          <p className="text-xs text-gray-300 mt-2 line-clamp-2">{supplier.description}</p>
+                        </div>
+                      ))
+                  )
+
+                ) : (
+
+                  postsLoading ? (
+                    <div className="w-full flex items-center justify-center py-10">
+                      <div className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  ) : activePosts.length === 0 ? (
+                    <p className="text-white/60 text-sm">No articles found for this topic.</p>
+                  ) : (
+                    activePosts.slice(0, 6).map(post => (
+                      <article
+                        key={post.id}
+                        className="shrink-0 snap-start"
+                        style={{ width: "calc((100% - 5 * 1.5rem) / 6)", minWidth: "160px" }}
+                      >
+                        <Link href={`/post/${post.slug}`}>
+                          <div className="relative w-full h-40 mb-3">
+                            <Image
+                              src={post.imageUrl || "/placeholder.svg"}
+                              alt={post.title}
+                              fill
+                              className="object-cover rounded hover:opacity-90 transition-opacity"
+                            />
+                          </div>
+                        </Link>
+
+                        <h5 className="text-[10px] uppercase text-red-500 font-bold tracking-wide mb-1">
+                          {post.badge}
+                        </h5>
+
+                        <h4 className="text-sm font-semibold text-white leading-snug hover:text-[#B30F24]">
+                          <Link href={`/post/${post.slug}`}>
+                            {post.title}
+                          </Link>
+                        </h4>
+
+                        <p className="text-xs text-gray-300 mt-2 leading-relaxed line-clamp-2">
+                          {post.excerpt}
+                        </p>
+                      </article>
+                    ))
+                  )
+
+                )}
+
+              </div>
 
             </div>
 
