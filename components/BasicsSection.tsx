@@ -1,118 +1,3 @@
-// "use client";
-
-// import Link from "next/link";
-// import { useEffect, useState } from "react";
-// import type { Post } from "../types/Post";
-// import SupplierAds from "@/components/SupplierAds";
-
-// /* ------------------ MAIN SECTION ------------------ */
-
-// export default function BasicsSection() {
-//   const [posts, setPosts] = useState<Post[]>([]);
-
-//   useEffect(() => {
-//     async function fetchPosts() {
-//       const res = await fetch(
-//         `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`
-//       );
-//       const json = await res.json();
-//       const allPosts: Post[] = json.data || json;
-
-//       const basicsPosts = allPosts.filter((p) =>
-//         typeof p.category === "object"
-//           ? p.category?.slug?.toLowerCase().includes("basics")
-//           : String(p.category || "").toLowerCase().includes("basics")
-//       );
-
-//       setPosts(basicsPosts.slice(0, 6));
-//     }
-
-//     fetchPosts();
-//   }, []);
-
-//   if (!posts.length) return null;
-
-//   return (
-//     <section className="bg-[#f7f7f7] py-12 sm:py-16">
-//       <div className="max-w-[1320px] mx-auto px-4">
-
-//         {/* HEADER */}
-//         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
-//           <h2 className="text-2xl sm:text-3xl font-semibold text-[#121213]">
-//             Trending Stories
-//           </h2>
-
-//           <Link
-//             href="/basics"
-//             className="text-sm font-semibold uppercase text-[#0073ff]"
-//           >
-//             View All →
-//           </Link>
-//         </div>
-
-//         {/* GRID */}
-//         <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr] gap-10">
-
-//           {/* LEFT CONTENT */}
-//           <div className="space-y-10">
-//             {posts.map((post) => (
-//               <article
-//                 key={post.id}
-//                 className="flex flex-col sm:flex-row gap-5 pb-10 border-b border-[#e5e5e5]"
-//               >
-//                 {/* IMAGE */}
-//                 <Link
-//                   href={`/post/${post.slug}`}
-//                   className="w-full sm:w-[260px] h-[200px] sm:h-[170px] shrink-0 overflow-hidden rounded-md"
-//                 >
-//                   <img
-//                     src={
-//                       post.imageUrl?.startsWith("http")
-//                         ? post.imageUrl
-//                         : `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-//                     }
-//                     alt={post.title}
-//                     className="w-full h-full object-cover hover:scale-105 transition"
-//                   />
-//                 </Link>
-
-//                 {/* CONTENT */}
-//                 <div className="flex-1">
-//                   <span className="inline-block mb-2 text-[11px] font-bold uppercase bg-[#0073ff] text-white px-3 py-[2px]">
-//                     {typeof post.category === "object"
-//                       ? post.category?.name
-//                       : post.category}
-//                   </span>
-
-//                   <h3 className="text-lg sm:text-xl font-semibold text-[#121213] leading-snug">
-//                     <Link href={`/post/${post.slug}`}>
-//                       {post.title}
-//                     </Link>
-//                   </h3>
-
-//                   {post.excerpt && (
-//                     <p className="mt-3 text-sm sm:text-[15px] text-[#616c74] leading-relaxed line-clamp-3">
-//                       {post.excerpt}
-//                     </p>
-//                   )}
-//                 </div>
-//               </article>
-//             ))}
-//           </div>
-
-//           {/* RIGHT SIDEBAR */}
-//           <aside className="order-last lg:order-none">
-//             <div className="space-y-8">
-//               <SupplierAds />
-//             </div>
-//           </aside>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
-
 "use client";
 
 import Link from "next/link";
@@ -132,13 +17,32 @@ const CATEGORY_COLORS: Record<string, string> = {
   maintain: "bg-[#8B5CF6]",
   machining: "bg-[#EC4899]",
   build: "bg-[#14B8A6]",
-  cuttingtools: "bg-[#F97316]",
-  advancedmanufacturing: "bg-[#6366F1]",
+  "cutting-tools": "bg-[#F97316]",
+  "advanced-manufacturing": "bg-[#6366F1]",
 };
+
+// Keep this in sync with your actual category slugs once you confirm
+// them from the console log below (search: "Sample category slugs seen").
+const BASIC_CATEGORIES = [
+  "basics",
+  "maintain",
+  "machining",
+  "build",
+  "cutting-tools",
+  "advanced-manufacturing",
+];
 
 type Props = {
   posts: Post[];
 };
+
+function getCategorySlug(post: Post): string {
+  const slug =
+    typeof post.category === "object" && post.category !== null
+      ? post.category?.slug || ""
+      : String(post.category || "");
+  return slug.toLowerCase().trim();
+}
 
 export default function BasicsSection({ posts }: Props) {
   const [isClient, setIsClient] = useState(false);
@@ -146,37 +50,45 @@ export default function BasicsSection({ posts }: Props) {
   useEffect(() => {
     setIsClient(true);
     console.log("BasicsSection mounted with posts:", posts?.length || 0);
+
+    if (Array.isArray(posts) && posts.length > 0) {
+      const allSlugs = posts.map((p) => getCategorySlug(p));
+      const uniqueSlugs = Array.from(new Set(allSlugs));
+      console.log("🔎 Sample category slugs seen:", allSlugs.slice(0, 10));
+      console.log("🔎 ALL UNIQUE category slugs across posts:", uniqueSlugs);
+      console.log("🔎 BASIC_CATEGORIES currently matching against:", BASIC_CATEGORIES);
+    }
   }, [posts]);
 
   /* ================= FILTER BASICS ================= */
+  // Partial match (not exact) so hyphenated/variant slugs still match,
+  // e.g. slug "cutting-tools-guide" still matches "cutting-tools".
 
   const basicsPosts = useMemo(() => {
     if (!Array.isArray(posts)) return [];
 
-    const BASIC_CATEGORIES = [
-      "basics",
-      "maintain",
-      "machining",
-      "build",
-      "cuttingtools",
-      "advancedmanufacturing",
-    ];
+    const matched = posts.filter((post) => {
+      const slug = getCategorySlug(post);
+      if (!slug) return false;
+      return BASIC_CATEGORIES.some((cat) => slug.includes(cat));
+    });
 
-    return posts
-      .filter((post) => {
-        const slug =
-          typeof post.category === "object"
-            ? (post.category?.slug || "").toLowerCase().trim()
-            : String(post.category || "").toLowerCase().trim();
+    if (matched.length > 0) {
+      return matched.slice(0, 6);
+    }
 
-        return BASIC_CATEGORIES.includes(slug);
-      })
-      .slice(0, 6);
+    // Fallback: nothing matched the whitelist above. Rather than showing
+    // an empty section (which is what was happening), fall back to the
+    // most recent posts so the section stays populated while the real
+    // category slugs get confirmed from the console log.
+    console.warn(
+      "⚠️ No posts matched BASIC_CATEGORIES — falling back to recent posts. " +
+      "Check the console log above for real slugs and update BASIC_CATEGORIES."
+    );
+    return posts.slice(0, 6);
   }, [posts]);
 
-  // If no posts are found, show a message
   if (!basicsPosts || basicsPosts.length === 0) {
-    console.log("⚠️ No basics posts to display");
     return (
       <section className="bg-[#ffffff] py-12 sm:py-16">
         <div className="max-w-[1320px] mx-auto px-4">
@@ -184,12 +96,6 @@ export default function BasicsSection({ posts }: Props) {
             <h2 className="text-2xl sm:text-3xl font-semibold text-[#121213]">
               Basics & Fundamentals
             </h2>
-            {/* <Link
-              href="/articles"
-              className="text-sm font-semibold uppercase text-[#0073ff]"
-            >
-              View All →
-            </Link> */}
           </div>
           <div className="text-center py-10">
             <p className="text-gray-500">No articles available at the moment.</p>
@@ -215,11 +121,7 @@ export default function BasicsSection({ posts }: Props) {
 
   const getTag = (post: Post) => {
     const badge = post?.badge?.trim();
-
-    const slug =
-      typeof post?.category === "object" && post?.category !== null
-        ? post?.category?.slug?.toLowerCase() || ""
-        : String(post?.category || "").toLowerCase();
+    const slug = getCategorySlug(post);
 
     const matchedKey = Object.keys(CATEGORY_COLORS).find((key) =>
       slug.includes(key)
@@ -227,8 +129,15 @@ export default function BasicsSection({ posts }: Props) {
 
     const color = matchedKey ? CATEGORY_COLORS[matchedKey] : "bg-[#0073ff]";
 
+    const label =
+      badge ||
+      (typeof post?.category === "object" && post?.category !== null
+        ? post?.category?.name
+        : post?.category) ||
+      slug;
+
     return {
-      text: badge || slug, // Show category name if no badge
+      text: label,
       color,
     };
   };

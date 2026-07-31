@@ -47,7 +47,7 @@
 
 // //   return (
 // //     <>
-     
+
 // //       {/* <Header /> */}
 // //        {/* <AdBanner /> */}
 // //         {/* 📖 Latest Issue1 */}
@@ -64,9 +64,9 @@
 
 // //       <TrendingSection />
 
-     
 
-    
+
+
 
 // //       {/* 📘 Basics */}
 // //       <BasicsSection  />
@@ -82,7 +82,7 @@
 
 // //       <TrendingAd />
 
-     
+
 
 // //       {/* 📰 News & Products 2*/}
 // //       {/* <NewsProductsSection
@@ -245,46 +245,11 @@ export default async function Home() {
 
   const postsData = JSON.parse(text);
 
-  // const postsData = await postsRes.json()
   const posts: Post[] = postsData.data || postsData
 
   if (!Array.isArray(posts) || posts.length === 0) {
     return <div className="text-center p-10 text-[16px]">No posts available</div>
   }
-
-  // Log categories of all posts
-  posts.forEach((post, index) => {
-    console.log(`Post ${index + 1}:`, {
-      title: post.title,
-      category: post.category,
-      categoryType: typeof post.category,
-      slug: post.slug
-    });
-  });
-
-//   /* ================= FETCH BANNER ================= */
-
-//   const bannerRes = await fetch(
-//     `${process.env.NEXT_PUBLIC_API_URL}/api/banners?placement=HOME_MIDDLE`,
-//     { cache: "no-store" }
-//   )
-
-//  const bannerText = await bannerRes.text()
-
-// console.log("Banner Response:", bannerText)
-
-// let bannerData = null
-
-// try {
-//   bannerData = JSON.parse(bannerText)
-// } catch (err) {
-//   console.error("Invalid JSON:", bannerText)
-// }
-
-//   const banner =
-//     Array.isArray(bannerData) && bannerData.length > 0
-//       ? bannerData[0]
-//       : null
 
   /* ================= CATEGORY HELPER ================= */
 
@@ -295,17 +260,27 @@ export default async function Home() {
 
   /* ================= GROUP POSTS ================= */
 
-  const latestPosts = posts.filter(
-    (p) => getCategorySlug(p) === "latest"
-  )
-
+  // Manufacturing is still its own dedicated section, so it keeps its
+  // category filter. Everything else no longer filters by category —
+  // every post is eligible everywhere else (LatestHero, Trending, etc.)
   const manufacturingPosts = posts.filter(
     (p) => getCategorySlug(p) === "manufacturing"
   )
 
   /* ================= FEATURED ================= */
 
-  const latestPost = latestPosts[0]
+  // Previously this only looked at posts tagged "latest" — if none
+  // existed (e.g. on a local/empty-ish dataset), latestPost was
+  // undefined and LatestHero never rendered at all. Now it just takes
+  // the single most recent post overall, regardless of category, so
+  // the hero always has something to show as long as ANY posts exist.
+  const sortedByRecency = [...posts].sort((a, b) => {
+    const aTime = new Date((a as any).publishedAt || (a as any).createdAt || 0).getTime()
+    const bTime = new Date((b as any).publishedAt || (b as any).createdAt || 0).getTime()
+    return bTime - aTime
+  })
+
+  const latestPost = sortedByRecency[0]
 
   return (
     <div className="flex flex-col gap-6 md:gap-10">
@@ -315,7 +290,7 @@ export default async function Home() {
       {/* 🏢 Company Articles */}
       <CompanyArticles />
 
-      {/* 📰 Latest Hero */}
+      {/* 📰 Latest Hero — shows the most recent post + next 3, all categories */}
       {latestPost && <LatestHero post={latestPost} posts={posts} />}
 
       {/* 📈 Trending */}

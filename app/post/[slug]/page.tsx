@@ -119,7 +119,7 @@ export default function PostDetailsPage() {
 
   /* ================= CHECK LOGIN ================= */
   const [token, setToken] = useState<string | null>(null)
-  
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -294,10 +294,10 @@ export default function PostDetailsPage() {
 
   const date = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
     : "Today"
 
   const author = post.author
@@ -325,11 +325,11 @@ export default function PostDetailsPage() {
       <main className="bg-white overflow-x-hidden">
         {slugValue && <PostViewCounter slug={slugValue} />}
 
-        {/* ========== TOP SECTION: Breadcrumb + Sidebar ========== */}
+        {/* ========== SINGLE MERGED GRID: main column + sidebar ========== */}
         <div className="max-w-[1320px] mx-auto px-4 pt-6">
           <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr] gap-10">
-            {/* LEFT: Breadcrumb + Hero */}
-            <div>
+            {/* LEFT: everything flows in one continuous column */}
+            <article className="max-w-3xl overflow-hidden">
               {/* Breadcrumb */}
               <nav className="flex items-center gap-1.5 text-xs text-gray-500 mb-4">
                 <Link href="/" className="hover:text-[#003049]">Home</Link>
@@ -343,7 +343,7 @@ export default function PostDetailsPage() {
                 )}
               </nav>
 
-              {/* HERO IMAGE - Reduced size */}
+              {/* HERO IMAGE */}
               <div className="relative w-full max-w-[700px] bg-gray-100 rounded-2xl overflow-hidden border border-gray-100">
                 <div style={{ aspectRatio: "16/9", width: "100%", position: "relative" }}>
                   <Image
@@ -418,76 +418,9 @@ export default function PostDetailsPage() {
                   {post.excerpt}
                 </p>
               )}
-            </div>
 
-            {/* RIGHT: Sidebar - Sticky from the top */}
-            <div className="w-full overflow-hidden">
-              <div className="lg:sticky lg:top-6 space-y-6">
-                {/* Author Card */}
-                {author && (
-                  <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-                    <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
-                      About the Author
-                    </h3>
-                    <div className="flex items-center gap-3 mb-3">
-                      <UserAvatar name={author.name} imageUrl={author.avatarUrl} size="lg" />
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">{author.name}</p>
-                        {author.role && <p className="text-xs text-gray-500">{author.role}</p>}
-                        {author.company && <p className="text-xs text-gray-500">{author.company}</p>}
-                      </div>
-                    </div>
-                    {author.bio && (
-                      <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
-                        {author.bio}
-                      </p>
-                    )}
-                    {author.email && (
-                      <a
-                        href={`mailto:${author.email}`}
-                        className="inline-flex items-center gap-1.5 text-sm text-[#0F5B78] hover:underline mt-3"
-                      >
-                        <Mail size={14} />
-                        {author.email}
-                      </a>
-                    )}
-                  </div>
-                )}
-
-                {/* Posts Sidebar - Recent, Popular, Company */}
-                <PostSidebar 
-                  currentPostId={post.id} 
-                  categorySlug={post.category?.slug}
-                />
-
-                <SupplierAds />
-
-                {/* Category */}
-                {post.category?.name && (
-                  <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-                    <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
-                      Category
-                    </h3>
-                    <Link
-                      href={`/category/${post.category.slug}`}
-                      className="inline-block text-sm font-semibold text-[#003049] bg-gray-100 hover:bg-[#003049] hover:text-white transition-colors px-4 py-2 rounded-full"
-                    >
-                      {post.category.name}
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ========== CONTENT SECTION ========== */}
-        <div className="max-w-[1320px] mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr] gap-10">
-            {/* LEFT COLUMN - Content */}
-            <article className="max-w-3xl overflow-hidden">
-              {/* CONTENT */}
-              <div className="prose prose-lg max-w-none break-words overflow-hidden prose-headings:text-[#003049] prose-a:text-[#003049] prose-img:rounded-xl">
+              {/* CONTENT - now directly continues the same column, no gap */}
+              <div className="prose prose-lg max-w-none break-words overflow-hidden prose-headings:text-[#003049] prose-a:text-[#003049] prose-img:rounded-xl mt-6">
                 {post.contentBlocks && post.contentBlocks.length > 0 ? (
                   <BlockRenderer blocks={post.contentBlocks} />
                 ) : post.content ? (
@@ -574,10 +507,10 @@ export default function PostDetailsPage() {
                   className="mt-8 flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow group"
                 >
                   <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-                    <Image 
-                      src={relatedImageUrl(nextPost)} 
-                      alt={nextPost.title} 
-                      fill 
+                    <Image
+                      src={relatedImageUrl(nextPost)}
+                      alt={nextPost.title}
+                      fill
                       className="object-cover"
                       sizes="80px"
                     />
@@ -604,14 +537,70 @@ export default function PostDetailsPage() {
               </div>
             </article>
 
-            {/* RIGHT COLUMN - Empty now (sidebar moved to top) */}
-            <div className="hidden lg:block"></div>
+            {/* RIGHT: Sidebar - Sticky, sits alongside the main column */}
+            <div className="w-full overflow-hidden">
+              <div className="lg:sticky lg:top-6 space-y-6">
+                {/* Author Card */}
+                {author && (
+                  <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                    <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
+                      About the Author
+                    </h3>
+                    <div className="flex items-center gap-3 mb-3">
+                      <UserAvatar name={author.name} imageUrl={author.avatarUrl} size="lg" />
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">{author.name}</p>
+                        {author.role && <p className="text-xs text-gray-500">{author.role}</p>}
+                        {author.company && <p className="text-xs text-gray-500">{author.company}</p>}
+                      </div>
+                    </div>
+                    {author.bio && (
+                      <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+                        {author.bio}
+                      </p>
+                    )}
+                    {author.email && (
+                      <a
+                        href={`mailto:${author.email}`}
+                        className="inline-flex items-center gap-1.5 text-sm text-[#0F5B78] hover:underline mt-3"
+                      >
+                        <Mail size={14} />
+                        {author.email}
+                      </a>
+                    )}
+                  </div>
+                )}
+
+                {/* Posts Sidebar - Recent, Popular, Company */}
+                <PostSidebar
+                  currentPostId={post.id}
+                  categorySlug={post.category?.slug}
+                />
+
+                <SupplierAds />
+
+                {/* Category */}
+                {post.category?.name && (
+                  <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                    <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
+                      Category
+                    </h3>
+                    <Link
+                      href={`/category/${post.category.slug}`}
+                      className="inline-block text-sm font-semibold text-[#003049] bg-gray-100 hover:bg-[#003049] hover:text-white transition-colors px-4 py-2 rounded-full"
+                    >
+                      {post.category.name}
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
         {/* ========== RELATED POSTS ========== */}
         {relatedPosts.length > 0 && (
-          <section className="max-w-[1320px] mx-auto px-4 pb-16">
+          <section className="max-w-[1320px] mx-auto px-4 pb-16 pt-16">
             <h2 className="text-xl font-bold text-[#003049] mb-6">Related Posts</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedPosts.map((p) => (

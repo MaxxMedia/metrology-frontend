@@ -24,8 +24,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   engineering: "bg-[#2563EB]",
 }
 
-// Explicit badge values (e.g. post.badge === "LEADERSHIP") get their own
-// colors instead of falling through to the generic category color.
 const BADGE_COLORS: Record<string, string> = {
   FEATURED: "bg-[#E11D48]",
   LEADERSHIP: "bg-[#7C3AED]",
@@ -52,6 +50,26 @@ function getRecency(p: Post) {
 
 function sortByRecency(a: Post, b: Post) {
   return getRecency(b) - getRecency(a)
+}
+
+// The API can return author: null (company-submitted articles carry
+// Company / guestName / createdBy info instead). Never assume
+// post.author is a populated object — always guard it, and fall back
+// to the Company name so the byline doesn't just default to "rstheme".
+function getAuthorName(p: Post): string {
+  if (p.author && typeof p.author === "object" && p.author.name) {
+    return p.author.name
+  }
+  const company = (p as any).Company || (p as any).company
+  if (company?.name) return company.name
+  return "rstheme"
+}
+
+function getAuthorAvatar(p: Post): string | null {
+  if (p.author && typeof p.author === "object") {
+    return p.author.avatarUrl || null
+  }
+  return null
 }
 
 /**
@@ -95,25 +113,16 @@ function AuthorAvatar({
 }
 
 /**
- * Builds the ordered pool of posts to cycle through:
- * 1. "latest" category posts first, most recent first.
- * 2. If that's not enough to fill SLOT_COUNT, top up with the next
- *    most recent posts from ANY other category (never leaving gaps).
+ * Builds the ordered pool of posts to cycle through.
+ * No category filtering — every post is eligible, most recent first.
+ * (Previously this only pulled posts tagged with the "latest" category
+ * and used everything else as a fallback; now all posts are treated
+ * equally regardless of category.)
  */
 function buildPool(posts: Post[]): Post[] {
-  const latest = posts
-    .filter((p) => getSlug(p) === "latest")
-    .sort(sortByRecency)
+  if (!Array.isArray(posts) || posts.length === 0) return []
 
-  if (latest.length >= SLOT_COUNT) return latest
-
-  const usedIds = new Set(latest.map((p) => p.id))
-
-  const fallback = posts
-    .filter((p) => !usedIds.has(p.id))
-    .sort(sortByRecency)
-
-  return [...latest, ...fallback]
+  return [...posts].sort(sortByRecency)
 }
 
 export default function LatestHero({ post, posts }: LatestHeroProps) {
@@ -123,6 +132,15 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
   /* ================= BUILD ROTATION POOL ================= */
 
   const pool = useMemo(() => buildPool(posts), [posts])
+
+  // Dev-only visibility: if this ever logs 0/undefined, the problem is
+  // upstream (the page/server component isn't passing real data down),
+  // not this component.
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[LatestHero] posts received:", posts?.length ?? 0, "pool built:", pool.length)
+    }
+  }, [posts, pool])
 
   const visible = useMemo(() => {
     if (pool.length === 0) return []
@@ -137,13 +155,15 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
     return result
   }, [pool, index])
 
+  // Fall back to the `post` prop if the pool couldn't be built (e.g.
+  // `posts` came back empty from the parent fetch) — previously this
+  // silently rendered nothing further down if heroPost ended up falsy.
   const heroPost = visible[0] || post
   const sidePosts = visible.slice(1)
 
   /* ================= ROTATION ================= */
 
   useEffect(() => {
-    // Nothing to rotate in if we're already showing everything we have.
     if (pool.length <= SLOT_COUNT) return
 
     const timer = setInterval(() => {
@@ -160,6 +180,8 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
 
   /* ================= HERO IMAGE ================= */
 
+  if (!heroPost) return null
+
   const imageUrl =
     heroPost.imageUrl?.startsWith("http")
       ? heroPost.imageUrl
@@ -175,14 +197,6 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
     })
     : "Today"
 
-  /**
-   * Tag priority: an explicit `badge` string wins if present (e.g.
-   * "FEATURED", "LEADERSHIP"); otherwise fall back to the post's
-   * CATEGORY name. This was previously reading `item.badge` twice
-   * (once as the badge, once mistakenly as the "category" fallback),
-   * so whenever badge was empty, the tag silently came out blank
-   * instead of showing the category. Fixed to read `item.category`.
-   */
   const getTag = (item: Post) => {
     const badge = typeof item?.badge === "string" ? item.badge.trim() : ""
 
@@ -196,13 +210,10 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
     const text = badge || categoryName
 
     if (badge) {
-      // Badge present (e.g. "LEADERSHIP", "AI", "MANUFACTUR") — color by
-      // badge value, falling back to a neutral gray for unrecognized ones.
       const color = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]"
       return { text, color }
     }
 
-    // No badge — fall back to coloring by category slug.
     const matchedKey = Object.keys(CATEGORY_COLORS).find((key) =>
       slug.includes(key)
     )
@@ -211,8 +222,6 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
     return { text, color }
   }
 
-  if (!heroPost) return null
-
   return (
     <section className="pt-[40px] w-full">
       <div className="max-w-[1320px] mx-auto px-[12px]">
@@ -220,9 +229,6 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
 
           {/* ================= LEFT FEATURED CARD ================= */}
           <Link
-            // keying by id forces the transition classes to actually
-            // replay on rotation instead of the browser treating it as
-            // an in-place update with no visible change
             key={heroPost.id}
             href={`/post/${heroPost.slug}`}
             className="relative h-[420px] rounded-md overflow-hidden group"
@@ -262,11 +268,11 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
               <div className="flex items-center gap-4 text-sm text-gray-300">
                 <span className="flex items-center gap-2">
                   <AuthorAvatar
-                    name={heroPost.author?.name}
-                    avatarUrl={heroPost.author?.avatarUrl}
+                    name={getAuthorName(heroPost)}
+                    avatarUrl={getAuthorAvatar(heroPost)}
                     size={24}
                   />
-                  <span>By {heroPost.author?.name || "rstheme"}</span>
+                  <span>By {getAuthorName(heroPost)}</span>
                 </span>
 
                 {typeof heroPost.views === "number" && (
@@ -297,8 +303,6 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
 
               return (
                 <Link
-                  // index in the key (in addition to id) forces each
-                  // slot to remount on rotation so the fade actually plays
                   key={`${item.id}-${i}`}
                   href={`/post/${item.slug}`}
                   className={`flex gap-4 items-start border-b border-gray-200 pb-6 group transition-all font-bold duration-500 ease-in-out ${fade
@@ -336,11 +340,11 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                     <div className="flex items-center gap-3 text-xs text-gray-600 mt-2">
                       <span className="flex items-center gap-1">
                         <AuthorAvatar
-                          name={item.author?.name}
-                          avatarUrl={item.author?.avatarUrl}
+                          name={getAuthorName(item)}
+                          avatarUrl={getAuthorAvatar(item)}
                           size={20}
                         />
-                        <span>{item.author?.name || "rstheme"}</span>
+                        <span>{getAuthorName(item)}</span>
                       </span>
 
                       {typeof item.views === "number" && (
