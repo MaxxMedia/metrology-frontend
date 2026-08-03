@@ -253,7 +253,7 @@ export default function Footer() {
               <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Magazine</h5>
               <ul className="space-y-3 text-sm">
                 <li><Link href="/articles" className="hover:text-black hover:translate-x-1 inline-block transition-all">Latest Issue</Link></li>
-                <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Archives</Link></li>
+                <li><Link href="/articles/issues" className="hover:text-black hover:translate-x-1 inline-block transition-all">Archives</Link></li>
                 <li><Link href="/subscribe" className="hover:text-black hover:translate-x-1 inline-block transition-all">Subscribe</Link></li>
                 {/* <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Renew Subscription</Link></li> */}
                 <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Customer Service</Link></li>
