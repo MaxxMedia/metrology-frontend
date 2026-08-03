@@ -20,9 +20,10 @@ type FilterState = {
 
 type Props = {
   onFilterChange?: (filters: FilterState) => void
+  initialIndustryName?: string | null
 }
 
-export default function SupplierFilters({ onFilterChange }: Props) {
+export default function SupplierFilters({ onFilterChange, initialIndustryName }: Props) {
   const [industries, setIndustries] = useState<Industry[]>([])
   const [loadingIndustries, setLoadingIndustries] = useState(true)
 
@@ -84,6 +85,50 @@ export default function SupplierFilters({ onFilterChange }: Props) {
       .finally(() => setLoadingIndustries(false))
   }, [])
 
+  // Shared helper: fetch + cache children for any industry id (root or child)
+  const loadChildren = useCallback(async (id: number) => {
+    if (childrenCache[id]) return // already cached
+    setLoadingChildren(prev => new Set(prev).add(id))
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/industries/${id}/children`
+      )
+      const children = await res.json()
+      setChildrenCache(prev => ({ ...prev, [id]: Array.isArray(children) ? children : children.data ?? [] }))
+    } catch (err) {
+      console.error("Failed to load children", err)
+      setChildrenCache(prev => ({ ...prev, [id]: [] }))
+    } finally {
+      setLoadingChildren(prev => {
+        const s = new Set(prev)
+        s.delete(id)
+        return s
+      })
+    }
+  }, [childrenCache])
+
+  // Once industries are loaded, if we were told to pre-select one (e.g. from
+  // a "Browse by Industry" link elsewhere on the site), find it, select it,
+  // expand its accordion, AND fetch its children so they actually render.
+  useEffect(() => {
+    if (!initialIndustryName || industries.length === 0) return
+
+    const match = industries.find(
+      (i) => i.name.trim().toLowerCase() === initialIndustryName.trim().toLowerCase()
+    )
+    if (!match) return
+
+    // Select it (this also triggers onFilterChange up to the parent)
+    const preselected: FilterState = { ...filters, industryId: match.id }
+    setFilters(preselected)
+    onFilterChange?.(preselected)
+
+    // Expand its accordion section and load its children
+    setOpenSections((prev) => new Set(prev).add(match.id))
+    loadChildren(match.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialIndustryName, industries])
+
   // Toggle section open/close + lazy load children
   const toggleSection = async (industryId: number) => {
     const newOpen = new Set(openSections)
@@ -92,27 +137,7 @@ export default function SupplierFilters({ onFilterChange }: Props) {
       newOpen.delete(industryId)
     } else {
       newOpen.add(industryId)
-
-      // Lazy load children if not cached
-      if (!childrenCache[industryId]) {
-        setLoadingChildren(prev => new Set(prev).add(industryId))
-        try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/industries/${industryId}/children`
-          )
-          const children = await res.json()
-          setChildrenCache(prev => ({ ...prev, [industryId]: children }))
-        } catch (err) {
-          console.error("Failed to load children", err)
-          setChildrenCache(prev => ({ ...prev, [industryId]: [] }))
-        } finally {
-          setLoadingChildren(prev => {
-            const s = new Set(prev)
-            s.delete(industryId)
-            return s
-          })
-        }
-      }
+      await loadChildren(industryId)
     }
 
     setOpenSections(newOpen)
@@ -126,25 +151,7 @@ export default function SupplierFilters({ onFilterChange }: Props) {
       newOpen.delete(childId)
     } else {
       newOpen.add(childId)
-
-      if (!childrenCache[childId]) {
-        setLoadingChildren(prev => new Set(prev).add(childId))
-        try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/industries/${childId}/children`
-          )
-          const grandchildren = await res.json()
-          setChildrenCache(prev => ({ ...prev, [childId]: grandchildren }))
-        } catch (err) {
-          setChildrenCache(prev => ({ ...prev, [childId]: [] }))
-        } finally {
-          setLoadingChildren(prev => {
-            const s = new Set(prev)
-            s.delete(childId)
-            return s
-          })
-        }
-      }
+      await loadChildren(childId)
     }
 
     setOpenSections(newOpen)

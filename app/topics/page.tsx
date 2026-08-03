@@ -1,14 +1,29 @@
 import Link from "next/link"
 import type { Post } from "@/types/Post"
 
-export default async function TopicsPage() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`,
-    { cache: "no-store" }
-  )
+type Category = {
+  id: number
+  name: string
+  slug: string
+}
 
-  const data = await res.json()
+export default async function TopicsPage() {
+  const [postsRes, categoriesRes] = await Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`, {
+      cache: "no-store",
+    }),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
+      cache: "no-store",
+    }),
+  ])
+
+  const data = await postsRes.json()
   const posts: Post[] = data.data || data
+
+  const categoriesData = await categoriesRes.json()
+  const categories: Category[] = Array.isArray(categoriesData)
+    ? categoriesData
+    : []
 
   const slugOf = (post: Post) =>
     typeof post.category === "object"
@@ -20,107 +35,66 @@ export default async function TopicsPage() {
     .filter((p) => slugOf(p).includes("whatsnew"))
     .slice(0, 5)
 
-  // ================= STATIC TOPIC LISTS =================
-  const allTopicsLeft = [
-    "30 Under 30",
-    "3D Printing",
+  // ================= FIRST COLUMN — Browse by Industry (static list) =================
+  const browseByIndustry = [
     "Additive Manufacturing",
-    "Aluminum",
-    "Amerimold",
-    "Analysis",
-    "Artificial Intelligence",
-    "Associations",
-    "Automation",
-    "Automotive",
-    "Auxiliary Equipment",
-    "Basics",
-    "Build",
-    "Business Strategy",
-    "Case Study",
-    "Conformal Cooling",
-    "Consumer",
-    "Cutting Tools",
-    "Data Management Software",
-    "Design & Mfg. Software",
-    "Digital Demos",
-    "Drills",
-    "Economics",
-    "Editorial",
-    "Editorial Board Insight",
-    "EDM",
-    "Education",
-    "Electronics",
-    "Engineer",
-    "FAQ",
-    "Five Axis",
-    "Grinding",
-    "High Speed Machining",
-    "HMC",
-    "Hot Runners",
-    "ICYMI",
-  ]
-
-  const allTopicsMiddle = [
-    "IMTS",
-    "Industry 4.0",
-    "Inspection & Measurement",
-    "Jobposting",
-    "Leadership",
-    "Leadtime Leader",
-    "Machining",
-    "Maintain",
-    "Maintenance & Repair",
-    "Manage",
-    "Marketing",
-    "Medical",
-    "Tooling25",
-    "ToolingComponents",
-    "ToolingMaterials",
-    "Molding Equipment",
-    "Toolmaking Conference",
-    "NPE",
-    "Packaging",
-    "Profile",
-    "PTXPO",
-    "Rapid Tooling",
-    "Regulations",
-    "Safety",
-    "Sales",
-    "Shop Talk",
-    "Supply Chain",
-    "Surface Treatment",
-    "Sustainability",
-    "Tips",
-    "Tool Steel",
-    "Top Shops",
-    "Turning",
-    "VMC",
-    "Workforce Development",
+    "Automation & AI",
+    "Business Development",
+    "Cleaning & Pretreatment",
+    "Composites Fabrication",
+    "Inspection, Testing, Measurement",
+    "Manufacturing Execution & Automation Software & Controls",
+    "Manufacturing Services",
+    "Materials",
+    "Metalworking",
+    "Mold Making",
+    "Plastics Processing Equipment",
+    "Pollution Control & Sustainability",
+    "Supplies",
+    "Surface Finishing",
+    "Temperature/Pressure Control Equipment",
     "Workholding",
   ]
 
+  // ================= RIGHT COLUMN — Most Popular =================
   const mostPopular = [
-    "Data Management Software",
-    "Design & Mfg. Software",
-    "Surface Treatment",
-    "Machining",
-    "ToolingMaterials",
-    "Hot Runners",
-    "Business Strategy",
-    "Engineer",
-    "ToolingComponents",
-    "Maintenance & Repair",
+    "Machine Tools",
+    "Cutting Tools",
+    "Dies, Moulds & Tooling",
+    "Metrology & Quality",
+    "Factory Automation",
+    "CAD/CAM/CAE",
+    "Manufacturing Technologies",
+    "Webinars",
+    "Videos",
+    "Events",
+    "Suppliers",
+    "Tooling Design & Optimization",
   ]
 
+  // ================= RIGHT COLUMN — Multimedia Formats =================
   const multimediaFormats = [
-    "Articles",
-    "News",
-    "Products",
-    "Industry Talks",
-    "Video",
-    "Podcast",
-    "Webinars",
+    { name: "Magazine", href: "/magazines" },
+    { name: "Directory", href: "/suppliers" },
+    { name: "Industry Talks", href: "/industry-talks" },
+    { name: "Events", href: "/events" },
+    { name: "Jobs", href: "/feed" },
   ]
+
+  const getCategoryUrl = (slug: string) => {
+    const s = slug.toLowerCase()
+    if (s === "video" || s === "videos") return "/videos"
+    if (s === "industry-talks") return "/industry-talks"
+    if (s === "webinars") return "/webinars"
+    if (s === "events") return "/events"
+    if (s === "suppliers") return "/suppliers"
+    if (s === "articles") return "/articles"
+    if (s === "products") return "/products"
+    if (s === "magazine" || s === "magazines") return "/magazines"
+    if (s === "news") return "/news"
+    if (s === "machine tools" || s === "machine-tools") return "/topics/machine"
+    return `/topics/${slug}`
+  }
 
   return (
     <main className="bg-white">
@@ -173,14 +147,14 @@ export default async function TopicsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_320px] gap-16">
 
-          {/* LEFT COLUMN */}
+          {/* LEFT COLUMN — Browse by Industry (static list only) */}
           <div>
-            <h2 className="text-lg font-semibold mb-6">All Topics</h2>
+            <h2 className="text-sm font-semibold mb-6">Browse by Industry</h2>
             <ul className="space-y-2">
-              {allTopicsLeft.map((topic) => (
+              {browseByIndustry.map((topic) => (
                 <li key={topic}>
                   <Link
-                    href={`/topics/${topic.toLowerCase().replace(/\s+/g, "-")}`}
+                    href={`/suppliers?industry=${encodeURIComponent(topic)}`}
                     className="text-sm text-[#003B5C] hover:underline"
                   >
                     {topic}
@@ -190,17 +164,17 @@ export default async function TopicsPage() {
             </ul>
           </div>
 
-          {/* MIDDLE COLUMN */}
+          {/* MIDDLE COLUMN — Categories from backend */}
           <div>
             <h2 className="text-lg font-semibold mb-6 invisible">All Topics</h2>
             <ul className="space-y-2">
-              {allTopicsMiddle.map((topic) => (
-                <li key={topic}>
+              {categories.map((cat) => (
+                <li key={cat.id}>
                   <Link
-                    href={`/topics/${topic.toLowerCase().replace(/\s+/g, "-")}`}
+                    href={getCategoryUrl(cat.slug)}
                     className="text-sm text-[#003B5C] hover:underline"
                   >
-                    {topic}
+                    {cat.name}
                   </Link>
                 </li>
               ))}
@@ -215,7 +189,7 @@ export default async function TopicsPage() {
                 {mostPopular.map((topic) => (
                   <li key={topic}>
                     <Link
-                      href={`/topics/${topic.toLowerCase().replace(/\s+/g, "-")}`}
+                      href={getCategoryUrl(topic.toLowerCase().replace(/\s+/g, "-"))}
                       className="text-sm text-[#003B5C] hover:underline"
                     >
                       {topic}
@@ -229,12 +203,12 @@ export default async function TopicsPage() {
               <h3 className="text-lg font-semibold mb-6">Multimedia Formats</h3>
               <ul className="space-y-2">
                 {multimediaFormats.map((topic) => (
-                  <li key={topic}>
+                  <li key={topic.name}>
                     <Link
-                      href={`/topics/${topic.toLowerCase().replace(/\s+/g, "-")}`}
+                      href={topic.href}
                       className="text-sm text-[#003B5C] hover:underline"
                     >
-                      {topic}
+                      {topic.name}
                     </Link>
                   </li>
                 ))}
