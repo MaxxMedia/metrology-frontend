@@ -224,10 +224,11 @@ export default function Footer() {
               <ul className="space-y-3 text-sm">
                 <li><Link href="/topics/machining" className="hover:text-black hover:translate-x-1 inline-block transition-all">Machining</Link></li>
                 <li><Link href="/topics/cutting-tools" className="hover:text-black hover:translate-x-1 inline-block transition-all">Cutting Tools</Link></li>
-                <li><Link href="/topics/surface-engineering" className="hover:text-black hover:translate-x-1 inline-block transition-all">Surface Engineering</Link></li>
-                <li><Link href="/topics/smart-manufacturing" className="hover:text-black hover:translate-x-1 inline-block transition-all">Smart Manufacturing</Link></li>
-                <li><Link href="/topics/advanced-manufacturing" className="hover:text-black hover:translate-x-1 inline-block transition-all">Advanced Manufacturing</Link></li>
-                <li><Link href="/topics/maintenance&operations" className="hover:text-black hover:translate-x-1 inline-block transition-all">Maintenance & Operations</Link></li>
+                <li><Link href="/topics/dies-moulds-tooling" className="hover:text-black hover:translate-x-1 inline-block transition-all">Dies Moulds Tooling</Link></li>
+                <li><Link href="/topics/metrology-quality" className="hover:text-black hover:translate-x-1 inline-block transition-all">Metrology Quality</Link></li>
+                <li><Link href="/topics/factory-automation" className="hover:text-black hover:translate-x-1 inline-block transition-all">Factory Automation</Link></li>
+                <li><Link href="/topics/cad-cam-cae" className="hover:text-black hover:translate-x-1 inline-block transition-all">Cad Cam Cae</Link></li>
+                <li><Link href="/topics/manufacturing-technologies" className="hover:text-black hover:translate-x-1 inline-block transition-all">Manufacturing Technologies</Link></li>
                 <li><Link href="/topics" className="hover:text-black hover:translate-x-1 inline-block transition-all font-semibold">View All →</Link></li>
               </ul>
             </div>
