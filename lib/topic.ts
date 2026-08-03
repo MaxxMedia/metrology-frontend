@@ -9,7 +9,7 @@ export const ARTICLE_TOPICS: ArticleTopic[] = [
     { label: "DIES, MOULDS & TOOLING", slug: "dies-moulds-and-tooling" },
     { label: "METROLOGY & QUALITY", slug: "metrologyandquality" },
     { label: "FACTORY AUTOMATION", slug: "factory-automation" },
-    { label: "CAD/CAM/CAE", slug: "CAD/CAM/CAE" },
+    { label: "CAD/CAM/CAE", slug: "cad-cam-cae" },
     { label: "MANUFACTURING TECHNOLOGIES", slug: "manufacturing-technologies" },
 ]
 
