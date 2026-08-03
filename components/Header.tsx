@@ -500,7 +500,13 @@ export default function Header() {
                         className="shrink-0 snap-start"
                         style={{ width: "calc((100% - 5 * 1.5rem) / 6)", minWidth: "160px" }}
                       >
-                        <Link href={`/post/${post.slug}`}>
+                        <Link
+                          href={
+                            activeSlug === "webinars"
+                              ? `/Webinar/${post.slug}`
+                              : `/post/${post.slug}`
+                          }
+                        >
                           <div className="relative w-full h-40 mb-3">
                             <Image
                               src={post.imageUrl || "/placeholder.svg"}
@@ -516,7 +522,13 @@ export default function Header() {
                         </h5>
 
                         <h4 className="text-sm font-semibold text-white leading-snug hover:text-[#B30F24]">
-                          <Link href={`/post/${post.slug}`}>
+                          <Link
+                            href={
+                              activeSlug === "webinars"
+                                ? `/Webinar/${post.slug}`
+                                : `/post/${post.slug}`
+                            }
+                          >
                             {post.title}
                           </Link>
                         </h4>
