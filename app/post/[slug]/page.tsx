@@ -120,7 +120,7 @@ export default function PostDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showGate, setShowGate] = useState(false)
-  const [userSubmitted, setUserSubmitted] = useState(false)
+  const [hasPremiumAccess, setHasPremiumAccess] = useState(false)
   const [relatedPosts, setRelatedPosts] = useState<Post[]>([])
   const [comments, setComments] = useState<Comment[]>([])
   const [nextPost, setNextPost] = useState<Post | null>(null)
@@ -133,6 +133,10 @@ export default function PostDetailsPage() {
       try {
         const storedToken = localStorage.getItem("token")
         setToken(storedToken)
+        
+        // Check if user has premium access
+        const hasAccess = localStorage.getItem("premiumAccess") === "true"
+        setHasPremiumAccess(hasAccess)
       } catch (e) {
         setToken(null)
       }
@@ -248,10 +252,21 @@ export default function PostDetailsPage() {
 
   /* ================= CONTENT GATE ================= */
   useEffect(() => {
-    if (userSubmitted || !post || loading) return
+    // Only show gate if user doesn't have premium access and post is loaded
+    if (hasPremiumAccess || !post || loading) return
+    
+    // Show gate after 9 seconds
     const timer = setTimeout(() => setShowGate(true), 9000)
     return () => clearTimeout(timer)
-  }, [userSubmitted, post, loading])
+  }, [hasPremiumAccess, post, loading])
+
+  /* ================= HANDLE REGISTRATION SUCCESS ================= */
+  const handleRegistrationSuccess = () => {
+    // Store premium access in localStorage
+    localStorage.setItem("premiumAccess", "true")
+    setHasPremiumAccess(true)
+    setShowGate(false)
+  }
 
   /* ================= HANDLE COMMENT ADDED ================= */
   const handleCommentAdded = (newComment: Comment) => {
@@ -324,12 +339,10 @@ export default function PostDetailsPage() {
   return (
     <>
       <ContentGateModal
-        isOpen={showGate && !userSubmitted}
+        isOpen={showGate}
         onClose={() => setShowGate(false)}
-        onSubmit={() => {
-          setUserSubmitted(true)
-          setShowGate(false)
-        }}
+        onSuccess={handleRegistrationSuccess}
+        contentTitle={post.category?.name || "premium content"}
       />
 
       <main className="bg-white overflow-x-hidden">
