@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -11,6 +12,7 @@ interface SubscribeFormValues {
   lastName: string;
   jobTitle: string;
   company: string;
+  country: string;
 }
 
 const initialValues: SubscribeFormValues = {
@@ -20,6 +22,7 @@ const initialValues: SubscribeFormValues = {
   lastName: "",
   jobTitle: "",
   company: "",
+  country: "",
 };
 
 const SubscribeSchema = Yup.object().shape({
@@ -31,64 +34,81 @@ const SubscribeSchema = Yup.object().shape({
   lastName: Yup.string().required("Required"),
   jobTitle: Yup.string().required("Required"),
   company: Yup.string().required("Required"),
+  country: Yup.string().required("Required"),
 });
 
 export default function SubscribePage() {
+  const [countries, setCountries] = useState<string[]>([]);
+  const [countriesLoading, setCountriesLoading] = useState(true);
+  const [countriesError, setCountriesError] = useState(false);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const res = await fetch(
+          "https://cdn.jsdelivr.net/gh/umpirsky/country-list@master/data/en/country.json"
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch countries");
+
+        const data = (await res.json()) as Record<string, string>; // { "US": "United States", "IN": "India", ... }
+        const names: string[] = Object.values(data).sort((a, b) => a.localeCompare(b));
+
+        setCountries(names);
+      } catch (err) {
+        console.error("Error fetching countries:", err);
+        setCountriesError(true);
+      } finally {
+        setCountriesLoading(false);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
   return (
     <div className="w-full bg-white text-gray-900">
 
       {/* ⭐ SECTION 1 — HERO AREA */}
-      <div className="max-w-[1400px] mx-auto px-10 py-16 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+      <div className="max-w-[1400px] mx-auto px-10 pt-16 pb-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
 
         {/* LEFT AREA */}
         <div>
           <h1 className="text-6xl font-semibold leading-tight mb-8">
-            Subscribe to Tooling Technology
+            Subscribe to Tooling Trends
           </h1>
 
           <p className="text-gray-700 text-xl leading-relaxed mb-10 max-w-[650px]">
-            Tooling Technology magazine addresses the complete lifecycle of
+            Tooling Trends magazine addresses the complete lifecycle of
             the manufacture and maintenance of a Tooling– from design to first shot –
             by providing solutions and strategies to Toolmaking professionals
             charged with designing, building and repairing molds.
           </p>
 
-          <select className="w-full border border-gray-400 rounded px-4 py-3 mb-6 text-lg">
-            <option>Country*</option>
-            <option>United States</option>
-            <option>India</option>
-            <option>Canada</option>
-          </select>
-
           <label className="flex items-center gap-3 mb-3 text-lg">
             <input type="checkbox" className="w-5 h-5" />
-            Subscribe me to the <b><i>Tooling Technology</i></b> newsletter
-          </label>
-
-          <label className="flex items-center gap-3 mb-3 text-lg">
-            <input type="checkbox" className="w-5 h-5" defaultChecked />
-            Subscribe me to <b><i>Tooling Technology</i></b> magazine
+            Subscribe me to the <b><i>Tooling Trends</i></b> magazine
           </label>
         </div>
 
         {/* RIGHT SIDE IMAGE */}
-       <div className="flex justify-center items-start pt-10">
-  <div className="relative w-[450px] h-[550px]">
-    <Image
-      src="/recycled-materials-manufacturing.jpg"
-      alt="Toolingmanufacturing process"
-      fill
-      className="object-contain"
-      priority
-      sizes="(max-width:768px) 100vw, 450px"
-    />
-  </div>
-</div>
+        <div className="flex justify-center items-start">
+          <div className="relative w-full max-w-[400px] h-[350px]">
+            <Image
+              src="/recycled-materials-manufacturing.jpg"
+              alt="Toolingmanufacturing process"
+              fill
+              className="object-contain"
+              priority
+              sizes="(max-width:768px) 100vw, 400px"
+            />
+          </div>
+        </div>
 
       </div>
 
       {/* ⭐ SECTION 2 — FORM AREA */}
-      <div className="w-full bg-white py-10">
+      <div className="w-full bg-white pb-10">
         <div className="max-w-[1400px] mx-auto px-10">
 
           <h2 className="text-4xl font-bold mb-6">Subscriber Information</h2>
@@ -106,7 +126,6 @@ export default function SubscribePage() {
 
               if (res.ok) {
                 resetForm();
-                // 🌟 NEW: Redirect to Thank You Page
                 window.location.href = "/subscribe/thankyou";
               } else {
                 alert("❌ Something went wrong. Try again later.");
@@ -115,6 +134,34 @@ export default function SubscribePage() {
           >
             {({ isSubmitting }) => (
               <Form className="space-y-8">
+
+                {/* Country Field — dynamic from API */}
+                <div>
+                  <Field
+                    as="select"
+                    name="country"
+                    className="w-full border border-gray-400 rounded px-5 py-4 text-lg bg-white"
+                    disabled={countriesLoading}
+                  >
+                    <option value="">
+                      {countriesLoading
+                        ? "Loading countries..."
+                        : countriesError
+                          ? "Failed to load countries"
+                          : "Country*"}
+                    </option>
+                    {countries.map((country) => (
+                      <option key={country} value={country}>
+                        {country}
+                      </option>
+                    ))}
+                  </Field>
+                  <ErrorMessage
+                    name="country"
+                    component="p"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
 
                 {/* Input Fields */}
                 {[
@@ -161,7 +208,7 @@ export default function SubscribePage() {
                     disabled={isSubmitting}
                     className="bg-[#004d73] hover:bg-[#003a59] text-white text-xl font-bold px-16 py-4 rounded shadow-md"
                   >
-                    Subscribe To Tooling Technology
+                    Subscribe To Tooling Trends
                   </button>
                 </div>
 

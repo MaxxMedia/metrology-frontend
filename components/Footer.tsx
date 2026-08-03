@@ -100,11 +100,11 @@ export default function Footer() {
               <div>
                 <h5 className="text-black text-base font-bold mb-4 uppercase tracking-wide">Resources</h5>
                 <ul className="space-y-2.5 text-sm">
-                  <li><Link href="/mmtchats" className="hover:text-black transition-colors">Industry Talks</Link></li>
+                  <li><Link href="/industry-talks" className="hover:text-black transition-colors">Industry Talks</Link></li>
                   <li><Link href="/videos" className="hover:text-black transition-colors">Videos</Link></li>
-                  <li><Link href="/news" className="hover:text-black transition-colors">News</Link></li>
+                  <li><Link href="/news" className="hover:text-black transition-colors">News Latter</Link></li>
                   <li><Link href="/products" className="hover:text-black transition-colors">Products</Link></li>
-                  <li><Link href="/podcast" className="hover:text-black transition-colors">Podcast</Link></li>
+                  <li><Link href="/Webinars" className="hover:text-black transition-colors">Webinars</Link></li>
                 </ul>
               </div>
 
@@ -237,11 +237,11 @@ export default function Footer() {
             <div className="lg:col-span-2">
               <h5 className="text-black text-lg font-bold mb-6 uppercase tracking-wide">Resources</h5>
               <ul className="space-y-3 text-sm">
-                <li><Link href="/mmtchats" className="hover:text-black hover:translate-x-1 inline-block transition-all">Industry Talks</Link></li>
+                <li><Link href="/industry-talks" className="hover:text-black hover:translate-x-1 inline-block transition-all">Industry Talks</Link></li>
                 <li><Link href="/videos" className="hover:text-black hover:translate-x-1 inline-block transition-all">Videos</Link></li>
-                <li><Link href="/news" className="hover:text-black hover:translate-x-1 inline-block transition-all">News</Link></li>
+                <li><Link href="/news" className="hover:text-black hover:translate-x-1 inline-block transition-all">News Letter</Link></li>
                 <li><Link href="/products" className="hover:text-black hover:translate-x-1 inline-block transition-all">Products</Link></li>
-                <li><Link href="/podcast" className="hover:text-black hover:translate-x-1 inline-block transition-all">Podcast</Link></li>
+                <li><Link href="/Webinar" className="hover:text-black hover:translate-x-1 inline-block transition-all">Webinars</Link></li>
                 <li><Link href="/packages" className="hover:text-black hover:translate-x-1 inline-block transition-all">Packages &amp; Pricing</Link></li>
                 <li><Link href="/contact" className="hover:text-black hover:translate-x-1 inline-block transition-all">Contact Us</Link></li>
                 <li><Link href="/suppliers" className="hover:text-black hover:translate-x-1 inline-block transition-all">Find a Supplier</Link></li>
@@ -256,7 +256,8 @@ export default function Footer() {
                 <li><Link href="/articles/issues" className="hover:text-black hover:translate-x-1 inline-block transition-all">Archives</Link></li>
                 <li><Link href="/subscribe" className="hover:text-black hover:translate-x-1 inline-block transition-all">Subscribe</Link></li>
                 {/* <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Renew Subscription</Link></li> */}
-                <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Customer Service</Link></li>
+                {/* <li><Link href="/" className="hover:text-black hover:translate-x-1 inline-block transition-all">Customer Service</Link></li> */}
+                <li><Link href="/blog" className="hover:text-black hover:translate-x-1 inline-block transition-all">Blogs</Link></li>
               </ul>
             </div>
 
