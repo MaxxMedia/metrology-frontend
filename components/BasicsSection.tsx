@@ -54,9 +54,6 @@ export default function BasicsSection({ posts }: Props) {
     if (Array.isArray(posts) && posts.length > 0) {
       const allSlugs = posts.map((p) => getCategorySlug(p));
       const uniqueSlugs = Array.from(new Set(allSlugs));
-      console.log("🔎 Sample category slugs seen:", allSlugs.slice(0, 10));
-      console.log("🔎 ALL UNIQUE category slugs across posts:", uniqueSlugs);
-      console.log("🔎 BASIC_CATEGORIES currently matching against:", BASIC_CATEGORIES);
     }
   }, [posts]);
 

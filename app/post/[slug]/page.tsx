@@ -604,12 +604,9 @@ export default function PostDetailsPage() {
                     <h3 className="text-xs font-bold tracking-wide uppercase text-gray-500 mb-4">
                       Category
                     </h3>
-                    <Link
-                      href={`/category/${post.category.slug}`}
-                      className="inline-block text-sm font-semibold text-[#003049] bg-gray-100 hover:bg-[#003049] hover:text-white transition-colors px-4 py-2 rounded-full"
-                    >
+                    <span className="inline-block text-sm font-semibold text-[#003049] bg-gray-100 px-4 py-2 rounded-full">
                       {post.category.name}
-                    </Link>
+                    </span>
                   </div>
                 )}
               </div>
