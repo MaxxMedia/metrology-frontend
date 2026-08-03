@@ -11,9 +11,7 @@ import {
   LogOut,
   Mail,
   Users,
-
   UserPlus,
-
   ShieldCheck,
 } from "lucide-react"
 
@@ -321,6 +319,14 @@ export default function AdminLayout({
               label="Newsletter"
               icon={<Mail size={18} />}
               active={pathname.startsWith("/admin/newsletter")}
+            />
+          )}
+          {can("webinar.view") && (
+            <SidebarLink
+              href="/admin/webinar"
+              label="Webinar"
+              icon={<UserPlus size={18} />}
+              active={pathname.startsWith("/admin/webinar")}
             />
           )}
         </nav>
