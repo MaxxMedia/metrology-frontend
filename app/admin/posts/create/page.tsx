@@ -213,24 +213,32 @@ export default function CreatePost() {
 
   /* ================= UI ================= */
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-6 flex justify-center">
-      <div className="max-w-4xl w-full bg-white shadow-lg rounded-2xl p-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-indigo-700">
-            📝 Create New Post
+    <div className="admin-cms mx-auto max-w-4xl">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0073ff]">
+            Content
+          </p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Create New Post
           </h1>
-          <button
-            onClick={() => router.push("/admin/posts")}
-            className="text-sm text-gray-500 hover:text-gray-700"
-          >
-            ← Back to Posts
-          </button>
+          <p className="mt-1 text-sm text-slate-500">
+            Draft a publish-ready article with category, media, and content blocks.
+          </p>
         </div>
+        <button
+          type="button"
+          onClick={() => router.push("/admin/posts")}
+          className="admin-btn-secondary"
+        >
+          ← Back to Posts
+        </button>
+      </div>
 
+      <div className="admin-card">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* TITLE */}
           <div>
-            <label className="block font-medium text-gray-700 mb-2">
+            <label className="admin-label">
               Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -240,13 +248,12 @@ export default function CreatePost() {
               onChange={handleTitleChange}
               required
               placeholder="Enter post title"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="admin-field"
             />
           </div>
 
-          {/* SLUG */}
           <div>
-            <label className="block font-medium text-gray-700 mb-2">
+            <label className="admin-label">
               Slug <span className="text-red-500">*</span>
             </label>
             <input
@@ -256,33 +263,27 @@ export default function CreatePost() {
               onChange={handleChange}
               required
               placeholder="post-url-slug"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="admin-field"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="mt-1 text-xs text-slate-500">
               URL-friendly version of the title (auto-generated)
             </p>
           </div>
 
-          {/* BADGE */}
           <div>
-            <label className="block font-medium text-gray-700 mb-2">
-              Badge
-            </label>
+            <label className="admin-label">Badge</label>
             <input
               type="text"
               name="badge"
               value={form.badge}
               onChange={handleChange}
               placeholder="FEATURED, WEBINAR, EVENT"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="admin-field"
             />
           </div>
 
-          {/* IMAGE */}
           <div>
-            <label className="block font-medium text-gray-700 mb-2">
-              Featured Image
-            </label>
+            <label className="admin-label">Featured Image</label>
             <UploadBox
               label="Upload featured image"
               value={form.imageUrl}
@@ -293,57 +294,57 @@ export default function CreatePost() {
             />
           </div>
 
-          {/* CATEGORY */}
-          <div>
-            <label className="block font-medium text-gray-700 mb-2">
-              Category <span className="text-red-500">*</span>
-            </label>
-            <select
-              name="categoryId"
-              value={form.categoryId}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            >
-              <option value="">Select category</option>
-              {parentCategories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label className="admin-label">
+                Category <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="categoryId"
+                value={form.categoryId}
+                onChange={handleChange}
+                required
+                className="admin-field"
+              >
+                <option value="">Select category</option>
+                {parentCategories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="admin-label">
+                Subcategory{" "}
+                <span className="font-normal text-slate-400">(optional)</span>
+              </label>
+              <select
+                name="subCategoryId"
+                value={form.subCategoryId}
+                onChange={handleChange}
+                disabled={!form.categoryId || subCategories.length === 0}
+                className="admin-field"
+              >
+                <option value="">
+                  {!form.categoryId
+                    ? "Select a category first"
+                    : subCategories.length === 0
+                      ? "No subcategories"
+                      : "Select subcategory"}
                 </option>
-              ))}
-            </select>
+                {subCategories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          {/* SUBCATEGORY */}
           <div>
-            <label className="block font-medium text-gray-700 mb-2">
-              Subcategory <span className="text-gray-400 font-normal">(optional)</span>
-            </label>
-            <select
-              name="subCategoryId"
-              value={form.subCategoryId}
-              onChange={handleChange}
-              disabled={!form.categoryId || subCategories.length === 0}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
-            >
-              <option value="">
-                {!form.categoryId
-                  ? "Select a category first"
-                  : subCategories.length === 0
-                    ? "No subcategories"
-                    : "Select subcategory"}
-              </option>
-              {subCategories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* AUTHOR */}
-          <div>
-            <label className="block font-medium text-gray-700 mb-2">
+            <label className="admin-label">
               Author <span className="text-red-500">*</span>
             </label>
             <select
@@ -351,7 +352,7 @@ export default function CreatePost() {
               value={form.authorId}
               onChange={handleChange}
               required
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="admin-field"
             >
               <option value="">Select author</option>
               {authors.map((a) => (
@@ -362,24 +363,20 @@ export default function CreatePost() {
             </select>
           </div>
 
-          {/* EXCERPT */}
           <div>
-            <label className="block font-medium text-gray-700 mb-2">
-              Excerpt
-            </label>
+            <label className="admin-label">Excerpt</label>
             <textarea
               name="excerpt"
               value={form.excerpt}
               onChange={handleChange}
               rows={3}
-              placeholder="Short summary (optional - auto-generated from content)"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              placeholder="Short summary (optional — auto-generated from content)"
+              className="admin-field"
             />
           </div>
 
-          {/* CONTENT */}
           <div>
-            <label className="block font-semibold text-gray-700 mb-4">
+            <label className="admin-label">
               Content <span className="text-red-500">*</span>
             </label>
             <PostBuilder
@@ -393,39 +390,39 @@ export default function CreatePost() {
             />
           </div>
 
-          {/* SOCIAL / CONTACT */}
-          <div className="border-t pt-6">
-            <h3 className="font-bold text-lg text-gray-800 mb-4">
-              🔗 Social & Contact (Optional)
+          <div className="border-t border-slate-100 pt-6">
+            <h3 className="mb-4 text-base font-semibold text-slate-900">
+              Social & Contact
+              <span className="ml-2 text-sm font-normal text-slate-400">(optional)</span>
             </h3>
-            <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <input
                 name="facebookUrl"
                 value={form.facebookUrl}
                 onChange={handleChange}
                 placeholder="Facebook URL"
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="admin-field"
               />
               <input
                 name="linkedinUrl"
                 value={form.linkedinUrl}
                 onChange={handleChange}
                 placeholder="LinkedIn URL"
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="admin-field"
               />
               <input
                 name="twitterUrl"
                 value={form.twitterUrl}
                 onChange={handleChange}
                 placeholder="Twitter/X URL"
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="admin-field"
               />
               <input
                 name="youtubeUrl"
                 value={form.youtubeUrl}
                 onChange={handleChange}
                 placeholder="YouTube URL"
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="admin-field"
               />
               <input
                 name="email"
@@ -433,45 +430,35 @@ export default function CreatePost() {
                 onChange={handleChange}
                 placeholder="Contact Email"
                 type="email"
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="admin-field"
               />
               <input
                 name="whatsappNumber"
                 value={form.whatsappNumber}
                 onChange={handleChange}
                 placeholder="WhatsApp Number (e.g., +1234567890)"
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="admin-field"
               />
             </div>
           </div>
 
-          {/* SUBMIT BUTTON */}
           <button
             type="submit"
             disabled={loading || uploading}
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="admin-btn-primary w-full"
           >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Creating...
-              </span>
-            ) : (
-              "🚀 Create Post"
-            )}
+            {loading ? "Creating..." : "Create Post"}
           </button>
 
-          {/* MESSAGE */}
           {message && (
-            <div className={`p-4 rounded-lg ${
-              message.includes("✅") 
-                ? "bg-green-50 text-green-700 border border-green-200" 
-                : "bg-red-50 text-red-700 border border-red-200"
-            }`}>
-              <p className="text-center text-sm">{message}</p>
+            <div
+              className={`rounded-xl border p-4 text-center text-sm ${
+                message.includes("✅")
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  : "border-red-200 bg-red-50 text-red-700"
+              }`}
+            >
+              {message}
             </div>
           )}
         </form>

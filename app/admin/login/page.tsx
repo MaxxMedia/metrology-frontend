@@ -33,30 +33,31 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-md p-8">
-        <h2 className="text-2xl font-bold text-center mb-6">Admin Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-[#1D2125] px-4">
+      <div className="max-w-md w-full bg-[#15171f] rounded-[8px] border border-white/10 shadow-md p-8">
+        <h2 className="text-2xl font-bold text-center mb-2 text-white">Admin Login</h2>
+        <p className="text-center text-sm text-[#8a8b93] mb-6">Tooling Trends</p>
         <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={e=>setEmail(e.target.value)}
-            className="w-full p-3 border rounded-lg"
+            className="w-full p-3 rounded-[4px] bg-[#111318] border border-white/10 text-white placeholder:text-[#8a8b93] focus:outline-none focus:border-[#0073ff]"
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={e=>setPassword(e.target.value)}
-            className="w-full p-3 border rounded-lg"
+            className="w-full p-3 rounded-[4px] bg-[#111318] border border-white/10 text-white placeholder:text-[#8a8b93] focus:outline-none focus:border-[#0073ff]"
           />
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && <p className="text-red-400 text-sm">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg text-white font-semibold ${
-              loading ? "bg-indigo-300" : "bg-indigo-600 hover:bg-indigo-700"
+            className={`w-full py-3 rounded-[4px] text-white font-semibold transition-colors ${
+              loading ? "bg-[#0073ff]/50" : "bg-[#0073ff] hover:bg-[#0060d6]"
             }`}
           >
             {loading ? "Logging in..." : "Login"}

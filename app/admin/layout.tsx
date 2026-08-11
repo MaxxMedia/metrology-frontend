@@ -40,9 +40,7 @@ export default function AdminLayout({
     pathname.startsWith("/admin/articles")
   )
   const [usersOpen, setUsersOpen] = useState(
-
     pathname.startsWith("/admin/Users")
-
   )
 
   useEffect(() => {
@@ -61,13 +59,6 @@ export default function AdminLayout({
         return
       }
 
-      // ✅ FIX: don't trust localStorage's `permissions` — it's only
-      // ever set once, at login. If a super admin edits this account's
-      // permissions (or role) afterward, the sidebar would otherwise
-      // keep showing the old set until this user logs out and back in.
-      // /api/auth/me recomputes permissions fresh from the DB on every
-      // call (see authController.me), so hit that instead and treat
-      // it as the source of truth for this session.
       try {
         const res = await fetch(`${API_URL}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -92,8 +83,6 @@ export default function AdminLayout({
           return
         }
 
-        // Keep localStorage in sync so other reads elsewhere in the
-        // app (if any) aren't looking at outdated values either.
         localStorage.setItem("permissions", JSON.stringify(me.permissions || []))
 
         setRole(me.role)
@@ -123,14 +112,17 @@ export default function AdminLayout({
   const isSuperAdmin = role ? SUPER_ROLES.includes(role) : false
 
   return (
-    <div className="min-h-screen flex bg-[#F4F6FA]">
+    <div className="min-h-screen flex bg-[#F4F7FB]">
       {/* ================= SIDEBAR ================= */}
-      <aside className="w-64 bg-[#0F5B78] text-white flex flex-col shadow-xl">
-        <div className="px-6 py-5 border-b border-white/20">
-          <h1 className="text-lg font-semibold tracking-wide">
+      <aside className="w-64 bg-[#111318] text-white flex flex-col border-r border-white/10 shrink-0">
+        <div className="px-6 py-5 border-b border-white/10">
+          <p className="text-[11px] uppercase tracking-[0.14em] text-[#0073ff] font-semibold">
+            CMS
+          </p>
+          <h1 className="text-lg font-semibold tracking-wide text-white mt-1">
             Admin Panel
           </h1>
-          <p className="text-xs text-white/70 mt-1">
+          <p className="text-xs text-[#8a8b93] mt-1">
             Tooling Trends
           </p>
         </div>
@@ -149,11 +141,11 @@ export default function AdminLayout({
             <div>
               <button
                 onClick={() => setArticlesOpen(!articlesOpen)}
-                className={`flex items-center justify-between w-full px-4 py-2.5 rounded-md text-sm font-medium transition-all
+                className={`flex items-center justify-between w-full px-4 py-2.5 rounded-[4px] text-sm font-medium transition-all
                   ${pathname.startsWith("/admin/posts") ||
                     pathname.startsWith("/admin/articles")
-                    ? "bg-white/20 text-white"
-                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                    ? "bg-[#0073ff] text-white"
+                    : "text-[#a1a1a1] hover:bg-white/5 hover:text-white"
                   }
                 `}
               >
@@ -190,10 +182,10 @@ export default function AdminLayout({
             <div>
               <button
                 onClick={() => setUsersOpen(!usersOpen)}
-                className={`flex items-center justify-between w-full px-4 py-2.5 rounded-md text-sm font-medium transition-all
+                className={`flex items-center justify-between w-full px-4 py-2.5 rounded-[4px] text-sm font-medium transition-all
                   ${pathname.startsWith("/admin/Users")
-                    ? "bg-white/20 text-white"
-                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                    ? "bg-[#0073ff] text-white"
+                    : "text-[#a1a1a1] hover:bg-white/5 hover:text-white"
                   }
                 `}
               >
@@ -221,12 +213,6 @@ export default function AdminLayout({
                     icon={<ShieldCheck size={16} />}
                     active={pathname === "/admin/Users/custom-role-templates"}
                   />
-    {/* <SidebarLink
-                    href="/admin/Users/sub-admin-tracking"
-                    label="Sub Admin Tracking"
-                    icon={<FileText size={16} />}
-                    active={pathname === "/admin/Users/sub-admin-tracking"}
-                  /> */}
                 </div>
               )}
             </div>
@@ -331,7 +317,7 @@ export default function AdminLayout({
           )}
         </nav>
 
-        <div className="px-5 py-4 border-t border-white/20">
+        <div className="px-5 py-4 border-t border-white/10">
           <button
             onClick={() => {
               localStorage.removeItem("token")
@@ -339,7 +325,7 @@ export default function AdminLayout({
               localStorage.removeItem("permissions")
               router.push("/login")
             }}
-            className="flex items-center gap-3 text-sm font-medium text-white/90 hover:text-red-300 transition"
+            className="flex items-center gap-3 text-sm font-medium text-[#a1a1a1] hover:text-[#ef4444] transition"
           >
             <LogOut size={18} />
             Logout
@@ -347,8 +333,8 @@ export default function AdminLayout({
         </div>
       </aside>
 
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <main className="admin-cms flex-1 overflow-y-auto bg-[#F4F7FB] text-slate-900">
+        <div className="p-6 md:p-8 min-h-full">
           {children}
         </div>
       </main>
@@ -370,10 +356,10 @@ function SidebarLink({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 px-4 py-2.5 rounded-md text-sm font-medium transition-all
+      className={`flex items-center gap-3 px-4 py-2.5 rounded-[4px] text-sm font-medium transition-all
         ${active
-          ? "bg-white/20 text-white"
-          : "text-white/80 hover:bg-white/10 hover:text-white"
+          ? "bg-[#0073ff] text-white"
+          : "text-[#a1a1a1] hover:bg-white/5 hover:text-white"
         }
       `}
     >
