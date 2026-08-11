@@ -173,8 +173,20 @@ export default function PostDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showGate, setShowGate] = useState(false)
-  const [userSubmitted, setUserSubmitted] = useState(false)
+  const [hasPremiumAccess, setHasPremiumAccess] = useState(false)
   const [relatedPosts, setRelatedPosts] = useState<Post[]>([])
+
+  /* ================= CHECK PREMIUM ACCESS ================= */
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const hasAccess = localStorage.getItem("premiumAccess") === "true"
+        setHasPremiumAccess(hasAccess)
+      } catch (e) {
+        setHasPremiumAccess(false)
+      }
+    }
+  }, [])
 
   /* ================= FETCH POST BY SLUG ================= */
   useEffect(() => {
@@ -295,10 +307,19 @@ export default function PostDetailsPage() {
 
   /* ================= CONTENT GATE ================= */
   useEffect(() => {
-    if (userSubmitted || !post || loading) return
+    // Only show gate if user doesn't have premium access and post is loaded
+    if (hasPremiumAccess || !post || loading) return
     const timer = setTimeout(() => setShowGate(true), 9000)
     return () => clearTimeout(timer)
-  }, [userSubmitted, post, loading])
+  }, [hasPremiumAccess, post, loading])
+
+  /* ================= HANDLE REGISTRATION SUCCESS ================= */
+  const handleRegistrationSuccess = () => {
+    // Store premium access in localStorage
+    localStorage.setItem("premiumAccess", "true")
+    setHasPremiumAccess(true)
+    setShowGate(false)
+  }
 
   /* ================= LOADING STATE ================= */
   if (loading) {
@@ -359,12 +380,10 @@ export default function PostDetailsPage() {
     return (
       <>
         <ContentGateModal
-          isOpen={showGate && !userSubmitted}
+          isOpen={showGate}
           onClose={() => setShowGate(false)}
-          onSubmit={() => {
-            setUserSubmitted(true)
-            setShowGate(false)
-          }}
+          onSuccess={handleRegistrationSuccess}
+          contentTitle="Industry Talks Content"
         />
 
         <main className="bg-white overflow-x-hidden">
@@ -373,7 +392,7 @@ export default function PostDetailsPage() {
           <section className="max-w-[1320px] mx-auto px-4 py-10">
             <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr] gap-10">
               {/* CONTENT */}
-              <article className="max-w-3xl overflow-hidden">
+              <article className="w-full min-w-0">
                 {post.category?.name && (
                   <span className="inline-block text-[11px] font-bold tracking-wide uppercase text-[#0F5B78] mb-3">
                     {post.category.name}
@@ -463,47 +482,63 @@ export default function PostDetailsPage() {
                   </div>
                 )}
 
-                <div className="border-t border-gray-100 pt-8 mt-8">
-                  <h2 className="text-xs md:text-sm font-extrabold tracking-widest uppercase text-gray-900 mb-6">
-                    THE INTERVIEW
-                  </h2>
+                <div className="border-t border-gray-200 pt-8 mt-8">
+                  <div className="flex items-center gap-2.5 mb-8">
+                    <span className="w-1.5 h-6 bg-[#0F5B78] rounded-full" />
+                    <h2 className="text-sm font-extrabold tracking-wider uppercase text-gray-900">
+                      INTERVIEW TRANSCRIPT
+                    </h2>
+                  </div>
 
                   {post.qa && post.qa.length > 0 ? (
-                    <div className="space-y-7">
-                      {post.qa.map((item, idx) => (
-                        <div key={idx} className="group">
-                          <h3 className="text-[#0F5B78] font-bold text-base md:text-[17px] leading-snug mb-2 flex items-baseline justify-between">
-                            <span>
-                              Q{idx + 1}. {item.question}
-                            </span>
-                            {item.videoTimestamp && (
-                              <span className="shrink-0 text-xs font-medium text-[#0F5B78] bg-[#0F5B78]/10 px-2.5 py-0.5 rounded-full">
-                                ⏱ {item.videoTimestamp}
-                              </span>
-                            )}
-                          </h3>
+                    <div className="space-y-6">
+                      {post.qa.map((item, idx) => {
+                        const cleanedAnswer = stripHtml(item.answer || "") !== item.answer
+                          ? (item.answer || "").replace(/&nbsp;/g, " ").replace(/\s+/g, " ")
+                          : item.answer || ""
 
-                          <div className="text-gray-700 text-sm md:text-[15px] leading-relaxed">
-                            <span className="font-bold text-gray-900 mr-1.5 inline">
-                              {post.author?.name ? `${post.author.name}:` : "A:"}
-                            </span>
-                            <div
-                              className="inline [&_p]:inline [&_p]:m-0 [&_*]:!text-inherit [&_strong]:!text-gray-900"
-                              dangerouslySetInnerHTML={{ __html: item.answer || "" }}
-                            />
+                        return (
+                          <div
+                            key={idx}
+                            className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4"
+                          >
+                            {/* QUESTION HEADER */}
+                            <div className="flex items-start justify-between gap-3 pb-3 border-b border-gray-100">
+                              <h3 className="text-base md:text-lg font-bold text-[#0F5B78] leading-snug text-left flex-1">
+                                Q{idx + 1}. {item.question}
+                              </h3>
+                              {item.videoTimestamp && (
+                                <span className="shrink-0 text-xs font-semibold text-[#0F5B78] bg-[#0F5B78]/10 px-2.5 py-1 rounded-full border border-[#0F5B78]/20 flex items-center gap-1 whitespace-nowrap">
+                                  ⏱ {item.videoTimestamp}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* ANSWER BODY DIRECTLY IN SAME DIV */}
+                            <div className="text-gray-700 text-sm md:text-base leading-relaxed text-left space-y-2">
+                              <div className="text-sm font-bold text-gray-900 text-left flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-[#0F5B78] shrink-0" />
+                                <span>{post.author?.name ? `${post.author.name}:` : "Answer:"}</span>
+                              </div>
+
+                              <div
+                                className="text-gray-700 text-left leading-relaxed text-sm md:text-base [&_p]:!text-left [&_p]:!leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:text-gray-900"
+                                dangerouslySetInnerHTML={{ __html: cleanedAnswer }}
+                              />
+
+                              {item.highlightQuote && (
+                                <blockquote className="mt-3 p-4 bg-[#0F5B78]/5 border-l-4 border-[#0F5B78] rounded-r-xl text-sm italic text-gray-800 font-medium text-left">
+                                  "{item.highlightQuote}"
+                                </blockquote>
+                              )}
+                            </div>
                           </div>
-
-                          {item.highlightQuote && (
-                            <blockquote className="mt-3 pl-4 border-l-4 border-[#0F5B78] italic text-gray-800 text-sm bg-gray-50/70 py-2.5 px-3 rounded-r-lg">
-                              "{item.highlightQuote}"
-                            </blockquote>
-                          )}
-                        </div>
-                      ))}
+                        )
+                      })}
                     </div>
                   ) : (
                     <div
-                      className="prose prose-lg max-w-none break-words overflow-hidden text-justify prose-p:text-justify prose-headings:text-[#0F5B78] prose-h3:text-base prose-h3:font-bold prose-h3:mb-2 prose-h3:mt-6 prose-strong:text-gray-900 prose-a:text-[#0F5B78] prose-img:rounded-xl prose-p:text-gray-700 [&_*]:!bg-transparent [&_*]:!text-inherit [&_strong]:!text-gray-900 [&_a]:!text-[#0F5B78]"
+                      className="prose prose-lg max-w-none break-words text-left prose-p:text-left prose-headings:text-[#0F5B78] prose-h3:text-base prose-h3:font-bold prose-h3:mb-2 prose-h3:mt-6 prose-strong:text-gray-900 prose-a:text-[#0F5B78] prose-img:rounded-xl prose-p:text-gray-700 [&_*]:!bg-transparent [&_*]:!text-inherit [&_strong]:!text-gray-900 [&_a]:!text-[#0F5B78]"
                       dangerouslySetInnerHTML={{ __html: post.content || "" }}
                     />
                   )}
@@ -649,12 +684,10 @@ export default function PostDetailsPage() {
   return (
     <>
       <ContentGateModal
-        isOpen={showGate && !userSubmitted}
+        isOpen={showGate}
         onClose={() => setShowGate(false)}
-        onSubmit={() => {
-          setUserSubmitted(true)
-          setShowGate(false)
-        }}
+        onSuccess={handleRegistrationSuccess}
+        contentTitle={post.category?.name || "premium content"}
       />
 
       <main className="bg-[#f9f9f9] overflow-x-hidden">
@@ -713,7 +746,7 @@ export default function PostDetailsPage() {
 
         <section className="max-w-[1320px] mx-auto px-4 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr] gap-10">
-            <article className="max-w-3xl overflow-hidden">
+            <article className="w-full min-w-0">
               <div
                 className="prose prose-lg max-w-none break-words overflow-hidden text-justify prose-p:text-justify prose-headings:text-[#003049] prose-a:text-[#003049] prose-img:rounded-xl"
                 dangerouslySetInnerHTML={{ __html: post.content || "" }}

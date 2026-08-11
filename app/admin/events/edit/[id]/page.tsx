@@ -270,7 +270,7 @@ export default function EditEventPage() {
       </p>
 
       <Formik
-        initialValues={eventData}
+        initialValues={{ ...initialValues, ...eventData, agreeTerms: eventData.agreeTerms ?? true }}
         validationSchema={EventSchema}
         onSubmit={handleSubmit}
         enableReinitialize
@@ -593,6 +593,8 @@ export default function EditEventPage() {
                   label="PDF (Max. 5MB)"
                   value={values.brochureUrl}
                   onUpload={file => uploadFile(file, setFieldValue, "brochureUrl", "document")}
+                  uploadType="document"
+                  accept=".pdf,.doc,.docx"
                 />
               </div>
 

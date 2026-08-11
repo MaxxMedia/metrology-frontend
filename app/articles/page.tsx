@@ -17,7 +17,7 @@ export default async function ArticlesPage() {
   const data = await res.json()
   const posts: Post[] = data.data || data
 
-  /* ================= FETCH MAGAZINES ================= */
+  /* ================= FETCH MAGAZINES. ================= */
   const magRes = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/magazines`,
     { cache: "no-store" }

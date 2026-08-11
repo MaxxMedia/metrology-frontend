@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import {
   MapPin,
@@ -47,7 +47,9 @@ type Readiness = {
 }
 
 export default function JobDetailPage() {
-  const { slug } = useParams<{ slug: string }>()
+  const params = useParams<{ slug?: string }>()
+  const searchParams = useSearchParams()
+  const slug = params?.slug || searchParams?.get("slug")
   const router = useRouter()
 
   const [job, setJob] = useState<any>(null)
@@ -384,6 +386,7 @@ export default function JobDetailPage() {
   const profileIncomplete = isCandidate && readiness ? !readiness.isReady : false
   const applyDisabled =
     checkingApplyStatus || applying || checkingReadiness || profileIncomplete
+  const externalUrl = job.applyUrl || job.linkedinUrl
 
   return (
     <div className="min-h-screen bg-[#F4F2EE]">
@@ -471,14 +474,14 @@ export default function JobDetailPage() {
                         Applied
                       </button>
                     ) : job.isExternal ? (
-                      job.applyUrl && (
+                      externalUrl && (
                         <a
-                          href={job.applyUrl}
+                          href={externalUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors"
                         >
-                          Easy Apply
+                          Apply on LinkedIn
                         </a>
                       )
                     ) : (
@@ -628,10 +631,10 @@ export default function JobDetailPage() {
                 </div>
               </div>
 
-       
+
             </div>
 
-            <p className="text-xs text-gray-500 leading-relaxed mt-4">
+            <p className="text-[16px] text-gray-700 leading-relaxed mt-4">
               {company.description ||
                 "More information about this company is not available at the moment."}
             </p>
@@ -793,7 +796,7 @@ export default function JobDetailPage() {
         <div className="space-y-4">
 
           {/* People also viewed */}
-          
+
           {otherJobs.length > 0 && (
             <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
               <h3 className="text-sm font-bold text-gray-900 mb-4">
@@ -802,32 +805,32 @@ export default function JobDetailPage() {
 
               <div className="space-y-1">
                 <div className="divide-y divide-gray-300">
-                {otherJobs.slice(0, 3).map((item) => (
-                  <Link
-                    key={item.id}
-                    href={`/jobs/${item.slug}`}
-                    className="flex items-start gap-3 p-3 -mx-3 rounded-md hover:bg-gray-50 transition-colors group"
-                  >
-                    <div className="w-8 h-8 rounded-md bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Building2 size={12} className="text-gray-500" />
-                    </div>
+                  {otherJobs.slice(0, 3).map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/jobs/${item.slug}`}
+                      className="flex items-start gap-3 p-3 -mx-3 rounded-md hover:bg-gray-50 transition-colors group"
+                    >
+                      <div className="w-8 h-8 rounded-md bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Building2 size={12} className="text-gray-500" />
+                      </div>
 
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors truncate">
-                        {item.title}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-0.5 truncate">
-                        {item.company?.name || item.companyName}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        {item.location}
-                      </p>
-                    </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors truncate">
+                          {item.title}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-0.5 truncate">
+                          {item.company?.name || item.companyName}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {item.location}
+                        </p>
+                      </div>
 
-                    <Bookmark size={14} className="text-gray-300 group-hover:text-blue-400 transition-colors flex-shrink-0 mt-1" />
-                  </Link>
-                ))}
-              </div>
+                      <Bookmark size={14} className="text-gray-300 group-hover:text-blue-400 transition-colors flex-shrink-0 mt-1" />
+                    </Link>
+                  ))}
+                </div>
               </div>
 
               {otherJobs.length > 3 && (
@@ -837,11 +840,11 @@ export default function JobDetailPage() {
                     <ChevronRight size={14} />
                   </button>
                 </Link>
-             
+
               )}
             </div>
           )}
-         
+
 
           {/* Job insights */}
           <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">

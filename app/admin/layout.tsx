@@ -11,9 +11,7 @@ import {
   LogOut,
   Mail,
   Users,
-
   UserPlus,
-
   ShieldCheck,
 } from "lucide-react"
 
@@ -223,12 +221,12 @@ export default function AdminLayout({
                     icon={<ShieldCheck size={16} />}
                     active={pathname === "/admin/Users/custom-role-templates"}
                   />
-    <SidebarLink
+    {/* <SidebarLink
                     href="/admin/Users/sub-admin-tracking"
                     label="Sub Admin Tracking"
                     icon={<FileText size={16} />}
                     active={pathname === "/admin/Users/sub-admin-tracking"}
-                  />
+                  /> */}
                 </div>
               )}
             </div>
@@ -323,6 +321,14 @@ export default function AdminLayout({
               active={pathname.startsWith("/admin/newsletter")}
             />
           )}
+          {can("webinar.view") && (
+            <SidebarLink
+              href="/admin/webinar"
+              label="Webinar"
+              icon={<UserPlus size={18} />}
+              active={pathname.startsWith("/admin/webinar")}
+            />
+          )}
         </nav>
 
         <div className="px-5 py-4 border-t border-white/20">
@@ -331,7 +337,7 @@ export default function AdminLayout({
               localStorage.removeItem("token")
               localStorage.removeItem("user")
               localStorage.removeItem("permissions")
-              router.push("/admin/login")
+              router.push("/login")
             }}
             className="flex items-center gap-3 text-sm font-medium text-white/90 hover:text-red-300 transition"
           >

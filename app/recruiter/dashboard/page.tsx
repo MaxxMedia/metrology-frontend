@@ -429,13 +429,13 @@ export default function RecruiterDashboard() {
           {/* QUICK ACTIONS */}
           <div>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">Quick Actions</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
               <Link
                 href="/recruiter/jobs"
-                className="group p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-blue-200"
+                className="group p-2.5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-blue-200"
               >
                 <ActionCard
-                  icon={<Briefcase className="text-blue-600 group-hover:scale-110 transition-transform" size={18} />}
+                  icon={<Briefcase className="text-blue-600 group-hover:scale-110 transition-transform" size={14} />}
                   title="Manage Jobs"
                   desc="View all jobs"
                 />
@@ -444,10 +444,10 @@ export default function RecruiterDashboard() {
               <PostJobButton
                 eligibility={dashboard.jobPosting}
                 variant="card"
-                className="group p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-green-200"
+                className="group p-2.5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-green-200"
               >
                 <ActionCard
-                  icon={<TrendingUp className="text-green-600 group-hover:scale-110 transition-transform" size={18} />}
+                  icon={<TrendingUp className="text-green-600 group-hover:scale-110 transition-transform" size={14} />}
                   title="Post a Job"
                   desc={dashboard.jobPosting?.canPost ? "Create new listing" : "Upgrade to post more"}
                 />
@@ -455,10 +455,10 @@ export default function RecruiterDashboard() {
 
               <Link
                 href="/recruiter/articles"
-                className="group p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-indigo-200"
+                className="group p-2.5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-indigo-200"
               >
                 <ActionCard
-                  icon={<FileText className="text-indigo-600 group-hover:scale-110 transition-transform" size={18} />}
+                  icon={<FileText className="text-indigo-600 group-hover:scale-110 transition-transform" size={14} />}
                   title="Articles"
                   desc={formatArticleQuickDesc(dashboard.articlePosting)}
                 />
@@ -466,10 +466,10 @@ export default function RecruiterDashboard() {
 
               <Link
                 href="/recruiter/directories"
-                className="group p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-amber-200"
+                className="group p-2.5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-amber-200"
               >
                 <ActionCard
-                  icon={<FolderOpen className="text-amber-600 group-hover:scale-110 transition-transform" size={18} />}
+                  icon={<FolderOpen className="text-amber-600 group-hover:scale-110 transition-transform" size={14} />}
                   title="Directories"
                   desc={formatProductQuickDesc(dashboard.productListings)}
                 />
@@ -477,10 +477,10 @@ export default function RecruiterDashboard() {
 
               <Link
                 href="/recruiter/leads"
-                className="group p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-purple-200"
+                className="group p-2.5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-purple-200"
               >
                 <ActionCard
-                  icon={<Inbox className="text-purple-600 group-hover:scale-110 transition-transform" size={18} />}
+                  icon={<Inbox className="text-purple-600 group-hover:scale-110 transition-transform" size={14} />}
                   title="Leads"
                   desc="View RFQ requests"
                 />
@@ -802,13 +802,13 @@ function ActionCard({
   desc: string
 }) {
   return (
-    <div className="flex items-start gap-3">
-      <div className="w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
+    <div className="flex items-start gap-2">
+      <div className="w-7 h-7 rounded-md bg-gray-50 flex items-center justify-center flex-shrink-0">
         {icon}
       </div>
       <div className="min-w-0">
-        <h2 className="text-sm font-semibold text-gray-900 truncate">{title}</h2>
-        <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{desc}</p>
+        <span className="block font-medium text-gray-900 truncate leading-tight" style={{ fontSize: "20px" }}>{title}</span>
+        <p className="text-gray-500 mt-0.5 line-clamp-1" style={{ fontSize: "13px" }}>{desc}</p>
       </div>
     </div>
   )

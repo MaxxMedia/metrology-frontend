@@ -20,7 +20,7 @@ export default async function PodcastPage() {
         ? p.category?.slug?.toLowerCase()
         : String(p.category || "").toLowerCase()
 
-    return slug.includes("podcast")
+    return slug.includes("video")
   })
 
   return (

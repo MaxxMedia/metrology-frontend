@@ -359,7 +359,7 @@ export default function EventsContent() {
               />
             </div>
 
-            <select
+            {/* <select
               value={selectedIndustry}
               onChange={(e) => handleIndustryChange(e.target.value)}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white md:w-56"
@@ -370,7 +370,7 @@ export default function EventsContent() {
                   {item.name}
                 </option>
               ))}
-            </select>
+            </select> */}
 
             <button type="submit" className="bg-[#0f5b78] text-white px-5 py-2 rounded-lg">
               Search
@@ -535,7 +535,7 @@ export default function EventsContent() {
           <SubscribeForm />
 
           {/* POPULAR CATEGORIES */}
-          {popularIndustries.length > 0 && (
+          {/* {popularIndustries.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-xl p-4">
               <h3 className="text-sm font-semibold mb-3">Popular Categories</h3>
               <ul className="space-y-2 text-sm">
@@ -557,7 +557,7 @@ export default function EventsContent() {
                 </button>
               </Link>
             </div>
-          )}
+          )} */}
 
           {/* LIST YOUR EVENT */}
           <div className="bg-white border border-gray-200 rounded-xl p-4">

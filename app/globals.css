@@ -10,8 +10,9 @@
    DESIGN TOKENS
 ====================================================== */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Nerio Technology News Dark page background */
+  --background: #1D2125;
+  --foreground: #ffffff;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --border: oklch(0.922 0 0);

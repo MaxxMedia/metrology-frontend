@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { Suspense, useEffect, useState, useCallback } from "react"
+import { useSearchParams } from "next/navigation"
 import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react"
 import SupplierRowCard from "./SupplierRowCard"
 import SupplierFilters from "./SupplierFilters"
@@ -27,7 +28,10 @@ type FilterState = {
 
 const PER_PAGE = 15
 
-export default function SuppliersPage() {
+function SuppliersPageContent() {
+  const searchParams = useSearchParams()
+  const industryFromUrl = searchParams.get("industry") // e.g. "Additive Manufacturing"
+
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -145,7 +149,10 @@ export default function SuppliersPage() {
           {/* LEFT FILTERS — DESKTOP */}
           <aside className="hidden lg:block">
             <div className="sticky top-24">
-              <SupplierFilters onFilterChange={handleFilterChange} />
+              <SupplierFilters
+                onFilterChange={handleFilterChange}
+                initialIndustryName={industryFromUrl}
+              />
             </div>
           </aside>
 
@@ -162,7 +169,10 @@ export default function SuppliersPage() {
                   <button onClick={() => setShowFilters(false)} className="text-gray-500 hover:text-gray-700 text-2xl">×</button>
                 </div>
                 <div className="p-4">
-                  <SupplierFilters onFilterChange={(f) => { handleFilterChange(f); setShowFilters(false) }} />
+                  <SupplierFilters
+                    onFilterChange={(f) => { handleFilterChange(f); setShowFilters(false) }}
+                    initialIndustryName={industryFromUrl}
+                  />
                 </div>
                 <div className="sticky bottom-0 bg-white border-t p-4">
                   <button
@@ -311,5 +321,13 @@ export default function SuppliersPage() {
               <Banner placement="SUPPLIER_AFTER_VIDEO" />
     </div>
     
+  )
+}
+
+export default function SuppliersPage() {
+  return (
+    <Suspense fallback={null}>
+      <SuppliersPageContent />
+    </Suspense>
   )
 }

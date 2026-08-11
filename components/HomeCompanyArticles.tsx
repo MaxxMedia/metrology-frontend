@@ -2,276 +2,427 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import type { Post } from "../types/Post";
-import Banner from "./Banners/Banner";
+import {
+  Facebook,
+  Instagram,
+  Linkedin,
+  ArrowRight,
+  RefreshCw,
+} from "lucide-react";
 
-const ROTATE_INTERVAL = 6000;
-const PAGE_SIZE = 6; // 3 rows × 2 cols
+const INITIAL_COUNT = 6;
+const LOAD_MORE_COUNT = 3;
 
 const BADGE_COLORS: Record<string, string> = {
   FEATURED: "bg-[#E11D48]",
-  WEBINAR: "bg-[#7C3AED]",
-  EVENT: "bg-[#0EA5E9]",
-  TRENDING: "bg-[#F97316]",
-  EXCLUSIVE: "bg-[#059669]",
+  TECH: "bg-[#ff5733]",
+  AUTOMATION: "bg-[#00b5ed]",
+  INNOVATION: "bg-[#59a255]",
+  SOFTWARE: "bg-[#f27100]",
+  DIGITAL: "bg-[#0073ff]",
+  FUTURE: "bg-[#54bd05]",
+  GADGET: "bg-[#00ad48]",
+  ROBOTICS: "bg-[#6d28d9]",
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
+  tech: "bg-[#ff5733]",
+  automation: "bg-[#00b5ed]",
+  innovation: "bg-[#59a255]",
+  software: "bg-[#f27100]",
+  digital: "bg-[#0073ff]",
+  future: "bg-[#54bd05]",
+  gadget: "bg-[#00ad48]",
+  robotics: "bg-[#6d28d9]",
   gaming: "bg-[#0073FF]",
-  fashion: "bg-[#E033E0]",
-  "latest-issue": "bg-[#F69C00]",
-  tech: "bg-[#22C55E]",
-  politics: "bg-[#EF4444]",
-  travel: "bg-[#0EA5E9]",
-  articles: "bg-[#8B5CF6]",
-  latest: "bg-[#F59E0B]",
   basics: "bg-[#0073FF]",
-  maintain: "bg-[#8B5CF6]",
   machining: "bg-[#EC4899]",
-  build: "bg-[#14B8A6]",
-  cuttingtools: "bg-[#F97316]",
-  advancedmanufacturing: "bg-[#6366F1]",
-  departments: "bg-[#06B6D4]",
-  events: "bg-[#8B5CF6]",
-  "header-videos": "bg-[#EF4444]",
+  manufacturing: "bg-[#059669]",
 };
 
 type Props = {
   posts: Post[];
 };
 
-export default function CompanyArticles({ posts }: Props) {
-  const [allPosts, setAllPosts] = useState<Post[]>([]);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [fade, setFade] = useState(true);
-  const [paused, setPaused] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+function getAuthorName(post: Post): string {
+  if (post.author && typeof post.author === "object" && post.author.name) {
+    return post.author.name;
+  }
+  const company = (post as any).Company || (post as any).company;
+  if (company?.name) return company.name;
+  return "rstheme";
+}
 
-  // Update posts when prop changes
-  useEffect(() => {
-    if (posts && Array.isArray(posts)) {
-      setAllPosts(posts);
-    }
+function getCategorySlug(post: Post): string {
+  return typeof post.category === "object"
+    ? post.category?.slug?.toLowerCase() || ""
+    : String(post.category || "").toLowerCase();
+}
+
+function getCategoryName(post: Post): string {
+  return typeof post.category === "object"
+    ? post.category?.name || ""
+    : String(post.category || "");
+}
+
+function getImageUrl(post: Post): string {
+  if (post.imageUrl?.startsWith("http")) return post.imageUrl;
+  if (post.imageUrl) return `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`;
+  return "/placeholder.jpg";
+}
+
+function getTag(post: Post) {
+  const badge = post.badge?.trim();
+  const slug = getCategorySlug(post);
+  const categoryName = getCategoryName(post);
+  const text = badge || categoryName;
+  let color = "bg-[#0073ff]";
+
+  if (badge) {
+    color = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]";
+  } else {
+    const match = Object.keys(CATEGORY_COLORS).find(
+      (k) => slug.includes(k) || text.toLowerCase().includes(k)
+    );
+    if (match) color = CATEGORY_COLORS[match];
+  }
+
+  return { text, color };
+}
+
+function formatDate(post: Post) {
+  const raw = post.publishedAt || post.createdAt;
+  if (!raw) return "";
+  return new Date(raw).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function excerptOf(post: Post, words = 18) {
+  const text = (post.excerpt || "").replace(/\s+/g, " ").trim();
+  if (!text) {
+    return "Timely updates and reliable reporting on politics, global events, science, and culture. Our concise news summaries help you...";
+  }
+  const parts = text.split(" ");
+  if (parts.length <= words) return text;
+  return `${parts.slice(0, words).join(" ")}...`;
+}
+
+function PulseIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M3 12h3l2-5 3 10 2-6 2 3h6" />
+    </svg>
+  );
+}
+
+function CalendarIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      className={className}
+      aria-hidden
+    >
+      <rect x="3.5" y="5" width="17" height="15" rx="2" />
+      <path d="M8 3.5V7M16 3.5V7M3.5 10h17" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function DiamondDot() {
+  return (
+    <span className="w-[7px] h-[7px] bg-[#0073ff] rotate-45 shrink-0" aria-hidden />
+  );
+}
+
+function XIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.259 5.686L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+    </svg>
+  );
+}
+
+function PinterestIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 384 512" fill="currentColor" aria-hidden>
+      <path d="M204 6.5C101.4 6.5 0 74.9 0 185.6 0 256 39.6 296 63.6 296c9.9 0 15.6-27.6 15.6-35.4 0-9.3-23.7-29.1-23.7-67.8 0-80.4 61.2-137.4 140.4-137.4 68.1 0 118.5 38.7 118.5 109.8 0 53.1-21.3 152.7-90.3 152.7-24.9 0-46.2-18-46.2-43.8 0-37.8 26.4-74.4 26.4-113.4 0-66.2-93.9-54.2-93.9 25.8 0 16.8 2.1 35.4 9.6 50.7-13.8 59.4-42 147.9-42 209.1 0 18.9 2.7 37.5 4.5 56.4 3.4 3.8 1.7 3.4 6.9 1.5 50.4-69 48.6-82.5 71.4-172.8 12.3 23.4 44.1 36 69.3 36 106.2 0 153.9-103.5 153.9-196.8C384 71.3 298.2 6.5 204 6.5z" />
+    </svg>
+  );
+}
+
+function DribbbleIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 512 512" fill="currentColor" aria-hidden>
+      <path d="M256 8C119.252 8 8 119.252 8 256s111.252 248 248 248 248-111.252 248-248S392.748 8 256 8zm163.97 114.366c29.503 36.046 47.369 81.957 47.835 131.955-6.984-1.477-77.018-15.682-147.502-6.818-5.752-14.041-11.181-26.393-18.617-41.614 78.321-31.977 113.818-77.482 118.284-83.523zM396.421 97.87c-3.81 5.427-35.697 48.286-111.021 76.519-34.712-63.776-73.185-116.168-79.04-124.008 67.176-16.193 137.966 1.27 190.061 47.489zm-230.48-33.25c5.585 7.659 43.438 60.116 78.537 122.509-99.087 26.313-186.36 25.934-195.834 25.809C62.38 147.205 106.678 92.573 165.941 64.62zM44.17 256.323c0-2.166.043-4.322.108-6.473 9.268.19 111.92 1.513 217.706-30.146 6.064 11.868 11.857 23.915 17.174 35.949-76.599 21.575-146.194 83.527-180.531 142.306C64.794 360.405 44.17 310.73 44.17 256.323zm81.807 167.113c22.127-45.233 82.178-103.622 167.579-132.756 29.74 77.283 42.039 142.053 45.189 160.638-68.112 29.013-150.015 21.053-212.768-27.882zm248.38 8.489c-2.171-12.886-13.446-74.897-41.152-151.033 66.38-10.626 124.7 6.768 131.947 9.055-9.442 58.941-43.273 109.844-90.795 141.978z" />
+    </svg>
+  );
+}
+
+const SOCIALS = [
+  { name: "Facebook", followers: "88.2k Followers", href: "#", bg: "bg-[#1877F2]", Icon: Facebook },
+  { name: "Twitter - X", followers: "48.6k Followers", href: "#", bg: "bg-[#111111]", Icon: XIcon },
+  { name: "Dribbble", followers: "39.5k Followers", href: "#", bg: "bg-[#EA4C89]", Icon: DribbbleIcon },
+  { name: "Pinterest", followers: "28.2k Followers", href: "#", bg: "bg-[#E60023]", Icon: PinterestIcon },
+  { name: "Linkedin", followers: "30.3k Followers", href: "#", bg: "bg-[#0A66C2]", Icon: Linkedin },
+  { name: "Instagram", followers: "24.5k Followers", href: "#", bg: "bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af]", Icon: Instagram },
+];
+
+export default function HomeCompanyArticles({ posts }: Props) {
+  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
+
+  const allPosts = useMemo(() => {
+    if (!Array.isArray(posts)) return [];
+    return [...posts].sort((a, b) => {
+      const aTime = new Date(a.publishedAt || a.createdAt || 0).getTime();
+      const bTime = new Date(b.publishedAt || b.createdAt || 0).getTime();
+      return bTime - aTime;
+    });
   }, [posts]);
 
-  /* ── Total pages ── */
-  const totalPages = Math.ceil(allPosts.length / PAGE_SIZE);
+  const visiblePosts = allPosts.slice(0, visibleCount);
+  const hasMore = visibleCount < allPosts.length;
 
-  /* ── Visible slice ── */
-  const visiblePosts = useMemo(() => {
-    if (!allPosts.length) return [];
-    const start = pageIndex * PAGE_SIZE;
-    return Array.from({ length: PAGE_SIZE }, (_, i) =>
-      allPosts[(start + i) % allPosts.length]
-    );
-  }, [allPosts, pageIndex]);
+  const categories = useMemo(() => {
+    const map = new Map<string, { name: string; slug: string; count: number; image: string }>();
+    for (const post of allPosts) {
+      const slug = getCategorySlug(post) || "tech";
+      const name = getCategoryName(post) || slug;
+      const existing = map.get(slug);
+      if (existing) {
+        existing.count += 1;
+        if (!existing.image && post.imageUrl) existing.image = getImageUrl(post);
+      } else {
+        map.set(slug, {
+          name,
+          slug,
+          count: 1,
+          image: getImageUrl(post),
+        });
+      }
+    }
+    return Array.from(map.values())
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 6);
+  }, [allPosts]);
 
-  /* ── Auto-rotate ── */
-  const goToPage = (next: number) => {
-    setFade(false);
-    setTimeout(() => {
-      setPageIndex(next % (totalPages || 1));
-      setFade(true);
-    }, 300);
-  };
+  const popularPosts = useMemo(() => {
+    return [...allPosts]
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 4);
+  }, [allPosts]);
 
-  useEffect(() => {
-    if (totalPages <= 1 || paused) return;
-    timerRef.current = setInterval(() => {
-      goToPage((pageIndex + 1) % totalPages);
-    }, ROTATE_INTERVAL);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [totalPages, pageIndex, paused]);
-
-  if (!visiblePosts.length) return null;
+  if (!allPosts.length) return null;
 
   return (
-    <section className="pt-4 sm:pt-8 w-full">
-      <div className="max-w-[1320px] mx-auto px-4">
-        <div className="flex gap-8">
-          {/* ══ LEFT: Articles ══ */}
-          <div
-            className="flex-1 min-w-0"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-          >
-            {/* Heading */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-[#121213]">Company Articles</h2>
-              <Link
-                href="/articles"
-                className="text-sm font-medium text-[#616C74] hover:text-[#0073FF] transition flex items-center gap-1"
-              >
-                View All →
-              </Link>
+    <section className="w-full bg-[#1D2125] py-10 md:py-14">
+      <div className="max-w-[1320px] mx-auto px-3 sm:px-4">
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-8 xl:gap-10 items-start">
+
+          {/* ================= LEFT: TOP OF THIS WEEK ================= */}
+          <div>
+            <div className="flex items-center gap-4 mb-8">
+              <h2 className="text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
+                Top of This Week
+              </h2>
+              <div className="flex-1 min-w-[40px] flex items-center">
+                <DiamondDot />
+                <span className="flex-1 h-px bg-white/15" />
+              </div>
             </div>
 
-            {/* Grid 2 × 3 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {visiblePosts.map((post, i) => {
-                const slug =
-                  typeof post.category === "object"
-                    ? post.category?.slug?.toLowerCase() || ""
-                    : String(post.category || "").toLowerCase();
-                const categoryName =
-                  typeof post.category === "object"
-                    ? post.category?.name || ""
-                    : String(post.category || "");
-                const badge = post.badge?.trim();
-                const tagText = badge || categoryName;
-
-                let tagClass = "bg-[#9CA3AF]";
-                if (badge) {
-                  tagClass = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]";
-                } else {
-                  const match = Object.keys(CATEGORY_COLORS).find((k) =>
-                    slug.includes(k)
-                  );
-                  if (match) tagClass = CATEGORY_COLORS[match];
-                }
-
-                // Image URL logic matching HomeCompanyArticles
-                const imageUrl = post.imageUrl?.startsWith("http")
-                  ? post.imageUrl
-                  : post.imageUrl
-                    ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-                    : "/placeholder.jpg";
-
-                const formattedDate = post.createdAt
-                  ? new Date(post.createdAt).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })
-                  : "";
+            <div className="space-y-7">
+              {visiblePosts.map((post) => {
+                const tag = getTag(post);
+                const date = formatDate(post);
 
                 return (
                   <article
-                    key={`${post.id}-${i}`}
-                    className={`bg-white rounded-md overflow-hidden border border-[#F0F0F0] shadow-sm
-                      transition-all duration-500
-                      ${fade ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}`}
+                    key={post.id}
+                    className="group flex flex-col sm:flex-row gap-4 sm:gap-5"
                   >
-                    {/* Image */}
                     <Link
                       href={`/post/${post.slug}`}
-                      className="block relative w-full aspect-[16/10] overflow-hidden bg-gray-100"
+                      className="relative w-full sm:w-[240px] lg:w-[280px] h-[180px] sm:h-[170px] rounded-[10px] overflow-hidden shrink-0"
                     >
                       <Image
-                        src={imageUrl}
+                        src={getImageUrl(post)}
                         alt={post.title}
                         fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-500 hover:scale-105"
-                        onError={(e) => {
-                          // If image fails to load, show a fallback
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const parent = target.parentElement;
-                          if (parent) {
-                            const fallback = document.createElement('div');
-                            fallback.className = 'w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-sm';
-                            fallback.textContent = 'No image available';
-                            parent.appendChild(fallback);
-                          }
-                        }}
+                        sizes="280px"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </Link>
 
-                    {/* Body */}
-                    <div className="p-4 sm:p-5 flex flex-col gap-2">
-                      {tagText && (
+                    <div className="min-w-0 flex-1 py-0.5">
+                      {tag.text && (
                         <span
-                          className={`${tagClass} text-white px-3 py-[3px] rounded-full rounded-tl-none
-                            w-fit text-[11px] font-semibold uppercase tracking-wide`}
+                          className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-2.5 py-[3px] rounded mb-2.5`}
                         >
-                          {tagText}
+                          {tag.text}
                         </span>
                       )}
 
-                      <h3 className="text-[15px] sm:text-[17px] font-bold text-[#121213] leading-snug line-clamp-2">
+                      <h4 className="text-[18px] sm:text-[20px] font-bold text-white leading-snug mb-2">
                         <Link
                           href={`/post/${post.slug}`}
-                          className="hover:text-[#0073FF] transition-colors"
+                          className="hover:text-[#7dd3fc] transition-colors"
                         >
                           {post.title}
                         </Link>
-                      </h3>
+                      </h4>
 
-                      {/* Meta */}
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-[#616C74]">
-                        <span>
+                      <p className="text-[14px] text-white/60 leading-relaxed mb-3 line-clamp-2">
+                        {excerptOf(post)}
+                      </p>
+
+                      <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px] text-white/65">
+                        <li>
                           By{" "}
-                          <span className="font-semibold text-[#121213]">
-                            {typeof post.author === 'object' 
-                              ? post.author?.name || "rstheme"
-                              : post.author || "rstheme"}
+                          <span className="text-white/90 font-medium">
+                            {getAuthorName(post)}
                           </span>
-                        </span>
-
-                        <span className="flex items-center gap-1">
-                          <svg
-                            className="w-3 h-3"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-                            <polyline points="16 7 22 7 22 13" />
-                          </svg>
-                          {post.views?.toLocaleString() ?? 0} Views
-                        </span>
-
-                        {formattedDate && (
-                          <span className="flex items-center gap-1">
-                            <svg
-                              className="w-3 h-3"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                              <line x1="16" y1="2" x2="16" y2="6" />
-                              <line x1="8" y1="2" x2="8" y2="6" />
-                              <line x1="3" y1="10" x2="21" y2="10" />
-                            </svg>
-                            {formattedDate}
-                          </span>
+                        </li>
+                        <li className="inline-flex items-center gap-1">
+                          <PulseIcon className="w-3.5 h-3.5 text-[#7dd3fc]" />
+                          {(post.views ?? 0).toLocaleString()} Views
+                        </li>
+                        {date && (
+                          <li className="inline-flex items-center gap-1">
+                            <CalendarIcon className="w-3.5 h-3.5 text-[#7dd3fc]" />
+                            {date}
+                          </li>
                         )}
-                      </div>
+                      </ul>
                     </div>
                   </article>
                 );
               })}
             </div>
 
-            {/* ── Pagination dots ── */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-8">
-                {Array.from({ length: totalPages }).map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => goToPage(i)}
-                    aria-label={`Go to page ${i + 1}`}
-                    className={`rounded-full transition-all duration-300
-                      ${i === pageIndex
-                        ? "w-6 h-2 bg-[#0073FF]"
-                        : "w-2 h-2 bg-[#D1D5DB] hover:bg-[#9CA3AF]"
-                      }`}
-                  />
-                ))}
-              </div>
-            )}
+            <div className="mt-10 flex justify-center">
+              {hasMore ? (
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((n) => n + LOAD_MORE_COUNT)}
+                  className="inline-flex items-center gap-2 bg-[#0073ff] hover:bg-[#0060d6] text-white text-[14px] font-semibold px-6 py-2.5 rounded-[4px] transition-colors"
+                >
+                  Load More
+                  <RefreshCw size={15} />
+                </button>
+              ) : (
+                <p className="text-[14px] text-white/60">🥰 That&apos;s all for now!</p>
+              )}
+            </div>
           </div>
 
-          {/* ══ RIGHT: Ads ══ */}
-          <aside className="hidden xl:block w-[300px] flex-shrink-0" aria-label="Sponsored">
-            <Banner placement="SIDEBAR" />
+          {/* ================= RIGHT SIDEBAR ================= */}
+          <aside className="space-y-5">
+            {/* Explore Categories */}
+            <div className="rounded-[10px] border border-white/10 bg-[#252A30] p-4 sm:p-5">
+              <h4 className="text-[18px] font-bold text-white mb-4">
+                Explore Categories
+              </h4>
+              <div className="space-y-2.5">
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.slug}
+                    href={`/topics/${cat.slug}`}
+                    className="group relative flex items-center justify-between h-[52px] px-3.5 rounded-[6px] overflow-hidden"
+                  >
+                    <Image
+                      src={cat.image}
+                      alt=""
+                      fill
+                      sizes="320px"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/55 group-hover:bg-black/45 transition-colors" />
+                    <div className="relative z-10 flex items-center gap-1.5 text-white">
+                      <h6 className="text-[14px] font-bold">{cat.name}</h6>
+                      <span className="text-[12px] text-white/85">({cat.count})</span>
+                    </div>
+                    <span className="relative z-10 flex h-7 w-7 items-center justify-center rounded-[4px] bg-black/40 text-white group-hover:bg-[#0073ff] transition-colors">
+                      <ArrowRight size={14} />
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Popular News */}
+            <div className="rounded-[10px] border border-white/10 bg-[#252A30] p-4 sm:p-5">
+              <h4 className="text-[18px] font-bold text-white mb-4">
+                Popular News
+              </h4>
+              <div className="space-y-4">
+                {popularPosts.map((post) => (
+                  <Link
+                    key={post.id}
+                    href={`/post/${post.slug}`}
+                    className="group flex items-start gap-3"
+                  >
+                    <div className="relative w-[58px] h-[58px] rounded-full overflow-hidden shrink-0">
+                      <Image
+                        src={getImageUrl(post)}
+                        alt={post.title}
+                        fill
+                        sizes="58px"
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h6 className="text-[14px] font-bold text-white leading-snug mb-1.5 line-clamp-2 group-hover:text-[#7dd3fc] transition-colors">
+                        {post.title}
+                      </h6>
+                      <ul className="flex flex-wrap items-center gap-x-2.5 text-[11px] text-white/65">
+                        <li>By {getAuthorName(post)}</li>
+                        <li className="inline-flex items-center gap-1">
+                          <PulseIcon className="w-3 h-3 text-[#7dd3fc]" />
+                          {(post.views ?? 0).toLocaleString()} Views
+                        </li>
+                      </ul>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Follow Us */}
+            <div className="rounded-[10px] border border-white/10 bg-[#252A30] p-4 sm:p-5">
+              <h4 className="text-[18px] font-bold text-white mb-4">
+                Follow Us
+              </h4>
+              <div className="space-y-2.5">
+                {SOCIALS.map(({ name, followers, href, bg, Icon }) => (
+                  <Link
+                    key={name}
+                    href={href}
+                    className={`flex items-center gap-3 h-[48px] px-3.5 rounded-[6px] text-white ${bg} hover:opacity-90 transition-opacity`}
+                  >
+                    <Icon size={16} />
+                    <span className="flex-1 text-[14px] font-bold">{name}</span>
+                    <span className="text-[12px] text-white/90">{followers}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </aside>
         </div>
       </div>

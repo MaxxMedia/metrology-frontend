@@ -70,7 +70,11 @@ export default function AlertMatchesPage() {
           {jobs.map((job) => (
             <div key={job.id} className="bg-white rounded-lg shadow-sm p-5">
               <Link
-                href={`/company/${job.Company?.slug ?? ""}`}
+                href={
+                  job.Company?.slug
+                    ? `/company/${job.Company.slug}`
+                    : `/jobs/${job.slug}`
+                }
                 className="font-semibold text-sm text-blue-600 hover:underline"
               >
                 {job.Company?.name || job.companyName || "Company"}

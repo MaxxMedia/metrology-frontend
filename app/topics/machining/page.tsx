@@ -24,7 +24,7 @@ export default async function MachiningPage() {
 
   // ================= ENGINEER POSTS =================
   const engineerPosts = posts.filter(
-    (p) => slugOf(p) === "machining"
+    (p) => slugOf(p) === "machine"
   )
 
   return (

@@ -275,12 +275,31 @@ export default function TeamManagementTab() {
         }
     };
 
-    const limitReached = teamEligibility?.canAdd === false;
+    // True when the current plan doesn't include Team Management at all
+    // (backend sends effectiveLimit = 0 for plans without the feature, e.g. Free)
+    const noTeamAccess =
+        teamEligibility !== null &&
+        !teamEligibility.isUnlimited &&
+        Number(teamEligibility.effectiveLimit) === 0;
+
+    // True when the plan supports team members but the active count has hit the cap
+    const limitReached =
+        teamEligibility !== null &&
+        !teamEligibility.isUnlimited &&
+        !noTeamAccess &&
+        (
+            teamEligibility.remaining !== null
+                ? teamEligibility.remaining <= 0
+                : teamEligibility.activeMembers >= Number(teamEligibility.effectiveLimit)
+        );
+
     const teamCountLabel = !teamEligibility
         ? null
         : teamEligibility.isUnlimited
             ? 'Unlimited'
-            : `${teamEligibility.activeMembers} / ${teamEligibility.effectiveLimit}`;
+            : noTeamAccess
+                ? 'Not available'
+                : `${teamEligibility.activeMembers} / ${teamEligibility.effectiveLimit}`;
 
     if (loading) {
         return (
@@ -326,12 +345,39 @@ export default function TeamManagementTab() {
                 </div>
             )}
 
-            {limitReached && (
-                <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-center gap-2">
-                    <AlertTriangle size={18} className="flex-shrink-0" />
-                    <span className="text-sm font-medium">
-                        You've reached your Team Profile limit.
-                    </span>
+            {/* Plan doesn't include Team Management at all */}
+            {noTeamAccess && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                        <AlertTriangle size={18} className="flex-shrink-0" />
+                        <span className="text-sm font-medium">
+                            {`Team Management isn't included in your ${teamEligibility?.planLabel || 'current'} plan. Upgrade your subscription to add team members.`}
+                        </span>
+                    </div>
+                    <a
+                        href="/packages"
+                        className="text-sm font-semibold text-amber-900 underline whitespace-nowrap"
+                    >
+                        Upgrade Plan
+                    </a>
+                </div>
+            )}
+
+            {/* Plan supports team members but the cap has been hit */}
+            {!noTeamAccess && limitReached && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                        <AlertTriangle size={18} className="flex-shrink-0" />
+                        <span className="text-sm font-medium">
+                            {`You've reached your team member limit (${teamEligibility?.activeMembers}/${teamEligibility?.effectiveLimit}) for the ${teamEligibility?.planLabel || 'current'} plan. Upgrade your subscription to add more members.`}
+                        </span>
+                    </div>
+                    <a
+                        href="/pricing"
+                        className="text-sm font-semibold text-amber-900 underline whitespace-nowrap"
+                    >
+                        Upgrade Plan
+                    </a>
                 </div>
             )}
 
@@ -432,15 +478,29 @@ export default function TeamManagementTab() {
                             </div>
                             <button
                                 onClick={() => setShowSearchModal(true)}
-                                disabled={limitReached}
+                                disabled={limitReached || noTeamAccess}
                                 className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                             >
                                 <Search size={18} />
                                 Search Candidates
                             </button>
-                            {limitReached && (
+
+                            {noTeamAccess && (
                                 <p className="text-sm text-amber-600 mt-2">
-                                    ⚠️ Team limit reached. Upgrade to add more members.
+                                    ⚠️ Team Management isn't part of your current package.{' '}
+                                    <a href="/pricing" className="underline font-medium">
+                                        Upgrade your plan
+                                    </a>{' '}
+                                    to unlock it.
+                                </p>
+                            )}
+                            {!noTeamAccess && limitReached && (
+                                <p className="text-sm text-amber-600 mt-2">
+                                    ⚠️ Team limit reached.{' '}
+                                    <a href="/pricing" className="underline font-medium">
+                                        Upgrade
+                                    </a>{' '}
+                                    to add more members.
                                 </p>
                             )}
                         </div>

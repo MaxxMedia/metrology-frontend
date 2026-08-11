@@ -148,10 +148,10 @@ export default function Banner({ placement, limit, sticky = true }: BannerProps)
         );
     }
 
-    // --- 970x250 leaderboard on a light background block ---
+    // --- 970x250 leaderboard on dark background (Nerio dark) ---
     if (BLOCK_PLACEMENTS.includes(placement)) {
         return (
-            <section className="py-10 px-6" style={{ backgroundColor: "#F8F9FA" }}>
+            <section className="py-10 px-6 bg-[#1D2125]">
                 <div className="max-w-[970px] w-full mx-auto flex justify-center">
                     <Link href={banner.targetUrl || "#"} target="_blank" rel="noopener noreferrer">
                         <div

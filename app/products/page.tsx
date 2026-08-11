@@ -16,7 +16,7 @@ export default async function ProductsPage() {
       : String(post.category || "").toLowerCase()
 
   const productPosts = posts.filter(
-    (p) => getCategorySlug(p) === "products"
+    (p) => getCategorySlug(p) === "video"
   )
 
   return (
