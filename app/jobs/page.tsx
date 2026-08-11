@@ -25,10 +25,11 @@ import {
   Star,
   Sparkles,
   AlertCircle,
+  Search,
 } from "lucide-react"
-// ✅ REMOVED: import { ApplyModal } from "@/components/ApplyModel"
-// No more popup — Easy Apply now submits directly using the candidate's
-// already-stored resume.
+import JobFeed from "@/components/job/JobFeed"
+import LocationAutocomplete from "@/components/job/Locationautocomplete"
+import Banner from "@/components/Banners/Banner"
 import { getMyResume } from "@/lib/api/candidate/resume"
 
 const FALLBACK_SKILLS = [
@@ -317,10 +318,10 @@ function JobDetailContent() {
 
   if (loading)
     return (
-      <div className="min-h-screen bg-[#F4F2EE] flex items-center justify-center" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+      <div className="min-h-screen bg-[#171A1E] text-white flex items-center justify-center" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
-          <p className="text-[16px] text-gray-500 font-medium">
+          <div className="w-10 h-10 rounded-full border-4 border-[#0073FF] border-t-transparent animate-spin" />
+          <p className="text-[16px] text-[#CCCCCC] font-medium">
             Loading job details...
           </p>
         </div>
@@ -329,12 +330,12 @@ function JobDetailContent() {
 
   if (!job)
     return (
-      <div className="min-h-screen bg-[#F4F2EE] flex items-center justify-center" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+      <div className="min-h-screen bg-[#171A1E] text-white flex items-center justify-center" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
         <div className="text-center">
-          <p className="text-[24px] font-semibold text-gray-700">
+          <p className="text-[24px] font-semibold text-white">
             Job not found
           </p>
-          <p className="text-[12px] text-gray-400 mt-1">
+          <p className="text-[12px] text-[#B8B8B8] mt-1">
             This listing may have been removed.
           </p>
         </div>
@@ -389,19 +390,19 @@ function JobDetailContent() {
   const externalUrl = job.applyUrl || job.linkedinUrl
 
   return (
-    <div className="min-h-screen bg-[#F4F2EE]" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+    <div className="min-h-screen bg-[#171A1E] text-white" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
       {/* Breadcrumb */}
-      <div className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-2 text-[12px] text-gray-500">
+      <div className="bg-[#1D2125] border-b border-[#292C30]">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-2 text-[12px] text-[#B8B8B8]">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-1 hover:text-blue-600 transition-colors"
+            className="flex items-center gap-1 hover:text-[#00B5ED] transition-colors"
           >
             <ArrowLeft size={15} />
             Back to Jobs
           </button>
-          <ChevronRight size={13} className="text-gray-300" />
-          <span className="text-gray-800 font-medium truncate">
+          <ChevronRight size={13} className="text-[#858585]" />
+          <span className="text-white font-medium truncate">
             {job.title}
           </span>
         </div>
@@ -412,10 +413,10 @@ function JobDetailContent() {
         {/* LEFT */}
         <div className="lg:col-span-2 space-y-4 min-w-0">
 
-          <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden">
+          <div className="bg-[#1D2125] border border-[#292C30] rounded-xl overflow-hidden shadow-md">
 
             {/* Banner */}
-            <div className="relative h-32 bg-gradient-to-br from-[#0B1E4D] via-[#142B63] to-[#1E3A8A] overflow-visible">
+            <div className="relative h-32 bg-gradient-to-r from-[#171A1E] via-[#1D2125] to-[#1D247B] overflow-visible">
               <div className="absolute -right-6 top-4 w-40 h-40 rounded-full bg-white/5" />
               <div className="absolute right-10 bottom-0 w-24 h-24 rounded-full bg-white/5" />
               <div className="absolute left-24 top-6 flex gap-1.5">
@@ -423,21 +424,21 @@ function JobDetailContent() {
                   <span key={i} className="w-1 h-1 rounded-full bg-white/30" />
                 ))}
               </div>
-              <div className="absolute right-4 top-4 w-2 h-2 rounded-full bg-blue-300/60" />
+              <div className="absolute right-4 top-4 w-2 h-2 rounded-full bg-[#00B5ED]" />
 
               {/* Floating Logo */}
               <div className="absolute left-8 right-8 -bottom-10 flex items-end justify-between">
-                <div className="w-20 h-20 rounded-xl bg-white border border-gray-200 shadow-lg overflow-hidden flex items-center justify-center">
+                <div className="w-20 h-20 rounded-xl bg-[#171A1E] border border-[#292C30] shadow-lg overflow-hidden flex items-center justify-center p-2">
                   {company.logoUrl ? (
                     <Image
                       src={company.logoUrl}
                       alt={companyName}
                       width={80}
                       height={80}
-                      className="object-contain w-full h-full p-2"
+                      className="object-contain w-full h-full"
                     />
                   ) : (
-                    <Building2 size={28} className="text-gray-400" />
+                    <Building2 size={28} className="text-[#858585]" />
                   )}
                 </div>
               </div>
@@ -446,7 +447,7 @@ function JobDetailContent() {
             {/* Content */}
             <div className="px-8 pt-14 pb-8">
               <div className="flex items-start justify-between gap-3 flex-wrap">
-                <h1 className="text-[24px] font-bold text-gray-900">
+                <h1 className="text-[24px] font-bold text-white">
                   {job.title}
                 </h1>
 
@@ -456,11 +457,11 @@ function JobDetailContent() {
                     <button
                       onClick={toggleSave}
                       disabled={savingJob}
-                      className="flex items-center gap-1.5 border border-blue-500 text-blue-600 bg-white px-5 py-2 rounded-full font-medium hover:bg-blue-50 transition-colors text-[15px]"
+                      className="flex items-center gap-1.5 border border-[#0073FF] text-[#00B5ED] bg-[#171A1E] px-5 py-2 rounded-full font-medium hover:bg-[#292C30] transition-colors text-[15px]"
                     >
                       <Bookmark
                         size={16}
-                        className={saved ? "fill-blue-600 text-blue-600" : ""}
+                        className={saved ? "fill-[#00B5ED] text-[#00B5ED]" : ""}
                       />
                       {saved ? "Saved" : "Save"}
                     </button>
@@ -468,9 +469,9 @@ function JobDetailContent() {
                     {hasApplied ? (
                       <button
                         disabled
-                        className="flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200 px-6 py-2 rounded-full font-medium cursor-default text-[15px]"
+                        className="flex items-center gap-1.5 bg-[#00B5ED]/20 text-[#00B5ED] border border-[#00B5ED] px-6 py-2 rounded-full font-medium cursor-default text-[15px]"
                       >
-                        <CheckCircle2 size={16} className="text-green-600" />
+                        <CheckCircle2 size={16} className="text-[#00B5ED]" />
                         Applied
                       </button>
                     ) : job.isExternal ? (
@@ -479,7 +480,7 @@ function JobDetailContent() {
                           href={externalUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors text-[15px]"
+                          className="bg-[#0073FF] hover:bg-[#0060d6] text-white px-6 py-2 rounded-full font-medium transition-colors text-[15px]"
                         >
                           Apply on LinkedIn
                         </a>
@@ -489,7 +490,7 @@ function JobDetailContent() {
                         onClick={handleApply}
                         disabled={applyDisabled}
                         title={profileIncomplete ? readiness?.message : undefined}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors disabled:opacity-60 text-[15px]"
+                        className="bg-[#0073FF] hover:bg-[#0060d6] text-white px-6 py-2 rounded-full font-medium transition-colors disabled:opacity-60 text-[15px]"
                       >
                         {applying ? "Applying..." : "Easy Apply"}
                       </button>
@@ -497,7 +498,7 @@ function JobDetailContent() {
                   </div>
                   {/* ✅ ADDED: inline error instead of a modal */}
                   {applyError && (
-                    <p className="text-[12px] text-red-600 max-w-xs text-right flex items-center gap-1 justify-end">
+                    <p className="text-[12px] text-red-400 max-w-xs text-right flex items-center gap-1 justify-end">
                       <AlertCircle size={12} className="flex-shrink-0" />
                       {applyError}
                     </p>
@@ -505,7 +506,7 @@ function JobDetailContent() {
                   {/* ✅ ADDED: proactive nudge to complete profile, shown even
                       before the user clicks Easy Apply */}
                   {!applyError && profileIncomplete && !hasApplied && !job.isExternal && (
-                    <p className="text-[12px] text-amber-600 max-w-xs text-right">
+                    <p className="text-[12px] text-[#00B5ED] max-w-xs text-right">
                       Complete your profile ({readiness?.missingFields.join(", ")}) to apply.
                     </p>
                   )}
@@ -513,13 +514,13 @@ function JobDetailContent() {
               </div>
 
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-[16px] font-semibold text-gray-700">
+                <span className="text-[16px] font-semibold text-[#F7F7F7]">
                   {companyName}
                 </span>
-                <CheckCircle2 size={15} className="text-blue-600 fill-blue-100" />
+                <CheckCircle2 size={15} className="text-[#00B5ED]" />
               </div>
 
-              <p className="text-[16px] text-gray-500 mt-2">
+              <p className="text-[16px] text-[#B8B8B8] mt-2">
                 {job.location} • Posted{" "}
                 {daysAgo === 0
                   ? "today"
@@ -538,7 +539,7 @@ function JobDetailContent() {
                   <Tag icon={<Briefcase size={12} />} label={job.employmentType} />
                 )}
                 <Tag
-                  icon={<span className="w-2 h-2 rounded-full bg-green-500" />}
+                  icon={<span className="w-2 h-2 rounded-full bg-[#00B5ED]" />}
                   label="Actively hiring"
                   variant="success"
                 />
@@ -554,38 +555,38 @@ function JobDetailContent() {
           </div>
 
           {/* Description */}
-          <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h2 className="text-[20px] font-bold text-gray-900 mb-4">
+          <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-6 shadow-md text-white">
+            <h2 className="text-[20px] font-bold text-white mb-4">
               About the job
             </h2>
 
             <div className="relative">
               <div
-                className={`prose max-w-none text-[16px] text-black-700
+                className={`prose prose-invert max-w-none text-[16px] text-[#CCCCCC]
                            prose-h1:text-[24px] prose-h2:text-[20px]
-                           prose-h1:font-bold prose-h2:font-semibold
+                           prose-h1:font-bold prose-h2:font-semibold prose-h1:text-white prose-h2:text-white
                            prose-ul:list-disc prose-ul:pl-5
-                           prose-strong:text-gray-900
+                           prose-strong:text-white
                            break-words overflow-hidden
                            ${!showFullDesc ? "max-h-40 overflow-hidden" : ""}`}
                 dangerouslySetInnerHTML={{ __html: job.description }}
               />
               {!showFullDesc && (
-                <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#1D2125] to-transparent pointer-events-none" />
               )}
             </div>
 
             <button
               onClick={() => setShowFullDesc(!showFullDesc)}
-              className="flex items-center gap-1 text-[16px] font-semibold text-blue-700 hover:text-blue-800 mt-2"
+              className="flex items-center gap-1 text-[16px] font-semibold text-[#00B5ED] hover:underline mt-2"
             >
               {showFullDesc ? "Show less" : "Show more"}
               {showFullDesc ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
 
             {benefits.length > 0 && (
-              <div className="mt-6 pt-5 border-t border-gray-100">
-                <h3 className="text-[15px] font-bold text-gray-900 mb-3">Benefits</h3>
+              <div className="mt-6 pt-5 border-t border-[#292C30]">
+                <h3 className="text-[15px] font-bold text-white mb-3">Benefits</h3>
                 <div className="flex flex-wrap gap-2">
                   {benefits.map((b, i) => (
                     <Tag key={i} label={b} variant="muted" />
@@ -597,50 +598,48 @@ function JobDetailContent() {
           </div>
 
           {/* About Company */}
-          <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h3 className="text-[15px] font-bold text-gray-900 uppercase tracking-wide mb-4">
+          <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-6 shadow-md text-white">
+            <h3 className="text-[15px] font-bold text-[#F7F7F7] uppercase tracking-wide mb-4">
               About the company
             </h3>
 
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-md overflow-hidden bg-white border border-gray-100 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg overflow-hidden bg-[#171A1E] border border-[#292C30] flex items-center justify-center p-1">
                   {company.logoUrl ? (
                     <Image
                       src={company.logoUrl}
                       alt={companyName}
                       width={48}
                       height={48}
-                      className="object-contain w-full h-full p-1.5"
+                      className="object-contain w-full h-full"
                     />
                   ) : (
-                    <Building2 size={18} className="text-gray-400" />
+                    <Building2 size={18} className="text-[#858585]" />
                   )}
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <p className="text-[15px] font-semibold text-gray-800">{companyName}</p>
-                    <CheckCircle2 size={13} className="text-blue-600 fill-blue-100" />
+                    <p className="text-[15px] font-semibold text-white">{companyName}</p>
+                    <CheckCircle2 size={13} className="text-[#00B5ED]" />
                   </div>
                   {company.industry && (
-                    <p className="text-[12px] text-gray-400">{company.industry}</p>
+                    <p className="text-[12px] text-[#B8B8B8]">{company.industry}</p>
                   )}
                   {company.employeeCount && (
-                    <p className="text-[12px] text-gray-400">{company.employeeCount} employees</p>
+                    <p className="text-[12px] text-[#B8B8B8]">{company.employeeCount} employees</p>
                   )}
                 </div>
               </div>
-
-
             </div>
 
-            <p className="text-[16px] text-black-500 leading-relaxed mt-4">
+            <p className="text-[16px] text-[#CCCCCC] leading-relaxed mt-4">
               {company.description ||
                 "More information about this company is not available at the moment."}
             </p>
 
             {(company.website || company.industry || company.employeeCount || company.headquarters || company.founded) && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-5 pt-5 border-t border-gray-100">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-5 pt-5 border-t border-[#292C30]">
                 {company.website && (
                   <CompanyMeta icon={<Globe size={13} />} label="Website" value={company.website} />
                 )}
@@ -661,15 +660,15 @@ function JobDetailContent() {
           </div>
 
           {/* Meet the hiring team */}
-          <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h3 className="text-[15px] font-bold text-gray-900 uppercase tracking-wide mb-4">
+          <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-6 shadow-md text-white">
+            <h3 className="text-[15px] font-bold text-[#F7F7F7] uppercase tracking-wide mb-4">
               Meet the hiring team
             </h3>
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-5 flex-wrap">
                 {hiringTeam.map((person, i) => (
                   <div key={i} className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-[#171A1E] border border-[#292C30] flex items-center justify-center flex-shrink-0">
                       {person.avatarUrl ? (
                         <Image
                           src={person.avatarUrl}
@@ -679,12 +678,12 @@ function JobDetailContent() {
                           className="object-cover w-full h-full"
                         />
                       ) : (
-                        <Users size={16} className="text-gray-400" />
+                        <Users size={16} className="text-[#858585]" />
                       )}
                     </div>
                     <div>
-                      <p className="text-[15px] font-semibold text-gray-800">{person.name}</p>
-                      <p className="text-[12px] text-gray-400">{person.role}</p>
+                      <p className="text-[15px] font-semibold text-white">{person.name}</p>
+                      <p className="text-[12px] text-[#B8B8B8]">{person.role}</p>
                     </div>
                   </div>
                 ))}
@@ -695,32 +694,32 @@ function JobDetailContent() {
 
           {/* Job match (candidates only) */}
           {user?.role === "candidate" && (
-            <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-              <h3 className="text-[15px] font-bold text-gray-900 uppercase tracking-wide mb-1">
+            <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-6 shadow-md text-white">
+              <h3 className="text-[15px] font-bold text-[#F7F7F7] uppercase tracking-wide mb-1">
                 Job match
               </h3>
-              <p className="text-[12px] text-gray-500 flex items-center gap-1.5 mb-4">
-                <CheckCircle2 size={13} className="text-gray-400" />
+              <p className="text-[12px] text-[#B8B8B8] flex items-center gap-1.5 mb-4">
+                <CheckCircle2 size={13} className="text-[#00B5ED]" />
                 Your profile matches {matchPercent}% of the qualifications for this job.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-5">
                 <div className="flex-1">
-                  <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-[#171A1E] rounded-full overflow-hidden border border-[#292C30]">
                     <div
-                      className="h-full bg-green-500 rounded-full"
+                      className="h-full bg-[#00B5ED] rounded-full"
                       style={{ width: `${matchPercent}%` }}
                     />
                   </div>
-                  <p className="text-[12px] font-semibold text-green-600 mt-1.5">{matchLabel}</p>
+                  <p className="text-[12px] font-semibold text-[#00B5ED] mt-1.5">{matchLabel}</p>
 
-                  <p className="text-[12px] font-semibold text-gray-700 mt-4 mb-2">
+                  <p className="text-[12px] font-semibold text-white mt-4 mb-2">
                     Top skills that match this job
                   </p>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
                     {(matchedSkills.length > 0 ? matchedSkills : requiredSkills).map((skill, i) => (
-                      <span key={i} className="flex items-center gap-1.5 text-[12px] text-gray-600">
-                        <CheckCircle2 size={12} className="text-green-500" />
+                      <span key={i} className="flex items-center gap-1.5 text-[12px] text-[#CCCCCC]">
+                        <CheckCircle2 size={12} className="text-[#00B5ED]" />
                         {skill}
                       </span>
                     ))}
@@ -728,17 +727,17 @@ function JobDetailContent() {
                 </div>
 
                 {missingSkills.length > 0 && (
-                  <div className="sm:w-56 flex-shrink-0 bg-gray-50 rounded-md p-4">
-                    <p className="flex items-center gap-1.5 text-[12px] font-semibold text-gray-800 mb-1">
-                      <Lightbulb size={13} className="text-amber-500" />
+                  <div className="sm:w-56 flex-shrink-0 bg-[#171A1E] border border-[#292C30] rounded-lg p-4">
+                    <p className="flex items-center gap-1.5 text-[12px] font-semibold text-white mb-1">
+                      <Lightbulb size={13} className="text-[#00B5ED]" />
                       Stand out from other applicants
                     </p>
-                    <p className="text-[12px] text-gray-500 mb-2">Add these skills to your profile</p>
+                    <p className="text-[12px] text-[#B8B8B8] mb-2">Add these skills to your profile</p>
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {missingSkills.map((skill, i) => (
                         <span
                           key={i}
-                          className="text-[12px] font-medium px-2.5 py-1 rounded-full bg-white border border-gray-200 text-gray-600"
+                          className="text-[12px] font-medium px-2.5 py-1 rounded-full bg-[#1D2125] border border-[#292C30] text-[#00B5ED]"
                         >
                           {skill}
                         </span>
@@ -753,11 +752,11 @@ function JobDetailContent() {
 
           {/* Similar Jobs */}
           {otherJobs.length > 0 && (
-            <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-              <h3 className="text-[15px] font-bold text-gray-900 uppercase tracking-wide mb-4">
+            <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-6 shadow-md text-white">
+              <h3 className="text-[15px] font-bold text-[#F7F7F7] uppercase tracking-wide mb-4">
                 Similar jobs
               </h3>
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-[#292C30]">
                 {otherJobs.map((item) => (
                   <Link
                     key={item.id}
@@ -765,24 +764,24 @@ function JobDetailContent() {
                     className="flex items-center justify-between gap-3 py-3 group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 rounded-md bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
-                        <Building2 size={14} className="text-gray-500" />
+                      <div className="w-9 h-9 rounded-lg bg-[#171A1E] border border-[#292C30] flex items-center justify-center flex-shrink-0">
+                        <Building2 size={14} className="text-[#858585]" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[15px] font-semibold text-gray-800 group-hover:text-blue-600 transition-colors truncate">
+                        <p className="text-[15px] font-semibold text-white group-hover:text-[#00B5ED] transition-colors truncate">
                           {item.title}
                         </p>
-                        <p className="text-[12px] text-gray-500 truncate">
+                        <p className="text-[12px] text-[#B8B8B8] truncate">
                           {item.company?.name || item.companyName}
                           {item.salaryRange && ` • ${item.salaryRange}`}
                         </p>
-                        <p className="text-[12px] text-gray-400 flex items-center gap-1 mt-0.5">
+                        <p className="text-[12px] text-[#858585] flex items-center gap-1 mt-0.5">
                           <MapPin size={10} />
                           {item.location}
                         </p>
                       </div>
                     </div>
-                    <button className="border border-gray-300 hover:border-blue-600 hover:text-blue-600 text-gray-500 text-[12px] font-semibold px-4 py-1.5 rounded-full flex-shrink-0 transition-colors">
+                    <button className="border border-[#292C30] hover:border-[#0073FF] hover:text-[#0073FF] text-[#CCCCCC] text-[12px] font-semibold px-4 py-1.5 rounded-full flex-shrink-0 transition-colors">
                       Save
                     </button>
                   </Link>
@@ -797,8 +796,8 @@ function JobDetailContent() {
 
           {/* People also viewed */}
           {otherJobs.length > 0 && (
-            <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-              <h3 className="text-[15px] font-bold text-gray-900 mb-4">
+            <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-6 shadow-md text-white">
+              <h3 className="text-[15px] font-bold text-[#F7F7F7] mb-4">
                 People also viewed
               </h3>
 
@@ -807,31 +806,31 @@ function JobDetailContent() {
                   <Link
                     key={item.id}
                     href={`/jobs/${item.slug}`}
-                    className="flex items-start gap-3 p-3 -mx-3 rounded-md hover:bg-gray-50 transition-colors group"
+                    className="flex items-start gap-3 p-3 -mx-3 rounded-lg hover:bg-[#171A1E] transition-colors group"
                   >
-                    <div className="w-8 h-8 rounded-md bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Building2 size={12} className="text-gray-500" />
+                    <div className="w-8 h-8 rounded-lg bg-[#171A1E] border border-[#292C30] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Building2 size={12} className="text-[#858585]" />
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className="text-[15px] font-semibold text-gray-800 group-hover:text-blue-600 transition-colors truncate">
+                      <p className="text-[15px] font-semibold text-white group-hover:text-[#00B5ED] transition-colors truncate">
                         {item.title}
                       </p>
-                      <p className="text-[12px] text-gray-500 mt-0.5 truncate">
+                      <p className="text-[12px] text-[#B8B8B8] mt-0.5 truncate">
                         {item.company?.name || item.companyName}
                       </p>
-                      <p className="text-[12px] text-gray-400 mt-0.5">
+                      <p className="text-[12px] text-[#858585] mt-0.5">
                         {item.location}
                       </p>
                     </div>
 
-                    <Bookmark size={14} className="text-gray-300 group-hover:text-blue-400 transition-colors flex-shrink-0 mt-1" />
+                    <Bookmark size={14} className="text-[#858585] group-hover:text-[#00B5ED] transition-colors flex-shrink-0 mt-1" />
                   </Link>
                 ))}
               </div>
 
               {otherJobs.length > 3 && (
-                <button className="flex items-center gap-1 text-[15px] font-semibold text-blue-700 hover:text-blue-800 mt-2">
+                <button className="flex items-center gap-1 text-[15px] font-semibold text-[#00B5ED] hover:underline mt-2">
                   Show more jobs
                   <ChevronRight size={14} />
                 </button>
@@ -840,26 +839,26 @@ function JobDetailContent() {
           )}
 
           {/* Job insights */}
-          <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h3 className="text-[15px] font-bold text-gray-900 mb-4">
+          <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-6 shadow-md text-white">
+            <h3 className="text-[15px] font-bold text-[#F7F7F7] mb-4">
               Job insights
             </h3>
 
             <div className="space-y-4">
               <InsightRow
-                icon={<FileText size={15} className="text-gray-400" />}
+                icon={<FileText size={15} className="text-[#00B5ED]" />}
                 title={`${applicants} applicants`}
                 subtitle="Viewed recently"
               />
               {job.experience && (
                 <InsightRow
-                  icon={<TrendingUp size={15} className="text-gray-400" />}
+                  icon={<TrendingUp size={15} className="text-[#00B5ED]" />}
                   title="Experience level"
                   subtitle={job.experience}
                 />
               )}
               <InsightRow
-                icon={<MapPin size={15} className="text-gray-400" />}
+                icon={<MapPin size={15} className="text-[#00B5ED]" />}
                 title="Location"
                 subtitle={job.location}
               />
@@ -867,16 +866,16 @@ function JobDetailContent() {
           </div>
 
           {/* Trending skills */}
-          <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h3 className="text-[15px] font-bold text-gray-900 mb-4 flex items-center gap-1.5">
-              <Sparkles size={14} className="text-blue-500" />
+          <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-6 shadow-md text-white">
+            <h3 className="text-[15px] font-bold text-[#F7F7F7] mb-4 flex items-center gap-1.5">
+              <Sparkles size={14} className="text-[#00B5ED]" />
               Trending skills for this role
             </h3>
             <div className="flex flex-wrap gap-2">
               {trendingSkills.map((skill, i) => (
                 <span
                   key={i}
-                  className="text-[12px] font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-600"
+                  className="text-[12px] font-medium px-3 py-1.5 rounded-full bg-[#171A1E] text-[#00B5ED] border border-[#292C30]"
                 >
                   {skill}
                 </span>
@@ -885,8 +884,8 @@ function JobDetailContent() {
           </div>
 
           {/* Explore more */}
-          <div className="bg-white rounded-md shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-6">
-            <h3 className="text-[15px] font-bold text-gray-900 mb-4">
+          <div className="bg-[#1D247B] border border-[#292C30] rounded-xl p-6 shadow-md text-white">
+            <h3 className="text-[15px] font-bold text-white mb-4">
               Explore more
             </h3>
             <div className="space-y-4">
@@ -898,29 +897,272 @@ function JobDetailContent() {
           </div>
         </div>
       </div>
-
-      {/* ✅ REMOVED: <ApplyModal /> — no popup anymore, apply is one-click */}
     </div>
   )
 }
 
 // ✅ ADDED: default export wraps the client component in Suspense so
 // useSearchParams() doesn't break static export / build.
+function JobPageContainer() {
+  const params = useParams<{ slug?: string }>()
+  const searchParams = useSearchParams()
+  const slug = params?.slug || searchParams?.get("slug")
+
+  if (slug) {
+    return <JobDetailContent />
+  }
+
+  return <JobsListingContent />
+}
+
+function JobsListingContent() {
+  const [role, setRole] = useState<string | null>(null)
+  const [loadingRole, setLoadingRole] = useState(true)
+
+  const [filters, setFilters] = useState({
+    type: "",
+    category: "",
+    remote: false,
+    location: "",
+  })
+
+  const handleFilterChange = (field: string, value: string | boolean) => {
+    setFilters((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleSearch = () => {
+    (document.activeElement as HTMLElement | null)?.blur()
+    document
+      .getElementById("job-results")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      setLoadingRole(false)
+      return
+    }
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]))
+      setRole(payload.role?.toLowerCase() || null)
+    } catch (err) {
+      console.error(err)
+      setRole(null)
+    } finally {
+      setLoadingRole(false)
+    }
+  }, [])
+
+  const heroContent = {
+    guest: {
+      badge: "Manufacturing • Engineering • Technology",
+      title1: "Manufacturing Careers",
+      title2: "& Hiring Made Easy",
+      description:
+        "Connect skilled professionals with leading manufacturing companies. Explore exciting career opportunities or recruit top talent—all in one platform.",
+    },
+    candidate: {
+      badge: "Find Your Dream Job",
+      title1: "Find Your Next",
+      title2: "Manufacturing Career",
+      description:
+        "Explore manufacturing, engineering, automation, CNC machining and industrial technology opportunities from trusted employers worldwide.",
+    },
+    recruiter: {
+      badge: "Recruit Top Talent",
+      title1: "Hire the Best",
+      title2: "Manufacturing Talent",
+      description:
+        "Reach qualified engineers, CNC operators, maintenance technicians and production specialists to grow your workforce faster.",
+    },
+  }
+
+  const hero =
+    role === "candidate"
+      ? heroContent.candidate
+      : role === "recruiter"
+      ? heroContent.recruiter
+      : heroContent.guest
+
+  return (
+    <div className="bg-[#171A1E] text-white min-h-screen relative" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+
+      {/* ================= HERO ================= */}
+      <section className="relative bg-gradient-to-r from-[#171A1E] via-[#1D2125] to-[#1D247B] border-b border-[#292C30] overflow-hidden">
+        <div className="relative max-w-[1520px] mx-auto px-6 py-14 md:py-16">
+          {!loadingRole && (
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6">
+              <div className="max-w-3xl">
+                <div className="inline-flex items-center gap-2 rounded-full bg-[#00B5ED] px-3.5 py-1.5 shadow-md">
+                  <span className="h-2 w-2 rounded-full bg-white animate-pulse"></span>
+                  <span className="text-xs md:text-sm font-bold tracking-wide uppercase text-white">
+                    {hero.badge}
+                  </span>
+                </div>
+
+                <h1 className="mt-6 text-4xl md:text-5xl font-extrabold leading-tight text-white">
+                  {hero.title1}{" "}
+                  <span className="block text-[#00B5ED]">
+                    {hero.title2}
+                  </span>
+                </h1>
+
+                <p className="mt-4 text-base md:text-lg leading-relaxed text-[#CCCCCC] max-w-xl">
+                  {hero.description}
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                {(!role || role === "candidate") && (
+                  <Link
+                    href={role === "candidate" ? "#job-results" : "/signup?role=candidate"}
+                    className="inline-flex items-center justify-center px-7 py-3.5 rounded-xl bg-[#0073FF] text-white text-base font-bold shadow-lg hover:bg-[#0060d6] transition-all duration-200"
+                  >
+                    Apply for Jobs
+                  </Link>
+                )}
+
+                {(!role || role === "recruiter") && (
+                  <Link
+                    href={role === "recruiter" ? "/recruiter/jobs/new" : "/signup?role=recruiter"}
+                    className="inline-flex items-center justify-center px-7 py-3.5 rounded-xl border border-[#00B5ED] text-[#00B5ED] bg-[#171A1E] text-base font-bold hover:bg-[#00B5ED] hover:text-white transition-all duration-200"
+                  >
+                    Post a Job
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ================= FILTER BAR ================= */}
+      <section className="max-w-[1520px] mx-auto px-6 -mt-8 relative z-10">
+        <div className="bg-[#1D2125] rounded-2xl shadow-2xl border border-[#292C30] px-6 py-5">
+          <div className="flex flex-col md:flex-row md:items-end gap-5">
+
+            {/* Type */}
+            <div className="w-full md:w-[170px]">
+              <label className="block text-[11px] font-semibold tracking-wide text-[#B8B8B8] uppercase mb-1.5">
+                Type
+              </label>
+              <select
+                value={filters.type}
+                onChange={(e) => handleFilterChange("type", e.target.value)}
+                className="w-full text-sm bg-[#171A1E] text-white border border-[#292C30] rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#0073FF]"
+              >
+                <option value="">Any Type</option>
+                <option value="full-time">Full Time</option>
+                <option value="internship">Internship</option>
+              </select>
+            </div>
+
+            {/* Category */}
+            <div className="w-full md:w-[190px]">
+              <label className="block text-[11px] font-semibold tracking-wide text-[#B8B8B8] uppercase mb-1.5">
+                Category
+              </label>
+              <select
+                value={filters.category}
+                onChange={(e) => handleFilterChange("category", e.target.value)}
+                className="w-full text-sm bg-[#171A1E] text-white border border-[#292C30] rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#0073FF]"
+              >
+                <option value="">Any Category</option>
+                <option value="manufacturing">Manufacturing</option>
+                <option value="engineering">Engineering</option>
+                <option value="technology">Technology</option>
+                <option value="design">Design</option>
+              </select>
+            </div>
+
+            {/* Remote */}
+            <div className="w-full md:w-auto">
+              <label className="block text-[11px] font-semibold tracking-wide text-[#B8B8B8] uppercase mb-1.5">
+                Remote?
+              </label>
+              <label className="flex items-center gap-2 h-[42px] text-sm text-[#CCCCCC] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filters.remote}
+                  onChange={(e) => handleFilterChange("remote", e.target.checked)}
+                  className="w-4 h-4 rounded border-[#292C30] text-[#0073FF] focus:ring-[#0073FF]"
+                />
+                Yes
+              </label>
+            </div>
+
+            {/* Location */}
+            <div className="w-full md:flex-1">
+              <label className="block text-[11px] font-semibold tracking-wide text-[#B8B8B8] uppercase mb-1.5">
+                Location
+              </label>
+              <LocationAutocomplete
+                value={filters.location}
+                onChange={(val) => handleFilterChange("location", val)}
+              />
+            </div>
+
+            {/* Search */}
+            <div className="w-full md:w-auto">
+              <button
+                onClick={handleSearch}
+                className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#0073FF] hover:bg-[#0060d6] text-white text-sm font-bold px-7 py-3 rounded-lg shadow-md transition-all duration-200 whitespace-nowrap"
+              >
+                <Search size={16} />
+                Search
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ================= JOB LIST ================= */}
+      <section id="job-results" className="max-w-[1520px] mx-auto px-6 py-12">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-white">
+            Explore Jobs
+          </h2>
+          <p className="mt-2 text-sm text-[#CCCCCC] max-w-2xl">
+            Browse the latest manufacturing, engineering, tooling, automation, and industrial technology opportunities.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+          {/* Job Feed */}
+          <div>
+            <JobFeed isPublic filters={filters} />
+          </div>
+
+          {/* Sidebar */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-24 space-y-6">
+              <Banner placement="JOB_RIGHT" />
+            </div>
+          </aside>
+        </div>
+      </section>
+
+    </div>
+  )
+}
+
 export default function JobDetailPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#F4F2EE] flex items-center justify-center" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+        <div className="min-h-screen bg-[#171A1E] text-white flex items-center justify-center" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
           <div className="flex flex-col items-center gap-3">
-            <div className="w-10 h-10 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
-            <p className="text-[16px] text-gray-500 font-medium">
-              Loading job details...
+            <div className="w-10 h-10 rounded-full border-4 border-[#0073FF] border-t-transparent animate-spin" />
+            <p className="text-[16px] text-[#CCCCCC] font-medium">
+              Loading jobs...
             </p>
           </div>
         </div>
       }
     >
-      <JobDetailContent />
+      <JobPageContainer />
     </Suspense>
   )
 }
@@ -929,9 +1171,9 @@ export default function JobDetailPage() {
 
 function Tag({ icon, label, variant = "default" }: any) {
   const variants: any = {
-    default: "bg-blue-50 text-blue-700",
-    muted: "bg-gray-100 text-gray-500",
-    success: "bg-green-50 text-green-700",
+    default: "bg-[#171A1E] text-[#00B5ED] border border-[#292C30]",
+    muted: "bg-[#171A1E] text-[#CCCCCC] border border-[#292C30]",
+    success: "bg-[#00B5ED]/20 text-[#00B5ED] border border-[#00B5ED]",
   }
   return (
     <span
@@ -946,11 +1188,11 @@ function Tag({ icon, label, variant = "default" }: any) {
 function CompanyMeta({ icon, label, value }: any) {
   return (
     <div>
-      <p className="flex items-center gap-1.5 text-[12px] text-gray-400 font-medium mb-1">
+      <p className="flex items-center gap-1.5 text-[12px] text-[#B8B8B8] font-medium mb-1">
         {icon}
         {label}
       </p>
-      <p className="text-[12px] text-gray-800 font-semibold truncate">{value}</p>
+      <p className="text-[12px] text-white font-semibold truncate">{value}</p>
     </div>
   )
 }
@@ -960,8 +1202,8 @@ function InsightRow({ icon, title, subtitle }: any) {
     <div className="flex items-start gap-3">
       <div className="mt-0.5">{icon}</div>
       <div>
-        <p className="text-[15px] font-semibold text-gray-800">{title}</p>
-        <p className="text-[12px] text-gray-400">{subtitle}</p>
+        <p className="text-[15px] font-semibold text-white">{title}</p>
+        <p className="text-[12px] text-[#B8B8B8]">{subtitle}</p>
       </div>
     </div>
   )
@@ -970,12 +1212,12 @@ function InsightRow({ icon, title, subtitle }: any) {
 function ExploreRow({ icon, title, subtitle, href }: any) {
   return (
     <Link href={href} className="flex items-start gap-3 group">
-      <div className="mt-0.5 text-gray-400 group-hover:text-blue-600 transition-colors">{icon}</div>
+      <div className="mt-0.5 text-[#00B5ED] group-hover:text-white transition-colors">{icon}</div>
       <div>
-        <p className="text-[15px] font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+        <p className="text-[15px] font-semibold text-white group-hover:text-[#00B5ED] transition-colors">
           {title}
         </p>
-        <p className="text-[12px] text-gray-400">{subtitle}</p>
+        <p className="text-[12px] text-[#CCCCCC]">{subtitle}</p>
       </div>
     </Link>
   )

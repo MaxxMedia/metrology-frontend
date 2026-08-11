@@ -265,15 +265,20 @@ export default function JobFeed({
     allJobs.some((j) => j.location && !(j.location in locationCache))
 
   if (loading) {
-    return <div className="p-10">Loading jobs...</div>
+    return (
+      <div className="p-12 text-center text-[#CCCCCC] bg-[#1D2125] border border-[#292C30] rounded-xl">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#0073FF] mx-auto mb-3"></div>
+        <p className="text-sm font-medium">Loading manufacturing jobs...</p>
+      </div>
+    )
   }
 
   if (!loading && filteredJobs.length === 0) {
     return (
-      <div className="p-10 text-center text-gray-500 bg-white rounded-md shadow-sm">
+      <div className="p-10 text-center text-[#CCCCCC] bg-[#1D2125] border border-[#292C30] rounded-xl">
         No jobs match your filters. Try adjusting them.
         {isResolvingLocations && (
-          <p className="text-xs text-gray-400 mt-2">
+          <p className="text-xs text-[#858585] mt-2">
             Still refining location matches…
           </p>
         )}
@@ -283,7 +288,7 @@ export default function JobFeed({
 
   return (
     <>
-      <main className="space-y-3">
+      <main className="space-y-4">
         {pagedJobs.map(job => {
           const salary = formatSalary(job.salaryMin, job.salaryMax)
 
@@ -291,12 +296,12 @@ export default function JobFeed({
             <div
               key={job.id}
               onClick={() => router.push(`/jobs/${job.slug}`)}
-              className="bg-[#fafbfc] hover:bg-white hover:shadow-sm border border-gray-100 rounded-md px-5 py-4 transition cursor-pointer"
+              className="bg-[#1D2125] hover:bg-[#292C30]/40 border border-[#292C30] hover:border-[#0073FF] rounded-xl px-6 py-5 transition-all duration-200 cursor-pointer shadow-sm text-white"
             >
               <div className="flex items-start justify-between gap-4">
                 {/* LEFT: company / title / type + salary */}
-                <div className="min-w-0">
-                  <p className="text-sm text-gray-500 truncate">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm text-[#B8B8B8] truncate">
                     <span
                       onClick={(e) => {
                         e.stopPropagation()
@@ -308,30 +313,36 @@ export default function JobFeed({
                           router.push(`/jobs/${job.slug}`)
                         }
                       }}
-                      className="font-semibold text-gray-900 hover:underline"
+                      className="font-bold text-[#00B5ED] hover:underline"
                     >
                       {job.Company?.name || (job as any).companyName || "Company"}
                     </span>{" "}
                     is hiring
                   </p>
 
-                  <h2 className="text-lg md:text-xl font-bold text-red-500 mt-0.5 truncate">
+                  <h2 className="text-lg md:text-xl font-bold text-white mt-1 truncate">
                     {job.title}
                   </h2>
 
-                  <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wide mt-2 flex flex-wrap gap-x-3">
-                    <span>{job.employmentType || "Full Time"}</span>
-                    {salary && <span>{salary}</span>}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2 mt-3 text-xs">
+                    <span className="bg-[#171A1E] text-[#00B5ED] border border-[#292C30] px-3 py-1 rounded-full font-medium">
+                      {job.employmentType || "Full Time"}
+                    </span>
+                    {salary && (
+                      <span className="bg-[#171A1E] text-white border border-[#292C30] px-3 py-1 rounded-full font-medium">
+                        {salary}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* RIGHT: location/country + time ago */}
                 <div className="flex-shrink-0 text-right">
-                  <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wide whitespace-nowrap">
+                  <p className="text-xs font-semibold text-[#B8B8B8] uppercase tracking-wide whitespace-nowrap">
                     {job.location}
                     {job.country ? ` • ${job.country}` : ""}
                   </p>
-                  <p className="text-xs font-semibold text-gray-700 mt-1">
+                  <p className="text-xs font-bold text-[#00B5ED] mt-1.5">
                     {getShortTimeAgo(job.createdAt)}
                   </p>
                 </div>
@@ -349,7 +360,7 @@ export default function JobFeed({
               <PaginationItem>
                 <PaginationPrevious 
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  className={currentPage === 1 ? "pointer-events-none opacity-40 text-[#858585]" : "cursor-pointer text-[#00B5ED] hover:bg-[#292C30]"}
                 />
               </PaginationItem>
               
@@ -358,7 +369,7 @@ export default function JobFeed({
                   <PaginationLink
                     onClick={() => setCurrentPage(page)}
                     isActive={page === currentPage}
-                    className="cursor-pointer"
+                    className={`cursor-pointer ${page === currentPage ? "bg-[#0073FF] text-white" : "text-[#CCCCCC] hover:bg-[#292C30]"}`}
                   >
                     {page}
                   </PaginationLink>
@@ -368,7 +379,7 @@ export default function JobFeed({
               <PaginationItem>
                 <PaginationNext 
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-40 text-[#858585]" : "cursor-pointer text-[#00B5ED] hover:bg-[#292C30]"}
                 />
               </PaginationItem>
             </PaginationContent>

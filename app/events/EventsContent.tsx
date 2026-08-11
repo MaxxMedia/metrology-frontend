@@ -97,9 +97,9 @@ function SubscribeForm() {
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4">
-      <h3 className="text-sm font-semibold mb-2">Subscribe to Updates</h3>
-      <p className="text-xs text-gray-500 mb-3">
+    <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-4 text-white">
+      <h3 className="text-sm font-semibold mb-2 text-[#F7F7F7]">Subscribe to Updates</h3>
+      <p className="text-xs text-[#CCCCCC] mb-3">
         Get the latest updates on upcoming events and industry news.
       </p>
 
@@ -109,14 +109,14 @@ function SubscribeForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-[#0f5b78]"
+          className="w-full bg-[#171A1E] border border-[#292C30] rounded-lg px-3 py-2 text-sm text-white placeholder-[#858585] mb-2 focus:outline-none focus:ring-2 focus:ring-[#0073FF]"
           disabled={isSubmitting}
         />
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-[#b30f24] text-white text-sm font-medium py-2 rounded-lg hover:bg-[#b30f24]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full bg-[#0073FF] text-white text-sm font-medium py-2 rounded-lg hover:bg-[#0060d6] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isSubmitting ? (
             <span className="flex items-center justify-center gap-2">
@@ -136,8 +136,8 @@ function SubscribeForm() {
         <div
           className={`mt-3 p-2 rounded text-xs ${
             message.type === "success"
-              ? "bg-green-50 text-green-700 border border-green-200"
-              : "bg-red-50 text-red-700 border border-red-200"
+              ? "bg-green-950 text-green-300 border border-green-800"
+              : "bg-red-950 text-red-300 border border-red-800"
           }`}
         >
           {message.text}
@@ -221,21 +221,22 @@ export default function EventsContent() {
     fetchEvents(searchQuery, selectedIndustry)
   }
 
-  const handleIndustryChange = (value: string) => {
-    setSelectedIndustry(value)
-    fetchEvents(searchQuery, value)
+  const handleIndustryChange = (industryId: string) => {
+    setSelectedIndustry(industryId)
+    fetchEvents(searchQuery, industryId)
   }
 
   const handleClearFilters = () => {
     setSearchQuery("")
     setSelectedIndustry("")
-    window.location.href = "/events"
+    fetchEvents()
   }
 
   // Filter events by date from URL param
-  const filteredEvents = dateParam
-    ? events.filter((e) => isOnDate(e, dateParam))
-    : events
+  const filteredEvents = events.filter((e) => {
+    if (!dateParam) return true
+    return isOnDate(e, dateParam)
+  })
 
   // Pagination logic
   const totalPages = Math.ceil(filteredEvents.length / eventsPerPage)
@@ -243,10 +244,11 @@ export default function EventsContent() {
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent)
 
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page)
-      document.getElementById("events-list")?.scrollIntoView({ behavior: "smooth" })
+  const goToPage = (pageNumber: number) => {
+    setCurrentPage(pageNumber)
+    const element = document.getElementById("events-list")
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" })
     }
   }
 
@@ -311,32 +313,32 @@ export default function EventsContent() {
     .slice(0, 6)
 
   return (
-    <div className="w-full bg-gray-50">
+    <div className="w-full bg-[#171A1E] text-white min-h-screen">
       {/* HERO */}
-      <div className="bg-gradient-to-br from-[#0f5b78] via-black to-[#b30f24] text-white">
+      <div className="bg-gradient-to-r from-[#171A1E] via-[#1D2125] to-[#1D247B] text-white border-b border-[#292C30]">
         <div className="max-w-7xl mx-auto px-6 py-14 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
           <div>
-            <h1 className="text-4xl font-bold mb-3">Events</h1>
-            <p className="text-blue-100 max-w-xl">
+            <h1 className="text-4xl font-bold mb-3 text-white">Events</h1>
+            <p className="text-[#CCCCCC] max-w-xl">
               Discover the best exhibitions, conferences and trade shows in the tooling and manufacturing industry.
             </p>
           </div>
 
           <div className="flex gap-10">
-            <StatBlock icon={<Calendar size={26} />} value="50+" label="Upcoming Events" />
-            <StatBlock icon={<Globe2 size={26} />} value="15+" label="Countries" />
-            <StatBlock icon={<Users size={26} />} value="10,000+" label="Industry Visitors" />
+            <StatBlock icon={<Calendar size={26} className="text-[#00B5ED]" />} value="50+" label="Upcoming Events" />
+            <StatBlock icon={<Globe2 size={26} className="text-[#00B5ED]" />} value="15+" label="Countries" />
+            <StatBlock icon={<Users size={26} className="text-[#00B5ED]" />} value="10,000+" label="Industry Visitors" />
           </div>
         </div>
       </div>
 
       {/* BREADCRUMB */}
-      <div className="max-w-7xl mx-auto px-6 pt-4 text-sm text-gray-500">
-        <Link href="/" className="hover:underline">
+      <div className="max-w-7xl mx-auto px-6 pt-4 text-sm text-[#B8B8B8]">
+        <Link href="/" className="hover:underline hover:text-white">
           Home
         </Link>
         <span className="mx-2">›</span>
-        <span className="text-gray-700">Events</span>
+        <span className="text-white">Events</span>
       </div>
 
       {/* MAIN CONTENT */}
@@ -346,39 +348,26 @@ export default function EventsContent() {
           {/* FILTER BAR */}
           <form
             onSubmit={handleSearch}
-            className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row gap-3 mb-4"
+            className="bg-[#1D2125] border border-[#292C30] rounded-xl p-4 flex flex-col md:flex-row gap-3 mb-4"
           >
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#858585]" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search events by name, venue or keyword..."
-                className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm"
+                className="w-full bg-[#171A1E] border border-[#292C30] rounded-lg pl-9 pr-3 py-2 text-sm text-white placeholder-[#858585] focus:outline-none focus:ring-2 focus:ring-[#0073FF]"
               />
             </div>
 
-            {/* <select
-              value={selectedIndustry}
-              onChange={(e) => handleIndustryChange(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white md:w-56"
-            >
-              <option value="">All Categories</option>
-              {industries.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select> */}
-
-            <button type="submit" className="bg-[#0f5b78] text-white px-5 py-2 rounded-lg">
+            <button type="submit" className="bg-[#0073FF] hover:bg-[#0060d6] text-white px-5 py-2 rounded-lg font-semibold transition-colors">
               Search
             </button>
           </form>
 
           <div className="flex items-center justify-between mb-6 text-sm">
-            <span className="text-gray-500">
+            <span className="text-[#B8B8B8]">
               {dateParam
                 ? `Showing ${filteredEvents.length} event${filteredEvents.length === 1 ? "" : "s"} on ${new Date(
                     dateParam
@@ -387,7 +376,7 @@ export default function EventsContent() {
                     filteredEvents.length
                   } events`}
             </span>
-            <button onClick={handleClearFilters} className="text-[#0f5b78] font-medium hover:underline">
+            <button onClick={handleClearFilters} className="text-[#00B5ED] font-medium hover:underline">
               Clear Filters
             </button>
           </div>
@@ -396,10 +385,10 @@ export default function EventsContent() {
           <div id="events-list">
             {loading ? (
               <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0f5b78]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0073FF]"></div>
               </div>
             ) : currentEvents.length === 0 ? (
-              <p className="text-gray-500 text-center py-12">
+              <p className="text-[#CCCCCC] text-center py-12 bg-[#1D2125] border border-[#292C30] rounded-xl">
                 No events found{dateParam ? " on this date" : ""}.
               </p>
             ) : (
@@ -407,21 +396,21 @@ export default function EventsContent() {
                 {currentEvents.map((event) => (
                   <div
                     key={event.id}
-                    className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row gap-5 relative hover:shadow-lg transition-shadow duration-200"
+                    className="bg-[#1D2125] border border-[#292C30] rounded-xl p-4 flex flex-col md:flex-row gap-5 relative hover:border-[#0073FF] transition-all duration-200"
                   >
                     <Link
                       href={`/events/${event.slug}`}
-                      className="w-full md:w-56 h-36 flex-shrink-0 relative rounded-lg overflow-hidden bg-gray-100"
+                      className="w-full md:w-56 h-36 flex-shrink-0 relative rounded-lg overflow-hidden bg-[#171A1E] border border-[#292C30]"
                     >
                       {event.logoUrl || event.bannerUrl ? (
                         <Image src={event.logoUrl || event.bannerUrl!} alt={event.title} fill className="object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                        <div className="w-full h-full flex items-center justify-center text-[#858585] text-sm">
                           No Image
                         </div>
                       )}
                       {event.featured && (
-                        <span className="absolute top-2 left-2 bg-[#b30f24] text-white text-[10px] font-semibold px-2 py-1 rounded">
+                        <span className="absolute top-2 left-2 bg-[#00B5ED] text-white text-[10px] font-bold px-2 py-1 rounded">
                           FEATURED
                         </span>
                       )}
@@ -429,49 +418,49 @@ export default function EventsContent() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                          <Link href={`/events/${event.slug}`} className="hover:underline hover:text-[#0f5b78]">
+                        <h3 className="text-lg font-bold text-white mb-2">
+                          <Link href={`/events/${event.slug}`} className="hover:text-[#00B5ED] transition-colors">
                             {event.title}
                           </Link>
                         </h3>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-2">
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-[#B8B8B8] mb-2">
                         <span className="flex items-center gap-1">
-                          <Calendar size={13} />
+                          <Calendar size={13} className="text-[#00B5ED]" />
                           {formatDateRange(event.startDate, event.endDate)}
                         </span>
                         {event.timings && (
                           <span className="flex items-center gap-1">
-                            <Clock size={13} />
+                            <Clock size={13} className="text-[#00B5ED]" />
                             {event.timings}
                           </span>
                         )}
                       </div>
 
                       {event.location && (
-                        <p className="flex items-center gap-1 text-xs text-gray-500 mb-2">
-                          <MapPin size={13} />
+                        <p className="flex items-center gap-1 text-xs text-[#B8B8B8] mb-2">
+                          <MapPin size={13} className="text-[#00B5ED]" />
                           {event.location}
                         </p>
                       )}
 
-                      <p className="text-sm text-gray-600 line-clamp-2 mb-3">{event.description}</p>
+                      <p className="text-sm text-[#CCCCCC] line-clamp-2 mb-3 leading-relaxed">{event.description}</p>
 
                       <div className="flex items-center justify-between flex-wrap gap-3">
                         <div className="flex flex-wrap gap-2">
                           {(event.tags ?? []).slice(0, 3).map((tag) => (
-                            <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                            <span key={tag} className="text-xs bg-[#171A1E] text-[#00B5ED] border border-[#292C30] px-2.5 py-1 rounded-full">
                               {tag}
                             </span>
                           ))}
                           {(event.tags ?? []).length > 3 && (
-                            <span className="text-xs text-gray-400">+{(event.tags ?? []).length - 3} more</span>
+                            <span className="text-xs text-[#858585]">+{(event.tags ?? []).length - 3} more</span>
                           )}
                         </div>
                         <Link
                           href={`/events/${event.slug}`}
-                          className="bg-[#0f5b78] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#0f5b78]/90 transition-colors"
+                          className="bg-[#0073FF] hover:bg-[#0060d6] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
                         >
                           View Details
                         </Link>
@@ -489,8 +478,8 @@ export default function EventsContent() {
               <button
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors ${
-                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                className={`w-8 h-8 flex items-center justify-center border border-[#292C30] bg-[#1D2125] rounded-lg text-[#CCCCCC] hover:bg-[#292C30] transition-colors ${
+                  currentPage === 1 ? "opacity-40 cursor-not-allowed" : ""
                 }`}
               >
                 <ChevronLeft size={16} />
@@ -502,10 +491,10 @@ export default function EventsContent() {
                   onClick={() => typeof page === "number" && goToPage(page)}
                   className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
                     page === currentPage
-                      ? "bg-[#0f5b78] text-white"
+                      ? "bg-[#0073FF] text-white border border-[#0073FF]"
                       : page === "..."
-                      ? "border-0 cursor-default"
-                      : "border border-gray-300 text-gray-600 hover:bg-gray-50"
+                      ? "border-0 text-[#858585] cursor-default"
+                      : "border border-[#292C30] bg-[#1D2125] text-[#CCCCCC] hover:bg-[#292C30]"
                   }`}
                   disabled={page === "..."}
                 >
@@ -516,8 +505,8 @@ export default function EventsContent() {
               <button
                 onClick={() => goToPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors ${
-                  currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+                className={`w-8 h-8 flex items-center justify-center border border-[#292C30] bg-[#1D2125] rounded-lg text-[#CCCCCC] hover:bg-[#292C30] transition-colors ${
+                  currentPage === totalPages ? "opacity-40 cursor-not-allowed" : ""
                 }`}
               >
                 <ChevronRight size={16} />
@@ -534,43 +523,18 @@ export default function EventsContent() {
           {/* SUBSCRIBE FORM */}
           <SubscribeForm />
 
-          {/* POPULAR CATEGORIES */}
-          {/* {popularIndustries.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-xl p-4">
-              <h3 className="text-sm font-semibold mb-3">Popular Categories</h3>
-              <ul className="space-y-2 text-sm">
-                {popularIndustries.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      onClick={() => handleIndustryChange(String(item.id))}
-                      className="w-full flex items-center justify-between text-gray-600 hover:text-[#0f5b78] transition-colors"
-                    >
-                      <span>{item.name}</span>
-                      <span className="text-gray-400">{item.count}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <Link href="/suppliers">
-                <button className="text-[#0f5b78] text-sm font-medium mt-3 hover:underline">
-                  View All Categories →
-                </button>
-              </Link>
-            </div>
-          )} */}
-
           {/* LIST YOUR EVENT */}
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <CalendarPlus size={22} className="text-gray-500" />
+          <div className="bg-[#1D247B] border border-[#292C30] rounded-xl p-5 text-white shadow-md">
+            <div className="flex items-center gap-3 mb-3">
+              <CalendarPlus size={24} className="text-[#00B5ED]" />
               <div>
-                <h3 className="text-sm font-semibold">List Your Event</h3>
-                <p className="text-xs text-gray-500">Reach thousands of targeted industry professionals.</p>
+                <h3 className="text-base font-bold text-white">List Your Event</h3>
+                <p className="text-xs text-[#CCCCCC] mt-0.5">Reach thousands of targeted industry professionals.</p>
               </div>
             </div>
             <Link
               href="/contact"
-              className="block text-center border border-[#b30f24] text-[#b30f24] text-sm font-medium py-2 rounded-lg mt-2 hover:bg-red-50 transition-colors"
+              className="block text-center bg-[#0073FF] hover:bg-[#0060d6] text-white text-sm font-semibold py-2.5 rounded-lg mt-3 transition-colors shadow"
             >
               List Your Event
             </Link>

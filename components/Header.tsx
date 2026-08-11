@@ -54,7 +54,7 @@ const PAGES_LINKS: { label: string; href: string; children?: { label: string; hr
   { label: "Directory", href: "/suppliers" },
   { label: "Industry Talks", href: "/industry-talks" },
   { label: "Events", href: "/events" },
-  { label: "Jobs", href: "/feed" },
+  { label: "Jobs", href: "/jobs" },
   { label: "Blog", href: "/blog" },
   { label: "About / Contact", href: "/contact" },
 ]
@@ -346,6 +346,18 @@ export default function Header() {
                 </div>
               )}
             </div>
+
+            <Link href="/suppliers" className={navLinkClass}>
+              Directory
+            </Link>
+
+            <Link href="/events" className={navLinkClass}>
+              Events
+            </Link>
+
+            <Link href="/jobs" className={navLinkClass}>
+              Jobs
+            </Link>
 
             <Link href="/contact" className={navLinkClass}>
               Contact

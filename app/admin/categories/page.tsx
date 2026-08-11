@@ -1,8 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Edit, Filter, FolderOpen, Plus, Trash2, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Edit,
+  Filter,
+  FolderOpen,
+  Plus,
+  RotateCcw,
+  Search,
+  Trash2,
+  X,
+} from "lucide-react";
 import AdminPagination, { ADMIN_PAGE_SIZE } from "@/components/admin/AdminPagination";
 
 type Category = {
@@ -13,7 +23,11 @@ type Category = {
   children?: Category[];
 };
 
-type FlatRow = Category & { depth: number; parentName?: string };
+type FlatRow = Category & {
+  depth: number;
+  parentName?: string;
+  childrenCount: number;
+};
 
 function slugify(name: string, parentSlug?: string | null) {
   const base =
@@ -28,38 +42,77 @@ function slugify(name: string, parentSlug?: string | null) {
 }
 
 function buildNestedRows(categories: Category[]): FlatRow[] {
-  const parents = categories
-    .filter((c) => c.parentId == null)
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const parentMap = new Map<number, Category>();
+  for (const c of categories) {
+    if (c.parentId == null) {
+      parentMap.set(c.id, c);
+    }
+  }
+
+  const parents = Array.from(parentMap.values()).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 
   const byParent = new Map<number, Category[]>();
+  const orphaned: Category[] = [];
+
   for (const c of categories) {
     if (c.parentId != null) {
-      const list = byParent.get(c.parentId) || [];
-      list.push(c);
-      byParent.set(c.parentId, list);
+      if (parentMap.has(c.parentId)) {
+        const list = byParent.get(c.parentId) || [];
+        list.push(c);
+        byParent.set(c.parentId, list);
+      } else {
+        orphaned.push(c);
+      }
     }
   }
 
   const rows: FlatRow[] = [];
   for (const parent of parents) {
-    rows.push({ ...parent, depth: 0 });
     const children = (byParent.get(parent.id) || parent.children || []).sort((a, b) =>
       a.name.localeCompare(b.name)
     );
+    rows.push({
+      ...parent,
+      depth: 0,
+      childrenCount: children.length,
+    });
     for (const child of children) {
-      rows.push({ ...child, depth: 1, parentName: parent.name });
+      rows.push({
+        ...child,
+        depth: 1,
+        parentName: parent.name,
+        childrenCount: 0,
+      });
     }
   }
+
+  for (const orphan of orphaned) {
+    rows.push({
+      ...orphan,
+      depth: 1,
+      parentName: "Unknown",
+      childrenCount: 0,
+    });
+  }
+
   return rows;
 }
 
 export default function CategoryManagement() {
   const router = useRouter();
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const formContainerRef = useRef<HTMLDivElement>(null);
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Filter States
   const [selectedParentFilter, setSelectedParentFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState<"all" | "main" | "sub">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [page, setPage] = useState(1);
   const [form, setForm] = useState({ name: "", parentId: "" });
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -68,7 +121,7 @@ export default function CategoryManagement() {
 
   useEffect(() => {
     setPage(1);
-  }, [selectedParentFilter]);
+  }, [selectedParentFilter, typeFilter, searchQuery]);
 
   const fetchCategories = async () => {
     try {
@@ -100,12 +153,44 @@ export default function CategoryManagement() {
   const nestedRows = useMemo(() => buildNestedRows(categories), [categories]);
 
   const filteredRows = useMemo(() => {
-    if (!selectedParentFilter) return nestedRows;
-    const parentId = Number(selectedParentFilter);
-    return nestedRows.filter(
-      (row) => row.id === parentId || row.parentId === parentId
-    );
-  }, [nestedRows, selectedParentFilter]);
+    let rows = nestedRows;
+
+    // Filter by Parent Category
+    if (selectedParentFilter) {
+      const pid = Number(selectedParentFilter);
+      rows = rows.filter((r) => r.id === pid || r.parentId === pid);
+    }
+
+    // Filter by Category Type
+    if (typeFilter === "main") {
+      rows = rows.filter((r) => r.parentId == null);
+    } else if (typeFilter === "sub") {
+      rows = rows.filter((r) => r.parentId != null);
+    }
+
+    // Live Search Filter (name, slug, parent name)
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      rows = rows.filter(
+        (r) =>
+          r.name.toLowerCase().includes(q) ||
+          r.slug.toLowerCase().includes(q) ||
+          (r.parentName && r.parentName.toLowerCase().includes(q))
+      );
+    }
+
+    return rows;
+  }, [nestedRows, selectedParentFilter, typeFilter, searchQuery]);
+
+  const hasActiveFilters = Boolean(
+    selectedParentFilter || typeFilter !== "all" || searchQuery.trim()
+  );
+
+  const clearFilters = () => {
+    setSelectedParentFilter("");
+    setTypeFilter("all");
+    setSearchQuery("");
+  };
 
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / ADMIN_PAGE_SIZE));
   const paginatedRows = filteredRows.slice(
@@ -120,6 +205,27 @@ export default function CategoryManagement() {
       parentId: cat.parentId != null ? String(cat.parentId) : "",
     });
     setMessage("");
+    if (formContainerRef.current) {
+      formContainerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    if (nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  };
+
+  const handleAddSubcategory = (parentCat: Category) => {
+    setEditingCategory(null);
+    setForm({
+      name: "",
+      parentId: String(parentCat.id),
+    });
+    setMessage("");
+    if (formContainerRef.current) {
+      formContainerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    if (nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
   };
 
   const cancelEdit = () => {
@@ -217,22 +323,25 @@ export default function CategoryManagement() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-2xl shadow border h-fit">
+        <div className="grid text-black md:grid-cols-3 gap-6">
+          {/* Form Section */}
+          <div ref={formContainerRef} className="bg-white p-6 rounded-2xl shadow border h-fit">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-800">
                 {editingCategory
                   ? editingCategory.parentId
                     ? "Edit Subcategory"
                     : "Edit Category"
+                  : form.parentId
+                  ? "Add Subcategory"
                   : "Add Category / Subcategory"}
               </h2>
-              {editingCategory && (
+              {(editingCategory || form.parentId) && (
                 <button
                   onClick={cancelEdit}
                   className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
                 >
-                  <X size={16} /> Cancel
+                  <X size={16} /> Clear / Cancel
                 </button>
               )}
             </div>
@@ -243,6 +352,7 @@ export default function CategoryManagement() {
                   Name
                 </label>
                 <input
+                  ref={nameInputRef}
                   type="text"
                   name="name"
                   placeholder="e.g. Dimensional Metrology"
@@ -315,29 +425,111 @@ export default function CategoryManagement() {
             )}
           </div>
 
+          {/* Categories Table Section */}
           <div className="md:col-span-2 bg-white rounded-2xl shadow border overflow-hidden flex flex-col justify-between">
             <div>
-              <div className="p-4 border-b flex flex-wrap gap-3 items-center justify-between">
-                <h2 className="font-bold text-gray-800">
-                  All Categories ({nestedRows.length})
-                </h2>
-                <div className="relative w-full sm:w-64">
-                  <Filter
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                    size={16}
-                  />
-                  <select
-                    value={selectedParentFilter}
-                    onChange={(e) => setSelectedParentFilter(e.target.value)}
-                    className="pl-9 pr-8 py-2 border rounded-lg text-sm w-full bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0073ff]"
-                  >
-                    <option value="">All Categories</option>
-                    {parentOptions.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
+              {/* Filter Controls Header */}
+              <div className="p-5 border-b space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h2 className="font-bold text-gray-800 text-lg">
+                      Categories & Subcategories
+                    </h2>
+                    <p className="text-xs text-gray-500">
+                      Showing {filteredRows.length} of {nestedRows.length} total entries
+                    </p>
+                  </div>
+
+                  {hasActiveFilters && (
+                    <button
+                      onClick={clearFilters}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition border border-red-200"
+                    >
+                      <RotateCcw size={14} /> Clear Filters
+                    </button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {/* Live Search */}
+                  <div className="relative">
+                    <Search
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      size={16}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Search category name..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9 pr-8 py-2 text-sm border rounded-lg w-full bg-white focus:outline-none focus:ring-2 focus:ring-[#0073ff]"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery("")}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Parent Dropdown Filter */}
+                  <div className="relative">
+                    <Filter
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                      size={16}
+                    />
+                    <select
+                      value={selectedParentFilter}
+                      onChange={(e) => setSelectedParentFilter(e.target.value)}
+                      className="pl-9 pr-8 py-2 border rounded-lg text-sm w-full bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0073ff]"
+                    >
+                      <option value="">All Parent Categories</option>
+                      {parentOptions.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Category Type Filter Tabs */}
+                  <div className="flex bg-gray-100 p-1 rounded-lg text-xs font-medium self-center">
+                    <button
+                      type="button"
+                      onClick={() => setTypeFilter("all")}
+                      className={`flex-1 py-1.5 px-2 rounded-md transition text-center ${
+                        typeFilter === "all"
+                          ? "bg-white text-gray-900 shadow-sm font-semibold"
+                          : "text-gray-600 hover:text-gray-900"
+                      }`}
+                    >
+                      All
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTypeFilter("main")}
+                      className={`flex-1 py-1.5 px-2 rounded-md transition text-center ${
+                        typeFilter === "main"
+                          ? "bg-white text-gray-900 shadow-sm font-semibold"
+                          : "text-gray-600 hover:text-gray-900"
+                      }`}
+                    >
+                      Main
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTypeFilter("sub")}
+                      className={`flex-1 py-1.5 px-2 rounded-md transition text-center ${
+                        typeFilter === "sub"
+                          ? "bg-white text-gray-900 shadow-sm font-semibold"
+                          : "text-gray-600 hover:text-gray-900"
+                      }`}
+                    >
+                      Subcategories
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -346,70 +538,131 @@ export default function CategoryManagement() {
                   <div className="w-8 h-8 border-4 border-[#0073ff] border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : filteredRows.length === 0 ? (
-                <div className="p-12 text-center text-gray-500">No categories found.</div>
+                <div className="p-12 text-center text-gray-500 space-y-2">
+                  <p>No categories found matching your criteria.</p>
+                  {hasActiveFilters && (
+                    <button
+                      onClick={clearFilters}
+                      className="text-xs text-[#0073ff] underline hover:text-[#005bb5]"
+                    >
+                      Clear active filters
+                    </button>
+                  )}
+                </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead className="bg-gray-50 border-b">
                       <tr>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">
-                          Name
+                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Name & Subcategories
                         </th>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">
+                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                           Type
                         </th>
-                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">
+                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Parent Category
+                        </th>
+                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">
                           Actions
                         </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {paginatedRows.map((cat) => (
-                        <tr
-                          key={cat.id}
-                          className={`hover:bg-gray-50 transition ${
-                            editingCategory?.id === cat.id ? "bg-[#0073ff]/10" : ""
-                          }`}
-                        >
-                          <td className="px-6 py-4 text-sm font-semibold text-gray-800">
-                            <span
-                              className={cat.depth > 0 ? "pl-6 text-gray-700 font-medium" : ""}
-                            >
-                              {cat.depth > 0 ? `↳ ${cat.name}` : cat.name}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-xs text-gray-500">
-                            {cat.depth > 0 ? (
-                              <span>
-                                Subcategory
-                                {cat.parentName ? (
-                                  <span className="text-gray-400"> · {cat.parentName}</span>
-                                ) : null}
-                              </span>
-                            ) : (
-                              "Category"
-                            )}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-right">
-                            <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => startEdit(cat)}
-                                className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition"
-                                title="Edit"
-                              >
-                                <Edit size={16} />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(cat.id, cat.name)}
-                                className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition"
-                                title="Delete"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                      {paginatedRows.map((cat) => {
+                        const isMain = cat.parentId == null;
+                        const isEditing = editingCategory?.id === cat.id;
+
+                        return (
+                          <tr
+                            key={cat.id}
+                            className={`hover:bg-gray-50 transition ${
+                              isEditing ? "bg-[#0073ff]/10" : ""
+                            }`}
+                          >
+                            {/* Name & Subcategories Count */}
+                            <td className="px-6 py-4 text-sm font-semibold text-gray-800">
+                              <div className="flex items-center gap-2">
+                                {!isMain && (
+                                  <span className="text-gray-400 font-normal pl-2 select-none">
+                                    ↳
+                                  </span>
+                                )}
+                                <span
+                                  className={
+                                    !isMain
+                                      ? "text-gray-700 font-medium"
+                                      : "text-gray-900 font-bold"
+                                  }
+                                >
+                                  {cat.name}
+                                </span>
+                                {isMain && (
+                                  <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded-full border border-gray-200">
+                                    {cat.childrenCount}{" "}
+                                    {cat.childrenCount === 1
+                                      ? "subcategory"
+                                      : "subcategories"}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+
+                            {/* Type Pill */}
+                            <td className="px-6 py-4 text-xs">
+                              {isMain ? (
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                  Main Category
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">
+                                  Subcategory
+                                </span>
+                              )}
+                            </td>
+
+                            {/* Parent Category */}
+                            <td className="px-6 py-4 text-sm">
+                              {!isMain ? (
+                                <span className="text-gray-700 font-medium">
+                                  {cat.parentName || "—"}
+                                </span>
+                              ) : (
+                                <span className="text-gray-400 select-none">—</span>
+                              )}
+                            </td>
+
+                            {/* Actions */}
+                            <td className="px-6 py-4 text-sm text-right">
+                              <div className="flex justify-end items-center gap-2">
+                                {isMain && (
+                                  <button
+                                    onClick={() => handleAddSubcategory(cat)}
+                                    className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-medium transition inline-flex items-center gap-1 border border-blue-200"
+                                    title="Add Subcategory under this category"
+                                  >
+                                    <Plus size={14} /> Add Sub
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => startEdit(cat)}
+                                  className="p-2 bg-gray-50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition border border-gray-200"
+                                  title="Edit"
+                                >
+                                  <Edit size={16} />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(cat.id, cat.name)}
+                                  className="p-2 bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition border border-gray-200"
+                                  title="Delete"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -431,3 +684,4 @@ export default function CategoryManagement() {
     </div>
   );
 }
+
