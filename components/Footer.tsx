@@ -62,10 +62,7 @@ function SectionTitle({ children }: { children: ReactNode }) {
   return (
     <div className="mb-5">
       <h5 className="text-white text-[18px] font-bold mb-3">{children}</h5>
-      <div className="flex items-center">
-        <span className="w-[6px] h-[6px] bg-white rotate-45 shrink-0" aria-hidden />
-        <span className="flex-1 h-px bg-white/20" />
-      </div>
+      <span className="block w-10 h-[3px] bg-white rounded-full" aria-hidden />
     </div>
   );
 }
@@ -118,7 +115,7 @@ export default async function Footer() {
   ];
 
   return (
-    <footer className="relative bg-[#1D2125] text-[#a1a1a1]">
+    <footer className="relative bg-[#121213] text-[#a1a1a1]">
       <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-5 pt-14 md:pt-16 pb-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.15fr_0.85fr_1.2fr_1.1fr] gap-10 lg:gap-8">
 
@@ -126,7 +123,7 @@ export default async function Footer() {
           <div>
             <Link href="/" className="inline-block mb-4">
               <Image
-                src="/images/tooling new34 (1).png"
+                src="/images/logo5.png"
                 alt="Tooling Trends"
                 width={180}
                 height={56}
@@ -202,13 +199,14 @@ export default async function Footer() {
           {/* ================= COL 3: RECENT POST ================= */}
           <div>
             <SectionTitle>Recent Post</SectionTitle>
-            <div className="space-y-4">
+            <div>
               {recentPosts.length > 0 ? (
-                recentPosts.map((post) => (
+                recentPosts.map((post, i) => (
                   <Link
                     key={post.id}
                     href={`/post/${post.slug}`}
-                    className="group flex items-start gap-3"
+                    className={`group flex items-start gap-3 ${i < recentPosts.length - 1 ? "pb-4 mb-4 border-b border-white/10" : ""
+                      }`}
                   >
                     <div className="relative w-[64px] h-[64px] rounded-[6px] overflow-hidden shrink-0">
                       <Image
@@ -262,7 +260,7 @@ export default async function Footer() {
       </div>
 
       {/* ================= BOTTOM BAR ================= */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-white/10 bg-[#1D2125]">
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-5 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[13px]">
           <p className="text-[#8a8b93] text-center sm:text-left">
             © {new Date().getFullYear()} Tooling Trends. All rights reserved.
