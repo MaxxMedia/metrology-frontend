@@ -17,13 +17,20 @@ export default function CreateIssuePost() {
     content: "",
     authorId: "",
     categoryId: "",
+    subCategoryId: "",
   });
 
   const [authors, setAuthors] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [allCategories, setAllCategories] = useState<any[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  const parentCategories = categories.filter((c) => c.parentId == null);
+  const subCategories = allCategories.filter(
+    (c) => c.parentId != null && String(c.parentId) === form.categoryId
+  );
 
   const normalizeCategoryKey = (value: unknown) =>
     String(value ?? "")
@@ -46,18 +53,20 @@ export default function CreateIssuePost() {
       .then(([a, c]) => {
         setAuthors(a.data || a);
 
-        const allCategories = getCategoryList(c);
-        const issueCategories = allCategories.filter((cat: any) => {
+        const list = getCategoryList(c);
+        setAllCategories(list);
+        const issueCategories = list.filter((cat: any) => {
           const slugKey = normalizeCategoryKey(cat?.slug);
           const nameKey = normalizeCategoryKey(cat?.name);
           return slugKey === "inthisissue" || nameKey === "inthisissue";
         });
 
-        setCategories(issueCategories.length > 0 ? issueCategories : allCategories);
+        setCategories(issueCategories.length > 0 ? issueCategories : list);
       })
       .catch(() => {
         setAuthors([]);
         setCategories([]);
+        setAllCategories([]);
       });
   }, []);
 
@@ -78,7 +87,12 @@ export default function CreateIssuePost() {
       | ChangeEvent<HTMLSelectElement>
   ) {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      if (name === "categoryId") {
+        return { ...prev, categoryId: value, subCategoryId: "" };
+      }
+      return { ...prev, [name]: value };
+    });
   }
 
   /* ================= IMAGE UPLOAD ================= */
@@ -128,6 +142,7 @@ export default function CreateIssuePost() {
           excerpt,
           authorId: Number(form.authorId),
           categoryId: Number(form.categoryId),
+          subCategoryId: form.subCategoryId ? Number(form.subCategoryId) : null,
         }),
       });
 
@@ -142,6 +157,7 @@ export default function CreateIssuePost() {
           content: "",
           authorId: "",
           categoryId: "",
+          subCategoryId: "",
         });
       } else {
         setMessage("❌ Failed to create issue");
@@ -210,7 +226,29 @@ export default function CreateIssuePost() {
           className="w-full p-3 border rounded-lg"
         >
           <option value="">Select category</option>
-          {categories.map(c => (
+          {parentCategories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+
+        {/* SUBCATEGORY */}
+        <select
+          name="subCategoryId"
+          value={form.subCategoryId}
+          onChange={handleChange}
+          disabled={!form.categoryId || subCategories.length === 0}
+          className="w-full p-3 border rounded-lg disabled:bg-gray-100"
+        >
+          <option value="">
+            {!form.categoryId
+              ? "Select a category first"
+              : subCategories.length === 0
+                ? "No subcategories (optional)"
+                : "Select subcategory (optional)"}
+          </option>
+          {subCategories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>

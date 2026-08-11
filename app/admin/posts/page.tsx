@@ -30,6 +30,7 @@ type Post = {
   slug: string
   imageUrl?: string
   category?: { name: string; slug: string }
+  subCategory?: { name: string; slug: string } | null
   author?: { name: string }
   publishedAt?: string
   views: number
@@ -39,6 +40,7 @@ type Category = {
   id: number
   name: string
   slug: string
+  parentId?: number | null
 }
 
 const PAGE_SIZE = ADMIN_PAGE_SIZE
@@ -82,7 +84,11 @@ export default function PostsList() {
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`)
       .then(r => r.json())
-      .then(data => setCategories(Array.isArray(data) ? data : []))
+      .then((data) => {
+        const list = Array.isArray(data) ? data : []
+        // Filter dropdown: top-level categories only
+        setCategories(list.filter((c: Category) => c.parentId == null))
+      })
       .catch(console.error)
   }, [])
 
@@ -214,10 +220,17 @@ export default function PostsList() {
     columnHelper.display({
       id: "category",
       header: "Category",
-      cell: (info) =>
-        info.row.original.category?.name ?? (
-          <span className="text-gray-400">—</span>
-        ),
+      cell: (info) => {
+        const cat = info.row.original.category?.name
+        const sub = info.row.original.subCategory?.name
+        if (!cat) return <span className="text-gray-400">—</span>
+        return (
+          <div className="text-sm">
+            <p className="font-medium text-gray-800">{cat}</p>
+            {sub ? <p className="text-xs text-gray-500">{sub}</p> : null}
+          </div>
+        )
+      },
     }),
 
     /* 👁️ VIEWS COLUMN */
