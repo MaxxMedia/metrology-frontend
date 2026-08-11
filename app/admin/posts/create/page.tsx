@@ -20,6 +20,7 @@ export default function CreatePost() {
     contentBlocks: ContentBlock[];
     authorId: string;
     categoryId: string;
+    subCategoryId: string;
     facebookUrl: string;
     linkedinUrl: string;
     twitterUrl: string;
@@ -36,6 +37,7 @@ export default function CreatePost() {
     contentBlocks: [],
     authorId: "",
     categoryId: "",
+    subCategoryId: "",
     facebookUrl: "",
     linkedinUrl: "",
     twitterUrl: "",
@@ -49,6 +51,11 @@ export default function CreatePost() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  const parentCategories = categories.filter((c) => c.parentId == null);
+  const subCategories = categories.filter(
+    (c) => c.parentId != null && String(c.parentId) === form.categoryId
+  );
 
   /* ================= FETCH AUTHORS & CATEGORIES ================= */
   useEffect(() => {
@@ -87,7 +94,12 @@ export default function CreatePost() {
       | ChangeEvent<HTMLSelectElement>
   ) {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      if (name === "categoryId") {
+        return { ...prev, categoryId: value, subCategoryId: "" };
+      }
+      return { ...prev, [name]: value };
+    });
   }
 
   /* ================= IMAGE UPLOAD ================= */
@@ -158,6 +170,7 @@ export default function CreatePost() {
           contentBlocks: form.contentBlocks,
           authorId: Number(form.authorId),
           categoryId: Number(form.categoryId),
+          subCategoryId: form.subCategoryId ? Number(form.subCategoryId) : null,
         }),
       });
 
@@ -177,6 +190,7 @@ export default function CreatePost() {
           contentBlocks: [],
           authorId: "",
           categoryId: "",
+          subCategoryId: "",
           facebookUrl: "",
           linkedinUrl: "",
           twitterUrl: "",
@@ -292,7 +306,34 @@ export default function CreatePost() {
               className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             >
               <option value="">Select category</option>
-              {categories.map((c) => (
+              {parentCategories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* SUBCATEGORY */}
+          <div>
+            <label className="block font-medium text-gray-700 mb-2">
+              Subcategory <span className="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <select
+              name="subCategoryId"
+              value={form.subCategoryId}
+              onChange={handleChange}
+              disabled={!form.categoryId || subCategories.length === 0}
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
+            >
+              <option value="">
+                {!form.categoryId
+                  ? "Select a category first"
+                  : subCategories.length === 0
+                    ? "No subcategories"
+                    : "Select subcategory"}
+              </option>
+              {subCategories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
