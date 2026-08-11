@@ -116,7 +116,7 @@ export default async function Footer() {
 
   return (
     <footer className="relative bg-[#121213] text-[#a1a1a1]">
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-5 pt-14 md:pt-16 pb-10">
+      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-14 md:pt-16 pb-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.15fr_0.85fr_1.2fr_1.1fr] gap-10 lg:gap-8">
 
           {/* ================= COL 1: BRAND ================= */}
@@ -261,7 +261,7 @@ export default async function Footer() {
 
       {/* ================= BOTTOM BAR ================= */}
       <div className="border-t border-white/10 bg-[#1D2125]">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-5 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[13px]">
+        <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[13px]">
           <p className="text-[#8a8b93] text-center sm:text-left">
             © {new Date().getFullYear()} Tooling Trends. All rights reserved.
           </p>

@@ -144,6 +144,24 @@
     font-weight: var(--fw-bold) !important;
   }
 
+  /* Home hero title — must beat the global h1 clamp */
+  h1.hero-main-title {
+    font-size: clamp(28px, 2.8vw, 42px) !important;
+    line-height: 1.2 !important;
+    font-weight: 800 !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important;
+    overflow: hidden !important;
+  }
+
+  h1.hero-main-title a {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
   h2 {
     font-size: var(--fs-h2) !important;
     line-height: var(--lh-h2) !important;

@@ -231,14 +231,14 @@ export default function HomeCompanyArticles({ posts }: Props) {
   if (!allPosts.length) return null;
 
   return (
-    <section className="w-full bg-[#1D2125] py-10 md:py-14">
-      <div className="max-w-[1320px] mx-auto px-3 sm:px-4">
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-8 xl:gap-10 items-start">
+    <section className="w-full bg-[#1D2125]">
+      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-[30px] pb-[30px] lg:pt-[40px] lg:pb-[40px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] xl:grid-cols-[minmax(0,1fr)_300px] gap-5 lg:gap-6 items-start">
 
           {/* ================= LEFT: TOP OF THIS WEEK ================= */}
-          <div>
-            <div className="flex items-center gap-4 mb-8">
-              <h2 className="text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
+          <div className="min-w-0">
+            <div className="flex items-center gap-3 sm:gap-4 mb-6 lg:mb-7 min-w-0">
+              <h2 className="text-[22px] sm:text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
                 Top of This Week
               </h2>
               <div className="flex-1 min-w-[40px] flex items-center">
@@ -247,7 +247,7 @@ export default function HomeCompanyArticles({ posts }: Props) {
               </div>
             </div>
 
-            <div className="space-y-7">
+            <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">
               {visiblePosts.map((post) => {
                 const tag = getTag(post);
                 const date = formatDate(post);
@@ -255,17 +255,17 @@ export default function HomeCompanyArticles({ posts }: Props) {
                 return (
                   <article
                     key={post.id}
-                    className="group flex flex-col sm:flex-row gap-4 sm:gap-5"
+                    className="group flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0"
                   >
                     <Link
                       href={`/post/${post.slug}`}
-                      className="relative w-full sm:w-[240px] lg:w-[280px] h-[180px] sm:h-[170px] rounded-[10px] overflow-hidden shrink-0"
+                      className="relative w-full sm:w-[200px] md:w-[220px] lg:w-[240px] h-[180px] sm:h-[150px] md:h-[160px] rounded-[4px] overflow-hidden shrink-0"
                     >
                       <Image
                         src={getImageUrl(post)}
                         alt={post.title}
                         fill
-                        sizes="280px"
+                        sizes="(max-width: 640px) 100vw, 240px"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </Link>
@@ -273,39 +273,39 @@ export default function HomeCompanyArticles({ posts }: Props) {
                     <div className="min-w-0 flex-1 py-0.5">
                       {tag.text && (
                         <span
-                          className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-2.5 py-[3px] rounded mb-2.5`}
+                          className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-[10px]`}
                         >
                           {tag.text}
                         </span>
                       )}
 
-                      <h4 className="text-[18px] sm:text-[20px] font-bold text-white leading-snug mb-2">
+                      <h4 className="text-[17px] sm:text-[18px] md:text-[20px] font-bold text-white leading-snug mb-[8px]">
                         <Link
                           href={`/post/${post.slug}`}
-                          className="hover:text-[#7dd3fc] transition-colors"
+                          className="hover:text-[#0073ff] transition-colors"
                         >
                           {post.title}
                         </Link>
                       </h4>
 
-                      <p className="text-[14px] text-white/60 leading-relaxed mb-3 line-clamp-2">
+                      <p className="text-[14px] text-[#a8aab3] leading-relaxed mb-[12px] line-clamp-2">
                         {excerptOf(post)}
                       </p>
 
-                      <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px] text-white/65">
+                      <ul className="flex flex-wrap items-center gap-x-[14px] gap-y-[6px] text-[12px] text-[#a8aab3]">
                         <li>
                           By{" "}
                           <span className="text-white/90 font-medium">
                             {getAuthorName(post)}
                           </span>
                         </li>
-                        <li className="inline-flex items-center gap-1">
-                          <PulseIcon className="w-3.5 h-3.5 text-[#7dd3fc]" />
+                        <li className="inline-flex items-center gap-[4px]">
+                          <PulseIcon className="w-3.5 h-3.5 text-[#0073ff]" />
                           {(post.views ?? 0).toLocaleString()} Views
                         </li>
                         {date && (
-                          <li className="inline-flex items-center gap-1">
-                            <CalendarIcon className="w-3.5 h-3.5 text-[#7dd3fc]" />
+                          <li className="inline-flex items-center gap-[4px]">
+                            <CalendarIcon className="w-3.5 h-3.5 text-[#0073ff]" />
                             {date}
                           </li>
                         )}
@@ -316,12 +316,12 @@ export default function HomeCompanyArticles({ posts }: Props) {
               })}
             </div>
 
-            <div className="mt-10 flex justify-center">
+            <div className="mt-[32px] flex justify-center">
               {hasMore ? (
                 <button
                   type="button"
                   onClick={() => setVisibleCount((n) => n + LOAD_MORE_COUNT)}
-                  className="inline-flex items-center gap-2 bg-[#0073ff] hover:bg-[#0060d6] text-white text-[14px] font-semibold px-6 py-2.5 rounded-[4px] transition-colors"
+                  className="inline-flex items-center gap-[8px] bg-[#0073ff] hover:bg-[#0060d6] text-white text-[14px] font-semibold px-6 py-2.5 rounded-[4px] transition-colors"
                 >
                   Load More
                   <RefreshCw size={15} />
@@ -333,33 +333,33 @@ export default function HomeCompanyArticles({ posts }: Props) {
           </div>
 
           {/* ================= RIGHT SIDEBAR ================= */}
-          <aside className="space-y-5">
+          <aside className="flex flex-col gap-4 w-full lg:w-auto lg:max-w-[300px] min-w-0">
             {/* Explore Categories */}
-            <div className="rounded-[10px] border border-white/10 bg-[#252A30] p-4 sm:p-5">
-              <h4 className="text-[18px] font-bold text-white mb-4">
+            <div className="rounded-[4px] border border-white/10 bg-[#252A30] p-[14px]">
+              <h4 className="text-[17px] font-bold text-white mb-[12px]">
                 Explore Categories
               </h4>
-              <div className="space-y-2.5">
+              <div className="flex flex-col gap-[8px]">
                 {categories.map((cat) => (
                   <Link
                     key={cat.slug}
                     href={`/topics/${cat.slug}`}
-                    className="group relative flex items-center justify-between h-[52px] px-3.5 rounded-[6px] overflow-hidden"
+                    className="group relative flex items-center justify-between h-[48px] px-[12px] rounded-[4px] overflow-hidden"
                   >
                     <Image
                       src={cat.image}
                       alt=""
                       fill
-                      sizes="320px"
+                      sizes="260px"
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-black/55 group-hover:bg-black/45 transition-colors" />
-                    <div className="relative z-10 flex items-center gap-1.5 text-white">
-                      <h6 className="text-[14px] font-bold">{cat.name}</h6>
-                      <span className="text-[12px] text-white/85">({cat.count})</span>
+                    <div className="relative z-10 flex items-center gap-[5px] text-white min-w-0">
+                      <h6 className="text-[13px] font-bold truncate">{cat.name}</h6>
+                      <span className="text-[11px] text-white/85 shrink-0">({cat.count})</span>
                     </div>
-                    <span className="relative z-10 flex h-7 w-7 items-center justify-center rounded-[4px] bg-black/40 text-white group-hover:bg-[#0073ff] transition-colors">
-                      <ArrowRight size={14} />
+                    <span className="relative z-10 flex h-6 w-6 items-center justify-center rounded-[4px] bg-black/40 text-white group-hover:bg-[#0073ff] transition-colors shrink-0">
+                      <ArrowRight size={12} />
                     </span>
                   </Link>
                 ))}
@@ -367,34 +367,34 @@ export default function HomeCompanyArticles({ posts }: Props) {
             </div>
 
             {/* Popular News */}
-            <div className="rounded-[10px] border border-white/10 bg-[#252A30] p-4 sm:p-5">
-              <h4 className="text-[18px] font-bold text-white mb-4">
+            <div className="rounded-[4px] border border-white/10 bg-[#252A30] p-[14px]">
+              <h4 className="text-[17px] font-bold text-white mb-[12px]">
                 Popular News
               </h4>
-              <div className="space-y-4">
+              <div className="flex flex-col gap-[14px]">
                 {popularPosts.map((post) => (
                   <Link
                     key={post.id}
                     href={`/post/${post.slug}`}
-                    className="group flex items-start gap-3"
+                    className="group flex items-center gap-[12px]"
                   >
-                    <div className="relative w-[58px] h-[58px] rounded-full overflow-hidden shrink-0">
+                    <div className="relative w-[64px] h-[64px] rounded-[4px] overflow-hidden shrink-0">
                       <Image
                         src={getImageUrl(post)}
                         alt={post.title}
                         fill
-                        sizes="58px"
+                        sizes="64px"
                         className="object-cover"
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h6 className="text-[14px] font-bold text-white leading-snug mb-1.5 line-clamp-2 group-hover:text-[#7dd3fc] transition-colors">
+                      <h6 className="text-[13px] font-semibold text-white leading-snug mb-[6px] line-clamp-2 group-hover:text-[#0073ff] transition-colors">
                         {post.title}
                       </h6>
-                      <ul className="flex flex-wrap items-center gap-x-2.5 text-[11px] text-white/65">
+                      <ul className="flex flex-wrap items-center gap-x-[10px] text-[11px] text-[#a8aab3]">
                         <li>By {getAuthorName(post)}</li>
-                        <li className="inline-flex items-center gap-1">
-                          <PulseIcon className="w-3 h-3 text-[#7dd3fc]" />
+                        <li className="inline-flex items-center gap-[4px]">
+                          <PulseIcon className="w-3 h-3 text-[#0073ff]" />
                           {(post.views ?? 0).toLocaleString()} Views
                         </li>
                       </ul>
@@ -405,20 +405,20 @@ export default function HomeCompanyArticles({ posts }: Props) {
             </div>
 
             {/* Follow Us */}
-            <div className="rounded-[10px] border border-white/10 bg-[#252A30] p-4 sm:p-5">
-              <h4 className="text-[18px] font-bold text-white mb-4">
+            <div className="rounded-[4px] border border-white/10 bg-[#252A30] p-[14px]">
+              <h4 className="text-[17px] font-bold text-white mb-[12px]">
                 Follow Us
               </h4>
-              <div className="space-y-2.5">
+              <div className="flex flex-col gap-[8px]">
                 {SOCIALS.map(({ name, followers, href, bg, Icon }) => (
                   <Link
                     key={name}
                     href={href}
-                    className={`flex items-center gap-3 h-[48px] px-3.5 rounded-[6px] text-white ${bg} hover:opacity-90 transition-opacity`}
+                    className={`flex items-center gap-[10px] h-[44px] px-[12px] rounded-[4px] text-white ${bg} hover:opacity-90 transition-opacity`}
                   >
-                    <Icon size={16} />
-                    <span className="flex-1 text-[14px] font-bold">{name}</span>
-                    <span className="text-[12px] text-white/90">{followers}</span>
+                    <Icon size={14} />
+                    <span className="flex-1 text-[13px] font-bold truncate">{name}</span>
+                    <span className="text-[11px] text-white/90 shrink-0">{followers}</span>
                   </Link>
                 ))}
               </div>

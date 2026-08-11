@@ -178,44 +178,44 @@ export default function VideosSection({ posts }: Props) {
     return (
       <Link
         href={`/post/${post.slug}`}
-        className={`group relative block min-h-[280px] sm:min-h-[320px] rounded-[10px] overflow-hidden ${className}`}
+        className={`group relative block h-[260px] sm:h-[340px] md:h-[380px] lg:h-[440px] rounded-[4px] overflow-hidden ${className}`}
       >
         <Image
           src={imageUrl(post)}
           alt={post.title}
           fill
-          sizes="(max-width: 1024px) 100vw, 60vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 60vw, 50vw"
           quality={80}
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+        <div className="absolute inset-x-0 bottom-0 px-[16px] py-[18px] sm:px-[20px] sm:py-[22px]">
           {tag.text && (
             <span
-              className={`inline-block ${tag.color} text-white text-[11px] font-semibold uppercase tracking-wide px-2.5 py-[3px] rounded mb-3`}
+              className={`inline-block ${tag.color} text-white text-[11px] font-semibold uppercase tracking-wide px-[10px] py-[3px] rounded-[3px] mb-[12px]`}
             >
               {tag.text}
             </span>
           )}
 
-          <h3 className="text-white text-[20px] sm:text-[22px] md:text-[24px] font-bold leading-snug mb-3 group-hover:text-[#7dd3fc] transition-colors line-clamp-3">
+          <h3 className="text-white text-[20px] sm:text-[22px] md:text-[24px] font-bold leading-snug mb-[12px] group-hover:text-[#0073ff] transition-colors line-clamp-3">
             {post.title}
           </h3>
 
-          <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] text-white/85">
+          <ul className="flex flex-wrap items-center gap-x-[14px] gap-y-[6px] text-[13px] text-white/85">
             <li>
               By <span className="text-white">{getAuthorName(post)}</span>
             </li>
             {typeof post.views === "number" && (
-              <li className="inline-flex items-center gap-1.5">
-                <PulseIcon className="w-3.5 h-3.5 text-[#7dd3fc]" />
+              <li className="inline-flex items-center gap-[6px]">
+                <PulseIcon className="w-3.5 h-3.5 text-[#0073ff]" />
                 {post.views.toLocaleString()} Views
               </li>
             )}
             {date && (
-              <li className="inline-flex items-center gap-1.5">
-                <CalendarIcon className="w-3.5 h-3.5 text-[#7dd3fc]" />
+              <li className="inline-flex items-center gap-[6px]">
+                <CalendarIcon className="w-3.5 h-3.5 text-[#0073ff]" />
                 {date}
               </li>
             )}
@@ -226,11 +226,11 @@ export default function VideosSection({ posts }: Props) {
   };
 
   return (
-    <section className="w-full bg-[#1D2125] py-10 md:py-14">
-      <div className="max-w-[1320px] mx-auto px-3 sm:px-4">
+    <section className="w-full bg-[#1D2125]">
+      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-[30px] pb-[10px] lg:pt-[40px] lg:pb-[12px]">
         {/* ================= HEADER ================= */}
-        <div className="flex items-center gap-4 mb-8 md:mb-10">
-          <h2 className="text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
+        <div className="flex items-center gap-3 sm:gap-4 mb-6 lg:mb-7 min-w-0">
+          <h2 className="text-[22px] sm:text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
             Latest News
           </h2>
 
@@ -242,7 +242,7 @@ export default function VideosSection({ posts }: Props) {
 
           <Link
             href="/articles"
-            className="hidden sm:inline-flex items-center gap-2 text-[14px] text-white hover:text-[#0073ff] transition-colors shrink-0 group"
+            className="hidden sm:inline-flex items-center gap-[8px] text-[14px] text-white hover:text-[#0073ff] transition-colors shrink-0 group"
           >
             <span>View All</span>
             <ArrowIcon className="w-4 h-3 group-hover:translate-x-0.5 transition-transform" />
@@ -250,53 +250,53 @@ export default function VideosSection({ posts }: Props) {
         </div>
 
         {/* ================= TOP: 2 FEATURED ================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-5 md:gap-6 mb-5 md:mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 sm:gap-5 lg:gap-6 mb-5 lg:mb-6">
           {leftFeatured && <FeaturedCard post={leftFeatured} />}
           {rightFeatured && <FeaturedCard post={rightFeatured} />}
         </div>
 
         {/* ================= BOTTOM: 3 SMALL CARDS ================= */}
         {smallPosts.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-5 gap-y-4 lg:gap-6">
             {smallPosts.map((post) => {
               const tag = getTag(post);
               return (
                 <Link
                   key={post.id}
                   href={`/post/${post.slug}`}
-                  className="group flex items-start gap-3.5"
+                  className="group flex items-center gap-3 sm:gap-3.5 min-w-0"
                 >
-                  <div className="relative w-[88px] h-[88px] sm:w-[96px] sm:h-[96px] rounded-[8px] overflow-hidden shrink-0">
+                  <div className="relative w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-[4px] overflow-hidden shrink-0">
                     <Image
                       src={imageUrl(post)}
                       alt={post.title}
                       fill
-                      sizes="96px"
+                      sizes="80px"
                       quality={70}
                       className="object-cover"
                     />
                   </div>
 
-                  <div className="min-w-0 flex-1 pt-0.5">
+                  <div className="min-w-0 flex-1">
                     {tag.text && (
                       <span
-                        className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded mb-1.5`}
+                        className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-[8px]`}
                       >
                         {tag.text}
                       </span>
                     )}
 
-                    <h6 className="text-[15px] sm:text-[16px] font-bold leading-snug text-white mb-1.5 group-hover:text-[#7dd3fc] transition-colors line-clamp-2">
+                    <h6 className="text-[15px] font-semibold leading-snug text-white mb-[8px] group-hover:text-[#0073ff] transition-colors line-clamp-2">
                       {post.title}
                     </h6>
 
-                    <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-white/70">
+                    <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[12px] text-[#a8aab3]">
                       <li>
                         By <span className="text-white/90">{getAuthorName(post)}</span>
                       </li>
                       {typeof post.views === "number" && (
-                        <li className="inline-flex items-center gap-1">
-                          <PulseIcon className="w-3 h-3 text-[#7dd3fc]" />
+                        <li className="inline-flex items-center gap-[4px]">
+                          <PulseIcon className="w-3 h-3 text-[#0073ff]" />
                           {post.views.toLocaleString()} Views
                         </li>
                       )}
@@ -308,10 +308,10 @@ export default function VideosSection({ posts }: Props) {
           </div>
         )}
 
-        <div className="mt-8 flex justify-center sm:hidden">
+        <div className="mt-[20px] flex justify-center sm:hidden">
           <Link
             href="/articles"
-            className="inline-flex items-center gap-2 text-[14px] font-medium text-white"
+            className="inline-flex items-center gap-[8px] text-[14px] font-medium text-white hover:text-[#0073ff] transition-colors"
           >
             View All
             <ArrowIcon className="w-4 h-3" />
