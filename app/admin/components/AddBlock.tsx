@@ -59,48 +59,48 @@ export default function AddBlock({ onAdd }: Props) {
   }
 
   return (
-    <div className="border rounded-xl p-5 bg-white">
-      <h3 className="font-semibold mb-4">Add Block</h3>
+    <div className="border rounded-xl p-5 bg-white text-slate-900">
+      <h3 className="font-semibold mb-4 text-slate-900">Add Block</h3>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <button
           type="button"
           onClick={() => create("paragraph")}
-          className="border rounded-lg p-3 hover:bg-gray-100 transition"
+          className="border border-slate-200 rounded-lg p-3 text-slate-700 hover:bg-slate-50 hover:border-[#0073ff]/40 transition"
         >
-          📝 Paragraph
+          Paragraph
         </button>
 
         <button
           type="button"
           onClick={() => create("heading")}
-          className="border rounded-lg p-3 hover:bg-gray-100 transition"
+          className="border border-slate-200 rounded-lg p-3 text-slate-700 hover:bg-slate-50 hover:border-[#0073ff]/40 transition"
         >
-          📌 Heading
+          Heading
         </button>
 
         <button
           type="button"
           onClick={() => create("image")}
-          className="border rounded-lg p-3 hover:bg-gray-100 transition"
+          className="border border-slate-200 rounded-lg p-3 text-slate-700 hover:bg-slate-50 hover:border-[#0073ff]/40 transition"
         >
-          🖼️ Image
+          Image
         </button>
 
         <button
           type="button"
           onClick={() => create("gallery")}
-          className="border rounded-lg p-3 hover:bg-gray-100 transition"
+          className="border border-slate-200 rounded-lg p-3 text-slate-700 hover:bg-slate-50 hover:border-[#0073ff]/40 transition"
         >
-          🎨 Gallery
+          Gallery
         </button>
 
         <button
           type="button"
           onClick={() => create("quote")}
-          className="border rounded-lg p-3 hover:bg-gray-100 transition"
+          className="border border-slate-200 rounded-lg p-3 text-slate-700 hover:bg-slate-50 hover:border-[#0073ff]/40 transition"
         >
-          💬 Quote
+          Quote
         </button>
       </div>
     </div>

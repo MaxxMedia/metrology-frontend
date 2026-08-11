@@ -212,7 +212,7 @@ export default function CategoryManagement() {
               <ArrowLeft size={18} />
             </button>
             <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <FolderOpen className="text-indigo-600" /> Category Management
+              <FolderOpen className="text-[#0073ff]" /> Category Management
             </h1>
           </div>
         </div>
@@ -248,7 +248,7 @@ export default function CategoryManagement() {
                   placeholder="e.g. Dimensional Metrology"
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  className="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  className="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-[#0073ff] focus:outline-none"
                   required
                 />
               </div>
@@ -260,7 +260,7 @@ export default function CategoryManagement() {
                 <select
                   value={form.parentId}
                   onChange={(e) => setForm((f) => ({ ...f, parentId: e.target.value }))}
-                  className="w-full p-2.5 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  className="w-full p-2.5 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-[#0073ff] focus:outline-none"
                   disabled={
                     Boolean(
                       editingCategory &&
@@ -287,7 +287,7 @@ export default function CategoryManagement() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="flex-1 bg-[#0073ff] hover:bg-[#0060d6] text-white font-medium py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {editingCategory ? (
                     <>
@@ -329,7 +329,7 @@ export default function CategoryManagement() {
                   <select
                     value={selectedParentFilter}
                     onChange={(e) => setSelectedParentFilter(e.target.value)}
-                    className="pl-9 pr-8 py-2 border rounded-lg text-sm w-full bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="pl-9 pr-8 py-2 border rounded-lg text-sm w-full bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0073ff]"
                   >
                     <option value="">All Categories</option>
                     {parentOptions.map((cat) => (
@@ -343,7 +343,7 @@ export default function CategoryManagement() {
 
               {loading ? (
                 <div className="p-12 flex justify-center">
-                  <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-8 h-8 border-4 border-[#0073ff] border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : filteredRows.length === 0 ? (
                 <div className="p-12 text-center text-gray-500">No categories found.</div>
@@ -368,7 +368,7 @@ export default function CategoryManagement() {
                         <tr
                           key={cat.id}
                           className={`hover:bg-gray-50 transition ${
-                            editingCategory?.id === cat.id ? "bg-indigo-50/50" : ""
+                            editingCategory?.id === cat.id ? "bg-[#0073ff]/10" : ""
                           }`}
                         >
                           <td className="px-6 py-4 text-sm font-semibold text-gray-800">

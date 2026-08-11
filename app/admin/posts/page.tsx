@@ -304,13 +304,13 @@ export default function PostsList() {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-[#0073ff] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 min-h-screen">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* HEADER */}
@@ -318,7 +318,7 @@ export default function PostsList() {
           <h1 className="text-2xl font-bold">Content Management</h1>
           <button
             onClick={() => router.push("/admin/posts/create")}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded flex items-center gap-2 transition"
+            className="admin-btn-primary"
           >
             <Plus size={18} /> New Post
           </button>
@@ -466,7 +466,7 @@ function ActionCard({
       onClick={onClick}
       className="p-5 bg-white rounded-xl shadow hover:shadow-md transition text-left flex gap-4"
     >
-      <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center">
+      <div className="w-12 h-12 bg-[#0073ff]/10 text-[#0073ff] rounded-lg flex items-center justify-center">
         {icon}
       </div>
       <div>

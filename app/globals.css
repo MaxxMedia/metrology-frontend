@@ -671,3 +671,55 @@ body {
 .swiper-pagination-bullet:hover {
   opacity: 1 !important;
 }
+
+/* ======================================================
+   ADMIN CMS — readable light canvas + form controls
+====================================================== */
+.admin-cms {
+  color: #0f172a;
+}
+
+.admin-cms input,
+.admin-cms textarea,
+.admin-cms select {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  caret-color: #0f172a;
+}
+
+.admin-cms input::placeholder,
+.admin-cms textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.admin-cms .ql-editor,
+.admin-cms .ql-container {
+  color: #0f172a !important;
+  background: #ffffff !important;
+}
+
+.admin-cms .ql-toolbar {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.admin-field {
+  @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-slate-900 placeholder:text-slate-400 shadow-sm outline-none transition focus:border-[#0073ff] focus:ring-2 focus:ring-[#0073ff]/20 disabled:bg-slate-100 disabled:text-slate-500;
+}
+
+.admin-label {
+  @apply mb-2 block text-sm font-semibold text-slate-700;
+}
+
+.admin-card {
+  @apply rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_rgba(15,23,42,0.04)];
+}
+
+.admin-btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#0073ff] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0060d6] disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.admin-btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900;
+}
+

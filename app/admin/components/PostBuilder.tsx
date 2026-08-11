@@ -75,7 +75,7 @@ export default function PostBuilder({ value, onChange }: Props) {
       {blocks.map((block, index) => (
         <div
           key={block.id}
-          className="border rounded-xl bg-white p-5 shadow-sm"
+          className="border rounded-xl bg-white p-5 shadow-sm text-slate-900"
         >
           <div className="flex justify-end gap-2 mb-4">
             <button
