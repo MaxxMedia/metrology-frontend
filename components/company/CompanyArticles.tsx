@@ -7,8 +7,8 @@ import type { Post } from "@/types/Post";
 
 /* ================= CONFIG ================= */
 
-const ROTATE_INTERVAL = 5000; // 5 seconds
-const FADE_DURATION = 500; // must match the CSS transition duration below
+const ROTATE_INTERVAL = 5000;
+const FADE_DURATION = 500;
 
 const BADGE_COLORS: Record<string, string> = {
   FEATURED: "bg-[#E11D48]",
@@ -16,9 +16,23 @@ const BADGE_COLORS: Record<string, string> = {
   EVENT: "bg-[#0EA5E9]",
   TRENDING: "bg-[#F97316]",
   EXCLUSIVE: "bg-[#059669]",
+  TECH: "bg-[#ff5733]",
+  AUTOMATION: "bg-[#00b5ed]",
+  GADGET: "bg-[#00ad48]",
+  DIGITAL: "bg-[#0073ff]",
+  SOFTWARE: "bg-[#f27100]",
+  INNOVATION: "bg-[#59a255]",
+  FUTURE: "bg-[#54bd05]",
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
+  tech: "bg-[#ff5733]",
+  automation: "bg-[#00b5ed]",
+  gadget: "bg-[#00ad48]",
+  digital: "bg-[#0073ff]",
+  software: "bg-[#f27100]",
+  innovation: "bg-[#59a255]",
+  future: "bg-[#54bd05]",
   gaming: "bg-[#0073FF]",
   fashion: "bg-[#E033E0]",
   "latest-issue": "bg-[#F69C00]",
@@ -26,9 +40,6 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 /* ================= HELPERS ================= */
 
-// The API sometimes returns author: null (e.g. company-submitted
-// articles that instead carry Company / guestName / createdBy info).
-// Never assume post.author is an object — always guard it.
 function getAuthorName(post: Post): string {
   if (post.author && typeof post.author === "object") {
     return post.author.name || "rstheme";
@@ -36,7 +47,6 @@ function getAuthorName(post: Post): string {
   if (typeof post.author === "string" && (post.author as string).trim()) {
     return post.author as string;
   }
-  // Fall back to company name if this is a company-submitted article
   const company = (post as any).Company || (post as any).company;
   if (company?.name) return company.name;
   return "rstheme";
@@ -54,6 +64,35 @@ function getCategoryName(post: Post): string {
     : String(post.category || "");
 }
 
+function getImageUrl(post: Post): string {
+  if (post.imageUrl?.startsWith("http")) return post.imageUrl;
+  if (post.imageUrl) return `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`;
+  return "/placeholder.jpg";
+}
+
+function PulseIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M3 12h3l2-5 3 10 2-6 2 3h6" />
+    </svg>
+  );
+}
+
+function truncateTitle(title: string, max = 38) {
+  if (!title) return "";
+  if (title.length <= max) return title;
+  return `${title.slice(0, max).trimEnd()}…`;
+}
+
 /* ================= COMPONENT ================= */
 
 export default function CompanyArticles() {
@@ -62,8 +101,6 @@ export default function CompanyArticles() {
   const [fade, setFade] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  /* ================= FETCH APPROVED ARTICLES ================= */
 
   useEffect(() => {
     (async () => {
@@ -98,17 +135,11 @@ export default function CompanyArticles() {
         }
 
         const data = await res.json();
-
-        // API may return either a bare array or { data: [...] }
         const list: Post[] = Array.isArray(data)
           ? data
           : Array.isArray(data?.data)
             ? data.data
             : [];
-
-        if (list.length === 0) {
-          console.warn("[CompanyArticles] API returned an empty list", data);
-        }
 
         setAllPosts(list);
       } catch (err) {
@@ -120,8 +151,6 @@ export default function CompanyArticles() {
       }
     })();
   }, []);
-
-  /* ================= UP TO 3 UNIQUE ARTICLES (SLIDING WINDOW) ================= */
 
   const visiblePosts = useMemo(() => {
     if (allPosts.length === 0) return [];
@@ -135,8 +164,6 @@ export default function CompanyArticles() {
 
     return result;
   }, [allPosts, index]);
-
-  /* ================= ROTATION ================= */
 
   useEffect(() => {
     if (allPosts.length <= 3) return;
@@ -153,17 +180,11 @@ export default function CompanyArticles() {
     return () => clearInterval(timer);
   }, [allPosts.length]);
 
-  /* ================= RENDER GUARDS ================= */
-
-  // Previously this just returned null on empty/loading with zero
-  // visual feedback, which is indistinguishable from "silently broken".
   if (loading) {
     return (
-      <section className="pt-4 sm:pt-8 w-full">
-        <div className="max-w-[1320px] mx-auto px-4">
-          <div className="bg-[#F7F7F7] rounded-md px-6 py-10 text-center text-sm text-gray-400">
-            Loading articles…
-          </div>
+      <section className="w-full bg-[#1D2125]">
+        <div className="relative h-[420px] md:h-[480px] bg-[#1D2125] flex items-center justify-center">
+          <p className="text-white/50 text-sm">Loading articles…</p>
         </div>
       </section>
     );
@@ -171,11 +192,9 @@ export default function CompanyArticles() {
 
   if (error) {
     return (
-      <section className="pt-4 sm:pt-8 w-full">
-        <div className="max-w-[1320px] mx-auto px-4">
-          <div className="bg-[#F7F7F7] rounded-md px-6 py-10 text-center text-sm text-red-500">
-            {error}
-          </div>
+      <section className="w-full bg-[#1D2125]">
+        <div className="relative h-[200px] bg-[#1D2125] flex items-center justify-center">
+          <p className="text-red-400 text-sm">{error}</p>
         </div>
       </section>
     );
@@ -183,112 +202,92 @@ export default function CompanyArticles() {
 
   if (!visiblePosts.length) return null;
 
-  /* ================= UI ================= */
+  const heroBg = getImageUrl(visiblePosts[0]);
 
   return (
-    <section className="pt-4 sm:pt-8 w-full">
-      <div className="max-w-[1320px] mx-auto px-4">
-        <div className="relative bg-[#F7F7F7] rounded-md px-4 sm:px-6 py-6 sm:py-7 overflow-hidden">
-          {/* background shapes */}
-          <div className="absolute top-0 right-0 opacity-30 pointer-events-none hidden sm:block">
-            <Image
-              src="/images/shape/flower-shape-01.png"
-              alt=""
-              width={120}
-              height={120}
-              sizes="120px"
-              className="object-contain"
-            />
-          </div>
-          <div className="absolute bottom-0 left-2 opacity-30 pointer-events-none hidden sm:block">
-            <Image
-              src="/images/shape/flower-shape-02.png"
-              alt=""
-              width={120}
-              height={120}
-              sizes="120px"
-              className="object-contain"
-            />
-          </div>
+    <section className="w-full bg-[#1D2125]">
+      <div className="relative min-h-[420px] md:min-h-[520px] overflow-hidden bg-[#1D2125]">
+        {/* Full-bleed cinematic background */}
+        <Image
+          src={heroBg}
+          alt=""
+          fill
+          priority
+          quality={80}
+          sizes="100vw"
+          className={`object-cover transition-all duration-700 ease-in-out ${
+            fade ? "opacity-100 scale-100" : "opacity-80 scale-[1.03]"
+          }`}
+        />
+        <div className="absolute inset-0 bg-[#1D2125]/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1D2125] via-[#1D2125]/45 to-[#1D2125]/20" />
 
-          {/* POSTS GRID */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
-            {visiblePosts.map((post, i) => {
-              const slug = getCategorySlug(post);
-              const categoryName = getCategoryName(post);
+        {/* Glass cards row */}
+        <div className="absolute inset-x-0 bottom-0 z-10">
+          <div className="max-w-[1320px] mx-auto px-3 sm:px-4 pb-6 md:pb-8">
+            <div
+              className={`grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-500 ease-in-out ${
+                fade ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+              }`}
+            >
+              {visiblePosts.map((post, i) => {
+                const slug = getCategorySlug(post);
+                const categoryName = getCategoryName(post);
+                const badge = post.badge?.trim();
+                const tagText = badge || categoryName;
 
-              const badge = post.badge?.trim();
-              const tagText = badge || categoryName;
+                let tagClass = "bg-[#0073ff]";
+                if (badge) {
+                  tagClass = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]";
+                } else {
+                  const match = Object.keys(CATEGORY_COLORS).find(
+                    (key) =>
+                      slug.includes(key) || tagText.toLowerCase().includes(key)
+                  );
+                  if (match) tagClass = CATEGORY_COLORS[match];
+                }
 
-              let tagClass = "bg-[#9CA3AF]";
-
-              if (badge) {
-                tagClass = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]";
-              } else {
-                const match = Object.keys(CATEGORY_COLORS).find((key) =>
-                  slug.includes(key)
-                );
-                if (match) tagClass = CATEGORY_COLORS[match];
-              }
-
-              const imageUrl = post.imageUrl?.startsWith("http")
-                ? post.imageUrl
-                : post.imageUrl
-                  ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
-                  : "/placeholder.jpg";
-
-              return (
-                <div
-                  key={`${post.id}-${i}`}
-                  className="bg-white text-[16px] rounded-md p-4 sm:p-5 flex gap-4 h-[140px] sm:h-[160px] overflow-hidden"
-                >
-                  {/* thumbnail */}
+                return (
                   <Link
+                    key={`${post.id}-${i}`}
                     href={`/post/${post.slug}`}
-                    className="relative text-[16px] w-[72px] h-[72px] sm:w-[96px] sm:h-[96px] rounded-md overflow-hidden flex-shrink-0 bg-gray-100"
+                    className="group flex items-center gap-3.5 rounded-[12px] border border-white/15 bg-black/45 backdrop-blur-md p-3.5 sm:p-4 hover:border-white/30 hover:bg-black/55 transition-colors"
                   >
-                    <Image
-                      src={imageUrl}
-                      alt={post.title?.slice(0, 20) || "Article"}
-                      fill
-                      sizes="(max-width: 640px) 72px, 96px"
-                      className={`object-cover text-[16px] transition-all duration-500 ease-in-out ${fade
-                          ? "opacity-100 scale-100 translate-x-0"
-                          : "opacity-0 scale-95 -translate-x-2"
-                        }`}
-                    />
-                  </Link>
-
-                  {/* content */}
-                  <div
-                    className={`flex flex-col text-[16px] gap-2 min-w-0 transition-all duration-500 ease-in-out ${fade
-                        ? "translate-y-0 opacity-100"
-                        : "translate-y-2 opacity-0"
-                      }`}
-                  >
-                    {tagText && (
-                      <span
-                        className={`${tagClass} text-[16px] text-white px-3 py-[3px] rounded-full rounded-tl-none w-fit text-[12px] font-medium`}
-                      >
-                        {tagText}
-                      </span>
-                    )}
-
-                    <h6 className="text-[20px] leading-snug font-semibold text-[#121213] line-clamp-2 h-[44px] sm:h-[48px] hover:text-[#0073FF] transition">
-                      <Link href={`/post/${post.slug}`}>{post.title}</Link>
-                    </h6>
-
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[#616C74]">
-                      <span>
-                        By{" "}
-                        <span className="font-medium">{getAuthorName(post)}</span>
-                      </span>
-                      <span>{post.views?.toLocaleString() || 0} Views</span>
+                    <div className="relative w-[64px] h-[64px] sm:w-[70px] sm:h-[70px] rounded-full overflow-hidden shrink-0 ring-1 ring-white/20">
+                      <Image
+                        src={getImageUrl(post)}
+                        alt={post.title || "Article"}
+                        fill
+                        sizes="70px"
+                        className="object-cover"
+                      />
                     </div>
-                  </div>
-                </div>
-              );
-            })}
+
+                    <div className="min-w-0 flex-1">
+                      {tagText && (
+                        <span
+                          className={`inline-block ${tagClass} text-white text-[10px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded mb-1.5`}
+                        >
+                          {tagText}
+                        </span>
+                      )}
+
+                      <h6 className="text-white text-[14px] sm:text-[15px] font-bold leading-snug mb-1.5 line-clamp-2 group-hover:text-[#7dd3fc] transition-colors">
+                        {truncateTitle(post.title || "", 42)}
+                      </h6>
+
+                      <ul className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-white/75">
+                        <li>By {getAuthorName(post)}</li>
+                        <li className="inline-flex items-center gap-1">
+                          <PulseIcon className="w-3 h-3 text-[#7dd3fc]" />
+                          {(post.views ?? 0).toLocaleString()} Views
+                        </li>
+                      </ul>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

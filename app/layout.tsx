@@ -199,10 +199,10 @@ export default function RootLayout({
         {/* Sitemap */}
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
       </head>
-      <body className="antialiased" suppressHydrationWarning>
+      <body className="antialiased bg-[#1D2125] text-white" suppressHydrationWarning>
         <Header />
 
-        <main className="pt-[90px] pb-24">
+        <main className="pt-[114px] pb-24">
           {children}
         </main>
 

@@ -2,10 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { Post } from "../types/Post";
-
-type VideoPost = Post;
 
 /* ================= COLOR CONFIG ================= */
 
@@ -15,151 +13,132 @@ const BADGE_COLORS: Record<string, string> = {
   EVENT: "bg-[#0EA5E9]",
   TRENDING: "bg-[#F97316]",
   EXCLUSIVE: "bg-[#059669]",
+  TECH: "bg-[#ff5733]",
+  FUTURE: "bg-[#54bd05]",
+  DIGITAL: "bg-[#0073ff]",
+  SOFTWARE: "bg-[#f27100]",
+  GADGET: "bg-[#00ad48]",
+  AUTOMATION: "bg-[#00b5ed]",
+  INNOVATION: "bg-[#59a255]",
+  ROBOTICS: "bg-[#6d28d9]",
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
+  tech: "bg-[#ff5733]",
+  future: "bg-[#54bd05]",
+  digital: "bg-[#0073ff]",
+  software: "bg-[#f27100]",
+  gadget: "bg-[#00ad48]",
+  automation: "bg-[#00b5ed]",
+  innovation: "bg-[#59a255]",
+  robotics: "bg-[#6d28d9]",
   video: "bg-[#F69C00]",
-  "header-videos": "bg-[#EF4444]",
-  latest: "bg-[#F69C00]",
   engineering: "bg-[#0072BC]",
-  gaming: "bg-[#8B5CF6]",
-  food: "bg-[#F97316]",
-  travel: "bg-[#0EA5E9]",
-  tech: "bg-[#2563EB]",
-  leadership: "bg-[#7C3AED]",
-  machine: "bg-[#059669]",
+  manufacturing: "bg-[#059669]",
 };
 
 type Props = {
   posts: Post[];
 };
 
-function getYoutubeEmbed(url?: string) {
-  if (!url) return "";
-
-  let videoId = "";
-
-  if (url.includes("youtu.be/")) {
-    videoId = url.split("youtu.be/")[1].split("?")[0];
-  } else {
-    videoId = url.match(/[?&]v=([^&]+)/)?.[1] || "";
-  }
-
-  if (!videoId) return "";
-
-  return `https://www.youtube.com/embed/${videoId}?&rel=0`;
+function getRecency(p: Post) {
+  const raw = p.publishedAt || p.createdAt;
+  return raw ? new Date(raw).getTime() : 0;
 }
 
-/**
- * Renders the real avatar image when one exists, otherwise falls back to
- * a generated initials circle instead of a static placeholder file —
- * this can never 404 / show a broken-image icon.
- */
-function AuthorAvatar({
-  name,
-  avatarUrl,
-  size,
-}: {
-  name?: string | null;
-  avatarUrl?: string | null;
-  size: number;
-}) {
-  const displayName = name?.trim() || "rstheme";
-
-  if (avatarUrl) {
-    return (
-      <div className="relative shrink-0" style={{ width: size, height: size }}>
-        <Image
-          src={avatarUrl}
-          alt={displayName}
-          fill
-          sizes={`${size}px`}
-          className="rounded-full object-cover border border-white/30"
-        />
-      </div>
-    );
+function getAuthorName(post?: Post) {
+  if (!post) return "rstheme";
+  if (post.author && typeof post.author === "object" && post.author.name) {
+    return post.author.name;
   }
+  const company = (post as any).Company || (post as any).company;
+  if (company?.name) return company.name;
+  return "rstheme";
+}
 
-  const initial = displayName.charAt(0).toUpperCase();
+function PulseIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M3 12h3l2-5 3 10 2-6 2 3h6" />
+    </svg>
+  );
+}
 
+function CalendarIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      className={className}
+      aria-hidden
+    >
+      <rect x="3.5" y="5" width="17" height="15" rx="2" />
+      <path d="M8 3.5V7M16 3.5V7M3.5 10h17" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ArrowIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 18 12" className={className} aria-hidden fill="currentColor">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M16.2079 5.0991C14.0115 5.0991 12.0097 3.0991 12.0097 0.900901V0H10.2079V0.900901C10.2079 2.4991 10.9088 3.9982 12.0088 5.0991H0.892578V6.9009H12.0088C10.9088 8.0018 10.2079 9.5009 10.2079 11.0991V12H12.0097V11.0991C12.0097 8.9018 14.0115 6.9009 16.2079 6.9009H17.1088V5.0991H16.2079Z"
+      />
+    </svg>
+  );
+}
+
+function DiamondDot({ className = "" }: { className?: string }) {
   return (
     <span
-      style={{ width: size, height: size }}
-      className="rounded-full bg-[#0073ff] text-white flex items-center justify-center font-semibold shrink-0 border border-white/30"
-    >
-      <span style={{ fontSize: Math.max(10, size * 0.45) }}>{initial}</span>
-    </span>
+      className={`w-[7px] h-[7px] bg-[#0073ff] rotate-45 shrink-0 ${className}`}
+      aria-hidden
+    />
   );
 }
 
 export default function VideosSection({ posts }: Props) {
-  /* ================= FILTER VIDEOS ================= */
-  const videos = useMemo(() => {
-    return posts
-      .filter((post) => {
-        const slug =
-          typeof post.category === "object"
-            ? post.category?.slug?.toLowerCase() || ""
-            : String(post.category || "").toLowerCase();
-
-        // Check for header-videos category
-        return slug === "header-videos" || slug.includes("video");
-      })
-      .slice(0, 4);
+  /* Latest news by recency — 2 featured + 3 list */
+  const latestPosts = useMemo(() => {
+    if (!Array.isArray(posts) || posts.length === 0) return [];
+    return [...posts].sort((a, b) => getRecency(b) - getRecency(a)).slice(0, 5);
   }, [posts]);
 
-  // MOVED useState BEFORE the early return
-  // Use a safe default value
-  const [selectedVideo, setSelectedVideo] = useState<VideoPost | undefined>(videos[0]);
+  if (!latestPosts.length) return null;
 
-  // If no videos found, return null (but after all hooks)
-  if (!videos.length) {
-    console.log("⚠️ No videos found");
-    return null;
-  }
+  const [leftFeatured, rightFeatured, ...smallPosts] = latestPosts;
 
-  // Update selected video if it becomes undefined or if videos change
-  // But only if videos has data
-  if (!selectedVideo && videos.length > 0) {
-    setSelectedVideo(videos[0]);
-  }
-
-  const sideVideos = videos.filter((v) => v.id !== selectedVideo?.id);
-
-  const imageUrl = (v?: VideoPost) =>
-    v?.imageUrl?.startsWith("http")
-      ? v.imageUrl
-      : v?.imageUrl
-        ? `${process.env.NEXT_PUBLIC_API_URL}${v.imageUrl}`
+  const imageUrl = (post?: Post) =>
+    post?.imageUrl?.startsWith("http")
+      ? post.imageUrl
+      : post?.imageUrl
+        ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
         : "/placeholder.jpg";
 
-  const date = (d?: string | null) =>
-    d
-      ? new Date(d).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
-      : "";
+  const formatDate = (post?: Post) => {
+    const raw = post?.publishedAt || post?.createdAt;
+    if (!raw) return null;
+    return new Date(raw).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
 
-  /* ================= AUTHOR META ================= */
-
-  // Always renders — falls back to "rstheme" + an initials avatar
-  // instead of disappearing entirely when a video has no author.
-  const AuthorMeta = ({ video }: { video?: VideoPost }) => (
-    <span className="flex items-center gap-1.5">
-      <AuthorAvatar
-        name={video?.author?.name}
-        avatarUrl={video?.author?.avatarUrl}
-        size={18}
-      />
-      {video?.author?.name || "rstheme"}
-    </span>
-  );
-
-  /* ================= TAG HELPERS ================= */
-
-  const getTag = (post?: VideoPost) => {
+  const getTag = (post?: Post) => {
     const badge = post?.badge?.trim();
     const slug =
       typeof post?.category === "object"
@@ -171,15 +150,14 @@ export default function VideosSection({ posts }: Props) {
         ? post?.category?.name || ""
         : String(post?.category || "");
 
-    const text = badge ? badge : categoryName;
-
-    let color = "bg-[#9CA3AF]";
+    const text = badge || categoryName;
+    let color = "bg-[#0073ff]";
 
     if (badge) {
       color = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]";
     } else {
-      const match = Object.keys(CATEGORY_COLORS).find((k) =>
-        slug.includes(k)
+      const match = Object.keys(CATEGORY_COLORS).find(
+        (k) => slug.includes(k) || text.toLowerCase().includes(k)
       );
       if (match) color = CATEGORY_COLORS[match];
     }
@@ -187,179 +165,157 @@ export default function VideosSection({ posts }: Props) {
     return { text, color };
   };
 
-  const featuredTag = getTag(selectedVideo);
+  const FeaturedCard = ({
+    post,
+    className = "",
+  }: {
+    post: Post;
+    className?: string;
+  }) => {
+    const tag = getTag(post);
+    const date = formatDate(post);
 
-  /* ================= RENDER ================= */
+    return (
+      <Link
+        href={`/post/${post.slug}`}
+        className={`group relative block min-h-[280px] sm:min-h-[320px] rounded-[10px] overflow-hidden ${className}`}
+      >
+        <Image
+          src={imageUrl(post)}
+          alt={post.title}
+          fill
+          sizes="(max-width: 1024px) 100vw, 60vw"
+          quality={80}
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+
+        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+          {tag.text && (
+            <span
+              className={`inline-block ${tag.color} text-white text-[11px] font-semibold uppercase tracking-wide px-2.5 py-[3px] rounded mb-3`}
+            >
+              {tag.text}
+            </span>
+          )}
+
+          <h3 className="text-white text-[20px] sm:text-[22px] md:text-[24px] font-bold leading-snug mb-3 group-hover:text-[#7dd3fc] transition-colors line-clamp-3">
+            {post.title}
+          </h3>
+
+          <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] text-white/85">
+            <li>
+              By <span className="text-white">{getAuthorName(post)}</span>
+            </li>
+            {typeof post.views === "number" && (
+              <li className="inline-flex items-center gap-1.5">
+                <PulseIcon className="w-3.5 h-3.5 text-[#7dd3fc]" />
+                {post.views.toLocaleString()} Views
+              </li>
+            )}
+            {date && (
+              <li className="inline-flex items-center gap-1.5">
+                <CalendarIcon className="w-3.5 h-3.5 text-[#7dd3fc]" />
+                {date}
+              </li>
+            )}
+          </ul>
+        </div>
+      </Link>
+    );
+  };
 
   return (
-    <section className="bg-[#171A1E] pt-[70px] pb-[80px] text-white">
-      <div className="max-w-[1320px] mx-auto px-4">
-        {/* HEADER */}
-        <div className="flex items-center justify-between mb-12">
-          <h2 className="text-[24px] font-semibold">Featured Videos</h2>
+    <section className="w-full bg-[#1D2125] py-10 md:py-14">
+      <div className="max-w-[1320px] mx-auto px-3 sm:px-4">
+        {/* ================= HEADER ================= */}
+        <div className="flex items-center gap-4 mb-8 md:mb-10">
+          <h2 className="text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
+            Latest News
+          </h2>
+
+          <div className="relative flex-1 min-w-[40px] flex items-center">
+            <DiamondDot />
+            <span className="flex-1 h-px bg-white/15" />
+            <DiamondDot className="hidden sm:block" />
+          </div>
 
           <Link
-            href="/videos"
-            className="text-[12px] font-medium flex items-center gap-2 hover:underline"
+            href="/articles"
+            className="hidden sm:inline-flex items-center gap-2 text-[14px] text-white hover:text-[#0073ff] transition-colors shrink-0 group"
           >
-            View All →
+            <span>View All</span>
+            <ArrowIcon className="w-4 h-3 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr] gap-8">
-          {/* FEATURED VIDEO - LEFT SIDE */}
-          <div className="relative h-[420px] rounded-md overflow-hidden bg-black">
-            {selectedVideo?.youtubeUrl ? (
-              <iframe
-                key={selectedVideo.id}
-                src={getYoutubeEmbed(selectedVideo.youtubeUrl)}
-                title={selectedVideo.title}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <>
-                <div className="relative w-full h-full">
-                  <Image
-                    src={imageUrl(selectedVideo)}
-                    alt={selectedVideo?.title || "Video"}
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 800px"
-                    className="object-cover"
-                  />
-                </div>
+        {/* ================= TOP: 2 FEATURED ================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-5 md:gap-6 mb-5 md:mb-6">
+          {leftFeatured && <FeaturedCard post={leftFeatured} />}
+          {rightFeatured && <FeaturedCard post={rightFeatured} />}
+        </div>
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div
-                    className="
-                      group
-                      w-16 h-16
-                      rounded-full
-                      bg-white/15
-                      backdrop-blur-md
-                      border border-white/30
-                      shadow-[0_8px_30px_rgba(0,0,0,0.35)]
-                      flex items-center justify-center
-                      transition-all duration-300
-                      hover:bg-white/25
-                      hover:scale-110
-                    "
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="w-6 h-6 ml-1 fill-white group-hover:fill-red-600 transition-colors duration-300"
-                    >
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-6 left-6 max-w-[85%]">
-                  {featuredTag?.text && (
-                    <span
-                      className={`${featuredTag.color} text-[12px] font-bold px-3 py-1 rounded`}
-                    >
-                      {featuredTag.text}
-                    </span>
-                  )}
-
-                  <h3 className="text-[24px] font-semibold mt-4 leading-snug">
-                    {selectedVideo?.title}
-                  </h3>
-
-                  <div className="flex items-center gap-4 text-[12px] text-gray-300 mt-3">
-                    <AuthorMeta video={selectedVideo} />
-                    <span>{date(selectedVideo?.createdAt)}</span>
-                    {selectedVideo?.views !== undefined && selectedVideo?.views !== null && (
-                      <span>{selectedVideo.views.toLocaleString()} Views</span>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* SIDE VIDEOS - RIGHT SIDE - EXACTLY MATCHING HEIGHT */}
-          <div className="flex flex-col h-[420px]">
-            {sideVideos.map((video, index) => {
-              const tag = getTag(video);
-              const isLast = index === sideVideos.length - 1;
-
+        {/* ================= BOTTOM: 3 SMALL CARDS ================= */}
+        {smallPosts.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+            {smallPosts.map((post) => {
+              const tag = getTag(post);
               return (
-                <button
-                  key={video.id}
-                  type="button"
-                  onClick={() => setSelectedVideo(video)}
-                  className={`
-                    flex gap-3 w-full text-left hover:opacity-90 transition group flex-1 items-center
-                    ${!isLast ? 'border-b border-white/10' : ''}
-                  `}
+                <Link
+                  key={post.id}
+                  href={`/post/${post.slug}`}
+                  className="group flex items-start gap-3.5"
                 >
-                  <div className="relative w-[130px] h-[85px] rounded-md overflow-hidden flex-shrink-0">
+                  <div className="relative w-[88px] h-[88px] sm:w-[96px] sm:h-[96px] rounded-[8px] overflow-hidden shrink-0">
                     <Image
-                      src={imageUrl(video)}
-                      alt={video.title}
+                      src={imageUrl(post)}
+                      alt={post.title}
                       fill
-                      sizes="130px"
+                      sizes="96px"
                       quality={70}
-                      className="object-cover group-hover:scale-105 transition duration-300"
+                      className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/20 transition">
-                      <div
-                        className="
-                          w-8 h-8
-                          rounded-full
-                          bg-white/20
-                          backdrop-blur-md
-                          border border-white/40
-                          shadow-[0_4px_16px_rgba(0,0,0,0.35)]
-                          flex items-center justify-center
-                          transition-all duration-300
-                          group-hover:bg-white/30
-                          group-hover:scale-110
-                        "
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          className="w-3.5 h-3.5 ml-[1px] fill-white group-hover:fill-red-600 transition-colors duration-300"
-                        >
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      </div>
-                    </div>
                   </div>
 
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1 pt-0.5">
                     {tag.text && (
                       <span
-                        className={`${tag.color} text-[12px] font-bold px-2 py-0.5 rounded inline-block uppercase tracking-wide w-fit mb-1`}
+                        className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded mb-1.5`}
                       >
                         {tag.text}
                       </span>
                     )}
 
-                    <h4 className="text-[20px] font-semibold leading-snug line-clamp-2 group-hover:text-gray-300 transition">
-                      {video.title}
-                    </h4>
+                    <h6 className="text-[15px] sm:text-[16px] font-bold leading-snug text-white mb-1.5 group-hover:text-[#7dd3fc] transition-colors line-clamp-2">
+                      {post.title}
+                    </h6>
 
-                    <div className="flex items-center gap-1.5 text-[12px] text-gray-400 mt-1 flex-wrap">
-                      <AuthorMeta video={video} />
-                      <span>•</span>
-                      <span>{date(video.createdAt)}</span>
-                      <span>•</span>
-                      <span>{video.views ?? 0} Views</span>
-                    </div>
+                    <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-white/70">
+                      <li>
+                        By <span className="text-white/90">{getAuthorName(post)}</span>
+                      </li>
+                      {typeof post.views === "number" && (
+                        <li className="inline-flex items-center gap-1">
+                          <PulseIcon className="w-3 h-3 text-[#7dd3fc]" />
+                          {post.views.toLocaleString()} Views
+                        </li>
+                      )}
+                    </ul>
                   </div>
-                </button>
+                </Link>
               );
             })}
           </div>
+        )}
+
+        <div className="mt-8 flex justify-center sm:hidden">
+          <Link
+            href="/articles"
+            className="inline-flex items-center gap-2 text-[14px] font-medium text-white"
+          >
+            View All
+            <ArrowIcon className="w-4 h-3" />
+          </Link>
         </div>
       </div>
     </section>
