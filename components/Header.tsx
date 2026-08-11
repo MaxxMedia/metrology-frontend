@@ -77,7 +77,7 @@ export default function Header() {
   const [tickerIndex, setTickerIndex] = useState(0)
 
   const contentScrollRef = useRef<HTMLDivElement>(null)
-  const container = "max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-5"
+  const container = "w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8"
 
   const today = new Date().toLocaleDateString("en-US", {
     month: "long",
@@ -462,10 +462,10 @@ export default function Header() {
       {(openMega === "topics" || openMega === "resources") && (
         <div
           onMouseLeave={() => setOpenMega(null)}
-          className="hidden lg:flex justify-center absolute left-0 right-0 z-20 px-3 sm:px-4 lg:px-5"
+          className="hidden lg:flex justify-center absolute left-0 right-0 z-20 px-4 sm:px-6 lg:px-8"
         >
-          <div className="w-full max-w-[1400px]  bg-[#111318] shadow-2xl">
-            <div className={`py-8 px-6 lg:px-8 grid grid-cols-[240px_1fr] gap-8 items-stretch`}>
+          <div className="w-full max-w-[1520px] bg-[#111318] shadow-2xl">
+            <div className="py-8 px-6 lg:px-8 grid grid-cols-[200px_1fr] xl:grid-cols-[240px_1fr] gap-6 xl:gap-8 items-stretch">
               <aside className="bg-[#15171f]  overflow-hidden">
                 {(openMega === "topics" ? TOPICS : RESOURCES).map((item) => (
                   <button

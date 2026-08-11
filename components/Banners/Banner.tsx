@@ -122,7 +122,7 @@ export default function Banner({ placement, limit, sticky = true }: BannerProps)
     if (TOP_PLACEMENTS.includes(placement)) {
         return (
             <section className="py-6">
-                <div className="w-full flex justify-center px-6">
+                <div className="w-full flex justify-center px-4 sm:px-6">
                     <div
                         className="relative overflow-hidden w-full"
                         style={{ maxWidth: "728px", aspectRatio: "728 / 90" }}
@@ -151,19 +151,24 @@ export default function Banner({ placement, limit, sticky = true }: BannerProps)
     // --- 970x250 leaderboard on dark background (Nerio dark) ---
     if (BLOCK_PLACEMENTS.includes(placement)) {
         return (
-            <section className="py-10 px-6 bg-[#1D2125]">
+            <section className="py-8 sm:py-10 px-4 sm:px-6 lg:px-8 bg-[#1D2125]">
                 <div className="max-w-[970px] w-full mx-auto flex justify-center">
-                    <Link href={banner.targetUrl || "#"} target="_blank" rel="noopener noreferrer">
+                    <Link
+                        href={banner.targetUrl || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full"
+                    >
                         <div
-                            className="relative overflow-hidden"
-                            style={{ width: "970px", height: "250px" }}
+                            className="relative overflow-hidden w-full max-w-[970px] mx-auto"
+                            style={{ aspectRatio: "970 / 250" }}
                         >
                             <Image
                                 src={banner.imageUrl}
                                 alt={banner.title}
                                 fill
                                 priority
-                                sizes="970px"
+                                sizes="(max-width: 970px) 100vw, 970px"
                                 className="object-cover"
                             />
                         </div>
@@ -176,15 +181,23 @@ export default function Banner({ placement, limit, sticky = true }: BannerProps)
     // --- Default: plain 970x250 leaderboard (SUPPLIER_TOP, SUPPLIER_AFTER_VIDEO, FOOTER) ---
     return (
         <section className="py-6">
-            <div className="max-w-[970px] w-full mx-auto px-6 flex justify-center">
-                <Link href={banner.targetUrl || "#"} target="_blank" rel="noopener noreferrer">
-                    <div className="relative overflow-hidden" style={{ width: "970px", height: "250px" }}>
+            <div className="max-w-[970px] w-full mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
+                <Link
+                    href={banner.targetUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full"
+                >
+                    <div
+                        className="relative overflow-hidden w-full"
+                        style={{ aspectRatio: "970 / 250" }}
+                    >
                         <Image
                             src={banner.imageUrl}
                             alt={banner.title}
                             fill
                             priority
-                            sizes="970px"
+                            sizes="(max-width: 970px) 100vw, 970px"
                             className="object-cover"
                         />
                     </div>

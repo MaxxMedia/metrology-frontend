@@ -187,11 +187,12 @@ export default function BasicsSection({ posts }: Props) {
   };
 
   return (
-    <section className="w-full bg-transparent py-12 md:py-16">
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-5">
+    <section className="w-full bg-[#15171f]">
+      {/* Match Nerio Popular News: boxed header + full-bleed slider row */}
+      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-[30px] pb-[30px] lg:pt-[40px] lg:pb-[40px]">
         {/* ================= HEADER ================= */}
-        <div className="flex items-center gap-4 mb-8 md:mb-10">
-          <h2 className="text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
+        <div className="flex items-center gap-3 sm:gap-4 mb-6 lg:mb-7 min-w-0">
+          <h2 className="text-[22px] sm:text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
             Popular News
           </h2>
 
@@ -203,21 +204,21 @@ export default function BasicsSection({ posts }: Props) {
 
           <Link
             href="/articles"
-            className="hidden sm:inline-flex items-center gap-2 text-[14px] text-white hover:text-[#0073ff] transition-colors shrink-0 group"
+            className="hidden sm:inline-flex items-center gap-[8px] text-[14px] text-white hover:text-[#0073ff] transition-colors shrink-0 group"
           >
             <span>View All</span>
             <ArrowIcon className="w-4 h-3 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
 
-        {/* ================= SLIDER ================= */}
-        <div className="relative group/slider px-0 sm:px-10">
+        {/* ================= SLIDER (Nerio: 4 / 3 / 2 / 1, gap 30) ================= */}
+        <div className="relative group/slider">
           <Swiper
             modules={[Autoplay]}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
-            spaceBetween={24}
+            spaceBetween={30}
             slidesPerView={1}
             slidesPerGroup={1}
             loop={popularPosts.length > 4}
@@ -229,7 +230,7 @@ export default function BasicsSection({ posts }: Props) {
             breakpoints={{
               640: { slidesPerView: 2, spaceBetween: 20 },
               900: { slidesPerView: 3, spaceBetween: 24 },
-              1200: { slidesPerView: 4, spaceBetween: 28 },
+              1200: { slidesPerView: 4, spaceBetween: 30 },
             }}
             className="!overflow-hidden"
           >
@@ -241,7 +242,7 @@ export default function BasicsSection({ posts }: Props) {
                 <SwiperSlide key={post.id}>
                   <Link
                     href={`/post/${post.slug}`}
-                    className="group relative block h-[340px] sm:h-[360px] rounded-[10px] overflow-hidden"
+                    className="group relative block h-[280px] sm:h-[320px] lg:h-[360px] overflow-hidden rounded-[4px]"
                   >
                     <Image
                       src={imageUrl(post)}
@@ -251,34 +252,34 @@ export default function BasicsSection({ posts }: Props) {
                       quality={75}
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-                    <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                    <div className="absolute inset-x-0 bottom-0 px-[16px] py-[16px] sm:px-[18px] sm:py-[18px]">
                       {tag.text && (
                         <span
-                          className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-2.5 py-[3px] rounded mb-2.5`}
+                          className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-[10px]`}
                         >
                           {tag.text}
                         </span>
                       )}
 
-                      <h5 className="text-white text-[16px] sm:text-[17px] font-bold leading-snug mb-2.5 line-clamp-3 group-hover:text-[#7dd3fc] transition-colors">
+                      <h5 className="text-white text-[16px] sm:text-[17px] font-bold leading-[1.35] mb-[10px] line-clamp-3 group-hover:text-[#0073ff] transition-colors">
                         {post.title}
                       </h5>
 
-                      <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] sm:text-[12px] text-white/80">
+                      <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[12px] text-white/80">
                         <li>
                           By <span className="text-white/95">{getAuthorName(post)}</span>
                         </li>
                         {typeof post.views === "number" && (
-                          <li className="inline-flex items-center gap-1">
-                            <PulseIcon className="w-3 h-3 text-[#7dd3fc]" />
+                          <li className="inline-flex items-center gap-[4px]">
+                            <PulseIcon className="w-3 h-3 text-[#0073ff]" />
                             {post.views.toLocaleString()} Views
                           </li>
                         )}
                         {date && (
-                          <li className="inline-flex items-center gap-1">
-                            <CalendarIcon className="w-3 h-3 text-[#7dd3fc]" />
+                          <li className="inline-flex items-center gap-[4px]">
+                            <CalendarIcon className="w-3 h-3 text-[#0073ff]" />
                             {date}
                           </li>
                         )}
@@ -290,12 +291,11 @@ export default function BasicsSection({ posts }: Props) {
             })}
           </Swiper>
 
-          {/* Nav arrows — circular outline like Nerio */}
           <button
             type="button"
             aria-label="Previous slide"
             onClick={() => swiperRef.current?.slidePrev()}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 hidden sm:flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white bg-[#15171f]/80 backdrop-blur-sm hover:border-white/60 hover:bg-[#15171f] transition-colors"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 hidden sm:flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white bg-[#1D2125]/85 backdrop-blur-sm hover:border-[#0073ff] hover:text-[#0073ff] transition-colors"
           >
             <ChevronLeft />
           </button>
@@ -303,16 +303,16 @@ export default function BasicsSection({ posts }: Props) {
             type="button"
             aria-label="Next slide"
             onClick={() => swiperRef.current?.slideNext()}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden sm:flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white bg-[#15171f]/80 backdrop-blur-sm hover:border-white/60 hover:bg-[#15171f] transition-colors"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden sm:flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white bg-[#1D2125]/85 backdrop-blur-sm hover:border-[#0073ff] hover:text-[#0073ff] transition-colors"
           >
             <ChevronRight />
           </button>
         </div>
 
-        <div className="mt-8 flex justify-center sm:hidden">
+        <div className="mt-[24px] flex justify-center sm:hidden">
           <Link
             href="/articles"
-            className="inline-flex items-center gap-2 text-[14px] text-white"
+            className="inline-flex items-center gap-[8px] text-[14px] text-white hover:text-[#0073ff] transition-colors"
           >
             View All
             <ArrowIcon className="w-4 h-3" />

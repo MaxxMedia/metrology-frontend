@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 import type { Post } from "@/types/Post"
 
 type LatestHeroProps = {
@@ -12,8 +12,6 @@ type LatestHeroProps = {
 
 /* ================= CONFIG ================= */
 
-const ROTATE_INTERVAL = 5000
-const FADE_DURATION = 500
 /** 1 main hero + 2 bottom cards + 1 sidebar featured + 3 sidebar list */
 const SLOT_COUNT = 7
 
@@ -158,49 +156,17 @@ function PlayIcon() {
 }
 
 export default function LatestHero({ post, posts }: LatestHeroProps) {
-  const [index, setIndex] = useState(0)
-  const [fade, setFade] = useState(true)
-
   const pool = useMemo(() => buildPool(posts), [posts])
-
-  useEffect(() => {
-    if (process.env.NODE_ENV !== "production") {
-      console.log("[LatestHero] posts received:", posts?.length ?? 0, "pool built:", pool.length)
-    }
-  }, [posts, pool])
 
   const visible = useMemo(() => {
     if (pool.length === 0) return []
-
-    const size = Math.min(SLOT_COUNT, pool.length)
-    const result: Post[] = []
-
-    for (let i = 0; i < size; i++) {
-      result.push(pool[(index + i) % pool.length])
-    }
-
-    return result
-  }, [pool, index])
+    return pool.slice(0, SLOT_COUNT)
+  }, [pool])
 
   const heroPost = visible[0] || post
   const bottomPosts = visible.slice(1, 3)
   const recentFeatured = visible[3]
   const recentList = visible.slice(4, 7)
-
-  useEffect(() => {
-    if (pool.length <= SLOT_COUNT) return
-
-    const timer = setInterval(() => {
-      setFade(false)
-
-      setTimeout(() => {
-        setIndex((prev) => (prev + 1) % pool.length)
-        setFade(true)
-      }, FADE_DURATION)
-    }, ROTATE_INTERVAL)
-
-    return () => clearInterval(timer)
-  }, [pool.length])
 
   if (!heroPost) return null
 
@@ -234,64 +200,58 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
 
   return (
     <section className="w-full bg-[#1D2125]">
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-5 py-5 lg:py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.75fr)_minmax(280px,0.85fr)] gap-4 lg:gap-5 items-stretch">
+      {/* Nerio hero: full-bleed row, ~10px side inset, tight top/bottom */}
+      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-[10px] pb-[20px] lg:pb-[30px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(360px,420px)] gap-4 sm:gap-5 lg:gap-6 items-stretch">
 
-          {/* ================= LEFT: MAIN HERO + BOTTOM CARDS ================= */}
-          <div className="relative min-h-[520px] lg:min-h-[620px] rounded-[10px] overflow-hidden">
+          {/* ================= LEFT: HERO BG + TITLE + STYLE-TWO ================= */}
+          <div className="relative min-h-[460px] sm:min-h-[560px] lg:min-h-[720px] overflow-hidden rounded-[6px]">
             <Image
               src={imageUrl}
               alt={heroPost.title}
               fill
               priority
               quality={80}
-              sizes="(max-width: 1024px) 100vw, 900px"
-              className={`object-cover object-center transition-all duration-500 ease-in-out ${
-                fade ? "opacity-100 scale-100" : "opacity-0 scale-[1.02]"
-              }`}
+              sizes="(max-width: 1024px) 100vw, 1200px"
+              className="object-cover object-center"
             />
 
-            {/* Dark overlays matching Nerio depth */}
-            <div className="absolute inset-0 bg-[#1D2125]/45" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#1D2125]/90 via-[#1D2125]/55 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1D2125]/95 via-[#1D2125]/25 to-transparent" />
+            <div className="absolute inset-0 bg-[#1D2125]/25" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1D2125]/88 via-[#1D2125]/45 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1D2125]/80 via-transparent to-transparent" />
 
-            <div
-              className={`relative z-10 flex h-full flex-col justify-between p-5 sm:p-7 lg:p-9 transition-all duration-500 ease-in-out ${
-                fade ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
-              }`}
-            >
-              {/* Main featured content */}
-              <div className="max-w-[560px] pt-2 sm:pt-6">
+            <div className="relative z-10 flex h-full min-h-[460px] sm:min-h-[560px] lg:min-h-[720px] flex-col justify-between px-4 py-5 sm:px-7 sm:py-8 lg:px-12 lg:py-12">
+              {/* style-one: main featured */}
+              <div className="w-full max-w-none lg:max-w-[640px] xl:max-w-[700px] pt-1 sm:pt-3">
                 {heroTag.text ? (
                   <span
-                    className={`inline-block ${heroTag.color} text-white text-[11px] font-semibold uppercase tracking-wide px-2.5 py-[3px] rounded mb-4`}
+                    className={`inline-block ${heroTag.color} text-white text-[11px] font-semibold uppercase tracking-wide px-[10px] py-[3px] rounded-[3px] mb-4`}
                   >
                     {heroTag.text}
                   </span>
                 ) : null}
 
-                <h1 className="text-white text-[26px] sm:text-[32px] lg:text-[36px] font-bold leading-[1.25] mb-4">
+                <h1 className="hero-main-title text-white !font-extrabold !leading-[1.2] tracking-[-0.01em] mb-4 sm:mb-5 line-clamp-3">
                   <Link
                     href={`/post/${heroPost.slug}`}
-                    className="hover:text-[#0073ff] transition-colors"
+                    className="hover:text-[#0073ff] transition-colors line-clamp-3"
                   >
                     {heroPost.title}
                   </Link>
                 </h1>
 
-                <ul className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-[#c8c9ce] mb-6">
+                <ul className="flex flex-wrap items-center gap-x-[16px] gap-y-[8px] text-[14px] sm:text-[15px] text-[#c8c9ce] mb-[22px]">
                   <li>
                     By{" "}
                     <span className="text-white/90">{getAuthorName(heroPost)}</span>
                   </li>
                   {typeof heroPost.views === "number" && (
-                    <li className="inline-flex items-center gap-1.5">
+                    <li className="inline-flex items-center gap-[6px]">
                       <PulseIcon className="w-4 h-4 text-[#0073ff]" />
                       {heroPost.views.toLocaleString()} Views
                     </li>
                   )}
-                  <li className="inline-flex items-center gap-1.5">
+                  <li className="inline-flex items-center gap-[6px]">
                     <CalendarIcon className="w-3.5 h-3.5 text-[#0073ff]" />
                     {date}
                   </li>
@@ -299,29 +259,29 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
 
                 <Link
                   href={`/post/${heroPost.slug}`}
-                  className="inline-flex items-center justify-center bg-[#0073ff] hover:bg-[#0060d6] text-white text-[14px] font-semibold px-6 py-2.5 rounded-[4px] transition-colors"
+                  className="inline-flex items-center justify-center bg-[#0073ff] hover:bg-[#0060d6] text-white text-[15px] sm:text-[16px] font-semibold px-[28px] py-[13px] sm:px-[32px] sm:py-[14px] rounded-[4px] transition-colors"
                 >
                   Read Article
                 </Link>
               </div>
 
-              {/* Bottom style-two cards */}
+              {/* style-two: glass / smoky cards */}
               {bottomPosts.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8">
                   {bottomPosts.map((item, i) => {
                     const tag = getTag(item)
                     return (
                       <Link
                         key={`${item.id}-bottom-${i}`}
                         href={`/post/${item.slug}`}
-                        className="group flex items-center gap-3 rounded-[8px] border border-white/10 bg-[#12141c]/75 backdrop-blur-sm p-2.5 hover:border-white/20 transition-colors"
+                        className="group flex items-center gap-3.5 rounded-[12px] border border-white/15 bg-white/[0.07] backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.35)] p-3 sm:p-3.5 hover:bg-white/[0.12] hover:border-white/25 transition-colors"
                       >
-                        <div className="relative w-[72px] h-[72px] rounded-[6px] overflow-hidden shrink-0">
+                        <div className="relative w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] overflow-hidden shrink-0 rounded-[8px]">
                           <Image
                             src={getImageUrl(item)}
                             alt={item.title}
                             fill
-                            sizes="72px"
+                            sizes="80px"
                             quality={70}
                             className="object-cover"
                           />
@@ -337,17 +297,17 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                         <div className="min-w-0 flex-1">
                           {tag.text ? (
                             <span
-                              className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded mb-1.5`}
+                              className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-1.5`}
                             >
                               {tag.text}
                             </span>
                           ) : null}
 
-                          <h6 className="text-white text-[14px] sm:text-[15px] font-semibold leading-snug mb-1.5 group-hover:text-[#0073ff] transition-colors line-clamp-2">
-                            {truncateTitle(item.title, 42)}
+                          <h6 className="text-white !text-[15px] sm:!text-[16px] !font-bold leading-[1.35] mb-1.5 group-hover:text-[#0073ff] transition-colors line-clamp-2">
+                            {truncateTitle(item.title, 48)}
                           </h6>
 
-                          <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#a8aab3]">
+                          <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-[#c8c9ce]">
                             <li>By {getAuthorName(item)}</li>
                             {typeof item.views === "number" && (
                               <li className="inline-flex items-center gap-1">
@@ -365,55 +325,50 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
             </div>
           </div>
 
-          {/* ================= RIGHT: RECENT NEWS SIDEBAR ================= */}
-          <aside className="rounded-[10px] bg-[#0f1118] border border-white/5 p-4 sm:p-5 flex flex-col min-h-[520px] lg:min-h-[620px]">
-            <div className="flex items-center justify-between gap-3 mb-4">
-              <h4 className="text-white text-[20px] font-bold leading-none">
+          {/* ================= RIGHT: RECENT NEWS ================= */}
+          <aside className="bg-[#15171f] rounded-[6px] px-4 py-5 sm:px-6 sm:py-6 flex flex-col min-h-0 lg:min-h-[720px] w-full min-w-0">
+            <div className="flex items-center justify-between gap-3 mb-5">
+              <h4 className="text-white text-[20px] sm:text-[22px] font-bold leading-none">
                 Recent News
               </h4>
               <Link
-                href="/blog"
-                className="inline-flex items-center gap-2 text-[13px] text-[#c8c9ce] hover:text-white transition-colors group"
+                href="/articles"
+                className="inline-flex items-center gap-[8px] text-[13px] text-white hover:text-[#0073ff] transition-colors group"
               >
                 <span>View All</span>
                 <ArrowIcon className="w-4 h-3 text-current group-hover:translate-x-0.5 transition-transform" />
               </Link>
             </div>
 
-            <div
-              className={`flex flex-col gap-4 flex-1 transition-all duration-500 ease-in-out ${
-                fade ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
-              }`}
-            >
-              {/* Featured large card */}
+            <div className="flex flex-col gap-[20px] flex-1">
               {recentFeatured && (
                 <Link
                   href={`/post/${recentFeatured.slug}`}
-                  className="group relative block rounded-[8px] overflow-hidden min-h-[180px] sm:min-h-[200px]"
+                  className="group relative block overflow-hidden rounded-[4px] min-h-[190px] sm:min-h-[210px]"
                 >
                   <Image
                     src={getImageUrl(recentFeatured)}
                     alt={recentFeatured.title}
                     fill
-                    sizes="(max-width: 1024px) 100vw, 360px"
+                    sizes="(max-width: 1024px) 100vw, 380px"
                     quality={75}
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10" />
-                  <div className="absolute inset-x-0 bottom-0 p-4">
-                    <h4 className="text-white text-[16px] sm:text-[17px] font-bold leading-snug mb-2 group-hover:text-[#0073ff] transition-colors">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 px-[16px] py-[16px]">
+                    <h4 className="text-white text-[17px] font-bold leading-[1.35] mb-[10px] group-hover:text-[#0073ff] transition-colors">
                       {recentFeatured.title}
                     </h4>
-                    <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#d1d2d8]">
+                    <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[12px] text-[#d1d2d8]">
                       <li>By {getAuthorName(recentFeatured)}</li>
                       {typeof recentFeatured.views === "number" && (
-                        <li className="inline-flex items-center gap-1">
+                        <li className="inline-flex items-center gap-[4px]">
                           <PulseIcon className="w-3 h-3 text-[#0073ff]" />
                           {recentFeatured.views.toLocaleString()} Views
                         </li>
                       )}
                       {formatDate(recentFeatured) && (
-                        <li className="inline-flex items-center gap-1">
+                        <li className="inline-flex items-center gap-[4px]">
                           <CalendarIcon className="w-3 h-3 text-[#0073ff]" />
                           {formatDate(recentFeatured)}
                         </li>
@@ -423,44 +378,43 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                 </Link>
               )}
 
-              {/* List items */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-[18px]">
                 {recentList.map((item, i) => {
                   const tag = getTag(item)
                   return (
                     <Link
                       key={`${item.id}-recent-${i}`}
                       href={`/post/${item.slug}`}
-                      className="group flex items-start gap-3"
+                      className="group flex items-center gap-[14px]"
                     >
-                      <div className="relative w-[78px] h-[78px] rounded-[6px] overflow-hidden shrink-0">
+                      <div className="relative w-[80px] h-[80px] rounded-[4px] overflow-hidden shrink-0">
                         <Image
                           src={getImageUrl(item)}
                           alt={item.title}
                           fill
-                          sizes="78px"
+                          sizes="80px"
                           quality={70}
                           className="object-cover"
                         />
                       </div>
 
-                      <div className="min-w-0 flex-1 pt-0.5">
+                      <div className="min-w-0 flex-1">
                         {tag.text ? (
                           <span
-                            className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded mb-1.5`}
+                            className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-[8px]`}
                           >
                             {tag.text}
                           </span>
                         ) : null}
 
-                        <h6 className="text-white text-[14px] font-semibold leading-snug mb-1.5 group-hover:text-[#0073ff] transition-colors line-clamp-2">
+                        <h6 className="text-white text-[15px] font-semibold leading-[1.35] mb-[8px] group-hover:text-[#0073ff] transition-colors line-clamp-2">
                           {truncateTitle(item.title, 48)}
                         </h6>
 
-                        <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#a8aab3]">
+                        <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[12px] text-[#a8aab3]">
                           <li>By {getAuthorName(item)}</li>
                           {typeof item.views === "number" && (
-                            <li className="inline-flex items-center gap-1">
+                            <li className="inline-flex items-center gap-[4px]">
                               <PulseIcon className="w-3 h-3 text-[#0073ff]" />
                               {item.views.toLocaleString()} Views
                             </li>

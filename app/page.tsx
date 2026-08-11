@@ -75,7 +75,7 @@ export default async function Home() {
   const latestPost = sortedByRecency[0]
 
   return (
-    <div className="flex flex-col bg-[#1D2125]">
+    <div className="flex flex-col w-full min-w-0 overflow-x-hidden bg-[#1D2125]">
       {/* ================= HOME TOP BANNER ================= */}
       {/* <Banner placement="HOME_TOP" /> */}
 
@@ -84,16 +84,19 @@ export default async function Home() {
 
       {/* 📈 Trending + Popular */}
       <TrendingSection posts={posts} />
-      <BasicsSection posts={posts} />
 
       {/* ================= HOME MIDDLE BANNER ================= */}
       <Banner placement="HOME_MIDDLE" />
 
+      <BasicsSection posts={posts} />
+
+      
+
       {/* 🎥 Videos */}
       <VideosSection posts={posts} />
 
-      {/* 🏢 Company Articles */}
-      <CompanyArticles />
+      {/* Optical & Vision Metrology */}
+      <CompanyArticles posts={posts} />
 
       {/* 🏭 Manufacturing (currently disabled) */}
       {/* <ManufacturingConnected posts={manufacturingPosts.slice(0, 4)} /> */}

@@ -7,6 +7,9 @@ import type { Post } from "@/types/Post";
 
 /* ================= CONFIG ================= */
 
+const CATEGORY_SLUG = "optical-and-vision-metrology";
+const CATEGORY_NAME = "Optical & Vision Metrology";
+
 const ROTATE_INTERVAL = 5000;
 const FADE_DURATION = 500;
 
@@ -36,6 +39,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   gaming: "bg-[#0073FF]",
   fashion: "bg-[#E033E0]",
   "latest-issue": "bg-[#F69C00]",
+  "optical-and-vision-metrology": "bg-[#0073ff]",
 };
 
 /* ================= HELPERS ================= */
@@ -62,6 +66,17 @@ function getCategoryName(post: Post): string {
   return typeof post.category === "object"
     ? post.category?.name || ""
     : String(post.category || "");
+}
+
+function isOpticalVisionPost(post: Post): boolean {
+  const slug = getCategorySlug(post);
+  const name = getCategoryName(post).toLowerCase();
+
+  return (
+    slug === CATEGORY_SLUG ||
+    name === CATEGORY_NAME.toLowerCase() ||
+    (name.includes("optical") && name.includes("vision"))
+  );
 }
 
 function getImageUrl(post: Post): string {
@@ -93,16 +108,46 @@ function truncateTitle(title: string, max = 38) {
   return `${title.slice(0, max).trimEnd()}…`;
 }
 
+function sortByRecency(list: Post[]) {
+  return [...list].sort((a, b) => {
+    const aTime = new Date(
+      (a as any).publishedAt || (a as any).createdAt || 0
+    ).getTime();
+    const bTime = new Date(
+      (b as any).publishedAt || (b as any).createdAt || 0
+    ).getTime();
+    return bTime - aTime;
+  });
+}
+
+type Props = {
+  posts?: Post[];
+};
+
 /* ================= COMPONENT ================= */
 
-export default function CompanyArticles() {
-  const [allPosts, setAllPosts] = useState<Post[]>([]);
+export default function CompanyArticles({ posts: postsProp }: Props) {
+  const [fetchedPosts, setFetchedPosts] = useState<Post[]>([]);
   const [index, setIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fromProp = useMemo(
+    () =>
+      Array.isArray(postsProp)
+        ? sortByRecency(postsProp.filter(isOpticalVisionPost))
+        : [],
+    [postsProp]
+  );
+
   useEffect(() => {
+    if (fromProp.length > 0) {
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
     (async () => {
       setLoading(true);
       setError(null);
@@ -119,9 +164,10 @@ export default function CompanyArticles() {
       }
 
       try {
-        const res = await fetch(`${apiUrl}/api/articles/approved`, {
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `${apiUrl}/api/posts?category=${encodeURIComponent(CATEGORY_SLUG)}&limit=20`,
+          { cache: "no-store" }
+        );
 
         if (!res.ok) {
           const body = await res.text().catch(() => "");
@@ -130,7 +176,7 @@ export default function CompanyArticles() {
             body
           );
           setError(`Failed to load articles (${res.status})`);
-          setAllPosts([]);
+          setFetchedPosts([]);
           return;
         }
 
@@ -141,16 +187,21 @@ export default function CompanyArticles() {
             ? data.data
             : [];
 
-        setAllPosts(list);
+        setFetchedPosts(sortByRecency(list.filter(isOpticalVisionPost)));
       } catch (err) {
-        console.error("[CompanyArticles] Failed to load approved articles", err);
+        console.error(
+          "[CompanyArticles] Failed to load Optical & Vision Metrology posts",
+          err
+        );
         setError("Failed to load articles");
-        setAllPosts([]);
+        setFetchedPosts([]);
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [fromProp.length]);
+
+  const allPosts = fromProp.length > 0 ? fromProp : fetchedPosts;
 
   const visiblePosts = useMemo(() => {
     if (allPosts.length === 0) return [];
@@ -207,7 +258,6 @@ export default function CompanyArticles() {
   return (
     <section className="w-full bg-[#1D2125]">
       <div className="relative min-h-[420px] md:min-h-[520px] overflow-hidden bg-[#1D2125]">
-        {/* Full-bleed cinematic background */}
         <Image
           src={heroBg}
           alt=""
@@ -222,11 +272,10 @@ export default function CompanyArticles() {
         <div className="absolute inset-0 bg-[#1D2125]/50" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1D2125] via-[#1D2125]/45 to-[#1D2125]/20" />
 
-        {/* Glass cards row */}
         <div className="absolute inset-x-0 bottom-0 z-10">
-          <div className="max-w-[1320px] mx-auto px-3 sm:px-4 pb-6 md:pb-8">
+          <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pb-6 md:pb-8">
             <div
-              className={`grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-500 ease-in-out ${
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 transition-all duration-500 ease-in-out ${
                 fade ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
               }`}
             >
@@ -234,7 +283,7 @@ export default function CompanyArticles() {
                 const slug = getCategorySlug(post);
                 const categoryName = getCategoryName(post);
                 const badge = post.badge?.trim();
-                const tagText = badge || categoryName;
+                const tagText = badge || categoryName || CATEGORY_NAME;
 
                 let tagClass = "bg-[#0073ff]";
                 if (badge) {
