@@ -232,13 +232,31 @@ export default function HomeCompanyArticles({ posts }: Props) {
 
   return (
     <section className="w-full bg-[#1D2125]">
+      <style jsx>{`
+        h2.section-title-32 {
+          font-size: 32px !important;
+          line-height: 1.2 !important;
+        }
+        h4.top-card-title-22 {
+          font-size: 22px !important;
+          line-height: 1.3 !important;
+        }
+        p.top-card-excerpt-16 {
+          font-size: 16px !important;
+          line-height: 1.6 !important;
+        }
+        ul.top-card-meta-14 li {
+          font-size: 14px !important;
+          line-height: 1.4 !important;
+        }
+      `}</style>
       <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-[30px] pb-[30px] lg:pt-[40px] lg:pb-[40px]">
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] xl:grid-cols-[minmax(0,1fr)_300px] gap-5 lg:gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[970px_280px] xl:grid-cols-[970px_300px] gap-5 lg:gap-6 items-start">
 
           {/* ================= LEFT: TOP OF THIS WEEK ================= */}
-          <div className="min-w-0">
+          <div className="min-w-0 w-full  lg:w-[970px]">
             <div className="flex items-center gap-3 sm:gap-4 mb-6 lg:mb-7 min-w-0">
-              <h2 className="text-[22px] sm:text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
+              <h2 className="section-title-32 font-bold text-white shrink-0 leading-none">
                 Top of This Week
               </h2>
               <div className="flex-1 min-w-[40px] flex items-center">
@@ -255,17 +273,17 @@ export default function HomeCompanyArticles({ posts }: Props) {
                 return (
                   <article
                     key={post.id}
-                    className="group flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0"
+                    className="group flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 lg:w-[970px] lg:h-[270.8px] lg:py-[20px] lg:px-0"
                   >
                     <Link
                       href={`/post/${post.slug}`}
-                      className="relative w-full sm:w-[200px] md:w-[220px] lg:w-[240px] h-[180px] sm:h-[150px] md:h-[160px] rounded-[4px] overflow-hidden shrink-0"
+                      className="relative w-full sm:w-[200px] md:w-[220px] lg:w-[340px] h-[180px] sm:h-[150px] md:h-[160px] lg:h-full rounded-[4px] overflow-hidden shrink-0"
                     >
                       <Image
                         src={getImageUrl(post)}
                         alt={post.title}
                         fill
-                        sizes="(max-width: 640px) 100vw, 240px"
+                        sizes="(max-width: 640px) 100vw, 340px"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </Link>
@@ -279,7 +297,7 @@ export default function HomeCompanyArticles({ posts }: Props) {
                         </span>
                       )}
 
-                      <h4 className="text-[17px] sm:text-[18px] md:text-[20px] font-bold text-white leading-snug mb-[8px]">
+                      <h4 className="top-card-title-22 text-white font-bold leading-snug mb-[8px]">
                         <Link
                           href={`/post/${post.slug}`}
                           className="hover:text-[#0073ff] transition-colors"
@@ -288,11 +306,11 @@ export default function HomeCompanyArticles({ posts }: Props) {
                         </Link>
                       </h4>
 
-                      <p className="text-[14px] text-[#a8aab3] leading-relaxed mb-[12px] line-clamp-2">
+                      <p className="top-card-excerpt-16 text-[#CCCCCC] leading-relaxed mb-[12px] line-clamp-2">
                         {excerptOf(post)}
                       </p>
 
-                      <ul className="flex flex-wrap items-center gap-x-[14px] gap-y-[6px] text-[12px] text-[#a8aab3]">
+                      <ul className="top-card-meta-14 flex flex-wrap items-center gap-x-[14px] gap-y-[6px] text-[#CCCCCC]">
                         <li>
                           By{" "}
                           <span className="text-white/90 font-medium">

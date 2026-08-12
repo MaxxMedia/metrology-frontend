@@ -59,6 +59,10 @@ export function CommentsSection({
   const router = useRouter()
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [comment, setComment] = useState("")
+  const [fullName, setFullName] = useState("")
+  const [email, setEmail] = useState("")
+  const [website, setWebsite] = useState("")
+  const [saveDetails, setSaveDetails] = useState(false)
   const [postingComment, setPostingComment] = useState(false)
   const [commentError, setCommentError] = useState<string | null>(null)
 
@@ -128,38 +132,91 @@ export function CommentsSection({
     }
   }
 
-  const commentCount = comments.length
-
   return (
-    <div className="mt-12 pt-8 border-t border-gray-200">
-      <h3 className="text-xl font-bold text-[#003049] mb-6">
-        Comments ({commentCount})
+    <div className="mt-12 rounded-lg bg-[#1d2125] px-6 py-10 sm:px-10 sm:py-12 lg:p-[50px]">
+      <h3 className="text-2xl font-bold text-white">
+        Leave a Comment
       </h3>
+      <p className="mt-4 text-base text-gray-300">
+        Your email address will not be published. Required fields are marked *
+      </p>
 
       {/* Comment Input */}
-      <div className="mb-8">
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder={isLoggedIn ? "Write a comment..." : "Please login to comment"}
-          className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003B5C] focus:border-transparent resize-y min-h-[100px]"
-          disabled={!isLoggedIn || postingComment}
-        />
+      <div className="mt-9">
+        <div className="grid gap-8 sm:grid-cols-2">
+          <label className="border-b border-white/10 pb-4 text-base text-gray-300">
+            <span>Full Name *</span>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              autoComplete="name"
+              className="mt-2 block w-full bg-transparent text-white outline-none placeholder:text-gray-500"
+              disabled={!isLoggedIn || postingComment}
+            />
+          </label>
+          <label className="border-b border-white/10 pb-4 text-base text-gray-300">
+            <span>Email *</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              className="mt-2 block w-full bg-transparent text-white outline-none placeholder:text-gray-500"
+              disabled={!isLoggedIn || postingComment}
+            />
+          </label>
+        </div>
+
+        <label className="mt-8 block border-b border-white/10 pb-4 text-base text-gray-300">
+          <span>Website</span>
+          <input
+            type="url"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            autoComplete="url"
+            className="mt-2 block w-full bg-transparent text-white outline-none placeholder:text-gray-500"
+            disabled={!isLoggedIn || postingComment}
+          />
+        </label>
+
+        <label className="mt-8 block text-base text-gray-300">
+          <span>Write Comment</span>
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder={isLoggedIn ? "" : "Please login to comment"}
+            className="mt-3 block min-h-[128px] w-full resize-y border-b border-white/10 bg-transparent py-2 text-white outline-none placeholder:text-gray-500"
+            disabled={!isLoggedIn || postingComment}
+          />
+        </label>
+
+        <label className="mt-6 flex items-center gap-3 text-base text-gray-300">
+          <input
+            type="checkbox"
+            checked={saveDetails}
+            onChange={(e) => setSaveDetails(e.target.checked)}
+            className="h-5 w-5 accent-[#0073ff]"
+            disabled={!isLoggedIn || postingComment}
+          />
+          <span>Save my name, email, and website in this browser for the next time I comment.</span>
+        </label>
+
         {commentError && (
-          <p className="text-red-500 text-sm mt-2">{commentError}</p>
+          <p className="mt-4 text-sm text-red-400">{commentError}</p>
         )}
         <button
           onClick={submitComment}
           disabled={!comment.trim() || postingComment || !isLoggedIn}
-          className="mt-3 bg-[#003B5C] text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-[#002d47] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-8 rounded-md bg-[#0073ff] px-9 py-4 text-base font-semibold text-white transition-colors hover:bg-[#0066e6] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {postingComment ? "Posting..." : "Post Comment"}
         </button>
         {!isLoggedIn && (
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="mt-3 text-sm text-gray-400">
             <button
               onClick={() => router.push("/login")}
-              className="text-[#003B5C] hover:underline font-medium"
+              className="font-medium text-[#38bdf8] hover:underline"
             >
               Login
             </button>{" "}
@@ -168,18 +225,18 @@ export function CommentsSection({
         )}
       </div>
 
-      {/* Comments List */}
-      <div className="space-y-6">
+      {/* Comments List
+      <div className="mt-10 space-y-6">
         {comments.length === 0 ? (
-          <div className="text-center py-10 border rounded-xl bg-gray-50">
+          <div className="rounded-xl border border-white/10 bg-[#15191d] py-10 text-center">
             <MessageCircle
               size={42}
               className="mx-auto text-gray-400 mb-3"
             />
-            <h3 className="font-semibold text-lg">
+            <h3 className="text-lg font-semibold text-white">
               No comments yet
             </h3>
-            <p className="text-gray-500 mt-2">
+            <p className="mt-2 text-gray-400">
               Start the discussion by posting the first comment.
             </p>
           </div>
@@ -187,7 +244,7 @@ export function CommentsSection({
           comments.map((item) => (
             <div
               key={item.id}
-              className="flex gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+              className="flex gap-4 rounded-xl border border-white/10 bg-[#15191d] p-5 shadow-sm"
             >
               <UserAvatar
                 name={item.user.fullName}
@@ -197,26 +254,26 @@ export function CommentsSection({
 
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-semibold text-gray-900">
+                  <h4 className="font-semibold text-white">
                     {item.user.fullName}
                   </h4>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-400">
                     @{item.user.username}
                   </span>
                 </div>
 
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="mt-1 text-xs text-gray-400">
                   {timeAgo(item.createdAt)}
                 </p>
 
-                <p className="mt-3 text-gray-700 leading-7 whitespace-pre-wrap break-words">
+                <p className="mt-3 leading-7 text-gray-300 whitespace-pre-wrap break-words">
                   {item.content}
                 </p>
               </div>
             </div>
           ))
         )}
-      </div>
+      </div> */}
     </div>
   )
 }

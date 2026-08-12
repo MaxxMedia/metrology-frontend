@@ -178,7 +178,7 @@ export default function VideosSection({ posts }: Props) {
     return (
       <Link
         href={`/post/${post.slug}`}
-        className={`group relative block h-[260px] sm:h-[340px] md:h-[380px] lg:h-[440px] rounded-[4px] overflow-hidden ${className}`}
+        className={`group relative block h-[500px] rounded-[4px] overflow-hidden ${className}`}
       >
         <Image
           src={imageUrl(post)}
@@ -199,11 +199,11 @@ export default function VideosSection({ posts }: Props) {
             </span>
           )}
 
-          <h3 className="text-white text-[20px] sm:text-[22px] md:text-[24px] font-bold leading-snug mb-[12px] group-hover:text-[#0073ff] transition-colors line-clamp-3">
+          <h3 className="featured-title-28 text-white font-bold leading-snug mb-[12px] group-hover:text-[#0073ff] transition-colors line-clamp-3">
             {post.title}
           </h3>
 
-          <ul className="flex flex-wrap items-center gap-x-[14px] gap-y-[6px] text-[13px] text-white/85">
+          <ul className="flex flex-wrap items-center gap-x-[14px] gap-y-[6px] text-[14px] text-[#FFFFFFCC]">
             <li>
               By <span className="text-white">{getAuthorName(post)}</span>
             </li>
@@ -226,10 +226,10 @@ export default function VideosSection({ posts }: Props) {
   };
 
   return (
-    <section className="w-full bg-[#1D2125]">
-      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-[30px] pb-[10px] lg:pt-[40px] lg:pb-[12px]">
+    <section className="w-full bg-black">
+      <div className="w-full max-w-[1420px] mx-auto px-0 py-[80px]">
         {/* ================= HEADER ================= */}
-        <div className="flex items-center gap-3 sm:gap-4 mb-6 lg:mb-7 min-w-0">
+        <div className="flex items-center gap-3 sm:gap-4 mb-[12px] min-w-0">
           <h2 className="text-[22px] sm:text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
             Latest News
           </h2>
@@ -250,9 +250,13 @@ export default function VideosSection({ posts }: Props) {
         </div>
 
         {/* ================= TOP: 2 FEATURED ================= */}
-        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 sm:gap-5 lg:gap-6 mb-5 lg:mb-6">
-          {leftFeatured && <FeaturedCard post={leftFeatured} />}
-          {rightFeatured && <FeaturedCard post={rightFeatured} />}
+        <div className="flex flex-col md:flex-row gap-4 sm:gap-5 lg:gap-6 mb-5 lg:mb-6">
+          {leftFeatured && (
+            <FeaturedCard post={leftFeatured} className="w-full lg:w-[923.33px] shrink-0" />
+          )}
+          {rightFeatured && (
+            <FeaturedCard post={rightFeatured} className="w-full lg:w-[446.66px] shrink-0" />
+          )}
         </div>
 
         {/* ================= BOTTOM: 3 SMALL CARDS ================= */}
@@ -264,14 +268,14 @@ export default function VideosSection({ posts }: Props) {
                 <Link
                   key={post.id}
                   href={`/post/${post.slug}`}
-                  className="group flex items-center gap-3 sm:gap-3.5 min-w-0"
+                  className="group flex items-center gap-3.5 min-w-0 w-[450px] h-[151.6px] py-[10px]"
                 >
-                  <div className="relative w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-[4px] overflow-hidden shrink-0">
+                  <div className="relative w-[140px] h-[130px] rounded-[4px] overflow-hidden shrink-0">
                     <Image
                       src={imageUrl(post)}
                       alt={post.title}
                       fill
-                      sizes="80px"
+                      sizes="140px"
                       quality={70}
                       className="object-cover"
                     />
@@ -286,11 +290,11 @@ export default function VideosSection({ posts }: Props) {
                       </span>
                     )}
 
-                    <h6 className="text-[15px] font-semibold leading-snug text-white mb-[8px] group-hover:text-[#0073ff] transition-colors line-clamp-2">
+                    <h6 className="text-[18px] font-semibold leading-snug text-white mb-[8px] group-hover:text-[#0073ff] transition-colors line-clamp-2">
                       {post.title}
                     </h6>
 
-                    <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[12px] text-[#a8aab3]">
+                    <ul className="small-card-meta-14 flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[#a8aab3]">
                       <li>
                         By <span className="text-white/90">{getAuthorName(post)}</span>
                       </li>

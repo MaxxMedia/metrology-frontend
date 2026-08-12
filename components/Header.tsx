@@ -16,6 +16,11 @@ import {
   Instagram,
   Linkedin,
   Activity,
+  Phone,
+  Mail,
+  MapPin,
+  ArrowRight,
+
 } from "lucide-react"
 import { useState, useEffect, useRef, type FormEvent } from "react"
 import type { Post } from "@/types/Post"
@@ -59,10 +64,43 @@ const PAGES_LINKS: { label: string; href: string; children?: { label: string; hr
   { label: "About / Contact", href: "/contact" },
 ]
 
+const MOBILE_PRIMARY_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "Topics", href: "/topics" },
+  { label: "Resources", href: "/Webinar" },
+  { label: "Contact", href: "/contact" },
+]
+
+const MOBILE_SHOWCASE_IMAGES = [
+  "/heroimage.jpg",
+  "/artificial-intelligence-technology.png",
+  "/modern-manufacturing-facility.png",
+  "/green-factory-team.jpg",
+  "/manufacturing-worker-training.jpg",
+  "/featured-article.jpg",
+]
+
 export default function Header() {
   const [openMega, setOpenMega] = useState<MegaType>(null)
   const [openPagesChild, setOpenPagesChild] = useState<string | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuClosing, setIsMenuClosing] = useState(false)
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function closeMobileMenu() {
+    setIsMenuClosing(true)
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsMenuOpen(false)
+      setIsMenuClosing(false)
+    }, 900)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
+    }
+  }, [])
   const [user, setUser] = useState<User | null>(null)
   const [openUserMenu, setOpenUserMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -238,6 +276,32 @@ export default function Header() {
     <header className="fixed top-0 left-0 w-full z-50 bg-[#1D2125]">
       <style jsx global>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+        @keyframes menuGradientDrift {
+          0% { transform: translate3d(12%, -4%, 0) scale(1); opacity: 0.55; }
+          50% { transform: translate3d(-12%, 8%, 0) scale(1.08); opacity: 0.8; }
+          100% { transform: translate3d(-24%, 14%, 0) scale(0.96); opacity: 0.42; }
+        }
+        @keyframes menuGradientSweep {
+          0% { transform: translateX(18%); opacity: 0.16; }
+          50% { transform: translateX(-10%); opacity: 0.28; }
+          100% { transform: translateX(-22%); opacity: 0.14; }
+        }
+        @keyframes backdropWipeLeft {
+          0%   { clip-path: inset(0 0 0 100%); }
+          100% { clip-path: inset(0 0 0 0%); }
+        }
+        @keyframes backdropWipeOutRight {
+          0%   { clip-path: inset(0 0 0 0%); }
+          100% { clip-path: inset(0 0 0 100%); }
+        }
+        @keyframes panelSlideInRight {
+          0%   { transform: translateX(100%); }
+          100% { transform: translateX(0); }
+        }
+        @keyframes panelSlideOutRight {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(100%); }
+        }
       `}</style>
 
       {/* ================= TOP UTILITY BAR ================= */}
@@ -309,15 +373,14 @@ export default function Header() {
 
       {/* ================= MAIN NAV ================= */}
       <div className="bg-[#121213]">
-        <div className={`${container} h-[72px] flex items-center justify-between gap-4`}>
-          <Link href="/" className="shrink-0 flex items-center">
+      <div className={`${container} h-[56px] flex items-center justify-between gap-4`}>          <Link href="/" className="shrink-0 flex items-center">
             <Image
               src="/images/logo5.png"
               alt="Tooling Trends"
               width={180}
               height={56}
               priority
-              className="h-[48px] w-auto object-contain"
+              className="h-[44px] w-auto object-contain"
             />
           </Link>
 
@@ -504,7 +567,7 @@ export default function Header() {
             )}
 
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => (isMenuOpen ? closeMobileMenu() : setIsMenuOpen(true))}
               aria-label="Menu"
               className="h-10 w-10 flex items-center justify-center rounded-[4px] bg-[#15171f] border border-white/10 text-white hover:border-[#0073ff] transition-colors lg:hidden shrink-0"
             >
@@ -693,81 +756,205 @@ export default function Header() {
       {/* ================= MOBILE / OFFCANVAS PANEL ================= */}
       {isMenuOpen && (
         <>
-          <div className="fixed inset-0 bg-black/60 z-40" onClick={() => setIsMenuOpen(false)} />
-          <div className="fixed top-0 right-0 bottom-0 w-[min(360px,90vw)] bg-[#1D2125] z-50 overflow-y-auto border-l border-white/10">
-            <div className="flex items-center justify-between px-5 h-[72px] border-b border-white/10">
-              <Image
-                src="/images/logo5.png"
-                alt="Tooling Trends"
-                width={140}
-                height={44}
-                className="h-10 w-auto object-contain"
+
+          {/* Backdrop — dark gradient wipes in from right to left, and back out on close */}
+          <div
+            onClick={closeMobileMenu}
+            className="fixed inset-0 z-40 bg-gradient-to-l from-black/80 via-black/65 to-black/30"
+            style={{
+              animation: isMenuClosing
+                ? "backdropWipeOutRight 900ms cubic-bezier(0.22,1,0.36,1) forwards"
+                : "backdropWipeLeft 900ms cubic-bezier(0.22,1,0.36,1) forwards",
+            }}
+          />
+
+          <div
+            className="fixed inset-y-0 right-0 z-50 w-full sm:w-[420px] sm:max-w-[92vw] overflow-hidden border-l border-white/10 bg-[#121419] shadow-[0_0_60px_rgba(0,0,0,0.55)]"
+            style={{
+              animation: isMenuClosing
+                ? "panelSlideOutRight 900ms cubic-bezier(0.22,1,0.36,1) forwards"
+                : "panelSlideInRight 900ms cubic-bezier(0.22,1,0.36,1) forwards",
+            }}
+          >
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div
+                className="absolute -right-28 top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,_rgba(0,115,255,0.55)_0%,_rgba(0,115,255,0.18)_42%,_transparent_72%)] blur-3xl"
+                style={{ animation: "menuGradientDrift 9s ease-in-out infinite alternate" }}
               />
-              <button
-                onClick={() => setIsMenuOpen(false)}
-                className="h-9 w-9 flex items-center justify-center rounded text-white hover:bg-white/10 shrink-0"
-                aria-label="Close"
-              >
-                <X size={20} />
-              </button>
+              <div
+                className="absolute -right-16 bottom-28 h-64 w-64 rounded-full bg-[radial-gradient(circle,_rgba(56,189,248,0.32)_0%,_rgba(29,78,216,0.12)_44%,_transparent_74%)] blur-3xl"
+                style={{ animation: "menuGradientDrift 11s ease-in-out infinite alternate-reverse" }}
+              />
+              <div
+                className="absolute inset-y-0 right-0 w-28 bg-[linear-gradient(270deg,rgba(0,115,255,0.24),rgba(0,115,255,0.08),transparent)]"
+                style={{ animation: "menuGradientSweep 7s ease-in-out infinite alternate" }}
+              />
             </div>
 
-            <nav className="py-3 text-white font-semibold">
-              <Link href="/" className="block px-5 py-3.5 border-b border-white/10 hover:bg-white/5 truncate" onClick={() => setIsMenuOpen(false)}>Home</Link>
-              <Link href="/topics" className="block px-5 py-3.5 border-b border-white/10 hover:bg-white/5 truncate" onClick={() => setIsMenuOpen(false)}>Topics</Link>
-              <Link href="/Webinar" className="block px-5 py-3.5 border-b border-white/10 hover:bg-white/5 truncate" onClick={() => setIsMenuOpen(false)}>Resources</Link>
-              {PAGES_LINKS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block px-5 py-3.5 border-b border-white/10 hover:bg-white/5 truncate"
-                  onClick={() => setIsMenuOpen(false)}
+            <div className="relative z-10 h-full overflow-y-auto scrollbar-hide px-5 pb-8 pt-0 sm:px-6" style={{ scrollbarWidth: "none" }}>
+              <div>
+                <button
+                  onClick={closeMobileMenu}
+                  aria-label="Close"
+                  className="-ml-5 flex h-[40px] w-[45px] items-center justify-center bg-[#0073ff] text-white transition-colors hover:bg-[#0b66e8] sm:-ml-6"
                 >
-                  {item.label}
-                </Link>
-              ))}
+                  <X size={22} />
+                </button>
 
-              {!user ? (
-                <div className="px-5 py-5 flex flex-col gap-3">
-                  <Link
-                    href="/login"
-                    className="block w-full py-3 border border-white/20 text-white rounded-[4px] text-center font-semibold hover:bg-white/5"
-                    onClick={() => setIsMenuOpen(false)}
+                <div className="ml-[22px] mt-6 max-w-[340px]">
+                  <div>
+                    <div className="relative h-[76px] w-[190px] overflow-hidden">
+                      <Image
+                        src="/images/logo5.png"
+                        alt="Tooling Trends"
+                        fill
+                        className="object-cover object-left"
+                        sizes="190px"
+                      />
+                    </div>
+                    <p className="mt-3 w-full text-[16px] leading-[1.95] text-white/70">
+                      Explore manufacturing stories, industry resources, events, and supplier insights from one place.
+                    </p>
+                  </div>
+
+                  <div
+                    className="mt-8 grid gap-3"
+                    style={{ gridTemplateColumns: "repeat(3, 104px)" }}
                   >
-                    Login
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="block w-full py-3 bg-[#0073ff] text-white rounded-[4px] text-center font-semibold hover:bg-[#0060d6]"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
+                    {MOBILE_SHOWCASE_IMAGES.map((src) => (
+                      <div
+                        key={src}
+                        className="relative size-[104px] overflow-hidden rounded-[14px] border border-white/10 bg-white/5"
+                      >
+                        <Image
+                          src={src}
+                          alt="Menu showcase"
+                          fill
+                          className="object-cover transition-transform duration-500 hover:scale-105"
+                          sizes="104px"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 space-y-5">
+                    <h3 className="w-full text-[20px] font-semibold text-white">Quick Contact:</h3>
+
+                    <div className="space-y-3 text-white/85">
+                      <a
+                        href="mailto:info@toolingtrends.com"
+                        className="flex items-start gap-3 transition hover:text-white"
+                      >
+                        <Mail size={18} className="mt-1 shrink-0 text-[#0073ff]" />
+                        <span>info@toolingtrends.com</span>
+                      </a>
+                      <Link
+                        href="/contact"
+                        onClick={closeMobileMenu}
+                        className="flex items-start gap-3 transition hover:text-white"
+                      >
+                        <Phone size={18} className="mt-1 shrink-0 text-[#0073ff]" />
+                        <span>Contact our team</span>
+                      </Link>
+                      <Link
+                        href="/contact"
+                        onClick={closeMobileMenu}
+                        className="flex items-start gap-3 transition hover:text-white"
+                      >
+                        <MapPin size={18} className="mt-1 shrink-0 text-[#0073ff]" />
+                        <span>Visit the contact page for office details</span>
+                      </Link>
+                    </div>
+
+                    <div className="flex flex-wrap gap-4 pt-3">
+                      {[
+                        { href: "https://facebook.com", label: "Facebook", Icon: Facebook },
+                        { href: "https://instagram.com", label: "Instagram", Icon: Instagram },
+                        { href: "https://linkedin.com/company/toolingtrends", label: "LinkedIn", Icon: Linkedin },
+                      ].map(({ href, label, Icon }) => (
+                        <Link
+                          key={label}
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={label}
+                          className="flex h-[40px] w-[40px] items-center justify-center rounded-[12px] bg-[#121213] text-white transition hover:bg-[#0073ff]/12"
+                        >
+                          <Icon size={18} />
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div className="px-5 py-5 flex flex-col gap-3">
+
+                <div className="ml-[20px] mt-4 space-y-3">
                   <Link
-                    href={
-                      user.role === "admin"
-                        ? "/admin/dashboard"
-                        : user.role === "recruiter"
-                          ? "/recruiter/dashboard"
-                          : `/candidate/${user.username || user.email?.split("@")[0] || "profile"}`
-                    }
-                    className="block w-full py-3 bg-[#0073ff] text-white rounded-[4px] text-center font-semibold"
-                    onClick={() => setIsMenuOpen(false)}
+                    href="/contact"
+                    onClick={closeMobileMenu}
+                    className="inline-flex items-center justify-center gap-2 rounded-[18px] bg-[#0073ff] px-6 py-[18px] text-[16px] text-white transition hover:bg-[#0b66e8]"
                   >
-                    Dashboard
+                    <span>Get In Touch</span>
+                    <ArrowRight size={18} />
                   </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full py-3 border border-red-500/40 text-red-400 rounded-[4px] font-semibold"
-                  >
-                    Logout
-                  </button>
+
+                  {/* {!user ? (
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link
+                        href="/login"
+                        className="inline-flex min-h-[52px] items-center justify-center rounded-[14px] border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+                        onClick={closeMobileMenu}
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        href="/signup"
+                        className="inline-flex min-h-[52px] items-center justify-center rounded-[14px] border border-[#0073ff]/45 bg-[#0073ff]/12 text-white transition hover:bg-[#0073ff]/20"
+                        onClick={closeMobileMenu}
+                      >
+                        Sign Up
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link
+                        href={
+                          user.role === "admin"
+                            ? "/admin/dashboard"
+                            : user.role === "recruiter"
+                              ? "/recruiter/dashboard"
+                              : `/candidate/${user.username || user.email?.split("@")[0] || "profile"}`
+                        }
+                        className="inline-flex min-h-[52px] items-center justify-center rounded-[14px] border border-[#0073ff]/45 bg-[#0073ff]/12 text-white transition hover:bg-[#0073ff]/20"
+                        onClick={closeMobileMenu}
+                      >
+                        Dashboard
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="min-h-[52px] rounded-[14px] border border-red-500/30 bg-red-500/10 text-red-300 transition hover:bg-red-500/15"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )} */}
                 </div>
-              )}
-            </nav>
+
+                {/* <nav className="border-t border-white/10 pt-6">
+                  <div className="grid grid-cols-2 gap-2">
+                    {PAGES_LINKS.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="rounded-[14px] border border-white/10 bg-white/5 px-4 py-3 text-white/75 transition hover:bg-white/10 hover:text-white"
+                        onClick={closeMobileMenu}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </nav> */}
+              </div>
+            </div>
           </div>
         </>
       )}

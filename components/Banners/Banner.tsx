@@ -50,7 +50,7 @@ const BLOCK_PLACEMENTS: BannerPlacement[] = [
     "ARTICLE_BOTTOM",
 ];
 
-// Square 300x250 ads, possibly multiple, stacked in a rail (old SupplierAds behavior)
+// Square-ish ads, possibly multiple, stacked in a rail (old SupplierAds behavior)
 const RIGHT_RAIL_PLACEMENTS: BannerPlacement[] = [
     "SIDEBAR",
     "EVENT_RIGHT",
@@ -108,7 +108,7 @@ export default function Banner({ placement, limit, sticky = true }: BannerProps)
     if (RIGHT_RAIL_PLACEMENTS.includes(placement)) {
         const ads = banners.slice(0, limit ?? 3);
         return (
-            <div className={`space-y-6 ${sticky ? "sticky top-6" : ""}`}>
+            <div className={`space-y-8 ${sticky ? "sticky top-6" : ""}`}>
                 {ads.map((ad) => (
                     <SquareAd key={ad.id} ad={ad} />
                 ))}
@@ -212,7 +212,9 @@ export default function Banner({ placement, limit, sticky = true }: BannerProps)
 // Fills the FULL WIDTH of its container (the sidebar/rail), instead of a
 // fixed 300px box — that fixed width was leaving white space on either side
 // whenever the container was wider than 300px. Height is derived from the
-// 300:150 aspect ratio so it scales proportionally at any width.
+// aspect ratio below so it scales proportionally at any width.
+// Matched to the actual on-page render size (390 x 448.93px ≈ 300:345)
+// so the ad reads noticeably larger/taller in the sidebar rail.
 function SquareAd({ ad }: { ad: BannerData }) {
     return (
         <Link
@@ -223,7 +225,7 @@ function SquareAd({ ad }: { ad: BannerData }) {
         >
             <div
                 className="relative overflow-hidden w-full"
-                style={{ aspectRatio: "300 / 250" }}
+                style={{ aspectRatio: "300 / 345" }}
             >
                 <Image src={ad.imageUrl} alt={ad.title} fill sizes="300px" className="object-fill" />
             </div>
@@ -235,7 +237,7 @@ function SquareAd({ ad }: { ad: BannerData }) {
 export function RecruiterAd({ src }: { src: string }) {
     return (
         <Link href="/signup?role=recruiter" className="relative block group overflow-hidden">
-            <div className="relative overflow-hidden w-full" style={{ aspectRatio: "300 / 250" }}>
+            <div className="relative overflow-hidden w-full" style={{ aspectRatio: "300 / 345" }}>
                 <Image src={src} alt="Hire Candidates" fill sizes="300px" className="object-cover" />
                 <div className="absolute inset-0 bg-black/50 group-hover:bg-black/60 transition" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">

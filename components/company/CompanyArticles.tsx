@@ -224,8 +224,14 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
   const heroBg = getImageUrl(visiblePosts[0]);
 
   return (
-    <section className="w-full bg-[#1D2125]">
-      <div className="relative min-h-[420px] md:min-h-[520px] overflow-hidden bg-[#1D2125]">
+    <section className="w-full max-w-[1440px] h-[655.6px] mx-auto bg-[#1D2125] overflow-hidden">
+      <style jsx>{`
+        .company-card-title-18 {
+          font-size: 18px !important;
+          line-height: 1.35 !important;
+        }
+      `}</style>
+      <div className="relative w-full h-full overflow-hidden bg-[#1D2125]">
         <Image
           src={heroBg}
           alt=""
@@ -238,9 +244,9 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
         <div className="absolute inset-0 bg-[#1D2125]/50" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1D2125] via-[#1D2125]/45 to-[#1D2125]/20" />
 
-        <div className="absolute inset-x-0 bottom-0 z-10">
-          <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pb-6 md:pb-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div className="absolute inset-x-0 top-[430px] z-10">
+          <div className="w-full max-w-[1420px] h-[595.6px] mx-auto px-[10px] py-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
               {visiblePosts.map((post) => {
                 const slug = getCategorySlug(post);
                 const categoryName = getCategoryName(post);
@@ -262,14 +268,14 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
                   <Link
                     key={post.id}
                     href={`/post/${post.slug}`}
-                    className="group flex items-center gap-3.5 rounded-[12px] border border-white/15 bg-black/45 backdrop-blur-md p-3.5 sm:p-4 hover:border-white/30 hover:bg-black/55 transition-colors"
+                    className="group flex items-center gap-3.5 rounded-[12px] border border-white/15 bg-[#FFFFFF0D] backdrop-blur-md w-[446.66px] h-[165.6px] pt-[12px] pr-[30px] pb-[12px] pl-[12px] hover:border-white/30 hover:bg-black/55 transition-colors"
                   >
-                    <div className="relative w-[64px] h-[64px] sm:w-[70px] sm:h-[70px] rounded-full overflow-hidden shrink-0 ring-1 ring-white/20">
+                    <div className="relative w-[140px] h-[140px] rounded-full overflow-hidden shrink-0 ring-1 ring-white/20">
                       <Image
                         src={getImageUrl(post)}
                         alt={post.title || "Article"}
                         fill
-                        sizes="70px"
+                        sizes="140px"
                         className="object-cover"
                       />
                     </div>
@@ -283,7 +289,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
                         </span>
                       )}
 
-                      <h6 className="text-white text-[14px] sm:text-[15px] font-bold leading-snug mb-1.5 line-clamp-2 group-hover:text-[#7dd3fc] transition-colors">
+                      <h6 className="company-card-title-18 text-white font-bold leading-snug mb-1.5 line-clamp-2 group-hover:text-[#7dd3fc] transition-colors">
                         {truncateTitle(post.title || "", 42)}
                       </h6>
 

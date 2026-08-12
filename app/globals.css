@@ -24,7 +24,7 @@
 
   /* ── Font sizes ── */
   --fs-h1:     32px;
-  --fs-h2:     26px;
+  --fs-h2:     32px;
   --fs-h3:     22px;
   --fs-h4:     18px; /* Card Heading */
   --fs-h5:     16px;
@@ -37,10 +37,10 @@
   --fs-meta:   13px;
   --fs-card-heading: 18px;
   --fs-card-featured-heading: 22px;
-  --fs-card-small-heading: 16px;
+  --fs-card-small-heading: 14px;
   --fs-card-text: 16px;
   --fs-card-sub: 16px;
-  --fs-card-body: 16px;
+  --fs-card-body: 14px;
   --fs-footer-heading: 18px;
   --fs-footer-text:    14px;
   /* legacy aliases kept for any component that references them */
@@ -227,9 +227,9 @@
     --fs-h2: 24px;
     --fs-h3: 20px;
     --fs-h4: 17px;
-    --fs-h5: 16px;
+    --fs-h5: 14px;
     --fs-body-lg: 16px;
-    --fs-body: 16px;
+    --fs-body: 14px;
   }
 }
 
