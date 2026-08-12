@@ -10,7 +10,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const interTight = Inter_Tight({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-inter-tight",
   display: "swap",
 })
@@ -167,7 +167,7 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en" className={interTight.variable}>
+    <html lang="en" className={`${interTight.variable} h-full`}>
       <head>
         {/* JSON-LD Structured Data */}
         <script
@@ -189,17 +189,16 @@ export default function RootLayout({
         <meta name="DC.date" content="2026" />
         <meta name="DC.type" content="News and Information" />
         
-        {/* Preconnect for performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
         {/* RSS Feed */}
         <link rel="alternate" type="application/rss+xml" title="Tooling Trends RSS Feed" href="/feed.xml" />
         
         {/* Sitemap */}
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
       </head>
-      <body className="antialiased bg-[#1D2125] text-white" suppressHydrationWarning>
+      <body
+        className={`${interTight.className} antialiased bg-[#1D2125] text-white`}
+        suppressHydrationWarning
+      >
         <Header />
 
         <main className="pt-[114px] pb-24">

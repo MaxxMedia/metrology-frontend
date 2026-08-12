@@ -21,6 +21,10 @@ type Category = {
   slug: string;
   parentId?: number | null;
   children?: Category[];
+  _count?: {
+    posts: number;
+    subPosts: number;
+  };
 };
 
 type FlatRow = Category & {
@@ -28,6 +32,15 @@ type FlatRow = Category & {
   parentName?: string;
   childrenCount: number;
 };
+
+function getPostCount(cat: Category) {
+  // Parent categories: posts via categoryId
+  // Subcategories: posts via subCategoryId
+  if (cat.parentId != null) {
+    return cat._count?.subPosts ?? 0;
+  }
+  return cat._count?.posts ?? 0;
+}
 
 function slugify(name: string, parentSlug?: string | null) {
   const base =
@@ -563,6 +576,9 @@ export default function CategoryManagement() {
                         <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                           Parent Category
                         </th>
+                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-center">
+                          Posts
+                        </th>
                         <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">
                           Actions
                         </th>
@@ -572,6 +588,7 @@ export default function CategoryManagement() {
                       {paginatedRows.map((cat) => {
                         const isMain = cat.parentId == null;
                         const isEditing = editingCategory?.id === cat.id;
+                        const postCount = getPostCount(cat);
 
                         return (
                           <tr
@@ -630,6 +647,24 @@ export default function CategoryManagement() {
                               ) : (
                                 <span className="text-gray-400 select-none">—</span>
                               )}
+                            </td>
+
+                            {/* Posts Count */}
+                            <td className="px-6 py-4 text-center">
+                              <span
+                                className={`inline-flex min-w-[2rem] items-center justify-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                                  postCount > 0
+                                    ? "bg-[#0073ff]/10 text-[#0073ff]"
+                                    : "bg-gray-100 text-gray-500"
+                                }`}
+                                title={
+                                  !isMain
+                                    ? "Posts using this subcategory"
+                                    : "Posts in this category"
+                                }
+                              >
+                                {postCount}
+                              </span>
                             </td>
 
                             {/* Actions */}

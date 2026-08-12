@@ -20,13 +20,7 @@
   --radius: 0.625rem;
 
   /* ================= FONT SYSTEM ================= */
-  --font-primary: var(--font-inter-tight),
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Arial,
-    sans-serif;
+  --font-primary: var(--font-inter-tight), "Inter Tight", sans-serif;
 
   /* ── Font sizes ── */
   --fs-h1:     32px;
@@ -118,14 +112,15 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     font-family: var(--font-primary);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
     font-weight: var(--fw-regular);
   }
 
-  /* Ensure font-family cascades to every element */
+  /* Cascade Inter Tight to every element site-wide */
+  body,
   body :where(
       h1, h2, h3, h4, h5, h6,
       p, a, button, input, textarea,
@@ -134,7 +129,7 @@
       strong, em, span, div,
       table, th, td
     ) {
-    font-family: inherit !important;
+    font-family: var(--font-primary) !important;
   }
 
   /* ── Headings ── */
