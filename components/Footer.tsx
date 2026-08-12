@@ -4,34 +4,17 @@ import type { ReactNode } from "react";
 import { Facebook, Instagram, Linkedin } from "lucide-react";
 import BackToTop from "./BackToTop";
 import type { Post } from "@/types/Post";
+import { MASTER_CATEGORIES } from "@/lib/topic";
 
-const TOP_CATEGORIES = [
-  { label: "Tech", href: "/topics" },
-  { label: "Innovation", href: "/topics/advanced-manufacturing" },
-  { label: "Robotics", href: "/topics/factory-automation" },
-  { label: "Software", href: "/topics/cad-cam-cae" },
-  { label: "Gadget", href: "/products" },
-  { label: "Automation", href: "/topics/factory-automation" },
-  { label: "Digital", href: "/topics/smart-manufacturing" },
-  { label: "Future", href: "/topics/manufacturing-technologies" },
-];
+const TOP_CATEGORIES = MASTER_CATEGORIES.slice(0, 8).map((cat) => ({
+  label: cat.label,
+  href: `/topics/${cat.slug}`,
+}));
 
-const TAGS = [
-  "Beauty",
-  "Branding",
-  "Business",
-  "Food",
-  "Gaming",
-  "Makeup",
-  "Marketing",
-  "Politics",
-  "Printing",
-  "Social",
-  "Sports",
-  "Technology",
-  "Travel",
-  "Trip",
-];
+const MORE_CATEGORIES = MASTER_CATEGORIES.slice(8, 16).map((cat) => ({
+  label: cat.label,
+  href: `/topics/${cat.slug}`,
+}));
 
 function XIcon({ size = 16 }: { size?: number }) {
   return (
@@ -64,6 +47,24 @@ function SectionTitle({ children }: { children: ReactNode }) {
       <h5 className="text-white text-[18px] font-bold mb-3">{children}</h5>
       <span className="block w-10 h-[3px] bg-white rounded-full" aria-hidden />
     </div>
+  );
+}
+
+function CategoryLinks({ items }: { items: { label: string; href: string }[] }) {
+  return (
+    <ul className="space-y-2.5">
+      {items.map((item) => (
+        <li key={item.label}>
+          <Link
+            href={item.href}
+            className="group inline-flex items-center gap-2.5 text-[14px] text-[#a1a1a1] hover:text-white transition-colors"
+          >
+            <span className="w-[5px] h-[5px] rounded-full bg-white/70 group-hover:bg-[#0073ff] shrink-0" />
+            {item.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -117,7 +118,7 @@ export default async function Footer() {
   return (
     <footer className="relative bg-[#121213] text-[#a1a1a1]">
       <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-14 md:pt-16 pb-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.15fr_0.85fr_1.2fr_1.1fr] gap-10 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.15fr_0.85fr_0.85fr_1.2fr] gap-10 lg:gap-8">
 
           {/* ================= COL 1: BRAND ================= */}
           <div>
@@ -181,22 +182,16 @@ export default async function Footer() {
           {/* ================= COL 2: TOP CATEGORIES ================= */}
           <div>
             <SectionTitle>Top Categories</SectionTitle>
-            <ul className="space-y-2.5">
-              {TOP_CATEGORIES.map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="group inline-flex items-center gap-2.5 text-[14px] text-[#a1a1a1] hover:text-white transition-colors"
-                  >
-                    <span className="w-[5px] h-[5px] rounded-full bg-white/70 group-hover:bg-[#0073ff] shrink-0" />
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <CategoryLinks items={TOP_CATEGORIES} />
           </div>
 
-          {/* ================= COL 3: RECENT POST ================= */}
+          {/* ================= COL 3: MORE CATEGORIES ================= */}
+          <div>
+            <SectionTitle>More Categories</SectionTitle>
+            <CategoryLinks items={MORE_CATEGORIES} />
+          </div>
+
+          {/* ================= COL 4: RECENT POSTS (right) ================= */}
           <div>
             <SectionTitle>Recent Post</SectionTitle>
             <div>
@@ -238,24 +233,6 @@ export default async function Footer() {
               )}
             </div>
           </div>
-
-          {/* ================= COL 4: TAGS ================= */}
-          <div>
-            <SectionTitle>Tags</SectionTitle>
-            <div className="border border-white/10 rounded-[6px] p-3.5">
-              <div className="flex flex-wrap gap-2">
-                {TAGS.map((tag) => (
-                  <Link
-                    key={tag}
-                    href={`/blog?tag=${encodeURIComponent(tag.toLowerCase())}`}
-                    className="inline-block px-2.5 py-1.5 text-[12px] text-white bg-[#1a1c24] rounded-[3px] hover:bg-[#0073ff] transition-colors"
-                  >
-                    {tag}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -263,7 +240,7 @@ export default async function Footer() {
       <div className="border-t border-white/10 bg-[#1D2125]">
         <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[13px]">
           <p className="text-[#8a8b93] text-center sm:text-left">
-            © {new Date().getFullYear()} Tooling Trends. All rights reserved.
+            © {new Date().getFullYear()} Metrology. All rights reserved.
           </p>
           <div className="flex items-center gap-5">
             <Link href="/privacy-policy" className="text-[#8a8b93] hover:text-white transition-colors">
