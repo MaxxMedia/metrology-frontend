@@ -7,43 +7,34 @@ import type { Post } from "../types/Post";
 
 /* ================= COLOR CONFIG ================= */
 
-const BADGE_COLORS: Record<string, string> = {
-  FEATURED: "bg-[#E11D48]",
-  WEBINAR: "bg-[#7C3AED]",
-  EVENT: "bg-[#0EA5E9]",
-  TRENDING: "bg-[#F97316]",
-  EXCLUSIVE: "bg-[#059669]",
-  AUTOMATION: "bg-[#00b5ed]",
-  GADGET: "bg-[#00ad48]",
-  ROBOTICS: "bg-[#6d28d9]",
-  INNOVATION: "bg-[#59a255]",
-  SOFTWARE: "bg-[#f27100]",
-  DIGITAL: "bg-[#0073ff]",
-  TECH: "bg-[#ff5733]",
-  FUTURE: "bg-[#54bd05]",
-};
+const NON_REPEATING_PALETTE = [
+  "bg-[#00b5ed]", // Cyan (e.g. AUTOMATION)
+  "bg-[#00B95C]", // Green (e.g. GADGET)
+  "bg-[#7C3AED]", // Purple (e.g. ROBOTICS)
+  "bg-[#f27100]", // Orange (e.g. SOFTWARE)
+  "bg-[#0073ff]", // Royal Blue (e.g. DIGITAL)
+  "bg-[#E11D48]", // Rose (e.g. INNOVATION)
+  "bg-[#059669]", // Emerald (e.g. TECH / QUALITY)
+  "bg-[#F59E0B]", // Amber
+  "bg-[#8B5CF6]", // Violet
+  "bg-[#0284C7]", // Sky Blue
+];
 
-const CATEGORY_COLORS: Record<string, string> = {
+const CATEGORY_PREFERRED_COLORS: Record<string, string> = {
   automation: "bg-[#00b5ed]",
-  gadget: "bg-[#00ad48]",
-  robotics: "bg-[#6d28d9]",
-  innovation: "bg-[#59a255]",
+  gadget: "bg-[#00B95C]",
+  robotics: "bg-[#7C3AED]",
   software: "bg-[#f27100]",
   digital: "bg-[#0073ff]",
-  tech: "bg-[#ff5733]",
-  future: "bg-[#54bd05]",
-  trending: "bg-[#F59E0B]",
-  latest: "bg-[#F69C00]",
-  video: "bg-[#EF4444]",
-  gaming: "bg-[#2563EB]",
-  engineering: "bg-[#2563EB]",
-  articles: "bg-[#8B5CF6]",
-  manufacturing: "bg-[#059669]",
+  innovation: "bg-[#E11D48]",
+  tech: "bg-[#059669]",
 };
 
 type Props = {
   posts: Post[];
 };
+
+/* ================= ICONS ================= */
 
 function PulseIcon({ className = "" }: { className?: string }) {
   return (
@@ -90,14 +81,7 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   );
 }
 
-function DiamondDot({ className = "" }: { className?: string }) {
-  return (
-    <span
-      className={`w-[7px] h-[7px] bg-[#0073ff] rotate-45 shrink-0 ${className}`}
-      aria-hidden
-    />
-  );
-}
+/* ================= MAIN COMPONENT ================= */
 
 export default function TrendingSection({ posts }: Props) {
   const getAuthorName = (post?: Post) => {
@@ -114,7 +98,7 @@ export default function TrendingSection({ posts }: Props) {
     return [...posts].sort((a, b) => (b.views || 0) - (a.views || 0));
   }, [posts]);
 
-  // 1 featured (left) + 6 list cards (right 2×3)
+  // 1 large featured card (left) + 6 list cards (right 2×3 grid)
   const featured = sortedPosts[0];
   const listPosts = sortedPosts.slice(1, 7);
 
@@ -127,182 +111,202 @@ export default function TrendingSection({ posts }: Props) {
         ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
         : "/placeholder.jpg";
 
-  const getTag = (post?: Post) => {
-    const badge = post?.badge?.trim();
+  // Pre-calculate strictly non-repeating tags for all 7 visible cards
+  const tagsWithUniqueColors = useMemo(() => {
+    const usedColors = new Set<string>();
+    const allPosts = [featured, ...listPosts];
 
-    const slug =
-      typeof post?.category === "object"
-        ? post?.category?.slug?.toLowerCase() || ""
-        : String(post?.category || "").toLowerCase();
+    return allPosts.map((post, idx) => {
+      if (!post) return { text: "News", color: NON_REPEATING_PALETTE[idx % NON_REPEATING_PALETTE.length] };
 
-    const categoryName =
-      typeof post?.category === "object"
-        ? post?.category?.name || ""
-        : String(post?.category || "");
+      const badge = typeof post?.badge === "string" ? post.badge.trim() : "";
+      const slug = typeof post?.category === "object" ? post?.category?.slug?.toLowerCase() || "" : String(post?.category || "").toLowerCase();
+      const categoryName = typeof post?.category === "object" ? post?.category?.name || "" : String(post?.category || "");
+      const text = badge || categoryName || "News";
 
-    const text = badge ? badge : categoryName;
-    let color = "bg-[#0073ff]";
-
-    if (badge) {
-      color = BADGE_COLORS[badge.toUpperCase()] || "bg-gray-500";
-    } else {
-      const match = Object.keys(CATEGORY_COLORS).find(
+      const matchedKey = Object.keys(CATEGORY_PREFERRED_COLORS).find(
         (k) => slug.includes(k) || text.toLowerCase().includes(k)
       );
-      if (match) color = CATEGORY_COLORS[match];
-    }
 
-    return { text, color };
-  };
+      let chosenColor = "";
+      if (matchedKey && !usedColors.has(CATEGORY_PREFERRED_COLORS[matchedKey])) {
+        chosenColor = CATEGORY_PREFERRED_COLORS[matchedKey];
+      } else {
+        const unused = NON_REPEATING_PALETTE.find((c) => !usedColors.has(c));
+        chosenColor = unused || NON_REPEATING_PALETTE[idx % NON_REPEATING_PALETTE.length];
+      }
+
+      usedColors.add(chosenColor);
+      return { text, color: chosenColor };
+    });
+  }, [featured, listPosts]);
+
+  const featuredTag = tagsWithUniqueColors[0];
+  const listTags = tagsWithUniqueColors.slice(1);
 
   const formatDate = (date?: string | null) =>
     date
       ? new Date(date).toLocaleDateString("en-US", {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        })
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
       : null;
 
-  const featuredTag = getTag(featured);
   const featuredDate =
     formatDate(featured.publishedAt) || formatDate(featured.createdAt);
 
   return (
-    <section className="w-full bg-transparent">
-      {/* Match Nerio boxed trending + LatestHero side inset */}
-      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-[30px] pb-[20px] lg:pt-[40px] lg:pb-[30px]">
-        {/* ================= HEADER ================= */}
-        <div className="flex items-center gap-3 sm:gap-4 mb-6 lg:mb-7 min-w-0">
-          <h2 className="text-[22px] sm:text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
+    <section className="w-full bg-[#111824] text-white">
+      <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 pt-[40px] pb-[40px] lg:pt-[50px] lg:pb-[60px]">
+
+        {/* ================= TRENDING NEWS HEADER ================= */}
+        <div className="flex items-center justify-between gap-3 sm:gap-6 mb-6 lg:mb-8 min-w-0">
+          <h2 className="text-[28px] sm:text-[36px] lg:text-[42px] font-bold text-white shrink-0 leading-none tracking-tight">
             Trending News
           </h2>
 
-          <div className="relative flex-1 min-w-[40px] flex items-center">
-            <DiamondDot />
-            <span className="flex-1 h-px bg-white/15" />
-            <DiamondDot className="hidden sm:block" />
+          {/* Decorative line with rotated blue diamonds */}
+          <div className="hidden sm:flex items-center flex-1 min-w-[60px] mx-2 lg:mx-4">
+            <div className="w-[9px] h-[9px] bg-[#087CF5] rotate-45 shrink-0" />
+            <div className="flex-1 h-[1px] bg-[#17191c] mx-3" />
+            <div className="w-[9px] h-[9px] bg-[#087CF5] rotate-45 shrink-0" />
           </div>
 
           <Link
             href="/articles"
-            className="hidden sm:inline-flex items-center gap-[8px] text-[14px] text-white hover:text-[#0073ff] transition-colors shrink-0 group"
+            className="inline-flex items-center gap-[8px] text-[16px] sm:text-[18px] font-semibold text-white hover:text-[#087CF5] transition-colors shrink-0 group ml-auto sm:ml-0"
           >
             <span>View All</span>
-            <ArrowIcon className="w-4 h-3 group-hover:translate-x-0.5 transition-transform" />
+            <ArrowIcon className="w-4 h-4 text-current group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        {/* ================= fpg-post-group-four: large + 2×3 ================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)] gap-4 sm:gap-5 lg:gap-6 items-stretch">
-          {/* style-floating card-large */}
+        {/* Mobile decorative separator */}
+        <div className="sm:hidden w-full h-[1px] bg-[#35383C] mb-6" />
+        {/* ================= FEATURE GRID (Exact Reference Proportions) ================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,490px)_1fr] items-stretch">
+
+          {/* ================= LEFT: LARGE FEATURED ARTICLE CARD ================= */}
           <Link
             href={`/post/${featured.slug}`}
-            className="group relative block min-h-[280px] sm:min-h-[320px] lg:min-h-full overflow-hidden rounded-[4px]"
+            className="group relative block w-full max-w-[450px]  min-h-[380px] sm:min-h-[400px] lg:min-h-[530px] rounded-[6px] overflow-hidden shadow-2xl border border-white/10"
           >
             <Image
               src={imageUrl(featured)}
               alt={featured.title}
               fill
-              sizes="(max-width: 1024px) 100vw, 560px"
-              quality={80}
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 1024px) 300px, 450px"
+              quality={85}
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-            <div className="absolute inset-x-0 bottom-0 px-[16px] py-[18px] sm:px-[20px] sm:py-[22px]">
+
+            {/* Dark gradient overlay over bottom portion */}
+            <div
+              className="absolute inset-0 z-10 pointer-events-none"
+              style={{
+                background: "linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,0.2) 48%, rgba(0,0,0,0.88) 100%)"
+              }}
+            />
+
+            {/* Overlay Content at bottom-left */}
+            <div className="absolute inset-x-0 bottom-0 z-20 p-6 sm:p-8 lg:p-[36px] flex flex-col justify-end">
               {featuredTag.text && (
-                <span
-                  className={`inline-block ${featuredTag.color} text-white text-[11px] font-semibold uppercase tracking-wide px-[10px] py-[3px] rounded-[3px] mb-[12px]`}
-                >
-                  {featuredTag.text}
-                </span>
+                <div className="mb-3">
+                  <span
+                    className={`inline-flex items-center h-[29px] px-[13px] ${featuredTag.color} text-white text-[13px] font-bold uppercase tracking-wider rounded-tl-none rounded-tr-full rounded-br-full rounded-bl-full shadow-sm`}
+                  >
+                    {featuredTag.text}
+                  </span>
+                </div>
               )}
 
-              <h4 className="text-white text-[20px] sm:text-[22px] lg:text-[24px] font-bold leading-[1.3] mb-[12px] group-hover:text-[#0073ff] transition-colors">
+              <h3 className="text-white text-[22px] sm:text-[26px] lg:text-[28px] xl:text-[30px] font-bold leading-[1.18] mb-4 group-hover:text-[#087CF5] transition-colors line-clamp-3 max-w-[500px]">
                 {featured.title}
-              </h4>
+              </h3>
 
-              <ul className="flex flex-wrap items-center gap-x-[14px] gap-y-[6px] text-[13px] text-white/85">
-                <li>
-                  By <span className="text-white">{getAuthorName(featured)}</span>
-                </li>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[14px] sm:text-[16px] text-white/90 font-normal">
+                <span>By <span className="font-medium text-white">{getAuthorName(featured)}</span></span>
                 {typeof featured.views === "number" && (
-                  <li className="inline-flex items-center gap-[6px]">
-                    <PulseIcon className="w-3.5 h-3.5 text-[#0073ff]" />
-                    {featured.views.toLocaleString()} Views
-                  </li>
+                  <span className="inline-flex items-center gap-1.5">
+                    <PulseIcon className="w-4 h-4 text-[#087CF5]" />
+                    <span>{featured.views.toLocaleString()} Views</span>
+                  </span>
                 )}
                 {featuredDate && (
-                  <li className="inline-flex items-center gap-[6px]">
-                    <CalendarIcon className="w-3.5 h-3.5 text-[#0073ff]" />
-                    {featuredDate}
-                  </li>
+                  <span className="inline-flex items-center gap-1.5">
+                    <CalendarIcon className="w-4 h-4 text-[#087CF5]" />
+                    <span>{featuredDate}</span>
+                  </span>
                 )}
-              </ul>
+              </div>
             </div>
           </Link>
 
-          {/* style-two grid — 2 cols × 3 rows */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 sm:gap-x-5 gap-y-4 lg:gap-y-5 content-start">
-            {listPosts.map((post) => {
-              const tag = getTag(post);
+          {/* ================= RIGHT: 2 COLS × 3 ROWS NEWS GRID ================= */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 lg:gap-x-[24px] xl:gap-x-[28px] gap-y-0 content-between">
+            {listPosts.map((post, idx) => {
+              const tag = listTags[idx] || { text: "News", color: NON_REPEATING_PALETTE[(idx + 1) % NON_REPEATING_PALETTE.length] };
+
+
               return (
-                <Link
+                <div
                   key={post.id}
-                  href={`/post/${post.slug}`}
-                  className="group flex items-center gap-3 sm:gap-3.5 min-w-0"
+                  className="flex flex-col justify-between py-4 border-b border-[#35383C] min-w-0"
                 >
-                  <div className="relative w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-[4px] overflow-hidden shrink-0">
-                    <Image
-                      src={imageUrl(post)}
-                      alt={post.title}
-                      fill
-                      sizes="80px"
-                      quality={70}
-                      className="object-cover"
-                    />
-                  </div>
+                  <Link
+                    href={`/post/${post.slug}`}
+                    className="group flex gap-3.5 lg:gap-[16px] xl:gap-[20px] items-center min-w-0"
+                  >
+                    {/* Compact Square Thumbnail Image */}
+                    <div className="relative w-[90px] sm:w-[105px] lg:w-[115px] xl:w-[125px] aspect-square rounded-[7px] overflow-hidden shrink-0 bg-[#1D2125]">
+                      <Image
+                        src={imageUrl(post)}
+                        alt={post.title}
+                        fill
+                        sizes="125px"
+                        quality={80}
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
 
-                  <div className="min-w-0 flex-1">
-                    {tag.text && (
-                      <span
-                        className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-[8px]`}
-                      >
-                        {tag.text}
-                      </span>
-                    )}
-
-                    <h6 className="text-[15px] font-semibold leading-[1.35] text-white mb-[8px] group-hover:text-[#0073ff] transition-colors line-clamp-2">
-                      {post.title}
-                    </h6>
-
-                    <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[12px] text-[#a8aab3]">
-                      <li>By {getAuthorName(post)}</li>
-                      {typeof post.views === "number" && (
-                        <li className="inline-flex items-center gap-[4px]">
-                          <PulseIcon className="w-3 h-3 text-[#0073ff]" />
-                          {post.views.toLocaleString()} Views
-                        </li>
+                    {/* Text details container */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      {tag.text && (
+                        <div className="mb-2">
+                          <span
+                            className={`inline-flex items-center h-[24px] px-[12px] ${tag.color} text-white text-[12px] sm:text-[13px] font-bold uppercase tracking-wider rounded-tl-none rounded-tr-full rounded-br-full rounded-bl-full`}
+                          >
+                            {tag.text}
+                          </span>
+                        </div>
                       )}
-                    </ul>
-                  </div>
-                </Link>
+
+                      <h4 className="text-white text-[17px] sm:text-[19px] lg:text-[21px] xl:text-[23px] font-bold leading-[1.35] mb-2 group-hover:text-[#087CF5] transition-colors line-clamp-2">
+                        {post.title}
+                      </h4>
+
+                      <div className="flex flex-wrap items-center gap-x-2 text-[13px] sm:text-[15px] text-[#D0D4DC]">
+                        <span>By {getAuthorName(post)}</span>
+                        {typeof post.views === "number" && (
+                          <span className="inline-flex items-center gap-1">
+                            • <PulseIcon className="w-3.5 h-3.5 text-[#087CF5]" />
+                            <span>{post.views.toLocaleString()} Views</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                </div>
               );
             })}
           </div>
+
         </div>
 
-        <div className="mt-[24px] flex justify-center sm:hidden">
-          <Link
-            href="/articles"
-            className="inline-flex items-center gap-[8px] text-[14px] font-medium text-white hover:text-[#0073ff] transition-colors"
-          >
-            View All
-            <ArrowIcon className="w-4 h-3" />
-          </Link>
-        </div>
       </div>
     </section>
   );
 }
+

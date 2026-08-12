@@ -15,31 +15,33 @@ import {
 const INITIAL_COUNT = 6;
 const LOAD_MORE_COUNT = 3;
 
-const BADGE_COLORS: Record<string, string> = {
-  FEATURED: "bg-[#E11D48]",
-  TECH: "bg-[#ff5733]",
-  AUTOMATION: "bg-[#00b5ed]",
-  INNOVATION: "bg-[#59a255]",
-  SOFTWARE: "bg-[#f27100]",
-  DIGITAL: "bg-[#0073ff]",
-  FUTURE: "bg-[#54bd05]",
-  GADGET: "bg-[#00ad48]",
-  ROBOTICS: "bg-[#6d28d9]",
-};
+const NON_REPEATING_PALETTE = [
+  "bg-[#00b5ed]", // Cyan
+  "bg-[#00B95C]", // Green
+  "bg-[#7C3AED]", // Purple
+  "bg-[#f27100]", // Orange
+  "bg-[#0073ff]", // Royal Blue
+  "bg-[#E11D48]", // Rose
+  "bg-[#059669]", // Emerald
+  "bg-[#F59E0B]", // Amber
+  "bg-[#8B5CF6]", // Violet
+  "bg-[#0284C7]", // Sky Blue
+  "bg-[#EC4899]", // Pink
+  "bg-[#10B981]", // Teal
+];
 
-const CATEGORY_COLORS: Record<string, string> = {
-  tech: "bg-[#ff5733]",
+const CATEGORY_PREFERRED_COLORS: Record<string, string> = {
   automation: "bg-[#00b5ed]",
-  innovation: "bg-[#59a255]",
+  gadget: "bg-[#00B95C]",
+  robotics: "bg-[#7C3AED]",
   software: "bg-[#f27100]",
   digital: "bg-[#0073ff]",
-  future: "bg-[#54bd05]",
-  gadget: "bg-[#00ad48]",
-  robotics: "bg-[#6d28d9]",
-  gaming: "bg-[#0073FF]",
-  basics: "bg-[#0073FF]",
-  machining: "bg-[#EC4899]",
-  manufacturing: "bg-[#059669]",
+  innovation: "bg-[#E11D48]",
+  tech: "bg-[#059669]",
+  engineering: "bg-[#0284C7]",
+  manufacturing: "bg-[#10B981]",
+  future: "bg-[#8B5CF6]",
+  trending: "bg-[#F59E0B]",
 };
 
 type Props = {
@@ -71,25 +73,6 @@ function getImageUrl(post: Post): string {
   if (post.imageUrl?.startsWith("http")) return post.imageUrl;
   if (post.imageUrl) return `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`;
   return "/placeholder.jpg";
-}
-
-function getTag(post: Post) {
-  const badge = post.badge?.trim();
-  const slug = getCategorySlug(post);
-  const categoryName = getCategoryName(post);
-  const text = badge || categoryName;
-  let color = "bg-[#0073ff]";
-
-  if (badge) {
-    color = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]";
-  } else {
-    const match = Object.keys(CATEGORY_COLORS).find(
-      (k) => slug.includes(k) || text.toLowerCase().includes(k)
-    );
-    if (match) color = CATEGORY_COLORS[match];
-  }
-
-  return { text, color };
 }
 
 function formatDate(post: Post) {
@@ -199,6 +182,31 @@ export default function HomeCompanyArticles({ posts }: Props) {
   const visiblePosts = allPosts.slice(0, visibleCount);
   const hasMore = visibleCount < allPosts.length;
 
+  const visiblePostsWithTags = useMemo(() => {
+    const usedColors = new Set<string>();
+    return visiblePosts.map((post, idx) => {
+      const badge = typeof post?.badge === "string" ? post.badge.trim() : "";
+      const slug = getCategorySlug(post);
+      const categoryName = getCategoryName(post);
+      const text = badge || categoryName || "News";
+
+      const matchedKey = Object.keys(CATEGORY_PREFERRED_COLORS).find(
+        (k) => slug.includes(k) || text.toLowerCase().includes(k)
+      );
+
+      let chosenColor = "";
+      if (matchedKey && !usedColors.has(CATEGORY_PREFERRED_COLORS[matchedKey])) {
+        chosenColor = CATEGORY_PREFERRED_COLORS[matchedKey];
+      } else {
+        const unused = NON_REPEATING_PALETTE.find((c) => !usedColors.has(c));
+        chosenColor = unused || NON_REPEATING_PALETTE[idx % NON_REPEATING_PALETTE.length];
+      }
+
+      usedColors.add(chosenColor);
+      return { post, tagText: text, tagColor: chosenColor };
+    });
+  }, [visiblePosts]);
+
   const categories = useMemo(() => {
     const map = new Map<string, { name: string; slug: string; count: number; image: string }>();
     for (const post of allPosts) {
@@ -266,8 +274,7 @@ export default function HomeCompanyArticles({ posts }: Props) {
             </div>
 
             <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">
-              {visiblePosts.map((post) => {
-                const tag = getTag(post);
+              {visiblePostsWithTags.map(({ post, tagText, tagColor }) => {
                 const date = formatDate(post);
 
                 return (
@@ -289,11 +296,11 @@ export default function HomeCompanyArticles({ posts }: Props) {
                     </Link>
 
                     <div className="min-w-0 flex-1 py-0.5">
-                      {tag.text && (
+                      {tagText && (
                         <span
-                          className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-[10px]`}
+                          className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[10px]`}
                         >
-                          {tag.text}
+                          {tagText}
                         </span>
                       )}
 
@@ -396,12 +403,12 @@ export default function HomeCompanyArticles({ posts }: Props) {
                     href={`/post/${post.slug}`}
                     className="group flex items-center gap-[12px]"
                   >
-                    <div className="relative w-[64px] h-[64px] rounded-[4px] overflow-hidden shrink-0">
+                    <div className="relative w-[72px] h-[96px] rounded-xl overflow-hidden shrink-0 shadow-md">
                       <Image
                         src={getImageUrl(post)}
                         alt={post.title}
                         fill
-                        sizes="64px"
+                        sizes="72px"
                         className="object-cover"
                       />
                     </div>

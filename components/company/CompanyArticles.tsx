@@ -10,33 +10,33 @@ import type { Post } from "@/types/Post";
 const CATEGORY_SLUG = "optical-and-vision-metrology";
 const CATEGORY_NAME = "Optical & Vision Metrology";
 
-const BADGE_COLORS: Record<string, string> = {
-  FEATURED: "bg-[#E11D48]",
-  WEBINAR: "bg-[#7C3AED]",
-  EVENT: "bg-[#0EA5E9]",
-  TRENDING: "bg-[#F97316]",
-  EXCLUSIVE: "bg-[#059669]",
-  TECH: "bg-[#ff5733]",
-  AUTOMATION: "bg-[#00b5ed]",
-  GADGET: "bg-[#00ad48]",
-  DIGITAL: "bg-[#0073ff]",
-  SOFTWARE: "bg-[#f27100]",
-  INNOVATION: "bg-[#59a255]",
-  FUTURE: "bg-[#54bd05]",
-};
+const NON_REPEATING_PALETTE = [
+  "bg-[#00b5ed]", // Cyan
+  "bg-[#00B95C]", // Green
+  "bg-[#7C3AED]", // Purple
+  "bg-[#f27100]", // Orange
+  "bg-[#0073ff]", // Royal Blue
+  "bg-[#E11D48]", // Rose
+  "bg-[#059669]", // Emerald
+  "bg-[#F59E0B]", // Amber
+  "bg-[#8B5CF6]", // Violet
+  "bg-[#0284C7]", // Sky Blue
+  "bg-[#EC4899]", // Pink
+  "bg-[#10B981]", // Teal
+];
 
-const CATEGORY_COLORS: Record<string, string> = {
-  tech: "bg-[#ff5733]",
+const CATEGORY_PREFERRED_COLORS: Record<string, string> = {
   automation: "bg-[#00b5ed]",
-  gadget: "bg-[#00ad48]",
-  digital: "bg-[#0073ff]",
+  gadget: "bg-[#00B95C]",
+  robotics: "bg-[#7C3AED]",
   software: "bg-[#f27100]",
-  innovation: "bg-[#59a255]",
-  future: "bg-[#54bd05]",
-  gaming: "bg-[#0073FF]",
-  fashion: "bg-[#E033E0]",
-  "latest-issue": "bg-[#F69C00]",
-  "optical-and-vision-metrology": "bg-[#0073ff]",
+  digital: "bg-[#0073ff]",
+  innovation: "bg-[#E11D48]",
+  tech: "bg-[#059669]",
+  engineering: "bg-[#0284C7]",
+  manufacturing: "bg-[#10B981]",
+  future: "bg-[#8B5CF6]",
+  trending: "bg-[#F59E0B]",
 };
 
 /* ================= HELPERS ================= */
@@ -199,6 +199,31 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
   const allPosts = fromProp.length > 0 ? fromProp : fetchedPosts;
   const visiblePosts = allPosts.slice(0, 3);
 
+  const visiblePostsWithTags = useMemo(() => {
+    const usedColors = new Set<string>();
+    return visiblePosts.map((post, idx) => {
+      const badge = typeof post?.badge === "string" ? post.badge.trim() : "";
+      const slug = getCategorySlug(post);
+      const categoryName = getCategoryName(post);
+      const text = badge || categoryName || CATEGORY_NAME;
+
+      const matchedKey = Object.keys(CATEGORY_PREFERRED_COLORS).find(
+        (k) => slug.includes(k) || text.toLowerCase().includes(k)
+      );
+
+      let chosenColor = "";
+      if (matchedKey && !usedColors.has(CATEGORY_PREFERRED_COLORS[matchedKey])) {
+        chosenColor = CATEGORY_PREFERRED_COLORS[matchedKey];
+      } else {
+        const unused = NON_REPEATING_PALETTE.find((c) => !usedColors.has(c));
+        chosenColor = unused || NON_REPEATING_PALETTE[idx % NON_REPEATING_PALETTE.length];
+      }
+
+      usedColors.add(chosenColor);
+      return { post, tagText: text, tagColor: chosenColor };
+    });
+  }, [visiblePosts]);
+
   if (loading) {
     return (
       <section className="w-full bg-[#1D2125]">
@@ -224,7 +249,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
   const heroBg = getImageUrl(visiblePosts[0]);
 
   return (
-    <section className="w-full max-w-[1440px] h-[655.6px] mx-auto bg-[#1D2125] overflow-hidden">
+    <section className="w-full h-[655.6px] bg-[#1D2125] overflow-hidden">
       <style jsx>{`
         .company-card-title-18 {
           font-size: 18px !important;
@@ -247,22 +272,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
         <div className="absolute inset-x-0 top-[430px] z-10">
           <div className="w-full max-w-[1420px] h-[595.6px] mx-auto px-[10px] py-0">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
-              {visiblePosts.map((post) => {
-                const slug = getCategorySlug(post);
-                const categoryName = getCategoryName(post);
-                const badge = post.badge?.trim();
-                const tagText = badge || categoryName || CATEGORY_NAME;
-
-                let tagClass = "bg-[#0073ff]";
-                if (badge) {
-                  tagClass = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]";
-                } else {
-                  const match = Object.keys(CATEGORY_COLORS).find(
-                    (key) =>
-                      slug.includes(key) || tagText.toLowerCase().includes(key)
-                  );
-                  if (match) tagClass = CATEGORY_COLORS[match];
-                }
+              {visiblePostsWithTags.map(({ post, tagText, tagColor }) => {
 
                 return (
                   <Link
@@ -283,7 +293,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
                     <div className="min-w-0 flex-1">
                       {tagText && (
                         <span
-                          className={`inline-block ${tagClass} text-white text-[10px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded mb-1.5`}
+                          className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-1.5`}
                         >
                           {tagText}
                         </span>

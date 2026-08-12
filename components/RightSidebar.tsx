@@ -76,15 +76,15 @@ function PopularNewsSidebar() {
             href={`/post/${post.slug}`}
             className="flex gap-4"
           >
-           <div className="relative w-[80px] h-[80px] shrink-0">
-  <Image
-    src={imageUrl(post)}
-    alt={post.title}
-    fill
-    className="rounded-md object-cover"
-    sizes="80px"
-  />
-</div>
+            <div className="relative w-[84px] h-[112px] shrink-0 rounded-xl overflow-hidden shadow-sm">
+              <Image
+                src={imageUrl(post)}
+                alt={post.title}
+                fill
+                className="object-cover"
+                sizes="84px"
+              />
+            </div>
 
             <div>
                 {(post.badge || post.category) && (

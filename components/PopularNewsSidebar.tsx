@@ -35,13 +35,15 @@ export default function PopularNewsSidebar() {
             href={`/post/${post.slug}`}
             className="flex gap-4"
           >
-            <Image
-              src={imageUrl(post)}
-              alt={post.title}
-              width={80}
-              height={80}
-              className="rounded-lg object-cover flex-shrink-0"
-            />
+            <div className="relative w-[84px] h-[112px] shrink-0 rounded-xl overflow-hidden shadow-sm">
+              <Image
+                src={imageUrl(post)}
+                alt={post.title}
+                fill
+                sizes="84px"
+                className="object-cover"
+              />
+            </div>
 
             <div>
               <span className="inline-block mb-1 text-[11px] font-bold uppercase px-2 py-1 rounded bg-green-500 text-white">

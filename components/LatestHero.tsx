@@ -15,36 +15,34 @@ type LatestHeroProps = {
 /** 1 main hero + 2 bottom cards + 1 sidebar featured + 3 sidebar list */
 const SLOT_COUNT = 7
 
-const CATEGORY_COLORS: Record<string, string> = {
-  gadget: "bg-[#00ad48]",
-  digital: "bg-[#0073ff]",
-  future: "bg-[#54bd05]",
-  innovation: "bg-[#59a255]",
-  tech: "bg-[#ff5733]",
-  software: "bg-[#7C3AED]",
-  automation: "bg-[#0EA5E9]",
-  robotics: "bg-[#EF4444]",
-  basics: "bg-[#0073ff]",
-  trending: "bg-[#F59E0B]",
-  latest: "bg-[#F69C00]",
-  video: "bg-[#EF4444]",
-  engineering: "bg-[#2563EB]",
-}
+const NON_REPEATING_PALETTE = [
+  "bg-[#E11D48]", // Rose / Crimson
+  "bg-[#00b5ed]", // Cyan (Automation)
+  "bg-[#00B95C]", // Green (Gadget)
+  "bg-[#7C3AED]", // Purple (Robotics / Leadership)
+  "bg-[#f27100]", // Orange (Software / Manufacturing)
+  "bg-[#0073ff]", // Royal Blue (Digital)
+  "bg-[#059669]", // Emerald (Tech / AI)
+  "bg-[#F59E0B]", // Amber (Trending)
+  "bg-[#8B5CF6]", // Violet (Future)
+  "bg-[#0284C7]", // Sky Blue (Engineering)
+  "bg-[#EC4899]", // Pink (Design)
+  "bg-[#10B981]", // Teal
+]
 
-const BADGE_COLORS: Record<string, string> = {
-  FEATURED: "bg-[#E11D48]",
-  LEADERSHIP: "bg-[#7C3AED]",
-  AI: "bg-[#059669]",
-  MANUFACTUR: "bg-[#F97316]",
-  WEBINAR: "bg-[#7C3AED]",
-  EVENT: "bg-[#0EA5E9]",
-  TRENDING: "bg-[#F97316]",
-  EXCLUSIVE: "bg-[#059669]",
-  GADGET: "bg-[#00ad48]",
-  DIGITAL: "bg-[#0073ff]",
-  FUTURE: "bg-[#54bd05]",
-  INNOVATION: "bg-[#59a255]",
-  TECH: "bg-[#ff5733]",
+const CATEGORY_PREFERRED_COLORS: Record<string, string> = {
+  automation: "bg-[#00b5ed]",
+  gadget: "bg-[#00B95C]",
+  robotics: "bg-[#7C3AED]",
+  software: "bg-[#f27100]",
+  digital: "bg-[#0073ff]",
+  innovation: "bg-[#E11D48]",
+  tech: "bg-[#059669]",
+  engineering: "bg-[#0284C7]",
+  manufacturing: "bg-[#10B981]",
+  future: "bg-[#8B5CF6]",
+  trending: "bg-[#F59E0B]",
+  featured: "bg-[#E11D48]",
 }
 
 /* ================= HELPERS ================= */
@@ -163,49 +161,57 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
     return pool.slice(0, SLOT_COUNT)
   }, [pool])
 
-  const heroPost = visible[0] || post
-  const bottomPosts = visible.slice(1, 3)
-  const recentFeatured = visible[3]
-  const recentList = visible.slice(4, 7)
+  /* Non-repeating badge colors for all items in Hero */
+  const visibleWithTags = useMemo(() => {
+    if (visible.length === 0) return []
+    const usedColors = new Set<string>()
 
-  if (!heroPost) return null
+    return visible.map((item, idx) => {
+      const badge = typeof item?.badge === "string" ? item.badge.trim() : ""
+      const slug = getSlug(item)
+      const categoryName =
+        typeof item?.category === "object" && item?.category !== null
+          ? item?.category?.name || ""
+          : String(item?.category || "")
+
+      const text = badge || categoryName || "News"
+
+      const matchedKey = Object.keys(CATEGORY_PREFERRED_COLORS).find(
+        (k) => slug.includes(k) || text.toLowerCase().includes(k)
+      )
+
+      let chosenColor = ""
+      if (matchedKey && !usedColors.has(CATEGORY_PREFERRED_COLORS[matchedKey])) {
+        chosenColor = CATEGORY_PREFERRED_COLORS[matchedKey]
+      } else {
+        const unused = NON_REPEATING_PALETTE.find((c) => !usedColors.has(c))
+        chosenColor = unused || NON_REPEATING_PALETTE[idx % NON_REPEATING_PALETTE.length]
+      }
+
+      usedColors.add(chosenColor)
+      return { item, tagText: text, tagColor: chosenColor }
+    })
+  }, [visible])
+
+  if (visibleWithTags.length === 0) return null
+
+  const heroItem = visibleWithTags[0]
+  const heroPost = heroItem.item
+  const bottomWithTags = visibleWithTags.slice(1, 3)
+  const recentFeaturedItem = visibleWithTags[3]
+  const recentListWithTags = visibleWithTags.slice(4, 7)
 
   const imageUrl = getImageUrl(heroPost)
   const date = formatDate(heroPost) || "Today"
 
-  const getTag = (item: Post) => {
-    const badge = typeof item?.badge === "string" ? item.badge.trim() : ""
-    const slug = getSlug(item)
-    const categoryName =
-      typeof item.category === "object" && item.category !== null
-        ? item.category?.name || ""
-        : String(item.category || "")
-
-    const text = badge || categoryName
-
-    if (badge) {
-      const color = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]"
-      return { text, color }
-    }
-
-    const matchedKey = Object.keys(CATEGORY_COLORS).find((key) =>
-      slug.includes(key) || text.toLowerCase().includes(key)
-    )
-    const color = matchedKey ? CATEGORY_COLORS[matchedKey] : "bg-[#0073ff]"
-
-    return { text, color }
-  }
-
-  const heroTag = getTag(heroPost)
-
   return (
     <section className="w-full bg-[#1D2125]">
-      {/* Nerio hero: full-bleed row, ~10px side inset, tight top/bottom */}
-      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-[10px] pb-[20px] lg:pb-[30px]">
+      {/* Latest Hero: Left photo fills absolute left dead-end of screen with no gap & square corners */}
+      <div className="w-full pl-0 pr-4 sm:pr-6 lg:pr-10 xl:pr-12 pt-0 pb-6 lg:pb-10">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(360px,420px)] gap-4 sm:gap-5 lg:gap-6 items-stretch">
 
           {/* ================= LEFT: HERO BG + TITLE + STYLE-TWO ================= */}
-          <div className="relative min-h-[460px] sm:min-h-[560px] lg:min-h-[720px] overflow-hidden rounded-[6px]">
+          <div className="relative min-h-[460px] sm:min-h-[560px] lg:min-h-[720px] overflow-hidden rounded-none border-y border-r border-white/10 shadow-lg">
             <Image
               src={imageUrl}
               alt={heroPost.title}
@@ -216,18 +222,18 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
               className="object-cover object-center"
             />
 
-            <div className="absolute inset-0 bg-[#1D2125]/25" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#1D2125]/88 via-[#1D2125]/45 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1D2125]/80 via-transparent to-transparent" />
+            {/* Soft subtle gradient to maximize photo brightness while keeping white text readable */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/15 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-            <div className="relative z-10 flex h-full min-h-[460px] sm:min-h-[560px] lg:min-h-[720px] flex-col justify-between px-4 py-5 sm:px-7 sm:py-8 lg:px-12 lg:py-12">
+            <div className="relative z-10 flex h-full min-h-[460px] sm:min-h-[560px] lg:min-h-[720px] flex-col justify-between px-6 py-6 sm:px-10 sm:py-8 lg:px-14 lg:py-10">
               {/* style-one: main featured */}
-              <div className="w-full max-w-none lg:max-w-[640px] xl:max-w-[700px] pt-1 sm:pt-3">
-                {heroTag.text ? (
+              <div className="w-full max-w-none text-[60px] lg:max-w-[640px] xl:max-w-[700px] pt-1 sm:pt-3">
+                {heroItem.tagText ? (
                   <span
-                    className={`inline-block ${heroTag.color} text-white text-[11px] font-semibold uppercase tracking-wide px-[10px] py-[3px] rounded-[3px] mb-4`}
+                    className={`inline-block ${heroItem.tagColor} text-white text-[11px] font-semibold uppercase tracking-wide px-[10px] py-[3px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-4`}
                   >
-                    {heroTag.text}
+                    {heroItem.tagText}
                   </span>
                 ) : null}
 
@@ -266,10 +272,9 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
               </div>
 
               {/* style-two: glass / smoky cards */}
-              {bottomPosts.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8">
-                  {bottomPosts.map((item, i) => {
-                    const tag = getTag(item)
+              {bottomWithTags.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8 w-full max-w-none lg:max-w-[780px] xl:max-w-[850px]">
+                  {bottomWithTags.map(({ item, tagText, tagColor }, i) => {
                     return (
                       <Link
                         key={`${item.id}-bottom-${i}`}
@@ -295,11 +300,11 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          {tag.text ? (
+                          {tagText ? (
                             <span
-                              className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-1.5`}
+                              className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-tl-none rounded-tr-[4px] rounded-br-[4px] rounded-bl-[4px] mb-1.5`}
                             >
-                              {tag.text}
+                              {tagText}
                             </span>
                           ) : null}
 
@@ -341,14 +346,14 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
             </div>
 
             <div className="flex flex-col gap-[20px] flex-1">
-              {recentFeatured && (
+              {recentFeaturedItem && (
                 <Link
-                  href={`/post/${recentFeatured.slug}`}
+                  href={`/post/${recentFeaturedItem.item.slug}`}
                   className="group relative block overflow-hidden rounded-[4px] min-h-[190px] sm:min-h-[210px]"
                 >
                   <Image
-                    src={getImageUrl(recentFeatured)}
-                    alt={recentFeatured.title}
+                    src={getImageUrl(recentFeaturedItem.item)}
+                    alt={recentFeaturedItem.item.title}
                     fill
                     sizes="(max-width: 1024px) 100vw, 380px"
                     quality={75}
@@ -356,21 +361,28 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 px-[16px] py-[16px]">
+                    {recentFeaturedItem.tagText && (
+                      <span
+                        className={`inline-block ${recentFeaturedItem.tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-tl-none rounded-tr-[4px] rounded-br-[4px] rounded-bl-[4px] mb-[8px]`}
+                      >
+                        {recentFeaturedItem.tagText}
+                      </span>
+                    )}
                     <h4 className="text-white text-[17px] font-bold leading-[1.35] mb-[10px] group-hover:text-[#0073ff] transition-colors">
-                      {recentFeatured.title}
+                      {recentFeaturedItem.item.title}
                     </h4>
                     <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[12px] text-[#d1d2d8]">
-                      <li>By {getAuthorName(recentFeatured)}</li>
-                      {typeof recentFeatured.views === "number" && (
+                      <li>By {getAuthorName(recentFeaturedItem.item)}</li>
+                      {typeof recentFeaturedItem.item.views === "number" && (
                         <li className="inline-flex items-center gap-[4px]">
                           <PulseIcon className="w-3 h-3 text-[#0073ff]" />
-                          {recentFeatured.views.toLocaleString()} Views
+                          {recentFeaturedItem.item.views.toLocaleString()} Views
                         </li>
                       )}
-                      {formatDate(recentFeatured) && (
+                      {formatDate(recentFeaturedItem.item) && (
                         <li className="inline-flex items-center gap-[4px]">
                           <CalendarIcon className="w-3 h-3 text-[#0073ff]" />
-                          {formatDate(recentFeatured)}
+                          {formatDate(recentFeaturedItem.item)}
                         </li>
                       )}
                     </ul>
@@ -379,8 +391,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
               )}
 
               <div className="flex flex-col gap-[18px]">
-                {recentList.map((item, i) => {
-                  const tag = getTag(item)
+                {recentListWithTags.map(({ item, tagText, tagColor }, i) => {
                   return (
                     <Link
                       key={`${item.id}-recent-${i}`}
@@ -399,11 +410,11 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        {tag.text ? (
+                        {tagText ? (
                           <span
-                            className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-[8px]`}
+                            className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-tl-none rounded-tr-[4px] rounded-br-[4px] rounded-bl-[4px] mb-[8px]`}
                           >
-                            {tag.text}
+                            {tagText}
                           </span>
                         ) : null}
 

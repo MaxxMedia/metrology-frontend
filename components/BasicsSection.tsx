@@ -12,33 +12,33 @@ import "swiper/css";
 
 /* ================= CATEGORY COLORS ================= */
 
-const CATEGORY_COLORS: Record<string, string> = {
-  tech: "bg-[#ff5733]",
-  gadget: "bg-[#00ad48]",
-  innovation: "bg-[#59a255]",
+const NON_REPEATING_PALETTE = [
+  "bg-[#00b5ed]", // Cyan (Automation)
+  "bg-[#00B95C]", // Green (Gadget)
+  "bg-[#7C3AED]", // Purple (Robotics)
+  "bg-[#f27100]", // Orange (Software)
+  "bg-[#0073ff]", // Royal Blue (Digital)
+  "bg-[#E11D48]", // Rose (Innovation)
+  "bg-[#059669]", // Emerald (Tech / Quality)
+  "bg-[#F59E0B]", // Amber (Trending)
+  "bg-[#8B5CF6]", // Violet (Future)
+  "bg-[#0284C7]", // Sky Blue (Engineering)
+  "bg-[#EC4899]", // Pink (Design)
+  "bg-[#10B981]", // Teal (Manufacturing)
+];
+
+const CATEGORY_PREFERRED_COLORS: Record<string, string> = {
+  automation: "bg-[#00b5ed]",
+  gadget: "bg-[#00B95C]",
+  robotics: "bg-[#7C3AED]",
   software: "bg-[#f27100]",
   digital: "bg-[#0073ff]",
-  automation: "bg-[#00b5ed]",
-  robotics: "bg-[#6d28d9]",
-  future: "bg-[#54bd05]",
-  basics: "bg-[#0073ff]",
+  innovation: "bg-[#E11D48]",
+  tech: "bg-[#059669]",
+  engineering: "bg-[#0284C7]",
+  manufacturing: "bg-[#10B981]",
+  future: "bg-[#8B5CF6]",
   trending: "bg-[#F59E0B]",
-  latest: "bg-[#F69C00]",
-  video: "bg-[#EF4444]",
-  engineering: "bg-[#2563EB]",
-  manufacturing: "bg-[#059669]",
-};
-
-const BADGE_COLORS: Record<string, string> = {
-  FEATURED: "bg-[#E11D48]",
-  TECH: "bg-[#ff5733]",
-  GADGET: "bg-[#00ad48]",
-  INNOVATION: "bg-[#59a255]",
-  SOFTWARE: "bg-[#f27100]",
-  DIGITAL: "bg-[#0073ff]",
-  AUTOMATION: "bg-[#00b5ed]",
-  ROBOTICS: "bg-[#6d28d9]",
-  FUTURE: "bg-[#54bd05]",
 };
 
 type Props = {
@@ -135,15 +135,43 @@ function ChevronRight() {
 export default function BasicsSection({ posts }: Props) {
   const swiperRef = useRef<SwiperType | null>(null);
 
-  /* Popular = most viewed first */
-  const popularPosts = useMemo(() => {
+  /* Popular = most viewed first with non-repeating badge colors */
+  const popularPostsWithTags = useMemo(() => {
     if (!Array.isArray(posts) || posts.length === 0) return [];
-    return [...posts]
+    const sorted = [...posts]
       .sort((a, b) => (b.views || 0) - (a.views || 0))
       .slice(0, 10);
+
+    const usedColors = new Set<string>();
+
+    return sorted.map((post, idx) => {
+      const badge = typeof post?.badge === "string" ? post.badge.trim() : "";
+      const slug = getCategorySlug(post);
+      const categoryName =
+        typeof post?.category === "object" && post?.category !== null
+          ? post?.category?.name || ""
+          : String(post?.category || "");
+
+      const text = badge || categoryName || "News";
+
+      const matchedKey = Object.keys(CATEGORY_PREFERRED_COLORS).find(
+        (k) => slug.includes(k) || text.toLowerCase().includes(k)
+      );
+
+      let chosenColor = "";
+      if (matchedKey && !usedColors.has(CATEGORY_PREFERRED_COLORS[matchedKey])) {
+        chosenColor = CATEGORY_PREFERRED_COLORS[matchedKey];
+      } else {
+        const unused = NON_REPEATING_PALETTE.find((c) => !usedColors.has(c));
+        chosenColor = unused || NON_REPEATING_PALETTE[idx % NON_REPEATING_PALETTE.length];
+      }
+
+      usedColors.add(chosenColor);
+      return { post, tagText: text, tagColor: chosenColor };
+    });
   }, [posts]);
 
-  if (popularPosts.length === 0) {
+  if (popularPostsWithTags.length === 0) {
     return null;
   }
 
@@ -151,29 +179,6 @@ export default function BasicsSection({ posts }: Props) {
     if (post.imageUrl?.startsWith("http")) return post.imageUrl;
     if (post.imageUrl) return `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`;
     return "/placeholder.jpg";
-  };
-
-  const getTag = (post: Post) => {
-    const badge = post?.badge?.trim();
-    const slug = getCategorySlug(post);
-    const categoryName =
-      typeof post?.category === "object" && post?.category !== null
-        ? post?.category?.name || ""
-        : String(post?.category || "");
-
-    const text = badge || categoryName || slug;
-    let color = "bg-[#0073ff]";
-
-    if (badge) {
-      color = BADGE_COLORS[badge.toUpperCase()] || "bg-gray-500";
-    } else {
-      const matchedKey = Object.keys(CATEGORY_COLORS).find(
-        (key) => slug.includes(key) || text.toLowerCase().includes(key)
-      );
-      if (matchedKey) color = CATEGORY_COLORS[matchedKey];
-    }
-
-    return { text, color };
   };
 
   const formatDate = (post: Post) => {
@@ -221,7 +226,7 @@ export default function BasicsSection({ posts }: Props) {
             spaceBetween={30}
             slidesPerView={1}
             slidesPerGroup={1}
-            loop={popularPosts.length > 4}
+            loop={popularPostsWithTags.length > 4}
             speed={500}
             autoplay={{
               delay: 5000,
@@ -230,19 +235,18 @@ export default function BasicsSection({ posts }: Props) {
             breakpoints={{
               640: { slidesPerView: 2, spaceBetween: 20 },
               900: { slidesPerView: 3, spaceBetween: 24 },
-              1200: { slidesPerView: 4, spaceBetween: 30 },
+              1200: { slidesPerView: 4, spaceBetween: 24 },
             }}
             className="!overflow-hidden"
           >
-            {popularPosts.map((post) => {
-              const tag = getTag(post);
+            {popularPostsWithTags.map(({ post, tagText, tagColor }) => {
               const date = formatDate(post);
 
               return (
                 <SwiperSlide key={post.id}>
                   <Link
                     href={`/post/${post.slug}`}
-                    className="group relative block h-[280px] sm:h-[320px] lg:h-[360px] overflow-hidden rounded-[4px]"
+                    className="group relative block h-[360px] sm:h-[400px] lg:h-[440px] overflow-hidden rounded-2xl border border-white/10"
                   >
                     <Image
                       src={imageUrl(post)}
@@ -252,14 +256,14 @@ export default function BasicsSection({ posts }: Props) {
                       quality={75}
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
 
                     <div className="absolute inset-x-0 bottom-0 px-[16px] py-[16px] sm:px-[18px] sm:py-[18px]">
-                      {tag.text && (
+                      {tagText && (
                         <span
-                          className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-[10px]`}
+                          className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[10px]`}
                         >
-                          {tag.text}
+                          {tagText}
                         </span>
                       )}
 
