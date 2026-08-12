@@ -7,34 +7,33 @@ import type { Post } from "../types/Post";
 
 /* ================= COLOR CONFIG ================= */
 
-const BADGE_COLORS: Record<string, string> = {
-  FEATURED: "bg-[#E11D48]",
-  WEBINAR: "bg-[#7C3AED]",
-  EVENT: "bg-[#0EA5E9]",
-  TRENDING: "bg-[#F97316]",
-  EXCLUSIVE: "bg-[#059669]",
-  TECH: "bg-[#ff5733]",
-  FUTURE: "bg-[#54bd05]",
-  DIGITAL: "bg-[#0073ff]",
-  SOFTWARE: "bg-[#f27100]",
-  GADGET: "bg-[#00ad48]",
-  AUTOMATION: "bg-[#00b5ed]",
-  INNOVATION: "bg-[#59a255]",
-  ROBOTICS: "bg-[#6d28d9]",
-};
+const NON_REPEATING_PALETTE = [
+  "bg-[#00b5ed]", // Cyan
+  "bg-[#00B95C]", // Green
+  "bg-[#7C3AED]", // Purple
+  "bg-[#f27100]", // Orange
+  "bg-[#0073ff]", // Royal Blue
+  "bg-[#E11D48]", // Rose
+  "bg-[#059669]", // Emerald
+  "bg-[#F59E0B]", // Amber
+  "bg-[#8B5CF6]", // Violet
+  "bg-[#0284C7]", // Sky Blue
+  "bg-[#EC4899]", // Pink
+  "bg-[#10B981]", // Teal
+];
 
-const CATEGORY_COLORS: Record<string, string> = {
-  tech: "bg-[#ff5733]",
-  future: "bg-[#54bd05]",
-  digital: "bg-[#0073ff]",
-  software: "bg-[#f27100]",
-  gadget: "bg-[#00ad48]",
+const CATEGORY_PREFERRED_COLORS: Record<string, string> = {
   automation: "bg-[#00b5ed]",
-  innovation: "bg-[#59a255]",
-  robotics: "bg-[#6d28d9]",
-  video: "bg-[#F69C00]",
-  engineering: "bg-[#0072BC]",
-  manufacturing: "bg-[#059669]",
+  gadget: "bg-[#00B95C]",
+  robotics: "bg-[#7C3AED]",
+  software: "bg-[#f27100]",
+  digital: "bg-[#0073ff]",
+  innovation: "bg-[#E11D48]",
+  tech: "bg-[#059669]",
+  engineering: "bg-[#0284C7]",
+  manufacturing: "bg-[#10B981]",
+  future: "bg-[#8B5CF6]",
+  trending: "bg-[#F59E0B]",
 };
 
 type Props = {
@@ -111,15 +110,45 @@ function DiamondDot({ className = "" }: { className?: string }) {
 }
 
 export default function VideosSection({ posts }: Props) {
-  /* Latest news by recency — 2 featured + 3 list */
-  const latestPosts = useMemo(() => {
+  /* Latest news by recency — 2 featured + 3 list with non-repeating tags */
+  const latestPostsWithTags = useMemo(() => {
     if (!Array.isArray(posts) || posts.length === 0) return [];
-    return [...posts].sort((a, b) => getRecency(b) - getRecency(a)).slice(0, 5);
+    const sorted = [...posts].sort((a, b) => getRecency(b) - getRecency(a)).slice(0, 5);
+    const usedColors = new Set<string>();
+
+    return sorted.map((post, idx) => {
+      const badge = typeof post?.badge === "string" ? post.badge.trim() : "";
+      const slug =
+        typeof post?.category === "object"
+          ? post?.category?.slug?.toLowerCase() || ""
+          : String(post?.category || "").toLowerCase();
+      const categoryName =
+        typeof post?.category === "object"
+          ? post?.category?.name || ""
+          : String(post?.category || "");
+
+      const text = badge || categoryName || "News";
+
+      const matchedKey = Object.keys(CATEGORY_PREFERRED_COLORS).find(
+        (k) => slug.includes(k) || text.toLowerCase().includes(k)
+      );
+
+      let chosenColor = "";
+      if (matchedKey && !usedColors.has(CATEGORY_PREFERRED_COLORS[matchedKey])) {
+        chosenColor = CATEGORY_PREFERRED_COLORS[matchedKey];
+      } else {
+        const unused = NON_REPEATING_PALETTE.find((c) => !usedColors.has(c));
+        chosenColor = unused || NON_REPEATING_PALETTE[idx % NON_REPEATING_PALETTE.length];
+      }
+
+      usedColors.add(chosenColor);
+      return { post, tagText: text, tagColor: chosenColor };
+    });
   }, [posts]);
 
-  if (!latestPosts.length) return null;
+  if (!latestPostsWithTags.length) return null;
 
-  const [leftFeatured, rightFeatured, ...smallPosts] = latestPosts;
+  const [leftFeatured, rightFeatured, ...smallPosts] = latestPostsWithTags;
 
   const imageUrl = (post?: Post) =>
     post?.imageUrl?.startsWith("http")
@@ -138,41 +167,14 @@ export default function VideosSection({ posts }: Props) {
     });
   };
 
-  const getTag = (post?: Post) => {
-    const badge = post?.badge?.trim();
-    const slug =
-      typeof post?.category === "object"
-        ? post?.category?.slug?.toLowerCase() || ""
-        : String(post?.category || "").toLowerCase();
-
-    const categoryName =
-      typeof post?.category === "object"
-        ? post?.category?.name || ""
-        : String(post?.category || "");
-
-    const text = badge || categoryName;
-    let color = "bg-[#0073ff]";
-
-    if (badge) {
-      color = BADGE_COLORS[badge.toUpperCase()] || "bg-[#6B7280]";
-    } else {
-      const match = Object.keys(CATEGORY_COLORS).find(
-        (k) => slug.includes(k) || text.toLowerCase().includes(k)
-      );
-      if (match) color = CATEGORY_COLORS[match];
-    }
-
-    return { text, color };
-  };
-
   const FeaturedCard = ({
-    post,
+    itemObj,
     className = "",
   }: {
-    post: Post;
+    itemObj: { post: Post; tagText: string; tagColor: string };
     className?: string;
   }) => {
-    const tag = getTag(post);
+    const { post, tagText, tagColor } = itemObj;
     const date = formatDate(post);
 
     return (
@@ -191,11 +193,11 @@ export default function VideosSection({ posts }: Props) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
         <div className="absolute inset-x-0 bottom-0 px-[16px] py-[18px] sm:px-[20px] sm:py-[22px]">
-          {tag.text && (
+          {tagText && (
             <span
-              className={`inline-block ${tag.color} text-white text-[11px] font-semibold uppercase tracking-wide px-[10px] py-[3px] rounded-[3px] mb-[12px]`}
+              className={`inline-block ${tagColor} text-white text-[11px] font-semibold uppercase tracking-wide px-[10px] py-[3px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[12px]`}
             >
-              {tag.text}
+              {tagText}
             </span>
           )}
 
@@ -252,18 +254,17 @@ export default function VideosSection({ posts }: Props) {
         {/* ================= TOP: 2 FEATURED ================= */}
         <div className="flex flex-col md:flex-row gap-4 sm:gap-5 lg:gap-6 mb-5 lg:mb-6">
           {leftFeatured && (
-            <FeaturedCard post={leftFeatured} className="w-full lg:w-[923.33px] shrink-0" />
+            <FeaturedCard itemObj={leftFeatured} className="w-full lg:w-[923.33px] shrink-0" />
           )}
           {rightFeatured && (
-            <FeaturedCard post={rightFeatured} className="w-full lg:w-[446.66px] shrink-0" />
+            <FeaturedCard itemObj={rightFeatured} className="w-full lg:w-[446.66px] shrink-0" />
           )}
         </div>
 
         {/* ================= BOTTOM: 3 SMALL CARDS ================= */}
         {smallPosts.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-5 gap-y-4 lg:gap-6">
-            {smallPosts.map((post) => {
-              const tag = getTag(post);
+            {smallPosts.map(({ post, tagText, tagColor }) => {
               return (
                 <Link
                   key={post.id}
@@ -282,11 +283,11 @@ export default function VideosSection({ posts }: Props) {
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    {tag.text && (
+                    {tagText && (
                       <span
-                        className={`inline-block ${tag.color} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-[3px] mb-[8px]`}
+                        className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[8px]`}
                       >
-                        {tag.text}
+                        {tagText}
                       </span>
                     )}
 
