@@ -10,9 +10,6 @@ import type { Post } from "@/types/Post";
 const CATEGORY_SLUG = "optical-and-vision-metrology";
 const CATEGORY_NAME = "Optical & Vision Metrology";
 
-const ROTATE_INTERVAL = 5000;
-const FADE_DURATION = 500;
-
 const BADGE_COLORS: Record<string, string> = {
   FEATURED: "bg-[#E11D48]",
   WEBINAR: "bg-[#7C3AED]",
@@ -128,8 +125,6 @@ type Props = {
 
 export default function CompanyArticles({ posts: postsProp }: Props) {
   const [fetchedPosts, setFetchedPosts] = useState<Post[]>([]);
-  const [index, setIndex] = useState(0);
-  const [fade, setFade] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -202,34 +197,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
   }, [fromProp.length]);
 
   const allPosts = fromProp.length > 0 ? fromProp : fetchedPosts;
-
-  const visiblePosts = useMemo(() => {
-    if (allPosts.length === 0) return [];
-
-    const windowSize = Math.min(3, allPosts.length);
-    const result: Post[] = [];
-
-    for (let i = 0; i < windowSize; i++) {
-      result.push(allPosts[(index + i) % allPosts.length]);
-    }
-
-    return result;
-  }, [allPosts, index]);
-
-  useEffect(() => {
-    if (allPosts.length <= 3) return;
-
-    const timer = setInterval(() => {
-      setFade(false);
-
-      setTimeout(() => {
-        setIndex((prev) => (prev + 1) % allPosts.length);
-        setFade(true);
-      }, FADE_DURATION);
-    }, ROTATE_INTERVAL);
-
-    return () => clearInterval(timer);
-  }, [allPosts.length]);
+  const visiblePosts = allPosts.slice(0, 3);
 
   if (loading) {
     return (
@@ -265,21 +233,15 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
           priority
           quality={80}
           sizes="100vw"
-          className={`object-cover transition-all duration-700 ease-in-out ${
-            fade ? "opacity-100 scale-100" : "opacity-80 scale-[1.03]"
-          }`}
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-[#1D2125]/50" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1D2125] via-[#1D2125]/45 to-[#1D2125]/20" />
 
         <div className="absolute inset-x-0 bottom-0 z-10">
           <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pb-6 md:pb-8">
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 transition-all duration-500 ease-in-out ${
-                fade ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
-              }`}
-            >
-              {visiblePosts.map((post, i) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+              {visiblePosts.map((post) => {
                 const slug = getCategorySlug(post);
                 const categoryName = getCategoryName(post);
                 const badge = post.badge?.trim();
@@ -298,7 +260,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
 
                 return (
                   <Link
-                    key={`${post.id}-${i}`}
+                    key={post.id}
                     href={`/post/${post.slug}`}
                     className="group flex items-center gap-3.5 rounded-[12px] border border-white/15 bg-black/45 backdrop-blur-md p-3.5 sm:p-4 hover:border-white/30 hover:bg-black/55 transition-colors"
                   >

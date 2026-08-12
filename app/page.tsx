@@ -77,7 +77,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col w-full min-w-0 overflow-x-hidden bg-[#1D2125]">
       {/* ================= HOME TOP BANNER ================= */}
-      {/* <Banner placement="HOME_TOP" /> */}
+      <Banner placement="HOME_TOP" />
 
       {/* 📰 Latest Hero — shows the most recent post + next 3, all categories */}
       {latestPost && <LatestHero post={latestPost} posts={posts} />}

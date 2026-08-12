@@ -11,7 +11,20 @@ type Category = {
   slug: string;
   parentId?: number | null;
   children?: Category[];
+  _count?: {
+    posts: number;
+    subPosts: number;
+  };
 };
+
+function getPostCount(cat: Category) {
+  // Parent categories: posts via categoryId
+  // Subcategories: posts via subCategoryId
+  if (cat.parentId != null) {
+    return cat._count?.subPosts ?? 0;
+  }
+  return cat._count?.posts ?? 0;
+}
 
 type FlatRow = Category & { depth: number; parentName?: string };
 
@@ -358,13 +371,18 @@ export default function CategoryManagement() {
                         <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">
                           Type
                         </th>
+                        <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-center">
+                          Posts
+                        </th>
                         <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">
                           Actions
                         </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {paginatedRows.map((cat) => (
+                      {paginatedRows.map((cat) => {
+                        const postCount = getPostCount(cat);
+                        return (
                         <tr
                           key={cat.id}
                           className={`hover:bg-gray-50 transition ${
@@ -390,6 +408,22 @@ export default function CategoryManagement() {
                               "Category"
                             )}
                           </td>
+                          <td className="px-6 py-4 text-center">
+                            <span
+                              className={`inline-flex min-w-[2rem] items-center justify-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                                postCount > 0
+                                  ? "bg-[#0073ff]/10 text-[#0073ff]"
+                                  : "bg-gray-100 text-gray-500"
+                              }`}
+                              title={
+                                cat.depth > 0
+                                  ? "Posts using this subcategory"
+                                  : "Posts in this category"
+                              }
+                            >
+                              {postCount}
+                            </span>
+                          </td>
                           <td className="px-6 py-4 text-sm text-right">
                             <div className="flex justify-end gap-2">
                               <button
@@ -409,7 +443,8 @@ export default function CategoryManagement() {
                             </div>
                           </td>
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
