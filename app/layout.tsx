@@ -195,10 +195,12 @@ export default function RootLayout({
         {/* Sitemap */}
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
       </head>
+
       <body
         className={`${interTight.className} antialiased bg-[#1D2125] text-white`}
         suppressHydrationWarning
       >
+
         <Header />
 
         <main className="pt-[114px] pb-24">

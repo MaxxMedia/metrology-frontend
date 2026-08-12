@@ -125,9 +125,9 @@ export default async function Footer() {
               <Image
                 src="/images/logo5.png"
                 alt="Tooling Trends"
-                width={180}
-                height={56}
-                className="h-12 w-auto object-contain"
+                width={300}
+                height={66}
+                className="h-24 w-auto object-contain"
               />
             </Link>
 

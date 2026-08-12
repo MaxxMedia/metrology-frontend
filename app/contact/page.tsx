@@ -36,7 +36,7 @@ export default function ContactPage() {
 
     try {
       const response = await sendContactMessage(formData);
-      
+
       if (response.success) {
         setSuccessMessage("Thank you! Your message has been sent successfully.");
         // Reset form
@@ -61,49 +61,54 @@ export default function ContactPage() {
     }
   };
 
+  const locations = [
+    {
+      title: "California",
+      img: "/images/newyork.png",
+      address: "Madison Avenue, New York",
+      phone: "+990 123 456 789",
+      email: "info@toolingtrends.com",
+    },
+    {
+      title: "New York City",
+      img: "/images/newyork.png",
+      address: "Washington Ave, Manchester, Kentucky",
+      phone: "+89 (308) 555-0121",
+      email: "info@toolingtrends.com",
+    },
+    {
+      title: "New Hampshire",
+      img: "/images/newyork.png",
+      address: "Parker Rd. Allentown, New Mexico",
+      phone: "(907) 555-0101",
+      email: "info@toolingtrends.com",
+    },
+  ];
+
   return (
-    <main className="w-full bg-white">
+    <main className="w-full bg-[#0c0d10] text-white">
       {/* ================= HERO / BREADCRUMB ================= */}
-      <section className="relative bg-[#f8f9fb] py-24 text-center">
-        <h1 className="text-4xl font-semibold text-[#121213]">Contact</h1>
-        <div className="mt-2 text-sm text-[#616C74]">
-          <Link href="/" className="hover:text-blue-600">
+      <section className="relative bg-[#111318] py-24 text-center border-b border-white/5">
+        <h1 className="text-4xl font-semibold text-white">Contact</h1>
+        <div className="mt-3 flex items-center justify-center gap-2 text-sm text-[#8b93a1]">
+          <Link href="/" className="hover:text-blue-500 transition">
             Tooling Trends
           </Link>
-          <span className="mx-2">→</span>
-          <span className="text-blue-600">Contact</span>
+          <span className="text-[#3d424c]">→</span>
+          <span className="text-blue-500">Contact</span>
         </div>
       </section>
 
       {/* ================= LOCATIONS ================= */}
-      <section className="py-24">
+      <section className="pt-16 pb-24">
         <div className="max-w-[1320px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {[
-              {
-                title: "California",
-                img: "/images/newyork.png",
-                address: "Madison Avenue, New York",
-                phone: "+990 123 456 789",
-              },
-              {
-                title: "New York City",
-                img: "/images/newyork.png",
-                address: "Washington Ave, Manchester, Kentucky",
-                phone: "+89 (308) 555-0121",
-              },
-              {
-                title: "New Hampshire",
-                img: "/images/newyork.png",
-                address: "Parker Rd. Allentown, New Mexico",
-                phone: "(907) 555-0101",
-              },
-            ].map((item) => (
+            {locations.map((item) => (
               <div
                 key={item.title}
-                className="bg-white rounded-2xl shadow-sm p-8 text-center"
+                className="bg-[#16181d] rounded-2xl overflow-hidden text-center"
               >
-                <div className="relative w-full h-[220px] rounded-full overflow-hidden mx-auto mb-6">
+                <div className="relative w-full h-[260px]">
                   <Image
                     src={item.img}
                     alt={`${item.title} office`}
@@ -113,109 +118,115 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <h3 className="text-xl font-semibold text-[#121213]">
-                  {item.title}
-                </h3>
+                <div className="p-8">
+                  <h3 className="text-xl font-semibold text-white">
+                    {item.title}
+                  </h3>
 
-                <div className="w-10 h-[2px] bg-blue-600 mx-auto my-4" />
+                  {/* blue underline divider */}
+                  <div className="w-10 h-[2px] bg-blue-500 mx-auto my-4" />
 
-                <p className="text-sm text-[#616C74] leading-relaxed">
-                  {item.address}
-                </p>
-                <p className="text-sm text-[#616C74] mt-1">
-                  {item.phone}
-                </p>
-                <p className="text-sm text-[#616C74] mt-1">
-                  toolingtrends@gmail.com
-                </p>
+                  <p className="text-sm text-[#9aa0ab] leading-relaxed">
+                    {item.address}
+                  </p>
+                  <p className="text-sm text-[#9aa0ab] mt-1">
+                    {item.phone}
+                  </p>
+                  <p className="text-sm text-[#9aa0ab] mt-1">
+                    {item.email}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ================= CONTACT FORM ================= */}
-      <section className="pb-32">
+      {/* ================= CONTACT FORM (overlaps the map below it) ================= */}
+      <section className="relative z-10 pb-0">
         <div className="max-w-[1320px] mx-auto px-6">
-          <div className="bg-white rounded-[28px] border border-blue-500/20 p-10 md:p-14 grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="relative bg-[#16181d] rounded-2xl p-10 md:p-14 grid grid-cols-1 lg:grid-cols-2 gap-12 overflow-hidden">
+            {/* blue top border accent */}
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-blue-500" />
+
             {/* FORM */}
             <div>
-              <h2 className="text-3xl font-semibold text-[#121213] mb-8">
+              <h2 className="text-3xl font-semibold text-white mb-8">
                 Feel Free to Contact Us
               </h2>
 
               {successMessage && (
-                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                <div className="mb-4 p-3 bg-green-500/10 border border-green-500/40 text-green-400 rounded-lg">
                   {successMessage}
                 </div>
               )}
 
               {errorMessage && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/40 text-red-400 rounded-lg">
                   {errorMessage}
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-sm text-[#121213]">Full Name*</label>
+                  <label className="text-sm text-[#c7cbd3]">Full Name*</label>
                   <input
                     type="text"
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
-                    placeholder="Robot fox"
-                    className="mt-2 w-full rounded-lg border px-4 py-3 text-sm outline-none focus:border-blue-600"
+                    placeholder="Type Name"
+                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#0c0d10] text-white placeholder:text-[#5b616c] px-4 py-3.5 text-sm outline-none focus:border-blue-500 transition-colors"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-[#121213]">Email Address*</label>
+                  <label className="text-sm text-[#c7cbd3]">Email Address*</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="info@toolingtrends.com"
-                    className="mt-2 w-full rounded-lg border px-4 py-3 text-sm outline-none focus:border-blue-600"
+                    placeholder="info@example.com"
+                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#0c0d10] text-white placeholder:text-[#5b616c] px-4 py-3.5 text-sm outline-none focus:border-blue-500 transition-colors"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-[#121213]">Phone Number</label>
+                  <label className="text-sm text-[#c7cbd3]">Phone Number*</label>
                   <input
                     type="text"
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleChange}
                     placeholder="(480) 555-0103"
-                    className="mt-2 w-full rounded-lg border px-4 py-3 text-sm outline-none focus:border-blue-600"
+                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#0c0d10] text-white placeholder:text-[#5b616c] px-4 py-3.5 text-sm outline-none focus:border-blue-500 transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-[#121213]">Website</label>
+                  <label className="text-sm text-[#c7cbd3]">Website*</label>
                   <input
                     type="text"
                     name="website"
                     value={formData.website}
                     onChange={handleChange}
-                    placeholder="www.toolingtrends.com"
-                    className="mt-2 w-full rounded-lg border px-4 py-3 text-sm outline-none focus:border-blue-600"
+                    placeholder="www.nerio.com"
+                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#0c0d10] text-white placeholder:text-[#5b616c] px-4 py-3.5 text-sm outline-none focus:border-blue-500 transition-colors"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="text-sm text-[#121213]">Message*</label>
+                  <label className="text-sm text-[#c7cbd3]">Message*</label>
                   <textarea
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
                     rows={6}
                     placeholder="Type here..."
-                    className="mt-2 w-full rounded-lg border px-4 py-3 text-sm outline-none focus:border-blue-600"
+                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#0c0d10] text-white placeholder:text-[#5b616c] px-4 py-3.5 text-sm outline-none focus:border-blue-500 transition-colors resize-y"
                     required
                   />
                 </div>
@@ -224,7 +235,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 bg-blue-600 text-white px-7 py-3.5 rounded-lg text-sm font-medium hover:bg-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <>
@@ -235,7 +246,12 @@ export default function ContactPage() {
                         Sending...
                       </>
                     ) : (
-                      "Send Message →"
+                      <>
+                        Send Message
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 12" className="w-3.5 h-3.5 fill-white">
+                          <path fillRule="evenodd" clipRule="evenodd" d="M16.2079 5.0991C14.0115 5.0991 12.0097 3.0991 12.0097 0.900901V0H10.2079V0.900901C10.2079 2.4991 10.9088 3.9982 12.0088 5.0991H0.892578V6.9009H12.0088C10.9088 8.0018 10.2079 9.5009 10.2079 11.0991V12H12.0097V11.0991C12.0097 8.9018 14.0115 6.9009 16.2079 6.9009H17.1088V5.0991H16.2079Z" />
+                        </svg>
+                      </>
                     )}
                   </button>
                 </div>
@@ -243,7 +259,7 @@ export default function ContactPage() {
             </div>
 
             {/* IMAGE */}
-            <div className="relative w-full h-[520px] rounded-2xl overflow-hidden">
+            <div className="relative w-full h-full min-h-[480px] rounded-2xl overflow-hidden">
               <Image
                 src="/images/contact.png"
                 alt="Customer support representative"
@@ -253,6 +269,19 @@ export default function ContactPage() {
               />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ================= MAP ================= */}
+      <section>
+        <div className="w-full h-[420px]">
+          <iframe
+            loading="lazy"
+            className="w-full h-full border-0"
+            src="https://maps.google.com/maps?q=London%2C%20westminstar&t=m&z=10&output=embed&iwloc=near"
+            title="Office location map"
+            aria-label="Office location map"
+          />
         </div>
       </section>
     </main>

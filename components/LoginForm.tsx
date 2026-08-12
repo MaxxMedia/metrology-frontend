@@ -105,85 +105,78 @@ export default function LoginForm() {
 
   return (
     <div className="w-full max-w-md">
-      <h2 className="text-3xl font-semibold mb-8 text-center">Login</h2>
-
       {error && (
-        <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded">
+        <div className="mb-5 text-sm text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-md">
           {error}
         </div>
       )}
 
       <form className="space-y-5" onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email Address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full h-[52px] px-4 rounded-md border border-gray-200 focus:outline-none focus:border-[#0073FF]"
-        />
-
-        <div className="relative">
+        <div>
+          <label className="block text-white text-[14px] font-semibold mb-2">
+            Username or Email Address:
+          </label>
           <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
+            type="email"
+            placeholder="Username or Email Address:"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full h-[50px] px-4 pr-12 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0073FF]"
+            className="w-full h-[50px] px-4 rounded-md bg-[#0f1115] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#0073FF] transition-colors"
           />
+        </div>
 
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-4 flex items-center text-gray-500"
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+        <div>
+          <label className="block text-white text-[14px] font-semibold mb-2">
+            Password
+          </label>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-[50px] px-4 pr-12 rounded-md bg-[#0f1115] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#0073FF] transition-colors"
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-4 flex items-center text-white/40 hover:text-white/70 transition-colors"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center justify-between text-sm">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" className="rounded" />
+          <label className="flex items-center gap-2 text-white/80">
+            <input type="checkbox" className="rounded accent-[#0073FF]" />
             Remember me
           </label>
 
-          <Link href="/forgot-password" className="text-[#0073FF]">
+          <Link href="/forgot-password" className="text-white/50 hover:text-white transition-colors">
             Forgot Password?
           </Link>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full h-[52px] bg-[#0073FF] text-white rounded-md font-medium hover:bg-[#005fe0] transition disabled:opacity-60"
-        >
-          {loading ? "Signing in..." : "Sign In"}
-        </button>
+        <div className="flex items-center gap-5 pt-1">
+          <button
+            type="submit"
+            disabled={loading}
+            className="h-[48px] px-8 bg-[#0073FF] text-white rounded-md font-semibold hover:bg-[#005fe0] transition-colors disabled:opacity-60"
+          >
+            {loading ? "Signing in..." : "Log In"}
+          </button>
 
-        <div className="flex items-center gap-4 my-6">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-sm text-gray-400">or</span>
-          <div className="flex-1 h-px bg-gray-200" />
-        </div>
-
-        <div className="flex justify-center gap-4">
-          {["facebook", "instagram", "x", "linkedin"].map((s) => (
-            <div
-              key={s}
-              className="w-10 h-10 flex items-center justify-center rounded bg-gray-100 cursor-pointer hover:bg-gray-200"
-            >
-              <i className={`ri-${s}-fill`} />
-            </div>
-          ))}
-        </div>
-
-        <p className="text-center text-sm mt-6">
-          Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-[#0073FF]">
-            Sign up
+          <Link
+            href="/signup"
+            className="text-white/50 hover:text-white transition-colors text-[14px] font-medium"
+          >
+            Register
           </Link>
-        </p>
+        </div>
       </form>
     </div>
   )

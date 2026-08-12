@@ -162,28 +162,28 @@ export default function SignupForm() {
       {step === "form" && (
         <>
           {/* ROLE BADGE */}
-          <span className="inline-block mb-4 text-xs font-semibold uppercase tracking-wide text-[#0073FF] bg-blue-50 px-3 py-1 rounded-full">
+          <span className="inline-block mb-4 text-xs font-semibold uppercase tracking-wide text-[#0073FF] bg-[#0073FF]/10 border border-[#0073FF]/20 px-3 py-1 rounded-full">
             {role === "recruiter"
               ? "Employer Registration"
               : "Job Seeker Registration"}
           </span>
 
           {/* Dynamic Title */}
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-white mb-2">
             {role === "recruiter"
               ? "Register Your Company"
               : "Create Your Candidate Account"}
           </h2>
 
           {/* Dynamic Description */}
-          <p className="text-gray-600 mb-8">
+          <p className="text-white/50 mb-8">
             {role === "recruiter"
               ? "Start posting jobs and manage applicants."
               : "Find jobs and apply in minutes."}
           </p>
 
           {error && (
-            <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded">
+            <div className="mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-md">
               {error}
             </div>
           )}
@@ -196,11 +196,10 @@ export default function SignupForm() {
                 <button
                   type="button"
                   onClick={() => setRole("candidate")}
-                  className={`flex-1 h-[42px] rounded-md border text-sm font-medium transition ${
-                    role === "candidate"
+                  className={`flex-1 h-[42px] rounded-md border text-sm font-medium transition-colors ${role === "candidate"
                       ? "bg-[#0073FF] text-white border-[#0073FF]"
-                      : "bg-white text-gray-600 hover:bg-gray-50"
-                  }`}
+                      : "bg-[#0f1115] text-white/60 border-white/10 hover:text-white/90 hover:border-white/20"
+                    }`}
                 >
                   Candidate
                 </button>
@@ -208,11 +207,10 @@ export default function SignupForm() {
                 <button
                   type="button"
                   onClick={() => setRole("recruiter")}
-                  className={`flex-1 h-[42px] rounded-md border text-sm font-medium transition ${
-                    role === "recruiter"
+                  className={`flex-1 h-[42px] rounded-md border text-sm font-medium transition-colors ${role === "recruiter"
                       ? "bg-[#0073FF] text-white border-[#0073FF]"
-                      : "bg-white text-gray-600 hover:bg-gray-50"
-                  }`}
+                      : "bg-[#0f1115] text-white/60 border-white/10 hover:text-white/90 hover:border-white/20"
+                    }`}
                 >
                   Company
                 </button>
@@ -225,27 +223,27 @@ export default function SignupForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-[50px] px-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0073FF]"
+              className="w-full h-[50px] px-4 rounded-md bg-[#0f1115] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#0073FF] transition-colors"
             />
 
             <div className="relative">
-  <input
-    type={showPassword ? "text" : "password"}
-    placeholder="Password"
-    required
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-    className="w-full h-[50px] px-4 pr-12 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0073FF]"
-  />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-[50px] px-4 pr-12 rounded-md bg-[#0f1115] border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#0073FF] transition-colors"
+              />
 
-  <button
-    type="button"
-    onClick={() => setShowPassword(!showPassword)}
-    className="absolute inset-y-0 right-4 flex items-center text-gray-500"
-  >
-    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-  </button>
-</div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-4 flex items-center text-white/40 hover:text-white/70 transition-colors"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
 
             {role === "recruiter" && (
               <RecruiterSubscriptionTerms
@@ -258,7 +256,7 @@ export default function SignupForm() {
             <button
               type="submit"
               disabled={loading || (role === "recruiter" && !acceptedRecruiterTerms)}
-              className="w-full h-[52px] bg-[#0073FF] text-white rounded-md font-semibold hover:bg-[#005fe0] transition disabled:opacity-60"
+              className="w-full h-[52px] bg-[#0073FF] text-white rounded-md font-semibold hover:bg-[#005fe0] transition-colors disabled:opacity-60"
             >
               {loading ? "Sending OTP..." : "Create Account"}
             </button>
@@ -269,22 +267,22 @@ export default function SignupForm() {
       {/* ================= STEP 2 — OTP ================= */}
       {step === "otp" && (
         <>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-white mb-4">
             Verify Your Email
           </h2>
 
-          <p className="text-gray-600 mb-6">
-            Enter the 6-digit code sent to <b>{email}</b>
+          <p className="text-white/50 mb-6">
+            Enter the 6-digit code sent to <b className="text-white/80">{email}</b>
           </p>
 
           {error && (
-            <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded">
+            <div className="mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-md">
               {error}
             </div>
           )}
 
           {success && (
-            <div className="mb-4 text-sm text-green-600 bg-green-50 p-3 rounded">
+            <div className="mb-4 text-sm text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-md">
               {success}
             </div>
           )}
@@ -296,13 +294,13 @@ export default function SignupForm() {
               required
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              className="w-full h-[50px] px-4 border rounded-md text-center tracking-widest text-lg"
+              className="w-full h-[50px] px-4 rounded-md bg-[#0f1115] border border-white/10 text-white placeholder:text-white/30 text-center tracking-widest text-lg focus:outline-none focus:border-[#0073FF] transition-colors"
             />
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-[52px] bg-[#0073FF] text-white rounded-md font-semibold hover:bg-[#005fe0]"
+              className="w-full h-[52px] bg-[#0073FF] text-white rounded-md font-semibold hover:bg-[#005fe0] transition-colors disabled:opacity-60"
             >
               {loading ? "Verifying..." : "Verify Email"}
             </button>
@@ -318,9 +316,9 @@ export default function SignupForm() {
       )}
 
       {/* Footer */}
-      <p className="text-center text-sm mt-6 text-gray-600">
+      <p className="text-center text-sm mt-6 text-white/50">
         Already have an account?{" "}
-        <Link href="/login" className="text-[#0073FF] font-medium">
+        <Link href="/login" className="text-[#0073FF] font-medium hover:underline">
           Login
         </Link>
       </p>
