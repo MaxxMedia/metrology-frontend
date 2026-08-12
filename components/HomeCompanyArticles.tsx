@@ -238,6 +238,31 @@ export default function HomeCompanyArticles({ posts }: Props) {
 
   if (!allPosts.length) return null;
 
+  function getTag(post: Post) {
+    const badge = typeof post.badge === "string" ? post.badge.trim() : "";
+    const categoryName =
+      typeof post.category === "object"
+        ? post.category?.name || ""
+        : String(post.category || "");
+    const categorySlug =
+      typeof post.category === "object"
+        ? (post.category?.slug || "").toLowerCase()
+        : String(post.category || "").toLowerCase();
+
+    const text = badge || categoryName || "News";
+    const normalized = (text || "").toLowerCase();
+    const slug = categorySlug || post.slug?.toLowerCase() || "";
+
+    const match = Object.keys(CATEGORY_PREFERRED_COLORS).find(
+      (key) => slug.includes(key) || normalized.includes(key)
+    );
+
+    return {
+      text,
+      color: match ? CATEGORY_PREFERRED_COLORS[match] : "bg-[#0073ff]",
+    };
+  }
+
   return (
     <section className="w-full bg-[#1D2125]">
       <style jsx>{`
@@ -273,15 +298,10 @@ export default function HomeCompanyArticles({ posts }: Props) {
               </div>
             </div>
 
-<<<<<<< Updated upstream
-            <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">
-              {visiblePostsWithTags.map(({ post, tagText, tagColor }) => {
-=======
+
             {/* Plain normal-flow list — no inner scroll */}
             <div className="flex flex-col divide-y divide-white/10 border-t border-white/10">
-              {visiblePosts.map((post) => {
-                const tag = getTag(post);
->>>>>>> Stashed changes
+              {visiblePostsWithTags.map(({ post, tagText, tagColor }) => {
                 const date = formatDate(post);
 
                 return (
@@ -302,13 +322,10 @@ export default function HomeCompanyArticles({ posts }: Props) {
                       />
                     </Link>
 
-<<<<<<< Updated upstream
-                    <div className="min-w-0 flex-1 py-0.5">
-                      {tagText && (
-=======
+
                     <div className="min-w-0 flex-1 mx-[20px] ml-[5px] py-[15px]">
-                      {tag.text && (
->>>>>>> Stashed changes
+                      {tagText && (
+
                         <span
                           className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[10px]`}
                         >
@@ -416,20 +433,14 @@ export default function HomeCompanyArticles({ posts }: Props) {
                     href={`/post/${post.slug}`}
                     className="group flex items-center gap-[12px] py-[10px]"
                   >
-<<<<<<< Updated upstream
-                    <div className="relative w-[72px] h-[96px] rounded-xl overflow-hidden shrink-0 shadow-md">
-=======
+
                     <div className="relative w-[100px] h-[100px] rounded-full overflow-hidden shrink-0">
->>>>>>> Stashed changes
                       <Image
                         src={getImageUrl(post)}
                         alt={post.title}
                         fill
-<<<<<<< Updated upstream
-                        sizes="72px"
-=======
+
                         sizes="100px"
->>>>>>> Stashed changes
                         className="object-cover"
                       />
                     </div>
