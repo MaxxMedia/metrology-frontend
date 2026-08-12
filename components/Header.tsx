@@ -224,8 +224,8 @@ export default function Header() {
       {/* ================= TOP UTILITY BAR ================= */}
       <div className="">
         <div className={`${container} h-[42px] flex items-center justify-between gap-4 text-[13px]`}>
-          {/* Live News */}
-          <div className="flex items-center gap-3 min-w-0 flex-1">
+          {/* Live News + ticker + weather (inline, compact) */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <div className="flex items-center gap-2 shrink-0">
               <span className="relative flex h-2 w-2 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ef4444] opacity-75" />
@@ -236,7 +236,7 @@ export default function Header() {
               </span>
             </div>
             <span className="hidden sm:block w-px h-4 bg-white/30 shrink-0" />
-            <div className="min-w-0 flex-1 overflow-hidden">
+            <div className="min-w-0 max-w-[140px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[320px] overflow-hidden shrink">
               {activeTicker ? (
                 <Link
                   href={`/post/${activeTicker.slug}`}
@@ -248,19 +248,20 @@ export default function Header() {
                 <span className="text-white/50 truncate block">Loading headlines…</span>
               )}
             </div>
+            {weather && (
+              <>
+                <span className="hidden md:block w-px h-4 bg-white/30 shrink-0" />
+                <div className="hidden md:flex items-center gap-2 text-white shrink-0 whitespace-nowrap">
+                  <CloudSunIcon className="w-4 h-4 text-[#38bdf8] shrink-0" />
+                  <span className="font-semibold">
+                    {weather.temperature}
+                    <sup className="text-[10px]">°C</sup>
+                  </span>
+                  <span className="text-white/70">{weather.country}</span>
+                </div>
+              </>
+            )}
           </div>
-
-          {/* Weather — IP-based country + live temp */}
-          {weather && (
-            <div className="hidden md:flex items-center gap-2 text-white shrink-0 whitespace-nowrap">
-              <CloudSunIcon className="w-4 h-4 text-[#38bdf8] shrink-0" />
-              <span className="font-semibold">
-                {weather.temperature}
-                <sup className="text-[10px]">°C</sup>
-              </span>
-              <span className="text-white/70">{weather.country}</span>
-            </div>
-          )}
 
           {/* Right cluster */}
           <div className="flex items-center gap-5 xl:gap-6 shrink-0">
