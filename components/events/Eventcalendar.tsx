@@ -68,20 +68,20 @@ export default function EventCalendar({ events }: { events: CalendarEvent[] }) {
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-      <div className="bg-[#0f5b78] text-white text-sm font-semibold px-4 py-3">Event Calendar</div>
+    <div className="bg-[#1D2125] border border-[#292C30] rounded-xl overflow-hidden text-white">
+      <div className="bg-[#171A1E] text-[#F7F7F7] text-sm font-semibold px-4 py-3 border-b border-[#292C30]">Event Calendar</div>
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <button onClick={() => goToMonth(-1)} aria-label="Previous month">
-            <ChevronLeft size={16} className="text-gray-400 hover:text-gray-700" />
+            <ChevronLeft size={16} className="text-[#858585] hover:text-white" />
           </button>
-          <span className="text-sm font-medium">{monthLabel}</span>
+          <span className="text-sm font-medium text-white">{monthLabel}</span>
           <button onClick={() => goToMonth(1)} aria-label="Next month">
-            <ChevronRight size={16} className="text-gray-400 hover:text-gray-700" />
+            <ChevronRight size={16} className="text-[#858585] hover:text-white" />
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-400 mb-1">
+        <div className="grid grid-cols-7 gap-1 text-center text-xs text-[#858585] mb-1">
           {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(d => (
             <span key={d}>{d}</span>
           ))}
@@ -100,17 +100,17 @@ export default function EventCalendar({ events }: { events: CalendarEvent[] }) {
                 disabled={!inMonth}
                 onClick={() => selectDate(date)}
                 className={`relative h-7 flex items-center justify-center rounded-full ${isSelected
-                    ? "bg-[#b30f24] text-white"
+                    ? "bg-[#0073FF] text-white"
                     : isToday
-                      ? "bg-[#0f5b78] text-white"
+                      ? "bg-[#00B5ED] text-white"
                       : inMonth
-                        ? "text-gray-700 hover:bg-gray-100"
-                        : "text-gray-300"
+                        ? "text-[#CCCCCC] hover:bg-[#292C30]"
+                        : "text-[#858585]/40"
                   }`}
               >
                 {date.getDate()}
                 {hasEvent && !isSelected && (
-                  <span className="absolute bottom-0.5 w-1 h-1 rounded-full bg-[#b30f24]" />
+                  <span className="absolute bottom-0.5 w-1 h-1 rounded-full bg-[#00B5ED]" />
                 )}
               </button>
             )
@@ -121,7 +121,7 @@ export default function EventCalendar({ events }: { events: CalendarEvent[] }) {
           <button
             type="button"
             onClick={() => selectDate(parseDateKey(selectedDate))}
-            className="w-full mt-4 border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:bg-gray-50"
+            className="w-full mt-4 border border-[#292C30] rounded-lg py-2 text-sm text-[#00B5ED] hover:bg-[#292C30]"
           >
             Clear Date Filter
           </button>
