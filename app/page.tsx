@@ -76,7 +76,7 @@ export default async function Home() {
   const latestPost = sortedByRecency[0]
 
   return (
-    <div className="flex flex-col w-full min-w-0 overflow-x-hidden bg-[#1D2125]">
+    <div className="flex flex-col w-full min-w-0 overflow-x-clip bg-[#1D2125]">
       {/* ================= HOME TOP BANNER ================= */}
       <Banner placement="HOME_TOP" />
 

@@ -17,7 +17,7 @@ function ExploreCategories() {
 
   return (
     <div className="bg-white border rounded-lg p-6">
-      <h5 className="text-[18px] font-semibold mb-5 text-[#121213]">
+      <h5 className="text-[22px] font-semibold mb-5 text-[#121213]">
         Explore Categories
       </h5>
 
@@ -65,7 +65,7 @@ function PopularNewsSidebar() {
 
   return (
     <div className="bg-white border rounded-lg p-6">
-      <h5 className="text-[18px] font-semibold mb-5 text-[#121213]">
+      <h5 className="text-[22px] font-semibold mb-5 text-[#121213]">
         Popular News
       </h5>
 
@@ -128,7 +128,7 @@ function FollowUsWidget() {
 
   return (
     <div className="bg-white border rounded-lg p-6">
-      <h5 className="text-[18px] font-semibold mb-5 text-[#121213]">
+      <h5 className="text-[22px] font-semibold mb-5 text-[#121213]">
         Follow Us
       </h5>
 
