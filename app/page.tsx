@@ -17,6 +17,7 @@ import TrendingSection from "@/components/TrendingSection"
 import CompanyArticles from "@/components/company/CompanyArticles"
 import HomeCompanyArticles from "@/components/HomeCompanyArticles"
 import Banner from "@/components/Banners/Banner";
+import NewsLetters from "@/components/NewsLetters";
 
 
 export default async function Home() {
@@ -105,6 +106,10 @@ export default async function Home() {
 
       {/* ================= HOME BOTTOM BANNER ================= */}
       <Banner placement="HOME_BOTTOM" />
+
+
+      {/* 🏢 News Letters */}
+      <NewsLetters />
     </div>
   )
 }
