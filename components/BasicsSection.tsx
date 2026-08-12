@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -134,6 +134,8 @@ function ChevronRight() {
 
 export default function BasicsSection({ posts }: Props) {
   const swiperRef = useRef<SwiperType | null>(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
 
   /* Popular = most viewed first with non-repeating badge colors */
   const popularPostsWithTags = useMemo(() => {
@@ -192,11 +194,10 @@ export default function BasicsSection({ posts }: Props) {
   };
 
   return (
-    <section className="w-full bg-[#15171f]">
-      {/* Match Nerio Popular News: boxed header + full-bleed slider row */}
-      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-[30px] pb-[30px] lg:pt-[40px] lg:pb-[40px]">
-        {/* ================= HEADER ================= */}
-        <div className="flex items-center gap-3 sm:gap-4 mb-6 lg:mb-7 min-w-0">
+    <section className="w-full bg-[#15171f] py-[30px] lg:py-[40px]">
+      {/* Header aligned with page container */}
+      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 lg:mb-7">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
           <h2 className="text-[22px] sm:text-[28px] md:text-[32px] font-bold text-white shrink-0 leading-none">
             Popular News
           </h2>
@@ -215,18 +216,26 @@ export default function BasicsSection({ posts }: Props) {
             <ArrowIcon className="w-4 h-3 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
+      </div>
 
-        {/* ================= SLIDER (Nerio: 4 / 3 / 2 / 1, gap 30) ================= */}
+      {/* Full-bleed slider (no side margins at left & right dead-ends) */}
+      <div className="w-full px-0">
         <div className="relative group/slider">
           <Swiper
             modules={[Autoplay]}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
+              setIsBeginning(swiper.isBeginning);
+              setIsEnd(swiper.isEnd);
             }}
-            spaceBetween={30}
+            onSlideChange={(swiper) => {
+              setIsBeginning(swiper.isBeginning);
+              setIsEnd(swiper.isEnd);
+            }}
+            spaceBetween={24}
             slidesPerView={1}
             slidesPerGroup={1}
-            loop={popularPostsWithTags.length > 4}
+            loop={false}
             speed={500}
             autoplay={{
               delay: 5000,
@@ -237,7 +246,7 @@ export default function BasicsSection({ posts }: Props) {
               900: { slidesPerView: 3, spaceBetween: 24 },
               1200: { slidesPerView: 4, spaceBetween: 24 },
             }}
-            className="!overflow-hidden"
+            className="!overflow-hidden !px-4 sm:!px-6 lg:!px-8"
           >
             {popularPostsWithTags.map(({ post, tagText, tagColor }) => {
               const date = formatDate(post);
@@ -294,23 +303,6 @@ export default function BasicsSection({ posts }: Props) {
               );
             })}
           </Swiper>
-
-          <button
-            type="button"
-            aria-label="Previous slide"
-            onClick={() => swiperRef.current?.slidePrev()}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 hidden sm:flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white bg-[#1D2125]/85 backdrop-blur-sm hover:border-[#0073ff] hover:text-[#0073ff] transition-colors"
-          >
-            <ChevronLeft />
-          </button>
-          <button
-            type="button"
-            aria-label="Next slide"
-            onClick={() => swiperRef.current?.slideNext()}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden sm:flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white bg-[#1D2125]/85 backdrop-blur-sm hover:border-[#0073ff] hover:text-[#0073ff] transition-colors"
-          >
-            <ChevronRight />
-          </button>
         </div>
 
         <div className="mt-[24px] flex justify-center sm:hidden">
