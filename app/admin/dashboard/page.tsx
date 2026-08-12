@@ -168,13 +168,13 @@ export default function DashboardPage() {
   const { overview } = analytics;
 
   return (
-    <div className="space-y-8 pb-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+    <div className="space-y-5 sm:space-y-8 pb-4 w-full min-w-0">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0073ff]">
             Overview
           </p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+          <h2 className="mt-1 text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Analytics Dashboard
           </h2>
           <p className="mt-1 text-sm text-slate-500">
@@ -183,14 +183,14 @@ export default function DashboardPage() {
         </div>
         <Link
           href="/admin/packages"
-          className="inline-flex items-center gap-2 text-sm font-medium text-[#0073ff] hover:text-[#0060d6]"
+          className="inline-flex items-center gap-2 self-start sm:self-auto text-sm font-medium text-[#0073ff] hover:text-[#0060d6]"
         >
           <TrendingUp className="h-4 w-4" />
           Manage packages
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <KpiCard icon={<Users className="h-5 w-5" />} label="Total Users" value={overview.totalUsers} accent="blue" />
         <KpiCard icon={<Building2 className="h-5 w-5" />} label="Companies" value={overview.totalCompanies} accent="emerald" />
         <KpiCard icon={<Briefcase className="h-5 w-5" />} label="Active Jobs" value={overview.activeJobs} sub={`${overview.totalJobs} total`} accent="sky" />
@@ -201,12 +201,12 @@ export default function DashboardPage() {
         <KpiCard icon={<Users className="h-5 w-5" />} label="Applications" value={overview.totalApplications} accent="slate" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
         <ChartCard title="Subscription Plans" subtitle="Companies by active plan">
-          <ChartContainer config={planChartConfig} className="mx-auto h-[280px] w-full">
+          <ChartContainer config={planChartConfig} className="mx-auto aspect-square max-h-[240px] sm:max-h-[280px] w-full">
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
-              <Pie data={analytics.subscriptionPlans} dataKey="value" nameKey="name" innerRadius={60} outerRadius={95} paddingAngle={3}>
+              <Pie data={analytics.subscriptionPlans} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80} paddingAngle={3}>
                 {analytics.subscriptionPlans.map((entry, index) => (
                   <Cell key={entry.key} fill={planChartConfig[entry.key as keyof typeof planChartConfig]?.color ?? PIE_COLORS[index % PIE_COLORS.length]} />
                 ))}
@@ -217,10 +217,10 @@ export default function DashboardPage() {
         </ChartCard>
 
         <ChartCard title="Users by Role" subtitle={`${pieTotal(analytics.usersByRole)} registered users`}>
-          <ChartContainer config={roleChartConfig} className="mx-auto h-[280px] w-full">
+          <ChartContainer config={roleChartConfig} className="mx-auto aspect-square max-h-[240px] sm:max-h-[280px] w-full">
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
-              <Pie data={analytics.usersByRole} dataKey="value" nameKey="name" innerRadius={60} outerRadius={95} paddingAngle={3}>
+              <Pie data={analytics.usersByRole} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80} paddingAngle={3}>
                 {analytics.usersByRole.map((entry, index) => (
                   <Cell key={entry.key} fill={roleChartConfig[entry.key as keyof typeof roleChartConfig]?.color ?? PIE_COLORS[index % PIE_COLORS.length]} />
                 ))}
@@ -231,11 +231,11 @@ export default function DashboardPage() {
         </ChartCard>
 
         <ChartCard title="Monthly Revenue" subtitle="Paid package orders (₹)">
-          <ChartContainer config={revenueChartConfig} className="h-[300px] w-full">
-            <BarChart data={analytics.revenueByMonth} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <ChartContainer config={revenueChartConfig} className="h-[240px] sm:h-[300px] w-full min-w-0">
+            <BarChart data={analytics.revenueByMonth} margin={{ top: 8, right: 4, left: -12, bottom: 0 }}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
-              <XAxis dataKey="month" tickLine={false} axisLine={false} />
-              <YAxis tickLine={false} axisLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+              <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
+              <YAxis width={40} tickLine={false} axisLine={false} tick={{ fontSize: 11 }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
               <ChartTooltip content={<ChartTooltipContent formatter={(value) => formatCurrency(Number(value))} />} />
               <Bar dataKey="revenue" fill="var(--color-revenue)" radius={[6, 6, 0, 0]} />
             </BarChart>
@@ -243,13 +243,13 @@ export default function DashboardPage() {
         </ChartCard>
 
         <ChartCard title="Platform Growth" subtitle="New users, jobs & applications per month">
-          <ChartContainer config={growthChartConfig} className="h-[300px] w-full">
-            <BarChart data={analytics.growthByMonth} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <ChartContainer config={growthChartConfig} className="h-[240px] sm:h-[300px] w-full min-w-0">
+            <BarChart data={analytics.growthByMonth} margin={{ top: 8, right: 4, left: -12, bottom: 0 }}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
-              <XAxis dataKey="month" tickLine={false} axisLine={false} />
-              <YAxis tickLine={false} axisLine={false} allowDecimals={false} />
+              <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
+              <YAxis width={32} tickLine={false} axisLine={false} allowDecimals={false} tick={{ fontSize: 11 }} />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Legend />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
               <Bar dataKey="users" fill="var(--color-users)" radius={[4, 4, 0, 0]} />
               <Bar dataKey="jobs" fill="var(--color-jobs)" radius={[4, 4, 0, 0]} />
               <Bar dataKey="applications" fill="var(--color-applications)" radius={[4, 4, 0, 0]} />
@@ -258,10 +258,10 @@ export default function DashboardPage() {
         </ChartCard>
 
         <ChartCard title="Directory Status" subtitle="Supplier directory approvals">
-          <ChartContainer config={directoryChartConfig} className="mx-auto h-[280px] w-full">
+          <ChartContainer config={directoryChartConfig} className="mx-auto aspect-square max-h-[240px] sm:max-h-[280px] w-full">
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
-              <Pie data={analytics.directoryStatus} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={4}>
+              <Pie data={analytics.directoryStatus} dataKey="value" nameKey="name" innerRadius={45} outerRadius={75} paddingAngle={4}>
                 {analytics.directoryStatus.map((entry, index) => (
                   <Cell key={entry.key} fill={directoryChartConfig[entry.key as keyof typeof directoryChartConfig]?.color ?? PIE_COLORS[index % PIE_COLORS.length]} />
                 ))}
@@ -272,10 +272,10 @@ export default function DashboardPage() {
         </ChartCard>
 
         <ChartCard title="Payment Status" subtitle={`${overview.pendingOrders} pending orders`}>
-          <ChartContainer config={paymentChartConfig} className="mx-auto h-[280px] w-full">
+          <ChartContainer config={paymentChartConfig} className="mx-auto aspect-square max-h-[240px] sm:max-h-[280px] w-full">
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
-              <Pie data={analytics.paymentStatus} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={4}>
+              <Pie data={analytics.paymentStatus} dataKey="value" nameKey="name" innerRadius={45} outerRadius={75} paddingAngle={4}>
                 {analytics.paymentStatus.map((entry, index) => (
                   <Cell key={entry.key} fill={paymentChartConfig[entry.key as keyof typeof paymentChartConfig]?.color ?? PIE_COLORS[index % PIE_COLORS.length]} />
                 ))}
@@ -287,16 +287,42 @@ export default function DashboardPage() {
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-          <div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 px-4 sm:px-6 py-4">
+          <div className="min-w-0">
             <h3 className="font-semibold text-slate-900">Recent Package Purchases</h3>
             <p className="text-sm text-slate-500">Latest subscription and package orders</p>
           </div>
-          <Link href="/admin/packages" className="text-sm font-medium text-[#0073ff] hover:underline">
+          <Link href="/admin/packages" className="text-sm font-medium text-[#0073ff] hover:underline shrink-0">
             View all
           </Link>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* Mobile cards */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {analytics.recentPurchases.length === 0 ? (
+            <p className="px-4 py-10 text-center text-sm text-slate-500">No package purchases yet.</p>
+          ) : (
+            analytics.recentPurchases.map((purchase) => (
+              <div key={purchase.id} className="px-4 py-4 space-y-2">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="font-medium text-slate-900 text-sm leading-snug">{purchase.packageName}</p>
+                  <StatusBadge status={purchase.status} />
+                </div>
+                <p className="text-sm text-slate-600 truncate">
+                  {purchase.User?.fullName || purchase.User?.email || "—"}
+                </p>
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                  <span>{purchase.Company?.name || "—"}</span>
+                  <span className="font-semibold text-slate-900">{formatCurrency(purchase.amount)}</span>
+                  <span>{new Date(purchase.createdAt).toLocaleDateString("en-IN")}</span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead className="bg-slate-50 text-left">
               <tr>
@@ -357,10 +383,10 @@ function KpiCard({
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className={`mb-3 inline-flex rounded-xl p-2.5 ${accents[accent]}`}>{icon}</div>
-      <p className="text-sm font-medium text-slate-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900">{value}</p>
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm min-w-0">
+      <div className={`mb-2 sm:mb-3 inline-flex rounded-xl p-2 sm:p-2.5 ${accents[accent]}`}>{icon}</div>
+      <p className="text-xs sm:text-sm font-medium text-slate-500">{label}</p>
+      <p className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-slate-900 break-words">{value}</p>
       {sub && <p className="mt-1 text-xs text-slate-400">{sub}</p>}
     </div>
   );
@@ -368,12 +394,12 @@ function KpiCard({
 
 function ChartCard({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="mb-4">
-        <h3 className="font-semibold text-slate-900">{title}</h3>
-        {subtitle && <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p>}
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm min-w-0 overflow-hidden">
+      <div className="mb-3 sm:mb-4">
+        <h3 className="font-semibold text-slate-900 text-sm sm:text-base">{title}</h3>
+        {subtitle && <p className="mt-0.5 text-xs sm:text-sm text-slate-500">{subtitle}</p>}
       </div>
-      {children}
+      <div className="min-w-0 w-full overflow-x-auto">{children}</div>
     </div>
   );
 }
@@ -383,11 +409,11 @@ function PieLegend({ data }: { data: Slice[] }) {
   if (total === 0) return <p className="text-center text-sm text-slate-400">No data yet</p>;
 
   return (
-    <div className="mt-2 flex flex-wrap justify-center gap-x-5 gap-y-2">
+    <div className="mt-2 flex flex-wrap justify-center gap-x-3 sm:gap-x-5 gap-y-2">
       {data.map((row, index) => (
-        <div key={row.key} className="flex items-center gap-2 text-sm text-slate-600">
-          <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
-          <span>
+        <div key={row.key} className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600">
+          <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full shrink-0" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
+          <span className="min-w-0">
             {row.name} <span className="font-semibold text-slate-900">{row.value}</span>
             <span className="text-slate-400"> ({Math.round((row.value / total) * 100)}%)</span>
           </span>
