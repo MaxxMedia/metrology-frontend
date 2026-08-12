@@ -238,6 +238,31 @@ export default function HomeCompanyArticles({ posts }: Props) {
 
   if (!allPosts.length) return null;
 
+  function getTag(post: Post) {
+    const badge = typeof post.badge === "string" ? post.badge.trim() : "";
+    const categoryName =
+      typeof post.category === "object"
+        ? post.category?.name || ""
+        : String(post.category || "");
+    const categorySlug =
+      typeof post.category === "object"
+        ? (post.category?.slug || "").toLowerCase()
+        : String(post.category || "").toLowerCase();
+
+    const text = badge || categoryName || "News";
+    const normalized = (text || "").toLowerCase();
+    const slug = categorySlug || post.slug?.toLowerCase() || "";
+
+    const match = Object.keys(CATEGORY_PREFERRED_COLORS).find(
+      (key) => slug.includes(key) || normalized.includes(key)
+    );
+
+    return {
+      text,
+      color: match ? CATEGORY_PREFERRED_COLORS[match] : "bg-[#0073ff]",
+    };
+  }
+
   return (
     <section className="w-full bg-[#1D2125]">
       <style jsx>{`
@@ -258,11 +283,11 @@ export default function HomeCompanyArticles({ posts }: Props) {
           line-height: 1.4 !important;
         }
       `}</style>
-      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-[30px] pb-[30px] lg:pt-[40px] lg:pb-[40px]">
-        <div className="grid grid-cols-1 lg:grid-cols-[970px_280px] xl:grid-cols-[970px_300px] gap-5 lg:gap-6 items-start">
+      <div className="w-full max-w-[1420px] mx-auto px-0 pt-[70px] pb-[80px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[970px_400px] gap-5 lg:gap-10 w-full lg:w-[1400px] mx-auto">
 
           {/* ================= LEFT: TOP OF THIS WEEK ================= */}
-          <div className="min-w-0 w-full  lg:w-[970px]">
+          <div className="min-w-0 w-full lg:w-[970px]">
             <div className="flex items-center gap-3 sm:gap-4 mb-6 lg:mb-7 min-w-0">
               <h2 className="section-title-32 font-bold text-white shrink-0 leading-none">
                 Top of This Week
@@ -273,18 +298,20 @@ export default function HomeCompanyArticles({ posts }: Props) {
               </div>
             </div>
 
-            <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">
+
+            {/* Plain normal-flow list — no inner scroll */}
+            <div className="flex flex-col divide-y divide-white/10 border-t border-white/10">
               {visiblePostsWithTags.map(({ post, tagText, tagColor }) => {
                 const date = formatDate(post);
 
                 return (
                   <article
                     key={post.id}
-                    className="group flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 lg:w-[970px] lg:h-[270.8px] lg:py-[20px] lg:px-0"
+                    className="group flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 py-5 sm:py-6 lg:w-full lg:min-h-[230px] lg:py-[20px] lg:px-0"
                   >
                     <Link
                       href={`/post/${post.slug}`}
-                      className="relative w-full sm:w-[200px] md:w-[220px] lg:w-[340px] h-[180px] sm:h-[150px] md:h-[160px] lg:h-full rounded-[4px] overflow-hidden shrink-0"
+                      className="relative w-full sm:w-[200px] md:w-[220px] lg:w-[410px] h-[180px] sm:h-[150px] md:h-[160px] lg:h-[230px] rounded-[10px] overflow-hidden shrink-0"
                     >
                       <Image
                         src={getImageUrl(post)}
@@ -295,8 +322,10 @@ export default function HomeCompanyArticles({ posts }: Props) {
                       />
                     </Link>
 
-                    <div className="min-w-0 flex-1 py-0.5">
+
+                    <div className="min-w-0 flex-1 mx-[20px] ml-[5px] py-[15px]">
                       {tagText && (
+
                         <span
                           className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[10px]`}
                         >
@@ -358,62 +387,65 @@ export default function HomeCompanyArticles({ posts }: Props) {
           </div>
 
           {/* ================= RIGHT SIDEBAR ================= */}
-          <aside className="flex flex-col gap-4 w-full lg:w-auto lg:max-w-[300px] min-w-0">
-            {/* Explore Categories */}
-            <div className="rounded-[4px] border border-white/10 bg-[#252A30] p-[14px]">
-              <h4 className="text-[17px] font-bold text-white mb-[12px]">
-                Explore Categories
-              </h4>
-              <div className="flex flex-col gap-[8px]">
-                {categories.map((cat) => (
-                  <Link
-                    key={cat.slug}
-                    href={`/topics/${cat.slug}`}
-                    className="group relative flex items-center justify-between h-[48px] px-[12px] rounded-[4px] overflow-hidden"
-                  >
-                    <Image
-                      src={cat.image}
-                      alt=""
-                      fill
-                      sizes="260px"
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/55 group-hover:bg-black/45 transition-colors" />
-                    <div className="relative z-10 flex items-center gap-[5px] text-white min-w-0">
-                      <h6 className="text-[13px] font-bold truncate">{cat.name}</h6>
-                      <span className="text-[11px] text-white/85 shrink-0">({cat.count})</span>
-                    </div>
-                    <span className="relative z-10 flex h-6 w-6 items-center justify-center rounded-[4px] bg-black/40 text-white group-hover:bg-[#0073ff] transition-colors shrink-0">
-                      <ArrowRight size={12} />
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
+          <aside className="w-full lg:w-[400px] min-w-0 h-full relative">
+            <div className="flex flex-col gap-10 lg:sticky lg:top-[110px] w-full">
+              {/* Explore Categories */}
+              <div className="rounded-[4px] border border-white/10 bg-[#1D2125] w-full pt-[20px] pr-[30px] pb-[30px] pl-[30px]">
+                <h4 className="text-[17px] font-bold text-white mb-[12px]">
+      Explore Categories
+    </h4>
 
-            {/* Popular News */}
-            <div className="rounded-[4px] border border-white/10 bg-[#252A30] p-[14px]">
+    <div className="flex flex-col gap-[14px]">
+      {categories.map((cat) => (
+        <Link
+          key={cat.slug}
+          href={`/topics/${cat.slug}`}
+          className="group relative flex items-center min-h-[54px] py-[10px] pl-[12px] pr-[44px] rounded-[4px] overflow-hidden"
+        >
+          <Image
+            src={cat.image}
+            alt=""
+            fill
+            sizes="260px"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-[#00000080] group-hover:bg-black/60 transition-colors" />
+          <div className="relative z-10 flex items-baseline gap-[6px] text-white min-w-0 pr-1">
+            <h6 className="text-[16px] font-bold leading-snug break-words">{cat.name}</h6>
+            <span className="text-[11px] text-white/85 shrink-0">({cat.count})</span>
+          </div>
+          <span className="absolute z-10 top-1/2 right-[10px] -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-[4px] bg-black/40 text-white group-hover:bg-[#0073ff] transition-colors shrink-0">
+            <ArrowRight size={12} />
+          </span>
+        </Link>
+      ))}
+    </div>
+  </div>
+            {/* Popular News — normal flow */}
+            <div className="rounded-[4px] border border-white/10 bg-[#1D2125] w-full lg:w-[400px] pt-[20px] pr-[30px] pb-[30px] pl-[30px]">
               <h4 className="text-[17px] font-bold text-white mb-[12px]">
                 Popular News
               </h4>
-              <div className="flex flex-col gap-[14px]">
+              <div className="flex flex-col divide-y divide-white/10">
                 {popularPosts.map((post) => (
                   <Link
                     key={post.id}
                     href={`/post/${post.slug}`}
-                    className="group flex items-center gap-[12px]"
+                    className="group flex items-center gap-[12px] py-[10px]"
                   >
-                    <div className="relative w-[72px] h-[96px] rounded-xl overflow-hidden shrink-0 shadow-md">
+
+                    <div className="relative w-[100px] h-[100px] rounded-full overflow-hidden shrink-0">
                       <Image
                         src={getImageUrl(post)}
                         alt={post.title}
                         fill
-                        sizes="72px"
+
+                        sizes="100px"
                         className="object-cover"
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h6 className="text-[13px] font-semibold text-white leading-snug mb-[6px] line-clamp-2 group-hover:text-[#0073ff] transition-colors">
+                      <h6 className="text-[18px] font-semibold text-white leading-snug mb-[6px] line-clamp-2 group-hover:text-[#0073ff] transition-colors">
                         {post.title}
                       </h6>
                       <ul className="flex flex-wrap items-center gap-x-[10px] text-[11px] text-[#a8aab3]">
@@ -429,24 +461,25 @@ export default function HomeCompanyArticles({ posts }: Props) {
               </div>
             </div>
 
-            {/* Follow Us */}
-            <div className="rounded-[4px] border border-white/10 bg-[#252A30] p-[14px]">
+            {/* Follow Us — normal flow */}
+            <div className="rounded-[4px] border border-white/10 bg-[#1D2125] w-full lg:w-[400px] pt-[20px] pr-[30px] pb-[30px] pl-[30px]">
               <h4 className="text-[17px] font-bold text-white mb-[12px]">
                 Follow Us
               </h4>
-              <div className="flex flex-col gap-[8px]">
+              <div className="flex flex-col gap-[8px] w-full">
                 {SOCIALS.map(({ name, followers, href, bg, Icon }) => (
                   <Link
                     key={name}
                     href={href}
-                    className={`flex items-center gap-[10px] h-[44px] px-[12px] rounded-[4px] text-white ${bg} hover:opacity-90 transition-opacity`}
+                    className={`flex items-center gap-[10px] h-[50px] px-[12px] rounded-[4px] text-white ${bg} hover:opacity-90 transition-opacity`}
                   >
-                    <Icon size={14} />
-                    <span className="flex-1 text-[13px] font-bold truncate">{name}</span>
-                    <span className="text-[11px] text-white/90 shrink-0">{followers}</span>
+                    <Icon size={16} />
+                    <span className="flex-1 text-[16px] font-bold truncate">{name}</span>
+                    <span className="text-[16px] text-white/90 shrink-0">{followers}</span>
                   </Link>
                 ))}
               </div>
+            </div>
             </div>
           </aside>
         </div>
