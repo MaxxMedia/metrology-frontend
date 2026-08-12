@@ -253,3 +253,17 @@ export default function NewsLetters() {
     </section>
   );
 }
+
+
+
+
+
+// **Flow**
+
+// 1. **Header loads** → calls `/api/geo-weather` (or uses a 30‑minute session cache).
+// 2. **API reads the visitor IP** from headers (`x-forwarded-for`, `x-real-ip`, etc.). Localhost/private IPs are skipped so the lookup uses the machine’s public IP instead.
+// 3. **IP → location** via [ipwho.is](https://ipwho.is/) → country + lat/lon.
+// 4. **Lat/lon → temperature** via [Open-Meteo](https://open-meteo.com/) (current °C, no API key).
+// 5. **Header renders** something like `32.1°C` + `India`.
+
+// Nothing is hard-coded anymore; place and temp both come from the visitor’s IP-based location.

@@ -75,6 +75,7 @@ export default function Header() {
 
   const [tickerPosts, setTickerPosts] = useState<Post[]>([])
   const [tickerIndex, setTickerIndex] = useState(0)
+  const [weather, setWeather] = useState<{ temperature: number; country: string } | null>(null)
 
   const contentScrollRef = useRef<HTMLDivElement>(null)
   const container = "w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8"
@@ -110,6 +111,54 @@ export default function Header() {
         setTickerPosts(posts.slice(0, 6))
       })
       .catch(() => setTickerPosts([]))
+  }, [])
+
+  useEffect(() => {
+    const CACHE_KEY = "nav-geo-weather"
+    const CACHE_MS = 30 * 60 * 1000
+
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY)
+      if (cached) {
+        const parsed = JSON.parse(cached) as {
+          temperature: number
+          country: string
+          at: number
+        }
+        if (
+          parsed?.country &&
+          typeof parsed.temperature === "number" &&
+          Date.now() - parsed.at < CACHE_MS
+        ) {
+          setWeather({ temperature: parsed.temperature, country: parsed.country })
+          return
+        }
+      }
+    } catch {
+      /* ignore bad cache */
+    }
+
+    let cancelled = false
+    fetch("/api/geo-weather")
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data: { temperature?: number; country?: string }) => {
+        if (cancelled) return
+        if (typeof data.temperature !== "number" || !data.country) return
+        const next = { temperature: data.temperature, country: data.country }
+        setWeather(next)
+        try {
+          sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ...next, at: Date.now() }))
+        } catch {
+          /* ignore */
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setWeather(null)
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   useEffect(() => {
@@ -220,14 +269,17 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Weather */}
-          <div className="hidden md:flex items-center gap-2 text-white shrink-0 whitespace-nowrap">
-            <CloudSunIcon className="w-4 h-4 text-[#38bdf8] shrink-0" />
-            <span className="font-semibold">
-              28.3<sup className="text-[10px]">°C</sup>
-            </span>
-            <span className="text-white/70">California</span>
-          </div>
+          {/* Weather — IP-based country + live temp */}
+          {weather && (
+            <div className="hidden md:flex items-center gap-2 text-white shrink-0 whitespace-nowrap">
+              <CloudSunIcon className="w-4 h-4 text-[#38bdf8] shrink-0" />
+              <span className="font-semibold">
+                {weather.temperature}
+                <sup className="text-[10px]">°C</sup>
+              </span>
+              <span className="text-white/70">{weather.country}</span>
+            </div>
+          )}
 
           {/* Right cluster */}
           <div className="flex items-center gap-5 xl:gap-6 shrink-0">
