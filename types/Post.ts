@@ -29,6 +29,7 @@ export type Post = {
 
   author?: Author
   category?: Category
+  subCategory?: Category
   Company?: {
     id: number
     name: string

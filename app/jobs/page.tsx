@@ -563,13 +563,15 @@ function JobDetailContent() {
             <div className="relative">
               <div
                 className={`prose prose-invert max-w-none text-[16px] text-[#CCCCCC]
-                           prose-h1:text-[24px] prose-h2:text-[20px]
-                           prose-h1:font-bold prose-h2:font-semibold prose-h1:text-white prose-h2:text-white
-                           prose-ul:list-disc prose-ul:pl-5
-                           prose-strong:text-white
+                           [&_*]:!text-[#CCCCCC] [&_*]:!bg-transparent
+                           [&_h1]:!text-white [&_h2]:!text-white [&_h3]:!text-white [&_h4]:!text-white
+                           [&_h1]:!font-bold [&_h2]:!font-semibold [&_h3]:!font-semibold
+                           [&_strong]:!text-white [&_b]:!text-white
+                           [&_a]:!text-[#00B5ED] [&_a]:hover:underline
+                           [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5
                            break-words overflow-hidden
                            ${!showFullDesc ? "max-h-40 overflow-hidden" : ""}`}
-                dangerouslySetInnerHTML={{ __html: job.description }}
+                dangerouslySetInnerHTML={{ __html: sanitizeRichTextHtml(job.description) }}
               />
               {!showFullDesc && (
                 <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#1D2125] to-transparent pointer-events-none" />
@@ -1052,9 +1054,9 @@ function JobsListingContent() {
                 onChange={(e) => handleFilterChange("type", e.target.value)}
                 className="w-full text-sm bg-[#171A1E] text-white border border-[#292C30] rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#0073FF]"
               >
-                <option value="">Any Type</option>
-                <option value="full-time">Full Time</option>
-                <option value="internship">Internship</option>
+                <option value="" className="bg-[#171A1E] text-white">Any Type</option>
+                <option value="full-time" className="bg-[#171A1E] text-white">Full Time</option>
+                <option value="internship" className="bg-[#171A1E] text-white">Internship</option>
               </select>
             </div>
 
@@ -1068,11 +1070,11 @@ function JobsListingContent() {
                 onChange={(e) => handleFilterChange("category", e.target.value)}
                 className="w-full text-sm bg-[#171A1E] text-white border border-[#292C30] rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#0073FF]"
               >
-                <option value="">Any Category</option>
-                <option value="manufacturing">Manufacturing</option>
-                <option value="engineering">Engineering</option>
-                <option value="technology">Technology</option>
-                <option value="design">Design</option>
+                <option value="" className="bg-[#171A1E] text-white">Any Category</option>
+                <option value="manufacturing" className="bg-[#171A1E] text-white">Manufacturing</option>
+                <option value="engineering" className="bg-[#171A1E] text-white">Engineering</option>
+                <option value="technology" className="bg-[#171A1E] text-white">Technology</option>
+                <option value="design" className="bg-[#171A1E] text-white">Design</option>
               </select>
             </div>
 
@@ -1221,4 +1223,11 @@ function ExploreRow({ icon, title, subtitle, href }: any) {
       </div>
     </Link>
   )
+}
+
+function sanitizeRichTextHtml(html: string) {
+  if (!html) return ""
+  return html
+    .replace(/color:\s*(?:black|#000000|#000|#333333|#111111|rgb\(0,\s*0,\s*0\))/gi, "color: #CCCCCC")
+    .replace(/background-color:\s*(?:white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))/gi, "background-color: transparent")
 }

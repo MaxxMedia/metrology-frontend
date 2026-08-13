@@ -219,12 +219,12 @@ function SquareAd({ ad }: { ad: BannerData }) {
     return (
         <Link
             href={ad.targetUrl || "#"}
-            className="block bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] rounded-sm"
+            className="block bg-[#1D2125] border border-[#292C30] rounded-xl overflow-hidden shadow-lg hover:border-[#0073FF] transition duration-200"
             target="_blank"
             rel="noopener noreferrer"
         >
             <div
-                className="relative overflow-hidden w-full"
+                className="relative overflow-hidden w-full bg-[#171A1E]"
                 style={{ aspectRatio: "300 / 345" }}
             >
                 <Image src={ad.imageUrl} alt={ad.title} fill sizes="300px" className="object-fill" />
@@ -236,14 +236,14 @@ function SquareAd({ ad }: { ad: BannerData }) {
 /** Static CTA card, not backed by fetched banner data. Drop into a right rail alongside <Banner />. */
 export function RecruiterAd({ src }: { src: string }) {
     return (
-        <Link href="/signup?role=recruiter" className="relative block group overflow-hidden">
-            <div className="relative overflow-hidden w-full" style={{ aspectRatio: "300 / 345" }}>
+        <Link href="/signup?role=recruiter" className="relative block group overflow-hidden rounded-xl border border-[#292C30] shadow-lg">
+            <div className="relative overflow-hidden w-full bg-[#171A1E]" style={{ aspectRatio: "300 / 345" }}>
                 <Image src={src} alt="Hire Candidates" fill sizes="300px" className="object-cover" />
-                <div className="absolute inset-0 bg-black/50 group-hover:bg-black/60 transition" />
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/70 transition" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
                     <h3 className="text-white text-xl font-bold mb-2">Hiring Talent?</h3>
-                    <p className="text-white/90 text-sm mb-4">Register your company & post jobs</p>
-                    <span className="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold group-hover:bg-indigo-700 transition">
+                    <p className="text-[#CCCCCC] text-sm mb-4">Register your company & post jobs</p>
+                    <span className="inline-block bg-[#0073FF] text-white px-5 py-2.5 rounded-xl text-sm font-bold group-hover:bg-[#0060d6] transition shadow-md">
                         Hire Candidates
                     </span>
                 </div>
