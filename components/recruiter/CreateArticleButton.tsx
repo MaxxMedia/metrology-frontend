@@ -7,7 +7,7 @@ import type { ContentLimitEligibility } from "@/lib/packageLimits";
 
 export default function CreateArticleButton({
   eligibility,
-  className = "bg-black text-white px-5 py-2 rounded-lg",
+  className = "bg-[#0073FF] hover:bg-[#0060D0] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors",
   label = "+ Create Article",
 }: {
   eligibility?: ContentLimitEligibility | null;

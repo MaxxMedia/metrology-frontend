@@ -99,25 +99,32 @@ export default function MyJobsPage() {
   if (!allowed) return null
 
   if (loading) {
-    return <div className="p-10">Loading jobs...</div>
+    return (
+      <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-[3px] border-[#00B5ED] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-sm text-[#CCCCCC]">Loading jobs…</p>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f8fc] px-6 py-10">
+    <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] px-6 py-10">
       <div className="max-w-[1200px] mx-auto">
 
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">My Jobs</h1>
+          <h1 className="text-2xl font-bold text-[#FFFFFF]">My Jobs</h1>
 
           <PostJobButton eligibility={eligibility} />
         </div>
 
         {eligibility && (
-          <p className="mb-8 text-sm text-gray-600">{eligibility.message}</p>
+          <p className="mb-8 text-sm text-[#B8B8B8]">{eligibility.message}</p>
         )}
 
         {jobs.some((job) => job.isActive === false) && eligibility && (
-          <p className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <p className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
             Your {eligibility.planLabel} plan allows {eligibility.effectiveLimit} active job
             postings. Only your newest {eligibility.effectiveLimit} jobs appear on the feed —
             older jobs are marked inactive until you upgrade.
@@ -125,9 +132,9 @@ export default function MyJobsPage() {
         )}
 
         {jobs.length === 0 ? (
-          <div className="rounded-2xl bg-white p-10 text-center shadow">
-            <h2 className="text-lg font-semibold text-gray-900">No jobs posted yet</h2>
-            <p className="mt-2 text-sm text-gray-600">
+          <div className="rounded-xl bg-[#1D2125] border border-[#292C30] p-10 text-center shadow-sm">
+            <h2 className="text-lg font-semibold text-[#FFFFFF]">No jobs posted yet</h2>
+            <p className="mt-2 text-sm text-[#CCCCCC]">
               {eligibility?.canPost
                 ? "Create your first job listing to start receiving applications."
                 : "Upgrade your package to start posting jobs."}
@@ -141,48 +148,48 @@ export default function MyJobsPage() {
             {jobs.map((job) => (
               <div
                 key={job.id}
-                className="bg-white rounded-2xl shadow p-6 hover:shadow-lg transition"
+                className="bg-[#1D2125] border border-[#292C30] rounded-xl p-6 hover:border-[#00B5ED]/40 transition shadow-sm"
               >
-                <div className="flex justify-between mb-3">
-                  <h2 className="text-lg font-semibold">{job.title}</h2>
-                <span
-                  className={`text-xs px-3 py-1 rounded-full ${
-                    job.isActive
-                      ? "bg-green-100 text-green-600"
-                      : "bg-gray-100 text-gray-500"
-                  }`}
-                >
-                  {job.isActive ? "Active" : "Inactive (plan limit)"}
-                </span>
+                <div className="flex justify-between items-start mb-3 gap-2">
+                  <h2 className="text-lg font-semibold text-[#FFFFFF]">{job.title}</h2>
+                  <span
+                    className={`text-xs px-3 py-1 rounded-full whitespace-nowrap ${
+                      job.isActive
+                        ? "bg-emerald-500/15 text-emerald-400"
+                        : "bg-[#171A1E] text-[#B8B8B8] border border-[#292C30]"
+                    }`}
+                  >
+                    {job.isActive ? "Active" : "Inactive (plan limit)"}
+                  </span>
                 </div>
 
-                <div className="flex gap-4 text-sm text-gray-500 mb-4">
+                <div className="flex flex-wrap items-center gap-3 text-sm text-[#B8B8B8] mb-4">
                   <span className="flex items-center gap-1">
-                    <MapPin size={14} />
+                    <MapPin size={14} className="text-[#00B5ED]" />
                     {job.location}
                   </span>
 
                   {job.employmentType && (
-                    <span className="bg-gray-100 px-3 py-1 rounded-full">
+                    <span className="bg-[#00B5ED] text-white px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider">
                       {job.employmentType}
                     </span>
                   )}
                 </div>
 
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-400">
+                <div className="flex items-center justify-between pt-4 border-t border-[#292C30]">
+                  <span className="text-xs text-[#B8B8B8]">
                     {getPostedText(job.createdAt)}
                   </span>
 
-                  <div className="flex flex-wrap gap-4">
-                    <span className="flex items-center gap-1 text-sm text-gray-600">
+                  <div className="flex flex-wrap items-center gap-4">
+                    <span className="flex items-center gap-1 text-xs text-[#B8B8B8]">
                       <Eye size={14} />
                       {job.views} Views
                     </span>
 
                     <Link
                       href={`/jobs/${job.slug}`}
-                      className="flex items-center gap-1 text-sm text-blue-600"
+                      className="flex items-center gap-1 text-xs text-[#00B5ED] hover:text-[#0073FF] font-medium"
                     >
                       <Eye size={14} />
                       View
@@ -190,7 +197,7 @@ export default function MyJobsPage() {
 
                     <Link
                       href={`/recruiter/jobs/${job.id}/edit`}
-                      className="flex items-center gap-1 text-sm text-green-600"
+                      className="flex items-center gap-1 text-xs text-emerald-400 hover:underline font-medium"
                     >
                       <Pencil size={14} />
                       Edit
@@ -198,7 +205,7 @@ export default function MyJobsPage() {
 
                     <Link
                       href={`/recruiter/jobs/${job.id}/applications`}
-                      className="flex items-center gap-1 text-sm text-gray-600"
+                      className="flex items-center gap-1 text-xs text-[#CCCCCC] hover:text-[#FFFFFF] font-medium"
                     >
                       <Users size={14} />
                       Applicants ({job._count?.JobApplication ?? 0})

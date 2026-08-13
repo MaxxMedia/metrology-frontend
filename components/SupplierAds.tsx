@@ -44,20 +44,9 @@ function Ad({ ad }: { ad: Banner }) {
     <Link
       href={ad.targetUrl || "#"}
       target="_blank"
-      className="block w-full overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 bg-white border border-gray-200"
+      className="block w-full overflow-hidden rounded-xl shadow-lg hover:border-[#0073FF] transition duration-200 bg-[#1D2125] border border-[#292C30]"
     >
-      {/*
-        Fills the FULL WIDTH of its container - no fixed 300px box, so no
-        side white space regardless of how wide the sidebar column is.
-        Height is derived from the 300:250 aspect ratio, so proportions
-        stay consistent at any width.
-
-        object-fill (not object-cover) shows the ENTIRE image with nothing
-        cropped - it stretches to exactly fill the box instead. If a
-        particular banner looks stretched, the real fix is asking whoever
-        uploads it to export closer to a 300x250 (6:5) ratio.
-      */}
-      <div className="relative w-full" style={{ aspectRatio: "200 / 150" }}>
+      <div className="relative w-full bg-[#171A1E]" style={{ aspectRatio: "200 / 150" }}>
         <Image
           src={ad.imageUrl}
           alt={ad.title}
@@ -75,9 +64,9 @@ function RecruiterAd({ src }: { src: string }) {
   return (
     <Link
       href="/signup?role=recruiter"
-      className="relative block group overflow-hidden w-full"
+      className="relative block group overflow-hidden w-full rounded-xl border border-[#292C30] shadow-lg"
     >
-      <div className="relative w-full" style={{ aspectRatio: "300 / 250" }}>
+      <div className="relative w-full bg-[#171A1E]" style={{ aspectRatio: "300 / 250" }}>
         <Image
           src={src}
           alt="Hire Candidates"
@@ -86,17 +75,17 @@ function RecruiterAd({ src }: { src: string }) {
           className="object-cover"
         />
 
-        <div className="absolute inset-0 bg-black/50 group-hover:bg-black/60 transition" />
+        <div className="absolute inset-0 bg-black/60 group-hover:bg-black/70 transition" />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <h3 className="text-white text-xl font-bold mb-2">
             Hiring Talent?
           </h3>
-          <p className="text-white/90 text-sm mb-4">
+          <p className="text-[#CCCCCC] text-sm mb-4">
             Register your company & post jobs
           </p>
 
-          <span className="inline-block bg-indigo-600 text-white px-4 py-2 text-sm font-semibold group-hover:bg-indigo-700 transition">
+          <span className="inline-block bg-[#0073FF] text-white px-5 py-2.5 rounded-xl text-sm font-bold group-hover:bg-[#0060d6] transition shadow-md">
             Hire Candidates
           </span>
         </div>

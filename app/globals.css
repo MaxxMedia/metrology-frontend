@@ -19,6 +19,19 @@
   --ring: oklch(0.708 0 0);
   --radius: 0.625rem;
 
+  /* Recruiter Theme Tokens */
+  --recruiter-bg: #171A1E;
+  --recruiter-surface: #1D2125;
+  --recruiter-border: #292C30;
+  --recruiter-text-primary: #FFFFFF;
+  --recruiter-text-secondary: #CCCCCC;
+  --recruiter-text-muted: #B8B8B8;
+  --recruiter-cyan: #00B5ED;
+  --recruiter-blue: #0073FF;
+  --recruiter-purple: #1D247B;
+  --recruiter-sidebar-heading: #F7F7F7;
+
+
   /* ================= FONT SYSTEM ================= */
   --font-primary: var(--font-inter-tight), "Inter Tight", sans-serif;
 
@@ -511,6 +524,21 @@ body {
   border-radius: 6px;
 }
 
+.bg-\[\#171A1E\] .input,
+.bg-\[\#1D2125\] .input {
+  background-color: #171A1E;
+  border-color: #292C30;
+  color: #FFFFFF;
+  border-radius: 10px;
+}
+
+.bg-\[\#171A1E\] .input:focus,
+.bg-\[\#1D2125\] .input:focus {
+  outline: none;
+  border-color: #00B5ED;
+  box-shadow: 0 0 0 2px rgba(0, 181, 237, 0.2);
+}
+
 .label {
   display: block;
   font-size: var(--fs-meta);
@@ -519,10 +547,20 @@ body {
   margin-bottom: 4px;
 }
 
+.bg-\[\#171A1E\] .label,
+.bg-\[\#1D2125\] .label {
+  color: #CCCCCC;
+}
+
 .error {
   color: #dc2626;
   font-size: var(--fs-meta);
   margin-top: 4px;
+}
+
+.bg-\[\#171A1E\] .error,
+.bg-\[\#1D2125\] .error {
+  color: #f87171;
 }
 
 .editor-btn {

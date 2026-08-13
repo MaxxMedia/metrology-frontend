@@ -110,14 +110,14 @@ export default function LocationAutocomplete({
             setShowDropdown(true);
             onChange(e.target.value);
           }}
-          className="w-full text-sm border border-gray-300 rounded-md pl-3 pr-8 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full text-sm border border-[#292C30] rounded-xl pl-3 pr-8 py-2 bg-[#171A1E] text-white placeholder:text-[#858585] focus:outline-none focus:ring-2 focus:ring-[#00B5ED]"
         />
         {inputValue && (
           <button
             type="button"
             onClick={handleClear}
             aria-label="Clear location"
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-[#858585] hover:text-white transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -138,13 +138,13 @@ export default function LocationAutocomplete({
       </div>
 
       {showDropdown && inputValue.trim().length >= 2 && (
-        <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-72 overflow-y-auto">
+        <div className="absolute z-20 mt-1 w-full bg-[#1D2125] border border-[#292C30] rounded-xl shadow-2xl max-h-72 overflow-y-auto">
           {loadingSuggestions && (
-            <div className="px-4 py-3 text-sm text-gray-400">Searching...</div>
+            <div className="px-4 py-3 text-sm text-[#858585]">Searching...</div>
           )}
 
           {!loadingSuggestions && suggestions.length === 0 && (
-            <div className="px-4 py-3 text-sm text-gray-400">
+            <div className="px-4 py-3 text-sm text-[#858585]">
               No matching places found
             </div>
           )}
@@ -155,7 +155,7 @@ export default function LocationAutocomplete({
                 key={s.id}
                 type="button"
                 onClick={() => handleSelect(s.label)}
-                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-50 last:border-0"
+                className="w-full text-left px-4 py-2.5 text-sm text-[#CCCCCC] hover:bg-[#171A1E] hover:text-[#00B5ED] border-b border-[#292C30]/50 last:border-0 transition"
               >
                 {s.label}
               </button>

@@ -337,32 +337,32 @@ export default function EditJobPage() {
 
   if (loadingProfile) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] p-6 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading profile...</p>
+          <div className="w-10 h-10 border-[3px] border-[#00B5ED] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-sm text-[#CCCCCC]">Loading profile…</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] p-6 md:p-10">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-[#FFFFFF]">
               Edit Job Post
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-[#CCCCCC] mt-1">
               Edit a job post that will appear on your job board.
             </p>
           </div>
-          <span className="text-xs text-gray-400">* Required fields</span>
+          <span className="text-xs text-[#B8B8B8]">* Required fields</span>
         </div>
 
         {Object.keys(errors).length > 0 && (
-          <div className="mb-6 border border-red-200 bg-red-50 text-red-700 text-sm rounded-lg px-4 py-3">
+          <div className="mb-6 border border-rose-500/30 bg-rose-500/10 text-rose-400 text-sm rounded-xl px-4 py-3">
             Please fill in all required fields before saving the job (
             {Object.keys(errors).length} missing).
           </div>
@@ -375,10 +375,10 @@ export default function EditJobPage() {
               {/* 1. Company details (Auto-filled, read-only) */}
               <Section number={1} title="Company details">
                 {company ? (
-                  <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                  <div className="bg-[#171A1E] border border-[#292C30] rounded-xl p-4">
                     <div className="flex items-start gap-3">
                       {/* Company Logo */}
-                      <div className="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 rounded-xl bg-[#1D2125] border border-[#292C30] flex items-center justify-center flex-shrink-0">
                         {company.logoUrl ? (
                           <img
                             src={company.logoUrl}
@@ -386,18 +386,18 @@ export default function EditJobPage() {
                             className="w-10 h-10 rounded-lg object-cover"
                           />
                         ) : (
-                          <Building2 className="w-6 h-6 text-indigo-600" />
+                          <Building2 className="w-6 h-6 text-[#00B5ED]" />
                         )}
                       </div>
 
                       {/* Company Info */}
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-semibold text-gray-900">
+                          <h3 className="text-sm font-semibold text-[#FFFFFF]">
                             {company.name}
                           </h3>
                           {company.isVerified && (
-                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            <CheckCircle className="w-4 h-4 text-emerald-400" />
                           )}
                         </div>
 
@@ -406,14 +406,14 @@ export default function EditJobPage() {
                             href={company.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-indigo-600 hover:underline"
+                            className="text-xs text-[#00B5ED] hover:underline"
                           >
                             {company.website}
                           </a>
                         )}
 
                         {company.location && (
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-[#B8B8B8] mt-1">
                             📍 {company.location}
                           </p>
                         )}
@@ -509,31 +509,31 @@ export default function EditJobPage() {
                   <FieldLabel>Salary range (₹)</FieldLabel>
                   <div className="flex items-center gap-2">
                     <input
-                      className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full border border-[#292C30] rounded-xl p-2.5 text-sm bg-[#171A1E] text-[#FFFFFF] placeholder:text-[#858585] focus:outline-none focus:ring-2 focus:ring-[#00B5ED]"
                       placeholder="Min"
                       value={form.salaryMin}
                       onChange={e => update("salaryMin", e.target.value)}
                     />
-                    <span className="text-gray-400">–</span>
+                    <span className="text-[#B8B8B8]">–</span>
                     <input
-                      className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full border border-[#292C30] rounded-xl p-2.5 text-sm bg-[#171A1E] text-[#FFFFFF] placeholder:text-[#858585] focus:outline-none focus:ring-2 focus:ring-[#00B5ED]"
                       placeholder="Max"
                       value={form.salaryMax}
                       onChange={e => update("salaryMax", e.target.value)}
                     />
                     <select
-                      className="border border-gray-300 rounded-lg p-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="border border-[#292C30] rounded-xl p-2.5 text-sm bg-[#171A1E] text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#00B5ED]"
                       value={form.salaryPeriod}
                       onChange={e => update("salaryPeriod", e.target.value)}
                     >
                       {SALARY_PERIODS.map(o => (
-                        <option key={o.value} value={o.value}>
+                        <option key={o.value} value={o.value} className="bg-[#171A1E] text-[#FFFFFF]">
                           {o.label}
                         </option>
                       ))}
                     </select>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-[#B8B8B8] mt-1">
                     This will be displayed on your job post.
                   </p>
                 </div>
@@ -605,16 +605,16 @@ export default function EditJobPage() {
 
                 <div>
                   <FieldLabel>Benefits & perks (select all that apply)</FieldLabel>
-                  <div className="flex flex-wrap gap-x-6 gap-y-2 mb-3">
+                  <div className="flex flex-wrap gap-x-6 gap-y-2 mb-3 mt-1">
                     {Array.from(new Set([...DEFAULT_BENEFITS, ...form.benefits])).map(
                       benefit => (
                         <label
                           key={benefit}
-                          className="flex items-center gap-2 text-sm text-gray-700"
+                          className="flex items-center gap-2 text-sm text-[#CCCCCC] cursor-pointer hover:text-[#FFFFFF]"
                         >
                           <input
                             type="checkbox"
-                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                            className="rounded border-[#292C30] bg-[#171A1E] text-[#0073FF] focus:ring-[#00B5ED]"
                             checked={form.benefits.includes(benefit)}
                             onChange={() => toggleBenefit(benefit)}
                           />
@@ -625,7 +625,7 @@ export default function EditJobPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <input
-                      className="border border-gray-300 rounded-lg p-2 text-sm flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="border border-[#292C30] rounded-xl p-2.5 text-sm flex-1 bg-[#171A1E] text-[#FFFFFF] placeholder:text-[#858585] focus:outline-none focus:ring-2 focus:ring-[#00B5ED]"
                       placeholder="Add custom benefit"
                       value={customBenefit}
                       onChange={e => setCustomBenefit(e.target.value)}
@@ -639,7 +639,7 @@ export default function EditJobPage() {
                     <button
                       type="button"
                       onClick={addCustomBenefit}
-                      className="text-sm font-medium text-indigo-600 hover:text-indigo-700 whitespace-nowrap"
+                      className="text-sm font-semibold text-[#00B5ED] hover:text-[#0073FF] whitespace-nowrap transition"
                     >
                       + Add benefit
                     </button>
@@ -703,23 +703,23 @@ export default function EditJobPage() {
               {/* Featured job */}
               <Section number={5} title="Visibility">
                 <label
-                  className={`flex items-start gap-3 border rounded-lg p-4 cursor-pointer transition-colors ${
+                  className={`flex items-start gap-3 border rounded-xl p-4 cursor-pointer transition-colors ${
                     form.featured
-                      ? "border-indigo-500 bg-indigo-50"
-                      : "border-gray-200"
+                      ? "bg-[#00B5ED]/10 border-[#00B5ED]"
+                      : "bg-[#171A1E] border-[#292C30] hover:border-[#00B5ED]/50"
                   }`}
                 >
                   <input
                     type="checkbox"
-                    className="mt-0.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    className="mt-1 rounded border-[#292C30] bg-[#171A1E] text-[#0073FF] focus:ring-[#00B5ED]"
                     checked={form.featured}
                     onChange={e => update("featured", e.target.checked)}
                   />
                   <span>
-                    <span className="block text-sm font-medium text-gray-900">
+                    <span className="block text-sm font-medium text-[#FFFFFF]">
                       Featured job
                     </span>
-                    <span className="block text-sm text-gray-500">
+                    <span className="block text-sm text-[#B8B8B8]">
                       Pin this job to the top of listings and highlight it on the job board.
                     </span>
                   </span>
@@ -730,14 +730,14 @@ export default function EditJobPage() {
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="px-5 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="px-5 py-2.5 border border-[#292C30] rounded-xl text-sm font-semibold text-[#CCCCCC] bg-[#171A1E] hover:text-[#FFFFFF] transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60"
+                  className="px-6 py-2.5 bg-[#0073FF] text-white rounded-xl text-sm font-semibold hover:bg-[#0060D0] disabled:opacity-60 transition shadow-md"
                 >
                   {loading ? "Updating..." : "Update Job"}
                 </button>
@@ -746,30 +746,30 @@ export default function EditJobPage() {
 
             {/* ================= PREVIEW COLUMN ================= */}
             <div className="lg:sticky lg:top-6">
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <h2 className="text-sm font-semibold text-gray-900 mb-4">
+              <div className="bg-[#1D2125] rounded-xl shadow-sm p-6 border border-[#292C30] text-[#CCCCCC]">
+                <h2 className="text-sm font-semibold text-[#FFFFFF] mb-4 border-b border-[#292C30] pb-2">
                   Job post preview
                 </h2>
 
                 <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-md bg-indigo-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-[#0073FF] flex items-center justify-center text-white text-sm font-bold shrink-0">
                     {company ? company.name[0].toUpperCase() : "?"}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-[#FFFFFF]">
                       {company?.name || "Company name"}
                     </p>
                     {form.companySize && (
-                      <p className="text-xs text-gray-400">{form.companySize}</p>
+                      <p className="text-xs text-[#B8B8B8]">{form.companySize}</p>
                     )}
                   </div>
                 </div>
 
-                <p className="text-base font-semibold text-gray-900 mb-1">
+                <p className="text-base font-semibold text-[#FFFFFF] mb-1">
                   {form.title || "Job title"}
                 </p>
 
-                <div className="flex flex-col gap-1 text-xs text-gray-500 mb-3">
+                <div className="flex flex-col gap-1 text-xs text-[#B8B8B8] mb-3">
                   {form.location && (
                     <span>
                       {form.location}
@@ -792,10 +792,10 @@ export default function EditJobPage() {
 
                 {form.description && (
                   <>
-                    <p className="text-xs font-semibold text-gray-900 mb-1">
+                    <p className="text-xs font-semibold text-[#FFFFFF] mb-1">
                       About the job
                     </p>
-                    <p className="text-xs text-gray-500 line-clamp-3 mb-3">
+                    <p className="text-xs text-[#CCCCCC] line-clamp-3 mb-3">
                       {form.description}
                     </p>
                   </>
@@ -803,10 +803,10 @@ export default function EditJobPage() {
 
                 {responsibilityLines.length > 0 && (
                   <>
-                    <p className="text-xs font-semibold text-gray-900 mb-1">
+                    <p className="text-xs font-semibold text-[#FFFFFF] mb-1">
                       Key responsibilities
                     </p>
-                    <ul className="text-xs text-gray-500 list-disc pl-4 space-y-0.5">
+                    <ul className="text-xs text-[#CCCCCC] list-disc pl-4 space-y-0.5">
                       {responsibilityLines.slice(0, 3).map((line, i) => (
                         <li key={i}>{line}</li>
                       ))}
@@ -815,7 +815,7 @@ export default function EditJobPage() {
                 )}
 
                 {form.featured && (
-                  <span className="inline-block mt-4 text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded">
+                  <span className="inline-block mt-4 text-xs font-medium text-[#00B5ED] bg-[#00B5ED]/15 px-2.5 py-1 rounded-full">
                     Featured
                   </span>
                 )}
@@ -840,8 +840,8 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-      <h2 className="text-sm font-semibold text-gray-900 mb-5">
+    <div className="bg-[#1D2125] rounded-xl shadow-sm p-6 border border-[#292C30] text-[#CCCCCC]">
+      <h2 className="text-sm font-semibold text-[#FFFFFF] mb-5 border-b border-[#292C30] pb-2">
         {number}. {title}
       </h2>
       <div className="space-y-5">{children}</div>
@@ -869,7 +869,7 @@ function Row({
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <label className="block text-sm font-medium text-gray-700 mb-1">
+    <label className="block text-sm font-medium text-[#CCCCCC] mb-1">
       {children}
     </label>
   )
@@ -899,7 +899,7 @@ function Input({
   return (
     <div>
       <FieldLabel>
-        {label} {required && <span className="text-red-500">*</span>}
+        {label} {required && <span className="text-rose-400">*</span>}
       </FieldLabel>
       <input
         type={type}
@@ -907,13 +907,13 @@ function Input({
         value={value}
         placeholder={placeholder}
         onChange={e => onChange(e.target.value)}
-        className={`w-full border rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent ${
+        className={`w-full border rounded-xl p-2.5 text-sm bg-[#171A1E] text-[#FFFFFF] placeholder:text-[#858585] focus:outline-none focus:ring-2 ${
           error
-            ? "border-red-400 focus:ring-red-400"
-            : "border-gray-300 focus:ring-indigo-500"
+            ? "border-rose-500 focus:ring-rose-500"
+            : "border-[#292C30] focus:ring-[#00B5ED]"
         }`}
       />
-      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+      {error && <p className="text-xs text-rose-400 mt-1">{error}</p>}
     </div>
   )
 }
@@ -942,7 +942,7 @@ function Textarea({
   return (
     <div>
       <FieldLabel>
-        {label} {required && <span className="text-red-500">*</span>}
+        {label} {required && <span className="text-rose-400">*</span>}
       </FieldLabel>
       <textarea
         name={name}
@@ -951,20 +951,20 @@ function Textarea({
         onChange={e => onChange(e.target.value)}
         rows={rows}
         maxLength={maxLength}
-        className={`w-full border rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent resize-y ${
+        className={`w-full border rounded-xl p-2.5 text-sm bg-[#171A1E] text-[#FFFFFF] placeholder:text-[#858585] focus:outline-none focus:ring-2 resize-y ${
           error
-            ? "border-red-400 focus:ring-red-400"
-            : "border-gray-300 focus:ring-indigo-500"
+            ? "border-rose-500 focus:ring-rose-500"
+            : "border-[#292C30] focus:ring-[#00B5ED]"
         }`}
       />
       <div className="flex justify-between items-center mt-1">
         {error ? (
-          <p className="text-xs text-red-500">{error}</p>
+          <p className="text-xs text-rose-400">{error}</p>
         ) : (
           <span />
         )}
         {maxLength && (
-          <p className="text-right text-xs text-gray-400">
+          <p className="text-right text-xs text-[#B8B8B8]">
             {value.length}/{maxLength}
           </p>
         )}
@@ -995,26 +995,26 @@ function Select({
   return (
     <div>
       <FieldLabel>
-        {label} {required && <span className="text-red-500">*</span>}
+        {label} {required && <span className="text-rose-400">*</span>}
       </FieldLabel>
       <select
         name={name}
         value={value}
         onChange={e => onChange(e.target.value)}
-        className={`w-full border rounded-lg p-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:border-transparent ${
+        className={`w-full border rounded-xl p-2.5 text-sm bg-[#171A1E] text-[#FFFFFF] focus:outline-none focus:ring-2 ${
           error
-            ? "border-red-400 focus:ring-red-400"
-            : "border-gray-300 focus:ring-indigo-500"
+            ? "border-rose-500 focus:ring-rose-500"
+            : "border-[#292C30] focus:ring-[#00B5ED]"
         }`}
       >
         {placeholder && <option value="">{placeholder}</option>}
         {options.map(o => (
-          <option key={o.value} value={o.value}>
+          <option key={o.value} value={o.value} className="bg-[#171A1E] text-[#FFFFFF]">
             {o.label}
           </option>
         ))}
       </select>
-      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+      {error && <p className="text-xs text-rose-400 mt-1">{error}</p>}
     </div>
   )
 }

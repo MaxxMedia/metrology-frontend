@@ -47,13 +47,13 @@ function ImagesGallerySection({
   title: string
 }) {
   return (
-    <section className="bg-white rounded-xl border border-gray-100 p-6">
-      <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
+    <section className="bg-[#1D2125] rounded-xl border border-[#292C30] p-6 text-[#CCCCCC]">
+      <h2 className="text-lg font-bold border-b-2 border-[#00B5ED] text-[#FFFFFF] inline-block pb-1 mb-4">
         Images Gallery
       </h2>
       {images.length > 0 ? (
         <div>
-          <div className="relative w-full h-80 rounded-lg overflow-hidden mb-3 bg-gray-100">
+          <div className="relative w-full h-80 rounded-xl overflow-hidden mb-3 bg-[#171A1E] border border-[#292C30]">
             <Image
               src={images[imgIndex]}
               alt={title}
@@ -66,14 +66,14 @@ function ImagesGallerySection({
                 <button
                   type="button"
                   onClick={() => setImgIndex((prev) => (prev - 1 + images.length) % images.length)}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-600 text-white w-8 h-8 rounded-full"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-[#0073FF] hover:bg-[#0060D0] text-white w-9 h-9 rounded-full flex items-center justify-center font-bold transition shadow-md"
                 >
                   ←
                 </button>
                 <button
                   type="button"
                   onClick={() => setImgIndex((prev) => (prev + 1) % images.length)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 text-white w-8 h-8 rounded-full"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#0073FF] hover:bg-[#0060D0] text-white w-9 h-9 rounded-full flex items-center justify-center font-bold transition shadow-md"
                 >
                   →
                 </button>
@@ -81,14 +81,14 @@ function ImagesGallerySection({
             )}
           </div>
 
-          <div className="flex gap-2 overflow-x-auto">
+          <div className="flex gap-2 overflow-x-auto pb-1">
             {images.map((img, i) => (
               <button
                 type="button"
                 key={i}
                 onClick={() => setImgIndex(i)}
-                className={`relative w-28 h-16 flex-shrink-0 rounded overflow-hidden border-2 bg-gray-100 ${
-                  i === imgIndex ? "border-red-600" : "border-transparent"
+                className={`relative w-28 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 bg-[#171A1E] transition ${
+                  i === imgIndex ? "border-[#00B5ED]" : "border-transparent opacity-60 hover:opacity-100"
                 }`}
               >
                 <Image src={img} alt="" fill className="object-cover" unoptimized />
@@ -97,7 +97,7 @@ function ImagesGallerySection({
           </div>
         </div>
       ) : (
-        <p className="text-gray-500">No images available.</p>
+        <p className="text-[#858585]">No images available.</p>
       )}
     </section>
   )
@@ -105,14 +105,14 @@ function ImagesGallerySection({
 
 function VideosSection({ videos, title }: { videos: string[]; title: string }) {
   return (
-    <section className="bg-white rounded-xl border border-gray-100 p-6">
-      <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
+    <section className="bg-[#1D2125] rounded-xl border border-[#292C30] p-6 text-[#CCCCCC]">
+      <h2 className="text-lg font-bold border-b-2 border-[#00B5ED] text-[#FFFFFF] inline-block pb-1 mb-4">
         Videos
       </h2>
       {videos.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {videos.map((url, i) => (
-            <div key={i} className="aspect-video rounded-lg overflow-hidden">
+            <div key={i} className="aspect-video rounded-xl overflow-hidden border border-[#292C30] bg-[#171A1E]">
               <iframe
                 src={getYoutubeEmbedUrl(url)}
                 className="w-full h-full"
@@ -123,7 +123,7 @@ function VideosSection({ videos, title }: { videos: string[]; title: string }) {
           ))}
         </div>
       ) : (
-        <p className="text-gray-500">No video available.</p>
+        <p className="text-[#858585]">No video available.</p>
       )}
     </section>
   )
@@ -131,11 +131,11 @@ function VideosSection({ videos, title }: { videos: string[]; title: string }) {
 
 function OtherDetailsSection({ event }: { event: Event }) {
   return (
-    <section className="bg-white rounded-xl border border-gray-100 p-6">
-      <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
+    <section className="bg-[#1D2125] rounded-xl border border-[#292C30] p-6 text-[#CCCCCC]">
+      <h2 className="text-lg font-bold border-b-2 border-[#00B5ED] text-[#FFFFFF] inline-block pb-1 mb-4">
         Other Details
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2 text-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-3 text-sm">
         <DetailRow label="Frequency" value={event.frequency} />
         <DetailRow label="Organizer" value={event.organizer} />
         <DetailRow label="Edition" value={event.edition} />
@@ -156,18 +156,18 @@ export default function EventTabs({ event }: { event: Event }) {
   const videos = event.videos ?? []
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-[#CCCCCC]">
       {/* TAB NAV */}
-      <div className="bg-white rounded-xl border border-gray-100 flex border-b">
+      <div className="bg-[#1D2125] rounded-xl border border-[#292C30] flex overflow-x-auto">
         {TABS.map(tab => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`px-6 py-3 text-sm font-semibold uppercase tracking-wide border-b-2 ${
+            className={`px-6 py-3.5 text-sm font-semibold uppercase tracking-wide border-b-2 transition whitespace-nowrap ${
               activeTab === tab.id
-                ? "text-red-600 border-red-600"
-                : "text-gray-500 border-transparent hover:text-red-600 hover:border-red-600"
+                ? "text-[#00B5ED] border-[#00B5ED] bg-[#171A1E]/50"
+                : "text-[#B8B8B8] border-transparent hover:text-[#FFFFFF] hover:border-[#00B5ED]/40"
             }`}
           >
             {tab.label}
@@ -178,16 +178,16 @@ export default function EventTabs({ event }: { event: Event }) {
       {/* ABOUT US: shows everything */}
       {activeTab === "about" && (
         <>
-          <section className="bg-white rounded-xl border border-gray-100 p-6">
-            <h2 className="text-lg font-bold border-b-2 border-red-600 inline-block pb-1 mb-4">
+          <section className="bg-[#1D2125] rounded-xl border border-[#292C30] p-6 text-[#CCCCCC]">
+            <h2 className="text-lg font-bold border-b-2 border-[#00B5ED] text-[#FFFFFF] inline-block pb-1 mb-4">
               Description
             </h2>
-            <p className="text-gray-700 whitespace-pre-line mb-4">{event.description}</p>
+            <p className="text-[#CCCCCC] whitespace-pre-line mb-4 leading-relaxed">{event.description}</p>
             {event.highlights && event.highlights.length > 0 && (
-              <ul className="space-y-1">
+              <ul className="space-y-2">
                 {event.highlights.map((h, i) => (
-                  <li key={i} className="flex items-start gap-2 text-gray-700">
-                    <span className="text-red-500 mt-1">›</span>
+                  <li key={i} className="flex items-start gap-2 text-[#CCCCCC]">
+                    <span className="text-[#00B5ED] font-bold mt-0.5">›</span>
                     {h}
                   </li>
                 ))}
@@ -231,17 +231,17 @@ function DetailRow({ label, value, fullWidth }: { label: string; value?: string;
   const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
   return (
     <div className={`flex items-center gap-2 text-[15px] ${fullWidth ? "md:col-span-2" : ""}`}>
-      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-red-100 text-red-600 flex-shrink-0">
+      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#00B5ED]/20 text-[#00B5ED] flex-shrink-0">
         <ChevronRight size={13} strokeWidth={3} />
       </span>
-      <span className="text-gray-500 w-28 flex-shrink-0">{label}</span>
-      <span className="text-gray-800 break-words min-w-0">
+      <span className="text-[#B8B8B8] w-28 flex-shrink-0">{label}</span>
+      <span className="text-[#FFFFFF] break-words min-w-0 font-medium">
         {isUrl ? (
-          <a href={value} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+          <a href={value} target="_blank" rel="noopener noreferrer" className="text-[#00B5ED] hover:underline">
             {value}
           </a>
         ) : isEmail ? (
-          <a href={`mailto:${value}`} className="text-blue-600 hover:underline">
+          <a href={`mailto:${value}`} className="text-[#00B5ED] hover:underline">
             {value}
           </a>
         ) : (
