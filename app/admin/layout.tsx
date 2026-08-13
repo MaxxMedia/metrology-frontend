@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   FileText,
   Folder,
+  Building2,
   LogOut,
   Mail,
   Users,
@@ -293,6 +294,15 @@ export default function AdminLayout({
             label="Supplier Listing"
             icon={<Folder size={18} />}
             active={pathname === "/admin/directories"}
+          />
+        )}
+
+        {isSuperAdmin && (
+          <SidebarLink
+            href="/admin/industries"
+            label="Industries"
+            icon={<Building2 size={18} />}
+            active={pathname === "/admin/industries" || pathname.startsWith("/admin/industries/")}
           />
         )}
 
