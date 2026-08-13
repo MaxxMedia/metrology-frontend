@@ -90,7 +90,7 @@ export default function TopicsListing({
 
                 return (
                   <article key={post.id}>
-                    <Link href={`/articles/${post.slug}`}>
+                    <Link href={`/post/${post.slug}`}>
                       <div className="relative w-full h-40 mb-3">
                         <Image
                           src={imageUrl}
@@ -108,7 +108,7 @@ export default function TopicsListing({
 
                     <h2 className="font-semibold leading-snug mb-2">
                       <Link
-                        href={`/articles/${post.slug}`}
+                        href={`/post/${post.slug}`}
                         className="hover:underline"
                       >
                         {post.title}
