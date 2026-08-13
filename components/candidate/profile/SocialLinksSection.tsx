@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
     Globe,
@@ -43,23 +43,23 @@ export default function SocialLinksSection({
     onEditClick,
 }: Props) {
     return (
-        <div className="bg-white rounded-lg border border-[#e0e0e0] p-6 shadow-sm relative">
+        <div className="bg-[#121213] rounded-xl border border-white/10 p-6 shadow-sm relative">
             {onEditClick && (
                 <button
                     onClick={onEditClick}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 cursor-pointer"
+                    className="absolute top-4 right-4 text-[#a1a1a1] hover:text-[#0073ff] transition-colors p-1.5 rounded-full hover:bg-white/10 cursor-pointer"
                     title="Edit Contact & Social Links"
                 >
                     <Pencil size={16} />
                 </button>
             )}
 
-            <h3 className="text-base font-semibold mb-5">
+            <h3 className="text-base font-semibold mb-5 text-white">
                 Contact & Social Links
             </h3>
 
             {socials.length === 0 ? (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[#a1a1a1]">
                     No social links added.
                 </p>
             ) : (
@@ -72,12 +72,12 @@ export default function SocialLinksSection({
                             href={social.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="flex items-center justify-between hover:bg-gray-50 rounded-lg p-2 transition"
+                            className="flex items-center justify-between hover:bg-white/5 rounded-lg p-2 transition"
                         >
 
                             <div className="flex items-center gap-3">
 
-                                <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-[#0a66c2]">
+                                <div className="w-9 h-9 rounded-full bg-[#0073ff]/10 flex items-center justify-center text-[#0073ff]">
 
                                     {getIcon(social.platform)}
 
@@ -85,11 +85,11 @@ export default function SocialLinksSection({
 
                                 <div>
 
-                                    <p className="font-medium">
+                                    <p className="font-medium text-white">
                                         {social.platform}
                                     </p>
 
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-[#a1a1a1]">
                                         {social.username ?? social.url}
                                     </p>
 
@@ -99,7 +99,7 @@ export default function SocialLinksSection({
 
                             <ExternalLink
                                 size={16}
-                                className="text-gray-400"
+                                className="text-[#a1a1a1]"
                             />
 
                         </a>

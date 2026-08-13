@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -56,15 +56,15 @@ export default function LanguagesForm({
                   {values.languages.map((_, index) => (
                     <div
                       key={index}
-                      className="grid grid-cols-12 gap-3 items-end p-3.5 bg-white border border-gray-200 rounded-xl shadow-2xs"
+                      className="grid grid-cols-12 gap-3 items-end p-3.5 bg-[#171A1E] border border-white/10 rounded-xl shadow-2xs"
                     >
                       <div className="col-span-6">
-                        <label className="block text-xs font-semibold text-[#5A5F69] uppercase tracking-wider mb-1">
+                        <label className="block text-xs font-semibold text-[#a1a1a1] uppercase tracking-wider mb-1">
                           Language *
                         </label>
                         <Field
                           name={`languages.${index}.language`}
-                          className="w-full border border-gray-300 rounded-lg px-3.5 py-2 text-sm text-[#000000] focus:outline-none focus:ring-2 focus:ring-[#0F5B78] focus:border-transparent transition-all"
+                          className="w-full border border-white/20 rounded-lg px-3.5 py-2 text-sm text-white bg-[#171A1E] focus:outline-none focus:ring-2 focus:ring-[#0073ff] focus:border-transparent transition-all"
                           placeholder="e.g. English, Hindi, German"
                         />
                         <ErrorMessage
@@ -75,13 +75,13 @@ export default function LanguagesForm({
                       </div>
 
                       <div className="col-span-5">
-                        <label className="block text-xs font-semibold text-[#5A5F69] uppercase tracking-wider mb-1">
+                        <label className="block text-xs font-semibold text-[#a1a1a1] uppercase tracking-wider mb-1">
                           Proficiency
                         </label>
                         <Field
                           as="select"
                           name={`languages.${index}.proficiency`}
-                          className="w-full border border-gray-300 rounded-lg px-3.5 py-2 text-sm text-[#000000] bg-white focus:outline-none focus:ring-2 focus:ring-[#0F5B78] focus:border-transparent transition-all"
+                          className="w-full border border-white/20 rounded-lg px-3.5 py-2 text-sm text-white bg-[#171A1E] focus:outline-none focus:ring-2 focus:ring-[#0073ff] focus:border-transparent transition-all"
                         >
                           <option value="Elementary">Elementary proficiency</option>
                           <option value="Limited working">Limited working proficiency</option>
@@ -96,7 +96,7 @@ export default function LanguagesForm({
                           <button
                             type="button"
                             onClick={() => remove(index)}
-                            className="text-[#5A5F69] hover:text-[#B40F24] transition-colors p-1.5 rounded-full hover:bg-gray-100 cursor-pointer"
+                            className="text-[#a1a1a1] hover:text-[#0073ff] transition-colors p-1.5 rounded-full hover:bg-white/10 cursor-pointer"
                             title="Remove Language"
                           >
                             <Trash2 size={16} />
@@ -115,7 +115,7 @@ export default function LanguagesForm({
                       proficiency: "Full professional",
                     })
                   }
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0F5B78] hover:underline cursor-pointer pt-1"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0073ff] hover:underline cursor-pointer pt-1"
                 >
                   <Plus size={16} />
                   Add another language
@@ -124,11 +124,11 @@ export default function LanguagesForm({
             )}
           </FieldArray>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+          <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
             <button
               type="submit"
               disabled={loading || isSubmitting}
-              className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-sm"
+              className="bg-[#0073ff] hover:bg-[#0060d6] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-sm"
             >
               {(loading || isSubmitting) && <Loader2 size={16} className="animate-spin" />}
               Save

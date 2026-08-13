@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { FileText } from "lucide-react";
@@ -31,8 +31,8 @@ export default function MyApplicationsCard() {
   }, []);
 
   return (
-    <div className="bg-white rounded-xl border border-[#e0e0e0] shadow-md overflow-hidden">
-      <div className="bg-[#0F5B78] px-5 py-3.5 flex items-center justify-between">
+    <div className="bg-[#121213] rounded-xl border border-white/10 shadow-md overflow-hidden">
+      <div className="bg-[#0073ff] px-5 py-3.5 flex items-center justify-between">
         <h3 className="text-white font-bold text-base tracking-wide flex items-center gap-2">
           <FileText size={18} />
           My Applications
@@ -43,26 +43,26 @@ export default function MyApplicationsCard() {
       </div>
 
       {loading ? (
-        <div className="p-4 text-center text-xs text-[#5A5F69]">Loading applications...</div>
+        <div className="p-4 text-center text-xs text-[#a1a1a1]">Loading applications...</div>
       ) : applications.length === 0 ? (
-        <div className="p-5 text-center text-xs text-[#5A5F69]">
-          <p className="font-semibold text-[#000000]">No applications submitted</p>
+        <div className="p-5 text-center text-xs text-[#a1a1a1]">
+          <p className="font-semibold text-white">No applications submitted</p>
           <p className="mt-1">Applied roles will appear here</p>
         </div>
       ) : (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-white/10">
           {applications.slice(0, 5).map((app) => {
             const job = app.Job || {};
             return (
               <div
                 key={app.id}
-                className="p-3.5 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                className="p-3.5 flex items-center justify-between hover:bg-[#0073ff]/5 transition-colors"
               >
                 <div className="min-w-0 flex-1 pr-2">
-                  <h4 className="text-xs sm:text-sm font-bold text-[#000000] truncate">{job.title || "Applied Role"}</h4>
-                  <p className="text-xs text-[#5A5F69] mt-0.5 truncate">{job.Company?.name || ""}</p>
+                  <h4 className="text-xs sm:text-sm font-bold text-white truncate">{job.title || "Applied Role"}</h4>
+                  <p className="text-xs text-[#a1a1a1] mt-0.5 truncate">{job.Company?.name || ""}</p>
                 </div>
-                <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-blue-50 text-[#0F5B78] border border-[#0F5B78]/30 shrink-0">
+                <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-[#0073ff]/10 text-[#0073ff] border border-[#0073ff]/30 shrink-0">
                   {app.status || "APPLIED"}
                 </span>
               </div>

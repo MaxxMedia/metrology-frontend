@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -311,7 +311,7 @@ export default function CandidateProfilePanel({
         </div>
 
         {/* Company Section */}
-        <div className="mt-6 border-t border-gray-200 pt-6">
+        <div className="mt-6 border-t border-white/10 pt-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-gray-900 flex items-center gap-2">
               <Building2 className="h-4 w-4 text-blue-600" />
@@ -336,7 +336,7 @@ export default function CandidateProfilePanel({
                   ? 'bg-yellow-50 border border-yellow-200 text-yellow-700'
                   : teamStatus.status === 'REJECTED'
                     ? 'bg-red-50 border border-red-200 text-red-600'
-                    : 'bg-gray-50 border border-gray-200 text-gray-600'
+                    : 'bg-gray-50 border border-white/10 text-gray-600'
                 }`}
             >
               {teamStatus.status === 'PENDING' && (
@@ -372,7 +372,7 @@ export default function CandidateProfilePanel({
                     searchCompanies(e.target.value);
                   }}
                   placeholder="Search for your company..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pl-10"
+                  className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pl-10"
                 />
                 <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
                 {searching && (
@@ -394,7 +394,7 @@ export default function CandidateProfilePanel({
                         setSearchResults([]);
                         setSearchQuery('');
                       }}
-                      className="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition flex items-center gap-3"
+                      className="w-full text-left p-3 bg-gray-50 hover:bg-white/10 rounded-lg transition flex items-center gap-3"
                     >
                       {company.logoUrl ? (
                         <img src={company.logoUrl} alt={company.name} className="w-10 h-10 rounded-full object-cover" />
@@ -466,7 +466,7 @@ export default function CandidateProfilePanel({
                     value={companyFormData.designation}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, designation: e.target.value })}
                     placeholder="e.g., Senior Software Engineer"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-3 py-2 border border-white/20 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
                 </div>
 
@@ -477,7 +477,7 @@ export default function CandidateProfilePanel({
                     value={companyFormData.department}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, department: e.target.value })}
                     placeholder="e.g., Engineering"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-3 py-2 border border-white/20 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
                 </div>
 
@@ -489,7 +489,7 @@ export default function CandidateProfilePanel({
                     required
                     value={companyFormData.employmentType}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, employmentType: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-3 py-2 border border-white/20 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   >
                     <option value="FULL_TIME">Full Time</option>
                     <option value="PART_TIME">Part Time</option>
@@ -508,7 +508,7 @@ export default function CandidateProfilePanel({
                     required
                     value={companyFormData.startDate}
                     onChange={(e) => setCompanyFormData({ ...companyFormData, startDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full px-3 py-2 border border-white/20 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
                 </div>
 
@@ -526,7 +526,7 @@ export default function CandidateProfilePanel({
                       setShowCompanyForm(false);
                       setSelectedCompany(null);
                     }}
-                    className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition text-sm"
+                    className="px-4 py-2 border border-white/20 rounded-md hover:bg-gray-50 transition text-sm"
                   >
                     Cancel
                   </button>
@@ -633,7 +633,7 @@ export default function CandidateProfilePanel({
             onChange={(e) =>
               setProfile({ ...profile, fullName: e.target.value })
             }
-            className="w-full border border-gray-200 px-3 py-2 rounded-md text-sm"
+            className="w-full border border-white/10 px-3 py-2 rounded-md text-sm"
           />
 
           <input
@@ -642,7 +642,7 @@ export default function CandidateProfilePanel({
             onChange={(e) =>
               setProfile({ ...profile, headline: e.target.value })
             }
-            className="w-full border border-gray-200 px-3 py-2 rounded-md text-sm"
+            className="w-full border border-white/10 px-3 py-2 rounded-md text-sm"
           />
 
           <input
@@ -651,7 +651,7 @@ export default function CandidateProfilePanel({
             onChange={(e) =>
               setProfile({ ...profile, location: e.target.value })
             }
-            className="w-full border border-gray-200 px-3 py-2 rounded-md text-sm"
+            className="w-full border border-white/10 px-3 py-2 rounded-md text-sm"
           />
 
           <input
@@ -660,7 +660,7 @@ export default function CandidateProfilePanel({
             onChange={(e) =>
               setProfile({ ...profile, websiteUrl: e.target.value })
             }
-            className="w-full border border-gray-200 px-3 py-2 rounded-md text-sm"
+            className="w-full border border-white/10 px-3 py-2 rounded-md text-sm"
           />
 
           <textarea
@@ -670,7 +670,7 @@ export default function CandidateProfilePanel({
             onChange={(e) =>
               setProfile({ ...profile, about: e.target.value })
             }
-            className="w-full border border-gray-200 px-3 py-2 rounded-md text-sm"
+            className="w-full border border-white/10 px-3 py-2 rounded-md text-sm"
           />
 
           {message && (
@@ -712,7 +712,7 @@ function Field({
       <input
         value={value}
         disabled={disabled}
-        className="w-full border border-gray-200 px-3 py-2 rounded-md text-sm bg-gray-50 mt-1"
+        className="w-full border border-white/10 px-3 py-2 rounded-md text-sm bg-gray-50 mt-1"
       />
     </div>
   );

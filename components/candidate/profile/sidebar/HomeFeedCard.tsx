@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -35,8 +35,8 @@ export default function HomeFeedCard() {
   }, []);
 
   return (
-    <div className="bg-white rounded-xl border border-[#e0e0e0] shadow-md overflow-hidden">
-      <div className="bg-[#0F5B78] px-5 py-3.5 flex items-center justify-between">
+    <div className="bg-[#121213] rounded-xl border border-white/10 shadow-md overflow-hidden">
+      <div className="bg-[#0073ff] px-5 py-3.5 flex items-center justify-between">
         <h3 className="text-white font-bold text-base tracking-wide flex items-center gap-2">
           <Briefcase size={18} />
           Recommended Jobs
@@ -47,25 +47,25 @@ export default function HomeFeedCard() {
       </div>
 
       {loading ? (
-        <div className="p-4 text-center text-xs text-[#5A5F69]">Loading jobs...</div>
+        <div className="p-4 text-center text-xs text-[#a1a1a1]">Loading jobs...</div>
       ) : jobs.length === 0 ? (
-        <div className="p-5 text-center text-xs text-[#5A5F69]">No recommended jobs available.</div>
+        <div className="p-5 text-center text-xs text-[#a1a1a1]">No recommended jobs available.</div>
       ) : (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-white/10">
           {jobs.slice(0, 5).map((job) => (
             <Link
               key={job.id}
               href="/feed"
-              className="p-3.5 block hover:bg-blue-50/30 transition-colors cursor-pointer group"
+              className="p-3.5 block hover:bg-[#0073ff]/5 transition-colors cursor-pointer group"
             >
-              <h4 className="text-xs sm:text-sm font-bold text-[#000000] group-hover:text-[#0F5B78] transition-colors truncate">
+              <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-[#0073ff] transition-colors truncate">
                 {job.title}
               </h4>
-              <div className="flex items-center justify-between text-xs text-[#5A5F69] mt-1">
-                <span className="font-medium text-[#0F5B78]">{job.Company?.name || job.companyName || ""}</span>
+              <div className="flex items-center justify-between text-xs text-[#a1a1a1] mt-1">
+                <span className="font-medium text-[#0073ff]">{job.Company?.name || job.companyName || ""}</span>
                 {job.location && (
                   <span className="flex items-center gap-1">
-                    <MapPin size={11} className="text-[#5A5F69]" />
+                    <MapPin size={11} className="text-[#a1a1a1]" />
                     {job.location}
                   </span>
                 )}
@@ -75,10 +75,10 @@ export default function HomeFeedCard() {
         </div>
       )}
 
-      <div className="border-t border-gray-100 bg-white p-2">
+      <div className="border-t border-white/10 bg-[#171A1E] p-2">
         <Link
           href="/feed"
-          className="w-full text-center font-bold text-xs text-[#0F5B78] hover:underline py-2 block hover:bg-blue-50/40 rounded transition-colors cursor-pointer"
+          className="w-full text-center font-bold text-xs text-[#0073ff] hover:underline py-2 block hover:bg-[#0073ff]/10 rounded transition-colors cursor-pointer"
         >
           View all jobs in feed →
         </Link>

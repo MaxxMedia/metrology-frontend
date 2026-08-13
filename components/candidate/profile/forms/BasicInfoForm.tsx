@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -55,14 +55,14 @@ export default function BasicInfoForm({
       {({ isSubmitting, setFieldValue }) => (
         <Form className="space-y-5">
           {/* Avatar Photo Section */}
-          <div className="flex items-center gap-5 p-4 bg-gray-50 rounded-xl border border-gray-100">
+          <div className="flex items-center gap-5 p-4 bg-[#171A1E] rounded-xl border border-white/10">
             <div className="relative shrink-0">
               <img
                 src={preview || "/images/default-avatar.png"}
                 alt="Profile photo"
-                className="w-20 h-20 rounded-full object-cover border-2 border-white shadow-sm"
+                className="w-20 h-20 rounded-full object-cover border-2 border-[#292C30] shadow-sm"
               />
-              <label className="absolute bottom-0 right-0 bg-[#0F5B78] hover:bg-[#0b445a] text-white rounded-full p-1.5 cursor-pointer transition-colors shadow-sm">
+              <label className="absolute bottom-0 right-0 bg-[#0073ff] hover:bg-[#0060d6] text-white rounded-full p-1.5 cursor-pointer transition-colors shadow-sm">
                 <Camera size={14} />
                 <input
                   hidden
@@ -79,8 +79,8 @@ export default function BasicInfoForm({
               </label>
             </div>
             <div>
-              <h4 className="font-bold text-sm text-[#000000]">Profile Photo</h4>
-              <p className="text-xs text-[#5A5F69] mt-0.5">JPG, PNG up to 5 MB</p>
+              <h4 className="font-bold text-sm text-white">Profile Photo</h4>
+              <p className="text-xs text-[#a1a1a1] mt-0.5">JPG, PNG up to 5 MB</p>
             </div>
           </div>
 
@@ -100,11 +100,11 @@ export default function BasicInfoForm({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+          <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
             <button
               disabled={loading || isSubmitting}
               type="submit"
-              className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-sm"
+              className="bg-[#0073ff] hover:bg-[#0060d6] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-sm"
             >
               {(loading || isSubmitting) && <Loader2 size={16} className="animate-spin" />}
               Save
@@ -127,7 +127,7 @@ interface InputProps {
 function Input({ label, name, type = "text", placeholder = "", disabled = false }: InputProps) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-[#5A5F69] uppercase tracking-wider mb-1.5">
+      <label className="block text-xs font-semibold text-[#a1a1a1] uppercase tracking-wider mb-1.5">
         {label}
       </label>
       <Field
@@ -135,7 +135,7 @@ function Input({ label, name, type = "text", placeholder = "", disabled = false 
         type={type}
         placeholder={placeholder}
         disabled={disabled}
-        className="w-full border border-gray-300 rounded-lg px-3.5 py-2 text-sm text-[#000000] focus:outline-none focus:ring-2 focus:ring-[#0F5B78] focus:border-transparent transition-all disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+        className="w-full border border-white/20 rounded-lg px-3.5 py-2 text-sm text-white bg-[#171A1E] focus:outline-none focus:ring-2 focus:ring-[#0073ff] focus:border-transparent transition-all disabled:bg-white/5 disabled:text-[#a1a1a1] disabled:cursor-not-allowed"
       />
       <ErrorMessage name={name} component="p" className="text-red-500 text-xs mt-1 font-medium" />
     </div>

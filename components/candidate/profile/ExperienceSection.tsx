@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Pencil, Building2 } from "lucide-react";
 
@@ -80,13 +80,13 @@ export default function ExperienceSection({
   onEditClick,
 }: Props) {
   return (
-    <div className="bg-white rounded-xl border border-[#e0e0e0] p-6 shadow-sm relative">
+    <div className="bg-[#121213] rounded-xl border border-white/10 p-6 shadow-sm relative">
       {/* Edit button */}
       {!editable && onEditClick && (
         <button
           onClick={onEditClick}
           title="Edit Experience"
-          className="absolute top-4 right-4 text-[#5A5F69] hover:text-[#0F5B78] transition-colors p-1.5 rounded-full hover:bg-gray-100 cursor-pointer"
+          className="absolute top-4 right-4 text-[#a1a1a1] hover:text-[#0073ff] transition-colors p-1.5 rounded-full hover:bg-white/10 cursor-pointer"
         >
           <Pencil size={16} />
         </button>
@@ -94,18 +94,18 @@ export default function ExperienceSection({
 
       {editable && (
         <button
-          className="absolute top-4 right-4 text-[#5A5F69] hover:text-[#0F5B78] transition-colors p-1.5 rounded-full hover:bg-gray-100 cursor-pointer"
+          className="absolute top-4 right-4 text-[#a1a1a1] hover:text-[#0073ff] transition-colors p-1.5 rounded-full hover:bg-white/10 cursor-pointer"
         >
           <Pencil size={16} />
         </button>
       )}
 
-      <h2 className="text-lg font-bold text-[#000000] mb-5">Experience</h2>
+      <h2 className="text-lg font-bold text-white mb-5">Experience</h2>
 
       {experiences.length === 0 ? (
-        <p className="text-sm text-[#5A5F69] italic">No experience added.</p>
+        <p className="text-sm text-[#a1a1a1] italic">No experience added.</p>
       ) : (
-        <div className="space-y-6 divide-y divide-gray-100">
+        <div className="space-y-6 divide-y divide-white/10">
           {experiences.map((exp) => {
             const companyName = getExpCompanyName(exp);
             const title = getExpTitle(exp);
@@ -114,27 +114,27 @@ export default function ExperienceSection({
 
             return (
               <div key={exp.id || Math.random()} className="flex gap-4 pt-5 first:pt-0">
-                <div className="w-12 h-12 rounded-lg bg-[#0F5B78]/10 text-[#0F5B78] flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-lg bg-[#0073ff]/10 text-[#0073ff] flex items-center justify-center shrink-0">
                   <Building2 size={24} />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   {/* Job Title / Designation */}
-                  <h3 className="font-bold text-base text-[#000000] leading-snug">{title}</h3>
+                  <h3 className="font-bold text-base text-white leading-snug">{title}</h3>
 
                   {/* Company Name & Employment Type */}
                   {companyName && (
-                    <p className="text-sm font-semibold text-[#000000] mt-0.5">
+                    <p className="text-sm font-semibold text-white mt-0.5">
                       {companyName}
                       {exp.employmentType && (
-                        <span className="font-normal text-[#5A5F69]"> · {exp.employmentType}</span>
+                        <span className="font-normal text-[#a1a1a1]"> · {exp.employmentType}</span>
                       )}
                     </p>
                   )}
 
                   {/* Date Range & Duration */}
                   {(dateRange || duration) && (
-                    <p className="text-xs text-[#5A5F69] mt-1 font-medium">
+                    <p className="text-xs text-[#a1a1a1] mt-1 font-medium">
                       {dateRange}
                       {duration && <span> · {duration}</span>}
                     </p>
@@ -142,14 +142,14 @@ export default function ExperienceSection({
 
                   {/* Location */}
                   {exp.location && (
-                    <p className="text-xs text-[#5A5F69] mt-0.5">
+                    <p className="text-xs text-[#a1a1a1] mt-0.5">
                       {exp.location}
                     </p>
                   )}
 
                   {/* Description (Existing Design) */}
                   {exp.description && (
-                    <p className="text-sm text-[#000000] mt-3 whitespace-pre-line leading-relaxed">
+                    <p className="text-sm text-white mt-3 whitespace-pre-line leading-relaxed">
                       {exp.description}
                     </p>
                   )}

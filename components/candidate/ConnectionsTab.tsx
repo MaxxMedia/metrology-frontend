@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback } from "react";
 import {
@@ -77,7 +77,7 @@ function Avatar({ name, src, size = 48 }: { name?: string; src?: string; size?: 
                 src={src}
                 alt={name || "User"}
                 style={{ width: size, height: size }}
-                className="rounded-full object-cover flex-shrink-0 border border-[#e0e0e0]"
+                className="rounded-full object-cover flex-shrink-0 border border-white/10"
             />
         );
     }
@@ -85,7 +85,7 @@ function Avatar({ name, src, size = 48 }: { name?: string; src?: string; size?: 
     return (
         <div
             style={{ width: size, height: size }}
-            className="rounded-full bg-[#0F5B78]/10 text-[#0F5B78] flex items-center justify-center font-bold flex-shrink-0 border border-[#e0e0e0]"
+            className="rounded-full bg-[#0073ff]/10 text-[#0073ff] flex items-center justify-center font-bold flex-shrink-0 border border-white/10"
         >
             {initials}
         </div>
@@ -94,11 +94,11 @@ function Avatar({ name, src, size = 48 }: { name?: string; src?: string; size?: 
 
 function SkeletonCard() {
     return (
-        <div className="bg-white rounded-xl border border-[#e0e0e0] p-4 flex items-center gap-3 animate-pulse">
-            <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0" />
+        <div className="bg-[#121213] rounded-xl border border-white/10 p-4 flex items-center gap-3 animate-pulse">
+            <div className="w-12 h-12 rounded-full bg-white/10 flex-shrink-0" />
             <div className="flex-1 space-y-2">
-                <div className="h-3.5 bg-gray-200 rounded w-2/3" />
-                <div className="h-3 bg-gray-100 rounded w-1/2" />
+                <div className="h-3.5 bg-white/10 rounded w-2/3" />
+                <div className="h-3 bg-white/5 rounded w-1/2" />
             </div>
         </div>
     );
@@ -116,11 +116,11 @@ function SkeletonGrid({ count = 3 }: { count?: number }) {
 
 function EmptyState({ icon, text }: { icon: React.ReactNode; text: string }) {
     return (
-        <div className="bg-white rounded-xl border border-dashed border-[#e0e0e0] py-10 text-center">
-            <div className="w-12 h-12 bg-[#0F5B78]/10 text-[#0F5B78] rounded-full flex items-center justify-center mx-auto mb-3">
+        <div className="bg-[#121213] rounded-xl border border-dashed border-white/10 py-10 text-center">
+            <div className="w-12 h-12 bg-[#0073ff]/10 text-[#0073ff] rounded-full flex items-center justify-center mx-auto mb-3">
                 {icon}
             </div>
-            <p className="text-sm text-[#5A5F69]">{text}</p>
+            <p className="text-sm text-[#a1a1a1]">{text}</p>
         </div>
     );
 }
@@ -136,10 +136,10 @@ function SectionHeader({
 }) {
     return (
         <div className="flex items-center gap-2 mb-3">
-            <div className="text-[#0F5B78]">{icon}</div>
-            <h3 className="text-base font-bold text-[#000000]">{title}</h3>
+            <div className="text-[#0073ff]">{icon}</div>
+            <h3 className="text-base font-bold text-white">{title}</h3>
             {typeof count === "number" && (
-                <span className="text-xs font-semibold bg-[#0F5B78]/10 text-[#0F5B78] px-2 py-0.5 rounded-full">
+                <span className="text-xs font-semibold bg-[#0073ff]/10 text-[#0073ff] px-2 py-0.5 rounded-full">
                     {count}
                 </span>
             )}
@@ -226,7 +226,7 @@ export default function ConnectionsTab() {
                 {["My Connections", "Pending Received Requests", "Pending Sent Requests", "People You May Know"].map(
                     (label) => (
                         <div key={label}>
-                            <div className="h-5 w-48 bg-gray-200 rounded mb-3 animate-pulse" />
+                            <div className="h-5 w-48 bg-white/10 rounded mb-3 animate-pulse" />
                             <SkeletonGrid count={3} />
                         </div>
                     )
@@ -239,11 +239,11 @@ export default function ConnectionsTab() {
 
     if (error) {
         return (
-            <div className="bg-white rounded-xl border border-[#e0e0e0] p-10 text-center">
+            <div className="bg-[#121213] rounded-xl border border-white/10 p-10 text-center">
                 <p className="text-sm text-red-600 font-medium mb-3">{error}</p>
                 <button
                     onClick={() => fetchAll()}
-                    className="text-sm font-semibold text-[#0F5B78] hover:underline"
+                    className="text-sm font-semibold text-[#0073ff] hover:underline"
                 >
                     Try again
                 </button>
@@ -271,16 +271,16 @@ export default function ConnectionsTab() {
                             return (
                                 <div
                                     key={user.id}
-                                    className="bg-white rounded-xl border border-[#e0e0e0] p-4 flex flex-col gap-3 shadow-sm"
+                                    className="bg-[#121213] rounded-xl border border-white/10 p-4 flex flex-col gap-3 shadow-sm"
                                 >
                                     <div className="flex items-center gap-3">
                                         <Avatar name={user.fullName} src={user.profileImage} />
                                         <div className="min-w-0">
-                                            <p className="text-sm font-bold text-[#000000] truncate">
+                                            <p className="text-sm font-bold text-white truncate">
                                                 {user.fullName || user.username || "Unknown"}
                                             </p>
                                             {user.headline && (
-                                                <p className="text-xs text-[#5A5F69] truncate">{user.headline}</p>
+                                                <p className="text-xs text-[#a1a1a1] truncate">{user.headline}</p>
                                             )}
                                             {user.location && (
                                                 <p className="text-xs text-[#8A8F99] flex items-center gap-1 mt-0.5 truncate">
@@ -293,7 +293,7 @@ export default function ConnectionsTab() {
                                     <button
                                         onClick={() => handleRemove(user.id)}
                                         disabled={actionLoading === key}
-                                        className="text-xs font-semibold border border-[#e0e0e0] text-[#5A5F69] hover:text-red-600 hover:border-red-300 rounded-full py-1.5 transition-colors disabled:opacity-60"
+                                        className="text-xs font-semibold border border-white/10 text-[#a1a1a1] hover:text-red-600 hover:border-red-300 rounded-full py-1.5 transition-colors disabled:opacity-60"
                                     >
                                         {actionLoading === key ? "Removing..." : "Remove Connection"}
                                     </button>
@@ -318,16 +318,16 @@ export default function ConnectionsTab() {
                             return (
                                 <div
                                     key={req.id}
-                                    className="bg-white rounded-xl border border-[#e0e0e0] p-4 flex flex-col gap-3 shadow-sm"
+                                    className="bg-[#121213] rounded-xl border border-white/10 p-4 flex flex-col gap-3 shadow-sm"
                                 >
                                     <div className="flex items-center gap-3">
                                         <Avatar name={req.sender?.fullName} src={req.sender?.profileImage} />
                                         <div className="min-w-0">
-                                            <p className="text-sm font-bold text-[#000000] truncate">
+                                            <p className="text-sm font-bold text-white truncate">
                                                 {req.sender?.fullName || req.sender?.username || "Unknown"}
                                             </p>
                                             {req.sender?.headline && (
-                                                <p className="text-xs text-[#5A5F69] truncate">{req.sender.headline}</p>
+                                                <p className="text-xs text-[#a1a1a1] truncate">{req.sender.headline}</p>
                                             )}
                                         </div>
                                     </div>
@@ -335,7 +335,7 @@ export default function ConnectionsTab() {
                                         <button
                                             onClick={() => handleAccept(req.id)}
                                             disabled={busy}
-                                            className="flex-1 flex items-center justify-center gap-1 text-xs font-semibold bg-[#0F5B78] hover:bg-[#0b445a] text-white rounded-full py-1.5 transition-colors disabled:opacity-60"
+                                            className="flex-1 flex items-center justify-center gap-1 text-xs font-semibold bg-[#0073ff] hover:bg-[#0060d6] text-white rounded-full py-1.5 transition-colors disabled:opacity-60"
                                         >
                                             <UserCheck size={13} />
                                             {actionLoading === acceptKey ? "Accepting..." : "Accept"}
@@ -343,7 +343,7 @@ export default function ConnectionsTab() {
                                         <button
                                             onClick={() => handleReject(req.id)}
                                             disabled={busy}
-                                            className="flex-1 flex items-center justify-center gap-1 text-xs font-semibold border border-[#e0e0e0] text-[#5A5F69] hover:text-red-600 hover:border-red-300 rounded-full py-1.5 transition-colors disabled:opacity-60"
+                                            className="flex-1 flex items-center justify-center gap-1 text-xs font-semibold border border-white/10 text-[#a1a1a1] hover:text-red-600 hover:border-red-300 rounded-full py-1.5 transition-colors disabled:opacity-60"
                                         >
                                             <UserX size={13} />
                                             {actionLoading === rejectKey ? "Rejecting..." : "Reject"}
@@ -368,16 +368,16 @@ export default function ConnectionsTab() {
                             return (
                                 <div
                                     key={req.id}
-                                    className="bg-white rounded-xl border border-[#e0e0e0] p-4 flex flex-col gap-3 shadow-sm"
+                                    className="bg-[#121213] rounded-xl border border-white/10 p-4 flex flex-col gap-3 shadow-sm"
                                 >
                                     <div className="flex items-center gap-3">
                                         <Avatar name={req.receiver?.fullName} src={req.receiver?.profileImage} />
                                         <div className="min-w-0">
-                                            <p className="text-sm font-bold text-[#000000] truncate">
+                                            <p className="text-sm font-bold text-white truncate">
                                                 {req.receiver?.fullName || req.receiver?.username || "Unknown"}
                                             </p>
                                             {req.receiver?.headline && (
-                                                <p className="text-xs text-[#5A5F69] truncate">{req.receiver.headline}</p>
+                                                <p className="text-xs text-[#a1a1a1] truncate">{req.receiver.headline}</p>
                                             )}
                                             <p className="text-xs text-[#8A8F99] flex items-center gap-1 mt-0.5">
                                                 <Clock size={11} />
@@ -388,7 +388,7 @@ export default function ConnectionsTab() {
                                     <button
                                         onClick={() => handleCancel(req.id)}
                                         disabled={actionLoading === key}
-                                        className="text-xs font-semibold border border-[#e0e0e0] text-[#5A5F69] hover:text-red-600 hover:border-red-300 rounded-full py-1.5 transition-colors disabled:opacity-60"
+                                        className="text-xs font-semibold border border-white/10 text-[#a1a1a1] hover:text-red-600 hover:border-red-300 rounded-full py-1.5 transition-colors disabled:opacity-60"
                                     >
                                         {actionLoading === key ? "Cancelling..." : "Cancel Request"}
                                     </button>
@@ -411,23 +411,23 @@ export default function ConnectionsTab() {
                             return (
                                 <div
                                     key={user.id}
-                                    className="bg-white rounded-xl border border-[#e0e0e0] p-4 flex flex-col gap-3 shadow-sm"
+                                    className="bg-[#121213] rounded-xl border border-white/10 p-4 flex flex-col gap-3 shadow-sm"
                                 >
                                     <div className="flex items-center gap-3">
                                         <Avatar name={user.fullName} src={user.profileImage} />
                                         <div className="min-w-0">
-                                            <p className="text-sm font-bold text-[#000000] truncate">
+                                            <p className="text-sm font-bold text-white truncate">
                                                 {user.fullName || user.username || "Unknown"}
                                             </p>
                                             {user.headline && (
-                                                <p className="text-xs text-[#5A5F69] truncate">{user.headline}</p>
+                                                <p className="text-xs text-[#a1a1a1] truncate">{user.headline}</p>
                                             )}
                                         </div>
                                     </div>
                                     <button
                                         onClick={() => handleConnect(user.id)}
                                         disabled={actionLoading === key}
-                                        className="flex items-center justify-center gap-1 text-xs font-semibold bg-[#0F5B78] hover:bg-[#0b445a] text-white rounded-full py-1.5 transition-colors disabled:opacity-60"
+                                        className="flex items-center justify-center gap-1 text-xs font-semibold bg-[#0073ff] hover:bg-[#0060d6] text-white rounded-full py-1.5 transition-colors disabled:opacity-60"
                                     >
                                         <UserPlus size={13} />
                                         {actionLoading === key ? "Sending..." : "Connect"}

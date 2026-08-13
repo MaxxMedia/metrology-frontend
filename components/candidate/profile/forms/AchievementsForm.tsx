@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Formik, Form, Field, FieldArray, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
@@ -65,19 +65,19 @@ export default function AchievementsForm({
               <>
                 <div className="space-y-6">
                   {values.achievements.map((_, index) => (
-                    <div key={index} className="border border-gray-200 rounded-xl p-5 bg-white relative space-y-4 shadow-2xs">
+                    <div key={index} className="border border-white/10 rounded-xl p-5 bg-[#171A1E] relative space-y-4 shadow-2xs">
                       {values.achievements.length > 1 && (
                         <button
                           type="button"
                           onClick={() => remove(index)}
-                          className="absolute top-4 right-4 text-[#5A5F69] hover:text-[#B40F24] transition-colors p-1 rounded-full hover:bg-gray-100 cursor-pointer"
+                          className="absolute top-4 right-4 text-[#a1a1a1] hover:text-[#0073ff] transition-colors p-1 rounded-full hover:bg-white/10 cursor-pointer"
                           title="Remove Accomplishment"
                         >
                           <Trash2 size={16} />
                         </button>
                       )}
 
-                      <h4 className="font-bold text-sm text-[#000000]">
+                      <h4 className="font-bold text-sm text-white">
                         Accomplishment #{index + 1}
                       </h4>
 
@@ -104,7 +104,7 @@ export default function AchievementsForm({
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-[#5A5F69] uppercase tracking-wider mb-1.5">
+                        <label className="block text-xs font-semibold text-[#a1a1a1] uppercase tracking-wider mb-1.5">
                           Description
                         </label>
                         <Field
@@ -112,7 +112,7 @@ export default function AchievementsForm({
                           rows={3}
                           name={`achievements.${index}.description`}
                           placeholder="Describe your achievement, award criteria, or key accomplishments..."
-                          className="w-full border border-gray-300 rounded-lg p-3 text-sm text-[#000000] focus:outline-none focus:ring-2 focus:ring-[#0F5B78] focus:border-transparent transition-all"
+                          className="w-full border border-white/20 rounded-lg p-3 text-sm text-white bg-[#171A1E] focus:outline-none focus:ring-2 focus:ring-[#0073ff] focus:border-transparent transition-all"
                         />
                         <ErrorMessage
                           name={`achievements.${index}.description`}
@@ -134,7 +134,7 @@ export default function AchievementsForm({
                       description: "",
                     })
                   }
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0F5B78] hover:underline cursor-pointer pt-1"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0073ff] hover:underline cursor-pointer pt-1"
                 >
                   <Plus size={16} />
                   Add another accomplishment
@@ -143,11 +143,11 @@ export default function AchievementsForm({
             )}
           </FieldArray>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+          <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
             <button
               type="submit"
               disabled={loading || isSubmitting}
-              className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-sm"
+              className="bg-[#0073ff] hover:bg-[#0060d6] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-sm"
             >
               {(loading || isSubmitting) && <Loader2 size={16} className="animate-spin" />}
               Save
@@ -179,7 +179,7 @@ function Input({
 
   return (
     <div>
-      <label className="block text-xs font-semibold text-[#5A5F69] uppercase tracking-wider mb-1.5">
+      <label className="block text-xs font-semibold text-[#a1a1a1] uppercase tracking-wider mb-1.5">
         {label}
       </label>
       <input
@@ -187,7 +187,7 @@ function Input({
         type={type}
         value={value}
         placeholder={placeholder}
-        className="w-full border border-gray-300 rounded-lg px-3.5 py-2 text-sm text-[#000000] focus:outline-none focus:ring-2 focus:ring-[#0F5B78] focus:border-transparent transition-all"
+        className="w-full border border-white/20 rounded-lg px-3.5 py-2 text-sm text-white bg-[#171A1E] focus:outline-none focus:ring-2 focus:ring-[#0073ff] focus:border-transparent transition-all"
       />
       {meta.touched && meta.error && (
         <p className="text-red-500 text-xs mt-1 font-medium">{meta.error}</p>

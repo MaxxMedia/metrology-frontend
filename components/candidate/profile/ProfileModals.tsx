@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { X } from "lucide-react";
 import BasicInfoForm, { type BasicInfoValues } from "@/components/candidate/profile/forms/BasicInfoForm";
@@ -68,10 +68,10 @@ export default function ProfileModals({
 
   return (
     <div className="fixed inset-0 bg-[#000000]/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-[#121213] rounded-2xl shadow-2xl border border-white/10 max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
         {/* Sticky LinkedIn Modal Header */}
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-white shrink-0">
-          <h3 className="text-lg sm:text-xl font-bold text-[#000000]">
+        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-[#171A1E] shrink-0">
+          <h3 className="text-lg sm:text-xl font-bold text-white">
             {activeModal === "intro" && "Edit intro"}
             {activeModal === "about" && "Edit about"}
             {activeModal === "experience" && "Edit experience"}
@@ -86,7 +86,7 @@ export default function ProfileModals({
           </h3>
           <button
             onClick={onClose}
-            className="text-[#5A5F69] hover:text-[#000000] p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+            className="text-[#a1a1a1] hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
             title="Close"
           >
             <X size={20} />

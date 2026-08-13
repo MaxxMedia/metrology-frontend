@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import {
@@ -69,7 +69,7 @@ export default function ConnectionButton({
 
   if (!status) {
     return (
-      <button disabled className="rounded-lg bg-gray-200 px-4 py-2">
+      <button disabled className="rounded-lg bg-white/10 text-[#a1a1a1] px-4 py-2">
         Loading...
       </button>
     );
@@ -82,14 +82,14 @@ export default function ConnectionButton({
   switch (status.status) {
     case "CONNECTED":
       return (
-        <button disabled className="bg-[#0F5B78] text-white px-5 py-2 rounded-full font-semibold text-sm shadow-sm opacity-90 cursor-default">
+        <button disabled className="bg-[#0073ff] text-white px-5 py-2 rounded-full font-semibold text-sm shadow-sm opacity-90 cursor-default">
           Connected
         </button>
       );
 
     case "PENDING_SENT":
       return (
-        <button disabled className="bg-[#0F5B78]/80 text-white px-5 py-2 rounded-full font-semibold text-sm shadow-sm cursor-default">
+        <button disabled className="bg-[#0073ff]/80 text-white px-5 py-2 rounded-full font-semibold text-sm shadow-sm cursor-default">
           Pending
         </button>
       );
@@ -100,7 +100,7 @@ export default function ConnectionButton({
           <button
             onClick={handleAccept}
             disabled={loading}
-            className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm disabled:opacity-60 cursor-pointer"
+            className="bg-[#0073ff] hover:bg-[#0060d6] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm disabled:opacity-60 cursor-pointer"
           >
             {loading ? "Accepting..." : "Accept"}
           </button>
@@ -117,7 +117,7 @@ export default function ConnectionButton({
           <button
             onClick={handleConnect}
             disabled={loading}
-            className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm disabled:opacity-60 cursor-pointer"
+            className="bg-[#0073ff] hover:bg-[#0060d6] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm disabled:opacity-60 cursor-pointer"
           >
             {loading ? "Sending..." : "Connect"}
           </button>

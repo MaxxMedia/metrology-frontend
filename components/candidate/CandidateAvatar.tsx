@@ -42,7 +42,7 @@ export default function CandidateAvatar({
           src={avatarUrl}
           alt={name || "Profile photo"}
           fill
-          className={`rounded-full object-cover bg-white ${borderClassName}`}
+          className={`rounded-full object-cover bg-[#171A1E] ${borderClassName}`}
           sizes={size === "xl" ? "96px" : size === "lg" ? "80px" : size === "md" ? "64px" : "40px"}
           unoptimized={avatarUrl.includes("cloudinary")}
         />
@@ -52,7 +52,7 @@ export default function CandidateAvatar({
 
   return (
     <div
-      className={`${config.box} flex-shrink-0 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center ${borderClassName} ${className}`}
+      className={`${config.box} flex-shrink-0 rounded-full bg-[#171A1E] text-[#a1a1a1] flex items-center justify-center ${borderClassName} ${className}`}
       aria-label={name ? `${name} avatar placeholder` : "No profile photo"}
     >
       {initials ? (

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useRef } from "react";
 import {
@@ -556,7 +556,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
 
     if (loading) {
         return (
-            <div className="bg-white rounded-lg border border-[#e0e0e0] p-12 text-center">
+            <div className="bg-white rounded-lg border border-white/10 p-12 text-center">
                 <Loader2 className="w-8 h-8 animate-spin text-[#0a66c2] mx-auto mb-2" />
                 <p className="text-gray-500 text-sm">Loading edit forms...</p>
             </div>
@@ -616,7 +616,7 @@ function getRoleAndOrganization(candidate: any) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* SIDEBAR NAVIGATION */}
             <aside className="lg:col-span-3">
-                <div className="bg-white rounded-lg border border-[#e0e0e0] shadow-sm lg:sticky lg:top-6 overflow-hidden">
+                <div className="bg-white rounded-lg border border-white/10 shadow-sm lg:sticky lg:top-6 overflow-hidden">
                     <div className="px-4 py-3 border-b border-gray-100">
                         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                             Select Section To Edit
@@ -632,7 +632,7 @@ function getRoleAndOrganization(candidate: any) {
                                     onClick={() => setActiveSection(section.id)}
                                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${isActive
                                         ? "bg-[#0a66c2] text-white shadow-sm font-semibold"
-                                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                        : "text-gray-700 hover:bg-white/10 hover:text-gray-900"
                                         }`}
                                 >
                                     <Icon
@@ -657,7 +657,7 @@ function getRoleAndOrganization(candidate: any) {
             {/* SINGLE ACTIVE FORM CARD (NO LONG LADDER SCROLL) */}
             <main className="lg:col-span-9 space-y-6">
                 {/* Horizontal Mobile/Sub Section Tabs */}
-                <div className="bg-white rounded-lg border border-[#e0e0e0] p-2 shadow-sm flex items-center gap-2 overflow-x-auto scrollbar-hide">
+                <div className="bg-white rounded-lg border border-white/10 p-2 shadow-sm flex items-center gap-2 overflow-x-auto scrollbar-hide">
                     {sidebarSections.map((section) => {
                         const Icon = section.icon;
                         const isActive = activeSection === section.id;
@@ -841,7 +841,7 @@ function SectionCard({
     children: React.ReactNode;
 }) {
     return (
-        <div className="bg-white rounded-lg border border-[#e0e0e0] shadow-sm overflow-hidden">
+        <div className="bg-white rounded-lg border border-white/10 shadow-sm overflow-hidden">
             <div className="px-6 py-5 border-b border-gray-100">
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-[#0a66c2]/10 flex items-center justify-center">

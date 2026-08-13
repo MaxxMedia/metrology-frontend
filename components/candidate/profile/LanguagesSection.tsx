@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Pencil } from "lucide-react";
 
@@ -20,18 +20,18 @@ export default function LanguagesSection({
   onEditClick,
 }: Props) {
   return (
-    <div className="bg-white rounded-xl border border-[#e0e0e0] p-6 shadow-sm relative">
+    <div className="bg-[#121213] rounded-xl border border-white/10 p-6 shadow-sm relative">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-[#000000]">
-          Languages {languages.length > 0 && <span className="text-[#5A5F69] font-normal">({languages.length})</span>}
+        <h2 className="text-lg font-bold text-white">
+          Languages {languages.length > 0 && <span className="text-[#a1a1a1] font-normal">({languages.length})</span>}
         </h2>
 
         {(!editable && onEditClick) && (
           <button
             onClick={onEditClick}
             title="Edit Languages"
-            className="text-[#5A5F69] hover:text-[#0F5B78] transition-colors p-1.5 rounded-full hover:bg-gray-100 cursor-pointer"
+            className="text-[#a1a1a1] hover:text-[#0073ff] transition-colors p-1.5 rounded-full hover:bg-white/10 cursor-pointer"
           >
             <Pencil size={16} />
           </button>
@@ -39,7 +39,7 @@ export default function LanguagesSection({
 
         {editable && (
           <button
-            className="text-[#5A5F69] hover:text-[#0F5B78] transition-colors p-1.5 rounded-full hover:bg-gray-100 cursor-pointer"
+            className="text-[#a1a1a1] hover:text-[#0073ff] transition-colors p-1.5 rounded-full hover:bg-white/10 cursor-pointer"
           >
             <Pencil size={16} />
           </button>
@@ -47,18 +47,18 @@ export default function LanguagesSection({
       </div>
 
       {languages.length === 0 ? (
-        <p className="text-sm text-[#5A5F69] italic">No languages added.</p>
+        <p className="text-sm text-[#a1a1a1] italic">No languages added.</p>
       ) : (
         /* Horizontal Languages Layout */
         <div className="flex flex-wrap gap-2.5">
           {languages.map((lang) => (
             <div
               key={lang.id || Math.random()}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-gray-200 bg-white hover:border-[#0F5B78] hover:bg-[#0F5B78]/5 transition-all shadow-2xs"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-white/10 bg-[#171A1E] hover:border-[#0073ff] hover:bg-[#0073ff]/5 transition-all shadow-2xs"
             >
-              <span className="font-bold text-sm text-[#000000]">{lang.language}</span>
+              <span className="font-bold text-sm text-white">{lang.language}</span>
               {lang.proficiency && (
-                <span className="text-xs text-[#5A5F69] bg-gray-100 px-2.5 py-0.5 rounded-full font-medium">
+                <span className="text-xs text-[#a1a1a1] bg-white/10 px-2.5 py-0.5 rounded-full font-medium">
                   {lang.proficiency}
                 </span>
               )}
