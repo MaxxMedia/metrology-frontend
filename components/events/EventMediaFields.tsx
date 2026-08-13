@@ -157,12 +157,12 @@ export default function EventMediaFields({
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 text-[#CCCCCC]">
             {/* ================= IMAGE GALLERY ================= */}
             <div>
                 <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-gray-800">Images Gallery</h3>
-                    <label className="flex items-center gap-1 text-xs font-medium text-red-600 border border-red-500 rounded-lg px-3 py-1.5 cursor-pointer hover:bg-red-50">
+                    <h3 className="text-sm font-semibold text-[#FFFFFF]">Images Gallery</h3>
+                    <label className="flex items-center gap-1 text-xs font-semibold text-[#00B5ED] border border-[#292C30] rounded-xl px-3.5 py-2 cursor-pointer bg-[#171A1E] hover:text-[#0073FF] hover:border-[#00B5ED]/40 transition">
                         <Plus size={14} />
                         Add Images
                         <input
@@ -179,7 +179,7 @@ export default function EventMediaFields({
                 </div>
 
                 {images.length === 0 ? (
-                    <p className="text-sm text-gray-400 border border-dashed border-gray-300 rounded-lg py-6 text-center">
+                    <p className="text-sm text-[#858585] border border-dashed border-[#292C30] bg-[#171A1E] rounded-xl py-6 text-center">
                         No images added yet. Click "Add Images" to upload from your device.
                     </p>
                 ) : (
@@ -187,18 +187,18 @@ export default function EventMediaFields({
                         {images.map(img => (
                             <div
                                 key={img.id}
-                                className="relative w-full aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-50"
+                                className="relative w-full aspect-video rounded-xl overflow-hidden border border-[#292C30] bg-[#171A1E]"
                             >
                                 <Image src={img.previewUrl} alt="" fill className="object-cover" unoptimized />
 
                                 {img.uploading && (
-                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                        <Loader2 size={18} className="text-white animate-spin" />
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                        <Loader2 size={18} className="text-[#00B5ED] animate-spin" />
                                     </div>
                                 )}
 
                                 {img.error && (
-                                    <div className="absolute inset-x-0 bottom-0 bg-red-600/90 text-white text-[10px] px-1.5 py-1 text-center">
+                                    <div className="absolute inset-x-0 bottom-0 bg-rose-600/90 text-white text-[10px] px-1.5 py-1 text-center">
                                         {img.error}
                                     </div>
                                 )}
@@ -206,7 +206,7 @@ export default function EventMediaFields({
                                 <button
                                     type="button"
                                     onClick={() => removeImage(img.id)}
-                                    className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 text-white w-6 h-6 rounded-full flex items-center justify-center"
+                                    className="absolute top-1.5 right-1.5 bg-black/70 hover:bg-rose-600 text-white w-6 h-6 rounded-full flex items-center justify-center transition"
                                     aria-label="Remove image"
                                 >
                                     <X size={12} />
@@ -220,7 +220,7 @@ export default function EventMediaFields({
             {/* ================= VIDEO GALLERY ================= */}
             <div>
                 <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-gray-800">Video Gallery (YouTube)</h3>
+                    <h3 className="text-sm font-semibold text-[#FFFFFF]">Video Gallery (YouTube)</h3>
                 </div>
 
                 <div className="space-y-3">
@@ -229,7 +229,7 @@ export default function EventMediaFields({
                         return (
                             <div key={video.id} className="flex items-start gap-3">
                                 {ytId ? (
-                                    <div className="relative w-24 h-14 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
+                                    <div className="relative w-24 h-14 flex-shrink-0 rounded-xl overflow-hidden bg-[#171A1E] border border-[#292C30]">
                                         <Image
                                             src={`https://img.youtube.com/vi/${ytId}/default.jpg`}
                                             alt=""
@@ -239,7 +239,7 @@ export default function EventMediaFields({
                                         />
                                     </div>
                                 ) : (
-                                    <div className="w-24 h-14 flex-shrink-0 rounded-md bg-gray-100 border border-gray-200 flex items-center justify-center text-[10px] text-gray-400 text-center px-1">
+                                    <div className="w-24 h-14 flex-shrink-0 rounded-xl bg-[#171A1E] border border-[#292C30] flex items-center justify-center text-[10px] text-[#858585] text-center px-1">
                                         No preview
                                     </div>
                                 )}
@@ -250,10 +250,10 @@ export default function EventMediaFields({
                                         placeholder="Paste YouTube video URL"
                                         value={video.url}
                                         onChange={e => updateVideoUrl(video.id, e.target.value)}
-                                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="w-full border border-[#292C30] rounded-xl px-3 py-2 text-sm bg-[#171A1E] text-[#FFFFFF] placeholder:text-[#858585] focus:outline-none focus:ring-2 focus:ring-[#00B5ED]"
                                     />
                                     {video.error && (
-                                        <p className="text-xs text-red-600 mt-1">{video.error}</p>
+                                        <p className="text-xs text-rose-400 mt-1">{video.error}</p>
                                     )}
                                 </div>
 
@@ -261,7 +261,7 @@ export default function EventMediaFields({
                                     type="button"
                                     onClick={() => removeVideoField(video.id)}
                                     disabled={videos.length === 1}
-                                    className="mt-2 text-gray-400 hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                                    className="mt-2 text-[#858585] hover:text-rose-400 disabled:opacity-30 disabled:cursor-not-allowed transition"
                                     aria-label="Remove video field"
                                 >
                                     <X size={16} />
@@ -274,7 +274,7 @@ export default function EventMediaFields({
                 <button
                     type="button"
                     onClick={addVideoField}
-                    className="mt-3 flex items-center gap-1 text-xs font-medium text-red-600 border border-red-500 rounded-lg px-3 py-1.5 hover:bg-red-50"
+                    className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#00B5ED] border border-[#292C30] bg-[#171A1E] rounded-xl px-3.5 py-2 hover:text-[#0073FF] hover:border-[#00B5ED]/40 transition"
                 >
                     <Plus size={14} />
                     Add Another Video

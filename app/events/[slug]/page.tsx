@@ -74,8 +74,8 @@ export default async function EventDetailsPage({
 
   if (!event) {
     return (
-      <div className="max-w-4xl mx-auto p-10" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
-        <h1 className="text-[24px] font-bold">Event not found</h1>
+      <div className="max-w-4xl mx-auto p-10 min-h-screen bg-[#171A1E] text-white">
+        <h1 className="text-[24px] font-bold text-white">Event not found</h1>
       </div>
     )
   }
@@ -83,62 +83,61 @@ export default async function EventDetailsPage({
   const upcomingEvents = await getUpcomingEvents(slug)
 
   return (
-    <div className="w-full bg-gray-50" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+    <div className="w-full bg-[#171A1E] text-[#CCCCCC] min-h-screen">
       <EventViewTracker slug={slug} />
 
       {/* ================= HEADER ================= */}
-      <div className="relative bg-gradient-to-r from-[#1a6d8a] via-[#3a3a3a] to-[#c73b4f] text-white overflow-hidden">
+      <div className="relative bg-gradient-to-r from-[#171A1E] via-[#1D2125] to-[#1D247B] text-white border-b border-[#292C30] overflow-hidden">
         {event.bannerUrl && (
           <Image src={event.bannerUrl} alt={event.title} fill className="object-cover opacity-20" priority />
         )}
-        <div className="relative max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row md:items-center gap-6">
+        <div className="relative max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row md:items-center gap-6">
           {event.logoUrl && (
-            <div className="p-2 border bg-gray-500 rounded-4xl w-24 flex-shrink-0">
+            <div className="p-2 border border-[#292C30] bg-[#171A1E] rounded-2xl w-24 flex-shrink-0">
               <Image src={event.logoUrl} alt={event.title} width={90} height={50} className="object-contain rounded-sm" />
-
             </div>
           )}
 
           <div className="flex-1">
-            <h1 className="text-[24px] font-bold mb-3">{event.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-3 text-white">{event.title}</h1>
 
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-[16px] mb-2">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#CCCCCC] mb-2">
               <span className="flex items-center gap-2">
-                <Calendar size={14} />
+                <Calendar size={15} className="text-[#00B5ED]" />
                 {formatDate(event.startDate)} – {formatDate(event.endDate)}
               </span>
               {event.timings && (
                 <span className="flex items-center gap-2">
-                  <Clock size={14} />
+                  <Clock size={15} className="text-[#00B5ED]" />
                   {event.timings}
                 </span>
               )}
             </div>
 
             {event.location && (
-              <span className="flex items-center gap-2 text-[16px]">
-                <MapPin size={14} />
+              <span className="flex items-center gap-2 text-sm text-[#CCCCCC]">
+                <MapPin size={15} className="text-[#00B5ED]" />
                 {event.location}
               </span>
             )}
           </div>
 
-          <div className="text-[12px] space-y-2 md:text-right">
+          <div className="text-xs space-y-2 md:text-right text-[#CCCCCC]">
             {event.websiteUrl && (
               <span className="flex md:justify-end items-center gap-2">
-                <Globe size={14} />
+                <Globe size={14} className="text-[#00B5ED]" />
                 {event.websiteUrl.replace(/^https?:\/\//, "")}
               </span>
             )}
             {event.email && (
               <span className="flex md:justify-end items-center gap-2">
-                <Mail size={14} />
+                <Mail size={14} className="text-[#00B5ED]" />
                 {event.email}
               </span>
             )}
             {event.phone && (
               <span className="flex md:justify-end items-center gap-2">
-                <Phone size={14} />
+                <Phone size={14} className="text-[#00B5ED]" />
                 {event.phone}
               </span>
             )}
@@ -147,12 +146,12 @@ export default async function EventDetailsPage({
       </div>
 
       {/* ================= BREADCRUMB ================= */}
-      <div className="max-w-7xl mx-auto px-6 pt-4 text-[12px] text-gray-500">
-        <Link href="/" className="hover:underline">Home</Link>
+      <div className="max-w-7xl mx-auto px-6 pt-4 text-xs text-[#B8B8B8]">
+        <Link href="/" className="hover:underline hover:text-white">Home</Link>
         <span className="mx-2">›</span>
-        <Link href="/events" className="hover:underline">Events</Link>
+        <Link href="/events" className="hover:underline hover:text-white">Events</Link>
         <span className="mx-2">›</span>
-        <span className="text-gray-700">{event.title}</span>
+        <span className="text-white font-medium">{event.title}</span>
       </div>
 
       {/* ================= CONTENT ================= */}
@@ -165,7 +164,6 @@ export default async function EventDetailsPage({
               description: event.description,
               images: event.otherImages ?? [],
               videos: event.videoGallery ?? [],
-              // provide a primary video URL if EventTabs expects videoUrl
               videoUrl: event.videoGallery && event.videoGallery.length > 0 ? event.videoGallery[0] : undefined,
               frequency: event.frequency,
               edition: event.edition,
@@ -184,13 +182,13 @@ export default async function EventDetailsPage({
 
           {/* LOCATION */}
           {event.location && (
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-              <div className="px-4 py-3 border-b flex items-center justify-between">
-                <h3 className="text-[20px] font-semibold">Location</h3>
+            <div className="bg-[#1D2125] border border-[#292C30] rounded-xl overflow-hidden text-white">
+              <div className="px-4 py-3 border-b border-[#292C30] flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">Location</h3>
                 <Link
                   href={event.mapUrl || `https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
                   target="_blank"
-                  className="text-[12px] text-[#0f5b78] hover:underline"
+                  className="text-xs text-[#00B5ED] hover:underline"
                 >
                   Open in Maps ↗
                 </Link>
@@ -207,37 +205,37 @@ export default async function EventDetailsPage({
           )}
 
           {/* ENQUIRE FORM */}
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <h3 className="text-[20px] font-semibold mb-3">Enquire Form</h3>
+          <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-4 text-white">
+            <h3 className="text-lg font-semibold text-white mb-3">Enquire Form</h3>
             <EventEnquireForm slug={slug} />
           </div>
 
           {/* UPCOMING EVENTS */}
           {upcomingEvents.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-xl p-4">
-              <h3 className="text-[20px] font-semibold text-[#0f5b78] border-b-2 border-[#0f5b78] inline-block pb-1 mb-4">
+            <div className="bg-[#1D2125] border border-[#292C30] rounded-xl p-4 text-white">
+              <h3 className="text-lg font-semibold text-white border-b-2 border-[#00B5ED] inline-block pb-1 mb-4">
                 Upcoming Events
               </h3>
               <div className="space-y-4">
                 {upcomingEvents.map((e, i) => (
-                  <Link key={e.id} href={`/events/${e.slug}`} className="block">
+                  <Link key={e.id} href={`/events/${e.slug}`} className="block group">
                     {e.bannerUrl && (
-                      <div className="relative w-full h-28 rounded-lg overflow-hidden mb-2">
-                        <Image src={e.bannerUrl} alt={e.title} fill className="object-cover" unoptimized />
+                      <div className="relative w-full h-28 rounded-lg overflow-hidden mb-2 border border-[#292C30] bg-[#171A1E]">
+                        <Image src={e.bannerUrl} alt={e.title} fill className="object-cover group-hover:scale-105 transition duration-300" unoptimized />
                       </div>
                     )}
-                    <p className="text-[15px] font-semibold text-gray-900 mb-1">{e.title}</p>
-                    <p className="flex items-center gap-2 text-[12px] text-gray-500 mb-1">
-                      <Calendar size={12} />
+                    <p className="text-sm font-semibold text-white group-hover:text-[#00B5ED] transition-colors mb-1">{e.title}</p>
+                    <p className="flex items-center gap-2 text-xs text-[#B8B8B8] mb-1">
+                      <Calendar size={12} className="text-[#00B5ED]" />
                       {formatDate(e.startDate)}
                     </p>
                     {e.location && (
-                      <p className="flex items-center gap-2 text-[12px] text-gray-500">
-                        <MapPin size={12} />
+                      <p className="flex items-center gap-2 text-xs text-[#B8B8B8]">
+                        <MapPin size={12} className="text-[#00B5ED]" />
                         {e.location}
                       </p>
                     )}
-                    {i < upcomingEvents.length - 1 && <hr className="mt-4" />}
+                    {i < upcomingEvents.length - 1 && <hr className="mt-4 border-[#292C30]" />}
                   </Link>
                 ))}
               </div>
