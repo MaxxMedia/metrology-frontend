@@ -13,7 +13,7 @@ export function PlanGatedSection({
 }) {
     if (!allowed) {
         return (
-            <div className="rounded-lg border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+            <div className="rounded-xl border border-dashed border-[#292C30] bg-[#171A1E] p-4 text-sm text-[#B8B8B8]">
                 {upgradeMessage}
             </div>
         );

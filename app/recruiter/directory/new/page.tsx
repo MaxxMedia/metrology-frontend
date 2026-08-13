@@ -505,8 +505,11 @@ export default function AddDirectoryPage() {
 
   if (!geo || !eligibilityLoaded) {
     return (
-      <div className="max-w-3xl mx-auto p-10">
-        <p className="text-gray-600">Loading form...</p>
+      <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] flex items-center justify-center p-10">
+        <div className="text-center">
+          <div className="w-10 h-10 border-[3px] border-[#00B5ED] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-sm text-[#CCCCCC]">Loading form...</p>
+        </div>
       </div>
     );
   }
@@ -523,15 +526,15 @@ export default function AddDirectoryPage() {
   // Business rule: a recruiter account can create only one supplier directory.
   if (singleDirectoryAlreadyUsed) {
     return (
-      <div className="max-w-3xl mx-auto p-10">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-6">
-          <h1 className="text-2xl font-bold text-gray-900">Add Supplier Directory</h1>
-          <p className="mt-3 text-sm text-gray-700">
+      <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] flex items-center justify-center p-6 md:p-10">
+        <div className="w-full max-w-3xl rounded-xl border border-amber-500/30 bg-amber-500/10 p-6 text-amber-300">
+          <h1 className="text-2xl font-bold text-[#FFFFFF]">Add Supplier Directory</h1>
+          <p className="mt-3 text-sm text-[#CCCCCC]">
             Only one supplier directory can be created for this account. Please edit your existing directory instead of creating a new one.
           </p>
           <Link
             href="/recruiter/directories"
-            className="mt-4 inline-block rounded bg-black px-5 py-2 text-sm text-white"
+            className="mt-4 inline-block rounded-xl bg-[#0073FF] hover:bg-[#0060D0] px-5 py-2.5 text-sm font-semibold text-white transition"
           >
             Back to My Directories
           </Link>
@@ -541,15 +544,18 @@ export default function AddDirectoryPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-10">
-      <h1 className="text-2xl font-bold mb-2">Add Supplier Directory</h1>
-      {listingEligibility && (
-        <p className="text-sm text-gray-500 mb-6">
-          {listingEligibility.isUnlimited
-            ? "Your plan includes unlimited supplier directories."
-            : `Directory slots: ${listingEligibility.activeListings ?? 0} of ${listingEligibility.effectiveLimit ?? 0} used · ${listingEligibility.remaining ?? 0} remaining`}
-        </p>
-      )}
+    <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] p-6 md:p-10">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-[#FFFFFF] mb-1">Add Supplier Directory</h1>
+          {listingEligibility && (
+            <p className="text-sm text-[#B8B8B8]">
+              {listingEligibility.isUnlimited
+                ? "Your plan includes unlimited supplier directories."
+                : `Directory slots: ${listingEligibility.activeListings ?? 0} of ${listingEligibility.effectiveLimit ?? 0} used · ${listingEligibility.remaining ?? 0} remaining`}
+            </p>
+          )}
+        </div>
 
       <Formik
         initialValues={{
@@ -614,9 +620,9 @@ export default function AddDirectoryPage() {
           const atDescriptionLimit = wordLimit !== null && wordCount >= wordLimit;
 
           return (
-            <Form className="space-y-6 bg-white p-6 rounded-xl shadow">
+            <Form className="space-y-6 bg-[#1D2125] border border-[#292C30] p-6 md:p-8 rounded-xl shadow-lg text-[#CCCCCC]">
               {status && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 px-4 py-3 rounded-xl">
                   <p>{status}</p>
                 </div>
               )}
@@ -995,7 +1001,7 @@ export default function AddDirectoryPage() {
                   allowed={isFeatureAllowed(profileLimits?.productVideos)}
                   upgradeMessage="Product Videos are available on Basic plan and above."
                 >
-                  <p className="text-xs text-gray-400 mb-2">
+                  <p className="text-xs text-[#B8B8B8] mb-2">
                     {isUnlimited(profileLimits?.productVideos)
                       ? "Unlimited videos on your plan."
                       : `Your plan allows up to ${getDisplayLimit(profileLimits?.productVideos)} videos.`}
@@ -1008,16 +1014,16 @@ export default function AddDirectoryPage() {
                       return (
                         <>
                           {values.videoGallery.map((item: string, i: number) => (
-                            <div key={i} className="flex gap-2">
+                            <div key={i} className="flex gap-2 mb-2">
                               <Field name={`videoGallery.${i}`} className="input flex-1" placeholder="YouTube URL" />
-                              {i > 0 && <button type="button" onClick={() => remove(i)}>✕</button>}
+                              {i > 0 && <button type="button" onClick={() => remove(i)} className="text-rose-400 hover:text-rose-300 px-2 font-bold">✕</button>}
                             </div>
                           ))}
                           <button
                             type="button"
                             onClick={() => push("")}
                             disabled={atLimit}
-                            className="disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="disabled:opacity-40 disabled:cursor-not-allowed border border-[#292C30] px-4 py-2 rounded-xl bg-[#171A1E] text-[#00B5ED] hover:text-[#0073FF] hover:border-[#00B5ED]/40 text-sm font-semibold transition"
                           >
                             + Add video
                             {!isUnlimited(profileLimits?.productVideos) &&
@@ -1036,7 +1042,7 @@ export default function AddDirectoryPage() {
                   allowed={isFeatureAllowed(profileLimits?.productImages)}
                   upgradeMessage="Product Gallery is available on all plans. Free plan allows up to 10 images."
                 >
-                  <p className="text-xs text-gray-400 mb-2">
+                  <p className="text-xs text-[#B8B8B8] mb-2">
                     {isUnlimited(profileLimits?.productImages)
                       ? "Unlimited product images on your plan."
                       : `Your plan allows up to ${getDisplayLimit(profileLimits?.productImages)} product images.`}
@@ -1045,14 +1051,14 @@ export default function AddDirectoryPage() {
                     {({ push, remove }) => (
                       <div className="space-y-4">
                         {values.productGallery.map((item: any, i: number) => (
-                          <div key={i} className="p-4 border rounded-lg space-y-3 bg-white">
+                          <div key={i} className="p-4 border border-[#292C30] rounded-xl space-y-3 bg-[#171A1E] text-[#CCCCCC]">
                             <div className="flex justify-between items-start">
-                              <span className="text-sm font-medium">Product Image {i + 1}</span>
+                              <span className="text-sm font-medium text-[#FFFFFF]">Product Image {i + 1}</span>
                               {i > 0 && (
                                 <button
                                   type="button"
                                   onClick={() => remove(i)}
-                                  className="text-red-500 hover:text-red-700"
+                                  className="text-rose-400 hover:text-rose-300 text-xs font-semibold"
                                 >
                                   ✕ Remove
                                 </button>
@@ -1060,7 +1066,7 @@ export default function AddDirectoryPage() {
                             </div>
 
                             <div>
-                              <label className="text-sm font-medium block mb-1">Image</label>
+                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Image</label>
                               <UploadBox
                                 label="Upload Image"
                                 value={item.image}
@@ -1069,7 +1075,7 @@ export default function AddDirectoryPage() {
                             </div>
 
                             <div>
-                              <label className="text-sm font-medium block mb-1">Product Name</label>
+                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Product Name</label>
                               <Field
                                 name={`productGallery.${i}.name`}
                                 className="input w-full"
@@ -1078,7 +1084,7 @@ export default function AddDirectoryPage() {
                             </div>
 
                             <div>
-                              <label className="text-sm font-medium block mb-1">Description</label>
+                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Description</label>
                               <Field
                                 name={`productGallery.${i}.description`}
                                 className="input w-full"
@@ -1097,7 +1103,7 @@ export default function AddDirectoryPage() {
                             !isUnlimited(profileLimits?.productImages) &&
                             values.productGallery.length >= (getFeatureLimit(profileLimits?.productImages) ?? 0)
                           }
-                          className="disabled:opacity-40 disabled:cursor-not-allowed border px-4 py-2 rounded bg-gray-50 hover:bg-gray-100 text-sm font-medium"
+                          className="disabled:opacity-40 disabled:cursor-not-allowed border border-[#292C30] px-4 py-2.5 rounded-xl bg-[#171A1E] text-[#00B5ED] hover:text-[#0073FF] hover:border-[#00B5ED]/40 text-sm font-semibold transition"
                         >
                           + Add Product Image
                           {!isUnlimited(profileLimits?.productImages) &&
@@ -1115,7 +1121,7 @@ export default function AddDirectoryPage() {
                   allowed={isFeatureAllowed(profileLimits?.galleryImages)}
                   upgradeMessage="Company Gallery is available on Basic plan and above."
                 >
-                  <p className="text-xs text-gray-400 mb-2">
+                  <p className="text-xs text-[#B8B8B8] mb-2">
                     {isUnlimited(profileLimits?.galleryImages)
                       ? "Unlimited company images on your plan."
                       : `Your plan allows up to ${getDisplayLimit(profileLimits?.galleryImages)} company images.`}
@@ -1124,14 +1130,14 @@ export default function AddDirectoryPage() {
                     {({ push, remove }) => (
                       <div className="space-y-4">
                         {values.companyGallery.map((item: any, i: number) => (
-                          <div key={i} className="p-4 border rounded-lg space-y-3 bg-white">
+                          <div key={i} className="p-4 border border-[#292C30] rounded-xl space-y-3 bg-[#171A1E] text-[#CCCCCC]">
                             <div className="flex justify-between items-start">
-                              <span className="text-sm font-medium">Company Image {i + 1}</span>
+                              <span className="text-sm font-medium text-[#FFFFFF]">Company Image {i + 1}</span>
                               {i > 0 && (
                                 <button
                                   type="button"
                                   onClick={() => remove(i)}
-                                  className="text-red-500 hover:text-red-700"
+                                  className="text-rose-400 hover:text-rose-300 text-xs font-semibold"
                                 >
                                   ✕ Remove
                                 </button>
@@ -1139,7 +1145,7 @@ export default function AddDirectoryPage() {
                             </div>
 
                             <div>
-                              <label className="text-sm font-medium block mb-1">Image</label>
+                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Image</label>
                               <UploadBox
                                 label="Upload Image"
                                 value={item.image}
@@ -1148,7 +1154,7 @@ export default function AddDirectoryPage() {
                             </div>
 
                             <div>
-                              <label className="text-sm font-medium block mb-1">Image Name</label>
+                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Image Name</label>
                               <Field
                                 name={`companyGallery.${i}.name`}
                                 className="input w-full"
@@ -1157,7 +1163,7 @@ export default function AddDirectoryPage() {
                             </div>
 
                             <div>
-                              <label className="text-sm font-medium block mb-1">Description</label>
+                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Description</label>
                               <Field
                                 name={`companyGallery.${i}.description`}
                                 className="input w-full"
@@ -1176,7 +1182,7 @@ export default function AddDirectoryPage() {
                             !isUnlimited(profileLimits?.galleryImages) &&
                             values.companyGallery.length >= (getFeatureLimit(profileLimits?.galleryImages) ?? 0)
                           }
-                          className="disabled:opacity-40 disabled:cursor-not-allowed border px-4 py-2 rounded bg-gray-50 hover:bg-gray-100 text-sm font-medium"
+                          className="disabled:opacity-40 disabled:cursor-not-allowed border border-[#292C30] px-4 py-2.5 rounded-xl bg-[#171A1E] text-[#00B5ED] hover:text-[#0073FF] hover:border-[#00B5ED]/40 text-sm font-semibold transition"
                         >
                           + Add Company Image
                           {!isUnlimited(profileLimits?.galleryImages) &&
@@ -1194,7 +1200,7 @@ export default function AddDirectoryPage() {
                   allowed={isFeatureAllowed(profileLimits?.factoryImages)}
                   upgradeMessage="Factory Gallery is available on Basic plan and above."
                 >
-                  <p className="text-xs text-gray-400 mb-2">
+                  <p className="text-xs text-[#B8B8B8] mb-2">
                     {isUnlimited(profileLimits?.factoryImages)
                       ? "Unlimited factory images on your plan."
                       : `Your plan allows up to ${getDisplayLimit(profileLimits?.factoryImages)} factory images.`}
@@ -1203,14 +1209,14 @@ export default function AddDirectoryPage() {
                     {({ push, remove }) => (
                       <div className="space-y-4">
                         {values.factoryGallery.map((item: any, i: number) => (
-                          <div key={i} className="p-4 border rounded-lg space-y-3 bg-white">
+                          <div key={i} className="p-4 border border-[#292C30] rounded-xl space-y-3 bg-[#171A1E] text-[#CCCCCC]">
                             <div className="flex justify-between items-start">
-                              <span className="text-sm font-medium">Factory Image {i + 1}</span>
+                              <span className="text-sm font-medium text-[#FFFFFF]">Factory Image {i + 1}</span>
                               {i > 0 && (
                                 <button
                                   type="button"
                                   onClick={() => remove(i)}
-                                  className="text-red-500 hover:text-red-700"
+                                  className="text-rose-400 hover:text-rose-300 text-xs font-semibold"
                                 >
                                   ✕ Remove
                                 </button>
@@ -1218,7 +1224,7 @@ export default function AddDirectoryPage() {
                             </div>
 
                             <div>
-                              <label className="text-sm font-medium block mb-1">Image</label>
+                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Image</label>
                               <UploadBox
                                 label="Upload Image"
                                 value={item.image}
@@ -1227,7 +1233,7 @@ export default function AddDirectoryPage() {
                             </div>
 
                             <div>
-                              <label className="text-sm font-medium block mb-1">Image Name</label>
+                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Image Name</label>
                               <Field
                                 name={`factoryGallery.${i}.name`}
                                 className="input w-full"
@@ -1236,7 +1242,7 @@ export default function AddDirectoryPage() {
                             </div>
 
                             <div>
-                              <label className="text-sm font-medium block mb-1">Description</label>
+                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Description</label>
                               <Field
                                 name={`factoryGallery.${i}.description`}
                                 className="input w-full"
@@ -1753,7 +1759,7 @@ export default function AddDirectoryPage() {
                   uploadingManufacturingImage ||
                   uploadingMachineryImage
                 }
-                className="bg-black text-white px-6 py-2 rounded disabled:opacity-50"
+                className="w-full bg-[#0073FF] hover:bg-[#0060D0] text-white px-6 py-3.5 rounded-xl font-semibold text-base transition shadow-md disabled:opacity-50"
               >
                 {isSubmitting ? "Submitting..." : "Submit Directory"}
               </button>
@@ -1772,6 +1778,7 @@ export default function AddDirectoryPage() {
         limitValue={listingEligibility?.effectiveLimit}
       />
     </div>
+  </div>
   );
 }
 
@@ -1787,8 +1794,8 @@ function FieldBlock({ label, name }: any) {
 
 function Section({ title, children }: any) {
   return (
-    <div>
-      <h3 className="font-semibold mb-2">{title}</h3>
+    <div className="space-y-3">
+      <h3 className="font-semibold text-lg text-[#FFFFFF] border-b border-[#292C30] pb-2">{title}</h3>
       <div className="space-y-2">{children}</div>
     </div>
   );

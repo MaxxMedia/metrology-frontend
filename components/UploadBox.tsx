@@ -207,7 +207,7 @@ export default function UploadBox({
       {preview ? (
         <div className="relative group">
           {isImagePreview ? (
-            <div className={`relative w-full ${height} rounded-lg border border-gray-200 overflow-hidden bg-gray-50`}>
+            <div className={`relative w-full ${height} rounded-xl border border-[#292C30] overflow-hidden bg-[#171A1E]`}>
               <Image
                 src={preview}
                 alt="Upload preview"
@@ -216,8 +216,8 @@ export default function UploadBox({
               />
             </div>
           ) : (
-            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200 min-h-[60px]">
-              <span className="text-sm text-gray-700 truncate flex-1">
+            <div className="flex items-center gap-2 p-3 bg-[#171A1E] rounded-xl border border-[#292C30] min-h-[60px]">
+              <span className="text-sm text-[#CCCCCC] truncate flex-1">
                 {preview}
               </span>
             </div>
@@ -225,7 +225,7 @@ export default function UploadBox({
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-md"
+            className="absolute -top-2 -right-2 p-1 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors shadow-md"
           >
             <X size={16} />
           </button>
@@ -233,14 +233,14 @@ export default function UploadBox({
       ) : (
         <div
           onClick={() => fileInputRef.current?.click()}
-          className={`relative flex flex-col items-center justify-center w-full ${height} border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 transition-colors cursor-pointer bg-gray-50 hover:bg-gray-100`}
+          className={`relative flex flex-col items-center justify-center w-full ${height} border-2 border-dashed border-[#292C30] rounded-xl hover:border-[#00B5ED] transition-colors cursor-pointer bg-[#171A1E] hover:bg-[#22272c]`}
         >
-          <Upload className="w-8 h-8 text-gray-400 mb-2" />
-          <p className="text-sm text-gray-600 text-center px-4">
+          <Upload className="w-8 h-8 text-[#B8B8B8] mb-2" />
+          <p className="text-sm text-[#CCCCCC] text-center px-4 font-medium">
             {label}
           </p>
           {uploadError && (
-            <p className="text-xs text-red-500 mt-1">{uploadError}</p>
+            <p className="text-xs text-rose-400 mt-1">{uploadError}</p>
           )}
           <input
             ref={fileInputRef}
@@ -251,8 +251,8 @@ export default function UploadBox({
             disabled={isUploading}
           />
           {isUploading && (
-            <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-              <div className="text-sm text-gray-600">Uploading...</div>
+            <div className="absolute inset-0 bg-[#171A1E]/90 backdrop-blur-sm flex items-center justify-center rounded-xl">
+              <div className="text-sm text-[#00B5ED] font-medium">Uploading...</div>
             </div>
           )}
         </div>

@@ -7,7 +7,7 @@ import type { JobPostingEligibility } from "@/lib/jobPosting";
 
 export default function PostJobButton({
   eligibility,
-  className = "bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700",
+  className = "bg-[#0073FF] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0060D0] transition-colors",
   label = "+ Post Job",
   variant = "button",
   children,

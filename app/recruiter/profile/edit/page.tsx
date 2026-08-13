@@ -319,20 +319,20 @@ export default function EditRecruiterProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-12">
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-        <h1 className="text-2xl font-bold mb-6 text-gray-900">
+    <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] flex items-center justify-center px-6 py-12">
+      <div className="w-full max-w-2xl bg-[#1D2125] rounded-xl shadow-sm border border-[#292C30] p-8">
+        <h1 className="text-2xl font-bold mb-6 text-[#FFFFFF]">
           Edit Profile & Company
         </h1>
 
         {error && (
-          <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded">
+          <div className="mb-4 text-sm text-rose-400 bg-rose-500/10 border border-rose-500/30 p-3 rounded-xl">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 text-sm text-green-600 bg-green-50 p-3 rounded">
+          <div className="mb-4 text-sm text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl">
             {success}
           </div>
         )}
@@ -409,8 +409,8 @@ export default function EditRecruiterProfile() {
               accept="image/*"
             />
           ) : (
-            <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-4">
-              <p className="text-sm text-yellow-800">
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+              <p className="text-sm text-amber-300">
                 Company Cover Banner is available on the Basic plan and above.
               </p>
             </div>
@@ -443,7 +443,7 @@ export default function EditRecruiterProfile() {
             error={errors.companyDescription}
           />
           {profileLimits?.descriptionLimit && (
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[#B8B8B8] mt-1">
               {form.companyDescription.length}/{profileLimits.descriptionLimit}
             </p>
           )}
@@ -501,10 +501,10 @@ export default function EditRecruiterProfile() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full h-[50px] bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition disabled:opacity-60"
+            disabled={loading || uploading}
+            className="w-full h-[50px] bg-[#0073FF] hover:bg-[#0060D0] text-white rounded-xl font-semibold transition disabled:opacity-60"
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {loading ? "Saving..." : "Save Profile & Company"}
           </button>
         </form>
       </div>
@@ -516,7 +516,7 @@ export default function EditRecruiterProfile() {
 
 function SectionTitle({ title }: { title: string }) {
   return (
-    <h2 className="text-lg font-semibold text-gray-900 border-b pb-2">
+    <h2 className="text-lg font-semibold text-[#FFFFFF] border-b border-[#292C30] pb-2">
       {title}
     </h2>
   )
@@ -537,20 +537,20 @@ function Input({
 }) {
   return (
     <div>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-[#CCCCCC]">{label}</label>
       <input
         type="text"
         name={name}
         value={value}
         onChange={onChange}
-        className={`w-full h-[48px] px-4 mt-1 rounded-md border focus:outline-none focus:ring-2 ${
+        className={`w-full h-[48px] px-4 mt-1 bg-[#171A1E] text-[#FFFFFF] rounded-xl border focus:outline-none focus:ring-2 ${
           error
-            ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-600"
+            ? "border-rose-500 focus:ring-rose-500"
+            : "border-[#292C30] focus:ring-[#00B5ED]"
         }`}
       />
       {error && (
-        <p className="mt-1 text-xs text-red-500">{error}</p>
+        <p className="mt-1 text-xs text-rose-400">{error}</p>
       )}
     </div>
   )
@@ -573,21 +573,21 @@ function Textarea({
 }) {
   return (
     <div>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-[#CCCCCC]">{label}</label>
       <textarea
         name={name}
         value={value}
         onChange={onChange}
         rows={4}
         maxLength={maxLength}
-        className={`w-full mt-1 px-4 py-3 rounded-md border focus:outline-none focus:ring-2 ${
+        className={`w-full mt-1 px-4 py-3 bg-[#171A1E] text-[#FFFFFF] rounded-xl border focus:outline-none focus:ring-2 ${
           error
-            ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-600"
+            ? "border-rose-500 focus:ring-rose-500"
+            : "border-[#292C30] focus:ring-[#00B5ED]"
         }`}
       />
       {error && (
-        <p className="mt-1 text-xs text-red-500">{error}</p>
+        <p className="mt-1 text-xs text-rose-400">{error}</p>
       )}
     </div>
   )

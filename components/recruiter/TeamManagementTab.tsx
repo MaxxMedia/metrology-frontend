@@ -304,28 +304,28 @@ export default function TeamManagementTab() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00B5ED]"></div>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 text-[#CCCCCC]">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Team Management</h2>
-                    <p className="text-sm text-gray-500 mt-1">Manage your team members</p>
+                    <h2 className="text-2xl font-bold text-[#FFFFFF]">Team Management</h2>
+                    <p className="text-sm text-[#CCCCCC] mt-1">Manage your team members</p>
                 </div>
                 <div className="flex items-center gap-4">
                     {teamCountLabel && (
                         <div className="text-right">
-                            <p className="text-xs text-gray-500">Current Team Members</p>
-                            <p className="text-sm font-semibold text-gray-900">{teamCountLabel}</p>
+                            <p className="text-xs text-[#B8B8B8]">Current Team Members</p>
+                            <p className="text-sm font-semibold text-[#FFFFFF]">{teamCountLabel}</p>
                         </div>
                     )}
                     <button
                         onClick={loadData}
-                        className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition flex items-center gap-2"
+                        className="p-2 text-[#B8B8B8] hover:text-[#FFFFFF] hover:bg-[#171A1E] rounded-xl transition flex items-center gap-2"
                     >
                         <RefreshCw size={18} /> Refresh
                     </button>
@@ -333,21 +333,21 @@ export default function TeamManagementTab() {
             </div>
 
             {successMessage && (
-                <div className="bg-green-50 border border-green-200 text-green-700 p-4 rounded-lg flex items-center gap-2 animate-fade-in">
+                <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-4 rounded-xl flex items-center gap-2 animate-fade-in">
                     <CheckCircle size={20} className="flex-shrink-0" />
                     <span>{successMessage}</span>
                 </div>
             )}
 
             {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg">
+                <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-xl">
                     ❌ {error}
                 </div>
             )}
 
             {/* Plan doesn't include Team Management at all */}
             {noTeamAccess && (
-                <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-center justify-between gap-3">
+                <div className="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-4 rounded-xl flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                         <AlertTriangle size={18} className="flex-shrink-0" />
                         <span className="text-sm font-medium">
@@ -356,7 +356,7 @@ export default function TeamManagementTab() {
                     </div>
                     <a
                         href="/packages"
-                        className="text-sm font-semibold text-amber-900 underline whitespace-nowrap"
+                        className="text-sm font-semibold text-[#00B5ED] underline whitespace-nowrap"
                     >
                         Upgrade Plan
                     </a>
@@ -365,7 +365,7 @@ export default function TeamManagementTab() {
 
             {/* Plan supports team members but the cap has been hit */}
             {!noTeamAccess && limitReached && (
-                <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg flex items-center justify-between gap-3">
+                <div className="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-4 rounded-xl flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                         <AlertTriangle size={18} className="flex-shrink-0" />
                         <span className="text-sm font-medium">
@@ -373,27 +373,27 @@ export default function TeamManagementTab() {
                         </span>
                     </div>
                     <a
-                        href="/pricing"
-                        className="text-sm font-semibold text-amber-900 underline whitespace-nowrap"
+                        href="/packages"
+                        className="text-sm font-semibold text-[#00B5ED] underline whitespace-nowrap"
                     >
                         Upgrade Plan
                     </a>
                 </div>
             )}
 
-            <div className="border-b border-gray-200">
+            <div className="border-b border-[#292C30]">
                 <nav className="flex gap-8">
                     <button
                         onClick={() => setActiveTab('members')}
                         className={`pb-4 px-1 border-b-2 transition flex items-center gap-2 ${activeTab === 'members'
-                            ? 'border-blue-600 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                            ? 'border-[#0073FF] text-[#0073FF] font-semibold'
+                            : 'border-transparent text-[#B8B8B8] hover:text-[#FFFFFF]'
                             }`}
                     >
                         <Users size={18} />
                         Team Members
                         {members.length > 0 && (
-                            <span className="bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded-full">
+                            <span className="bg-[#171A1E] text-[#FFFFFF] text-xs px-2 py-0.5 rounded-full border border-[#292C30]">
                                 {members.length}
                             </span>
                         )}
@@ -401,8 +401,8 @@ export default function TeamManagementTab() {
                     <button
                         onClick={() => setActiveTab('add')}
                         className={`pb-4 px-1 border-b-2 transition flex items-center gap-2 ${activeTab === 'add'
-                            ? 'border-blue-600 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                            ? 'border-[#0073FF] text-[#0073FF] font-semibold'
+                            : 'border-transparent text-[#B8B8B8] hover:text-[#FFFFFF]'
                             }`}
                     >
                         <UserPlus size={18} />
@@ -415,32 +415,32 @@ export default function TeamManagementTab() {
                 {activeTab === 'members' && (
                     <>
                         {members.length === 0 ? (
-                            <div className="text-center py-12 bg-gray-50 rounded-xl">
+                            <div className="text-center py-12 bg-[#171A1E] border border-[#292C30] rounded-xl">
                                 <div className="text-4xl mb-3">👥</div>
-                                <p className="text-gray-500">No team members yet</p>
-                                <p className="text-sm text-gray-400 mt-1">Add team members to get started</p>
+                                <p className="text-[#CCCCCC]">No team members yet</p>
+                                <p className="text-sm text-[#B8B8B8] mt-1">Add team members to get started</p>
                             </div>
                         ) : (
                             <div className="grid gap-4">
                                 {members.map((member) => (
-                                    <div key={member.id} className="bg-white rounded-xl border p-4 hover:shadow-md transition">
+                                    <div key={member.id} className="bg-[#171A1E] rounded-xl border border-[#292C30] p-4 hover:border-[#00B5ED]/40 transition">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3 min-w-0">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                                <div className="w-10 h-10 rounded-full bg-[#0073FF] flex items-center justify-center text-white font-bold flex-shrink-0">
                                                     {member.user.fullName?.charAt(0) || 'U'}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <h4 className="font-medium text-gray-900 truncate">{member.user.fullName}</h4>
-                                                    <p className="text-sm text-gray-600 truncate">{member.designation}</p>
+                                                    <h4 className="font-medium text-[#FFFFFF] truncate">{member.user.fullName}</h4>
+                                                    <p className="text-sm text-[#CCCCCC] truncate">{member.designation}</p>
                                                     {member.department && (
-                                                        <span className="text-xs text-gray-500">{member.department}</span>
+                                                        <span className="text-xs text-[#B8B8B8]">{member.department}</span>
                                                     )}
                                                 </div>
                                             </div>
                                             <div className="flex gap-2 flex-shrink-0">
                                                 <button
                                                     onClick={() => handleEditMember(member)}
-                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                                    className="p-2 text-[#00B5ED] hover:bg-[#1D2125] rounded-lg transition"
                                                     title="Edit member"
                                                 >
                                                     <Edit2 size={16} />
@@ -450,7 +450,7 @@ export default function TeamManagementTab() {
                                                         setSelectedMemberId(member.id);
                                                         setShowRemoveModal(true);
                                                     }}
-                                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                                                    className="p-2 text-rose-400 hover:bg-[#1D2125] rounded-lg transition"
                                                     title="Remove member"
                                                 >
                                                     <UserX size={16} />
@@ -465,39 +465,39 @@ export default function TeamManagementTab() {
                 )}
 
                 {activeTab === 'add' && (
-                    <div className="bg-white rounded-xl border p-8 text-center">
+                    <div className="bg-[#171A1E] rounded-xl border border-[#292C30] p-8 text-center">
                         <div className="flex flex-col items-center gap-4">
-                            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
-                                <UserPlus size={32} className="text-blue-600" />
+                            <div className="w-20 h-20 bg-[#0073FF]/15 rounded-full flex items-center justify-center">
+                                <UserPlus size={32} className="text-[#0073FF]" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-semibold text-gray-900">Add Team Member</h3>
-                                <p className="text-gray-500 mt-1">
+                                <h3 className="text-xl font-semibold text-[#FFFFFF]">Add Team Member</h3>
+                                <p className="text-[#CCCCCC] mt-1">
                                     Search and add existing candidates to your team
                                 </p>
                             </div>
                             <button
                                 onClick={() => setShowSearchModal(true)}
                                 disabled={limitReached || noTeamAccess}
-                                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                className="px-6 py-3 bg-[#0073FF] text-white rounded-xl hover:bg-[#0060D0] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-medium"
                             >
                                 <Search size={18} />
                                 Search Candidates
                             </button>
 
                             {noTeamAccess && (
-                                <p className="text-sm text-amber-600 mt-2">
+                                <p className="text-sm text-amber-400 mt-2">
                                     ⚠️ Team Management isn't part of your current package.{' '}
-                                    <a href="/pricing" className="underline font-medium">
+                                    <a href="/packages" className="underline font-medium text-[#00B5ED]">
                                         Upgrade your plan
                                     </a>{' '}
                                     to unlock it.
                                 </p>
                             )}
                             {!noTeamAccess && limitReached && (
-                                <p className="text-sm text-amber-600 mt-2">
+                                <p className="text-sm text-amber-400 mt-2">
                                     ⚠️ Team limit reached.{' '}
-                                    <a href="/pricing" className="underline font-medium">
+                                    <a href="/packages" className="underline font-medium text-[#00B5ED]">
                                         Upgrade
                                     </a>{' '}
                                     to add more members.
@@ -510,48 +510,48 @@ export default function TeamManagementTab() {
 
             {/* Edit Member Modal */}
             {editingMember && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-xl max-w-md w-full p-6">
-                        <h3 className="text-xl font-bold mb-4">
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-[#1D2125] border border-[#292C30] rounded-xl max-w-md w-full p-6 text-[#CCCCCC]">
+                        <h3 className="text-xl font-bold text-[#FFFFFF] mb-4">
                             Edit Team Member
                         </h3>
-                        <p className="text-sm text-gray-600 mb-4">
+                        <p className="text-sm text-[#B8B8B8] mb-4">
                             Editing {editingMember.user.fullName}
                         </p>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-[#CCCCCC] mb-1">
                                     Designation *
                                 </label>
                                 <input
                                     type="text"
                                     value={editForm.designation}
                                     onChange={(e) => setEditForm({ ...editForm, designation: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-[#171A1E] border border-[#292C30] text-[#FFFFFF] rounded-xl p-2.5 focus:ring-2 focus:ring-[#00B5ED] focus:outline-none"
                                     placeholder="e.g., Senior Developer"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-[#CCCCCC] mb-1">
                                     Department
                                 </label>
                                 <input
                                     type="text"
                                     value={editForm.department || ''}
                                     onChange={(e) => setEditForm({ ...editForm, department: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-[#171A1E] border border-[#292C30] text-[#FFFFFF] rounded-xl p-2.5 focus:ring-2 focus:ring-[#00B5ED] focus:outline-none"
                                     placeholder="e.g., Engineering"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-[#CCCCCC] mb-1">
                                     Employment Type
                                 </label>
                                 <select
                                     value={editForm.employmentType || ''}
                                     onChange={(e) => setEditForm({ ...editForm, employmentType: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-[#171A1E] border border-[#292C30] text-[#FFFFFF] rounded-xl p-2.5 focus:ring-2 focus:ring-[#00B5ED] focus:outline-none"
                                 >
                                     <option value="">Select type</option>
                                     <option value="FULL_TIME">Full Time</option>
@@ -567,13 +567,13 @@ export default function TeamManagementTab() {
                             <button
                                 onClick={handleUpdateMember}
                                 disabled={processingId !== null || !editForm.designation.trim()}
-                                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                                className="flex-1 bg-[#0073FF] text-white px-4 py-2.5 rounded-xl hover:bg-[#0060D0] transition disabled:opacity-50 font-medium"
                             >
                                 {processingId ? 'Saving...' : 'Save Changes'}
                             </button>
                             <button
                                 onClick={() => setEditingMember(null)}
-                                className="flex-1 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
+                                className="flex-1 border border-[#292C30] text-[#CCCCCC] px-4 py-2.5 rounded-xl hover:bg-[#171A1E] transition font-medium"
                             >
                                 Cancel
                             </button>
@@ -584,25 +584,25 @@ export default function TeamManagementTab() {
 
             {/* Remove Member Modal */}
             {showRemoveModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-xl max-w-md w-full p-6">
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-[#1D2125] border border-[#292C30] rounded-xl max-w-md w-full p-6 text-[#CCCCCC]">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                                <UserX size={24} className="text-red-600" />
+                            <div className="w-12 h-12 bg-rose-500/15 rounded-full flex items-center justify-center">
+                                <UserX size={24} className="text-rose-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900">Remove Team Member</h3>
+                            <h3 className="text-xl font-bold text-[#FFFFFF]">Remove Team Member</h3>
                         </div>
-                        <p className="text-gray-600 mb-2">
+                        <p className="text-[#CCCCCC] mb-2">
                             Are you sure you want to remove this team member?
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-[#B8B8B8]">
                             They will be marked as FORMER and will no longer appear in your team list.
                         </p>
                         <div className="flex gap-3 mt-6">
                             <button
                                 onClick={handleRemoveMember}
                                 disabled={processingId !== null}
-                                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                                className="flex-1 bg-rose-600 text-white px-4 py-2.5 rounded-xl hover:bg-rose-700 transition disabled:opacity-50 font-medium"
                             >
                                 {processingId ? 'Removing...' : 'Confirm Removal'}
                             </button>
@@ -611,7 +611,7 @@ export default function TeamManagementTab() {
                                     setShowRemoveModal(false);
                                     setSelectedMemberId(null);
                                 }}
-                                className="flex-1 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
+                                className="flex-1 border border-[#292C30] text-[#CCCCCC] px-4 py-2.5 rounded-xl hover:bg-[#171A1E] transition font-medium"
                             >
                                 Cancel
                             </button>
