@@ -4,17 +4,7 @@ import type { ReactNode } from "react";
 import { Facebook, Instagram, Linkedin } from "lucide-react";
 import BackToTop from "./BackToTop";
 import type { Post } from "@/types/Post";
-import { MASTER_CATEGORIES } from "@/lib/topic";
-
-const TOP_CATEGORIES = MASTER_CATEGORIES.slice(0, 8).map((cat) => ({
-  label: cat.label,
-  href: `/topics/${cat.slug}`,
-}));
-
-const MORE_CATEGORIES = MASTER_CATEGORIES.slice(8, 16).map((cat) => ({
-  label: cat.label,
-  href: `/topics/${cat.slug}`,
-}));
+import { buildFooterCategoryColumns } from "@/lib/footerCategories";
 
 function XIcon({ size = 16 }: { size?: number }) {
   return (
@@ -105,8 +95,29 @@ async function getRecentPosts(): Promise<Post[]> {
   }
 }
 
+async function getFooterCategories() {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/categories?parentsOnly=true`,
+      { next: { revalidate: 300 } }
+    );
+    if (!res.ok) return { top: [], more: [] };
+    const data = await res.json();
+    const parents = Array.isArray(data) ? data : [];
+    return buildFooterCategoryColumns(
+      parents.map((c: { name: string; slug: string }) => ({
+        name: c.name,
+        slug: c.slug,
+      }))
+    );
+  } catch {
+    return { top: [], more: [] };
+  }
+}
+
 export default async function Footer() {
-  const recentPosts = await getRecentPosts();
+  const [recentPosts, { top: TOP_CATEGORIES, more: MORE_CATEGORIES }] =
+    await Promise.all([getRecentPosts(), getFooterCategories()]);
 
   const socialLinks = [
     { label: "Facebook", href: "#", Icon: Facebook },
@@ -150,31 +161,33 @@ export default async function Footer() {
               ))}
             </div>
 
-            <div className="flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap items-center gap-2.5">
               <Link
                 href="/coming-soon"
-                className="inline-flex items-center gap-2 h-[42px] px-3 rounded-[4px] border border-white/20 bg-[#111318] hover:border-white/40 transition-colors"
+                className="inline-block opacity-90 hover:opacity-100 transition-opacity"
+                aria-label="Get it on Google Play"
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white" aria-hidden>
-                  <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.293 12l2.405-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z" />
-                </svg>
-                <span className="leading-tight">
-                  <span className="block text-[9px] text-white/70">GET IT ON</span>
-                  <span className="block text-[13px] font-semibold text-white">Google Play</span>
-                </span>
+                <Image
+                  src="/images/google-play.png"
+                  alt="Get it on Google Play"
+                  width={135}
+                  height={40}
+                  className="h-[40px] w-auto object-contain"
+                />
               </Link>
 
               <Link
                 href="/coming-soon"
-                className="inline-flex items-center gap-2 h-[42px] px-3 rounded-[4px] border border-white/20 bg-[#111318] hover:border-white/40 transition-colors"
+                className="inline-block opacity-90 hover:opacity-100 transition-opacity"
+                aria-label="Download on the App Store"
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white" aria-hidden>
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-                </svg>
-                <span className="leading-tight">
-                  <span className="block text-[9px] text-white/70">Download on the</span>
-                  <span className="block text-[13px] font-semibold text-white">App Store</span>
-                </span>
+                <Image
+                  src="/images/apple-store.png"
+                  alt="Download on the App Store"
+                  width={135}
+                  height={40}
+                  className="h-[40px] w-auto object-contain"
+                />
               </Link>
             </div>
           </div>

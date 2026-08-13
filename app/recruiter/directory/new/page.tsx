@@ -39,11 +39,22 @@ function countGalleryItems(gallery: any[]): number {
   ).length;
 }
 
-const GalleryItemSchema = Yup.object({
-  image: Yup.string().url().required("Image URL is required"),
+// Validates gallery rows only when an image URL is present (empty rows are OK).
+const OptionalGalleryItemSchema = Yup.object({
+  image: Yup.string().test(
+    "optional-url",
+    "Image must be a valid URL",
+    (value) => !value || value.trim() === "" || Yup.string().url().isValidSync(value)
+  ),
   name: Yup.string(),
   description: Yup.string(),
 });
+
+const optionalUrl = Yup.string().test(
+  "optional-url",
+  "Must be a valid URL",
+  (value) => !value || value.trim() === "" || Yup.string().url().isValidSync(value)
+);
 
 const DirectorySchema = Yup.object({
   name: Yup.string().min(3).required("Company name is required"),
@@ -53,34 +64,34 @@ const DirectorySchema = Yup.object({
   phoneNumber: Yup.string().required("Phone number is required"),
   email: Yup.string().email().required("Email is required"),
   description: Yup.string().min(20).required("Description is required"),
-  website: Yup.string().url().nullable(),
-  logoUrl: Yup.string().url().nullable(),
-  coverImages: Yup.array().of(Yup.string().url()),
-  tradeNames: Yup.array().of(Yup.string()).min(1),
-  videoGallery: Yup.array().of(Yup.string().url()),
+  website: optionalUrl.nullable(),
+  logoUrl: optionalUrl.nullable(),
+  coverImages: Yup.array().of(optionalUrl),
+  tradeNames: Yup.array().of(Yup.string()),
+  videoGallery: Yup.array().of(optionalUrl),
   productSupplies: Yup.array(),
-  productGallery: Yup.array().of(GalleryItemSchema),
-  companyGallery: Yup.array().of(GalleryItemSchema),
-  factoryGallery: Yup.array().of(GalleryItemSchema),
-  productCatalogues: Yup.array().of(Yup.string().url()),
-  companyBrochure: Yup.array().of(Yup.string().url()),
-  certifications: Yup.array().of(Yup.string().url()),
+  productGallery: Yup.array().of(OptionalGalleryItemSchema),
+  companyGallery: Yup.array().of(OptionalGalleryItemSchema),
+  factoryGallery: Yup.array().of(OptionalGalleryItemSchema),
+  productCatalogues: Yup.array().of(optionalUrl),
+  companyBrochure: Yup.array().of(optionalUrl),
+  certifications: Yup.array().of(optionalUrl),
   brandsRepresented: Yup.array().of(Yup.string()),
   industriesServed: Yup.array().of(Yup.string()),
   exportMarkets: Yup.array().of(Yup.string()),
   manufacturingCapabilities: Yup.string(),
-  manufacturingCapabilityImages: Yup.array().of(Yup.string().url()),
-  manufacturingCapabilityVideos: Yup.array().of(Yup.string().url()),
+  manufacturingCapabilityImages: Yup.array().of(optionalUrl),
+  manufacturingCapabilityVideos: Yup.array().of(optionalUrl),
   machineryList: Yup.string(),
-  machineryImages: Yup.array().of(Yup.string().url()),
+  machineryImages: Yup.array().of(optionalUrl),
   qualityStandards: Yup.string(),
   enableInquiryForm: Yup.boolean(),
-  googleMapUrl: Yup.string().url().nullable(),
+  googleMapUrl: optionalUrl.nullable(),
   socialLinks: Yup.object({
-    facebook: Yup.string().url().nullable(),
-    linkedin: Yup.string().url().nullable(),
-    twitter: Yup.string().url().nullable(),
-    youtube: Yup.string().url().nullable(),
+    facebook: optionalUrl.nullable(),
+    linkedin: optionalUrl.nullable(),
+    twitter: optionalUrl.nullable(),
+    youtube: optionalUrl.nullable(),
     whatsapp: Yup.string().nullable(),
   }),
   country: Yup.string().required("Country required"),
@@ -431,8 +442,6 @@ export default function AddDirectoryPage() {
       // server's error response.
       const galleryLimitChecks: Array<{ field: string; label: string; limit: number | null }> = [
         { field: "productGallery", label: "Product Gallery", limit: getFeatureLimit(profileLimits?.productImages) },
-        { field: "companyGallery", label: "Company Gallery", limit: getFeatureLimit(profileLimits?.galleryImages) },
-        { field: "factoryGallery", label: "Factory Gallery", limit: getFeatureLimit(profileLimits?.factoryImages) },
       ];
 
       for (const check of galleryLimitChecks) {
@@ -501,7 +510,7 @@ export default function AddDirectoryPage() {
 
   const countries = geo?.Country.getAllCountries() ?? [];
 
-  const singleDirectoryAlreadyUsed = (listingEligibility?.activeListings ?? 0) >= 1;
+  const directoryLimitReached = listingEligibility?.canAdd === false;
 
   if (!geo || !eligibilityLoaded) {
     return (
@@ -524,13 +533,13 @@ export default function AddDirectoryPage() {
   const isProfessionalOrEnterprise = isProfessional || isEnterprise;
 
   // Business rule: a recruiter account can create only one supplier directory.
-  if (singleDirectoryAlreadyUsed) {
+  if (directoryLimitReached) {
     return (
       <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] flex items-center justify-center p-6 md:p-10">
         <div className="w-full max-w-3xl rounded-xl border border-amber-500/30 bg-amber-500/10 p-6 text-amber-300">
           <h1 className="text-2xl font-bold text-[#FFFFFF]">Add Supplier Directory</h1>
           <p className="mt-3 text-sm text-[#CCCCCC]">
-            Only one supplier directory can be created for this account. Please edit your existing directory instead of creating a new one.
+            Your plan&apos;s directory limit has been reached. Upgrade your subscription or edit an existing directory instead of creating a new one.
           </p>
           <Link
             href="/recruiter/directories"
@@ -566,16 +575,16 @@ export default function AddDirectoryPage() {
           description: "",
           website: "",
           logoUrl: "",
-          coverImages: [""],
+          coverImages: [] as string[],
           tradeNames: [""],
-          videoGallery: [""],
+          videoGallery: [] as string[],
           productSupplies: [""],
           productGallery: [{ image: "", name: "", description: "" }],
-          companyGallery: [{ image: "", name: "", description: "" }],
-          factoryGallery: [{ image: "", name: "", description: "" }],
-          productCatalogues: [""],
-          companyBrochure: [""],
-          certifications: [""],
+          companyGallery: [] as { image: string; name: string; description: string }[],
+          factoryGallery: [] as { image: string; name: string; description: string }[],
+          productCatalogues: [] as string[],
+          companyBrochure: [] as string[],
+          certifications: [] as string[],
           brandsRepresented: [""],
           industriesServed: [""],
           exportMarkets: [""],
@@ -1116,164 +1125,6 @@ export default function AddDirectoryPage() {
                           + Add Product Image
                           {!isUnlimited(profileLimits?.productImages) &&
                             ` (${values.productGallery.length}/${getDisplayLimit(profileLimits?.productImages)})`}
-                        </button>
-                      </div>
-                    )}
-                  </FieldArray>
-                </PlanGatedSection>
-              </Section>
-
-              {/* COMPANY GALLERY - GATED BY PACKAGE */}
-              <Section title="Company Gallery">
-                <PlanGatedSection
-                  allowed={isFeatureAllowed(profileLimits?.galleryImages)}
-                  upgradeMessage="Company Gallery is available on Basic plan and above."
-                >
-                  <p className="text-xs text-[#B8B8B8] mb-2">
-                    {isUnlimited(profileLimits?.galleryImages)
-                      ? "Unlimited company images on your plan."
-                      : `Your plan allows up to ${getDisplayLimit(profileLimits?.galleryImages)} company images.`}
-                  </p>
-                  <FieldArray name="companyGallery">
-                    {({ push, remove }) => (
-                      <div className="space-y-4">
-                        {values.companyGallery.map((item: any, i: number) => (
-                          <div key={i} className="p-4 border border-[#292C30] rounded-xl space-y-3 bg-[#171A1E] text-[#CCCCCC]">
-                            <div className="flex justify-between items-start">
-                              <span className="text-sm font-medium text-[#FFFFFF]">Company Image {i + 1}</span>
-                              {i > 0 && (
-                                <button
-                                  type="button"
-                                  onClick={() => remove(i)}
-                                  className="text-rose-400 hover:text-rose-300 text-xs font-semibold"
-                                >
-                                  ✕ Remove
-                                </button>
-                              )}
-                            </div>
-
-                            <div>
-                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Image</label>
-                              <UploadBox
-                                label="Upload Image"
-                                value={item.image}
-                                onUpload={(file) => handleGalleryImageUpload(file, setFieldValue, values, "companyGallery", i)}
-                              />
-                            </div>
-
-                            <div>
-                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Image Name</label>
-                              <Field
-                                name={`companyGallery.${i}.name`}
-                                className="input w-full"
-                                placeholder="Image name (optional)"
-                              />
-                            </div>
-
-                            <div>
-                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Description</label>
-                              <Field
-                                name={`companyGallery.${i}.description`}
-                                className="input w-full"
-                                placeholder="Image description (optional)"
-                                as="textarea"
-                                rows={2}
-                              />
-                            </div>
-                          </div>
-                        ))}
-
-                        <button
-                          type="button"
-                          onClick={() => push({ image: "", name: "", description: "" })}
-                          disabled={
-                            !isUnlimited(profileLimits?.galleryImages) &&
-                            values.companyGallery.length >= (getFeatureLimit(profileLimits?.galleryImages) ?? 0)
-                          }
-                          className="disabled:opacity-40 disabled:cursor-not-allowed border border-[#292C30] px-4 py-2.5 rounded-xl bg-[#171A1E] text-[#00B5ED] hover:text-[#0073FF] hover:border-[#00B5ED]/40 text-sm font-semibold transition"
-                        >
-                          + Add Company Image
-                          {!isUnlimited(profileLimits?.galleryImages) &&
-                            ` (${values.companyGallery.length}/${getDisplayLimit(profileLimits?.galleryImages)})`}
-                        </button>
-                      </div>
-                    )}
-                  </FieldArray>
-                </PlanGatedSection>
-              </Section>
-
-              {/* FACTORY GALLERY - GATED BY PACKAGE */}
-              <Section title="Factory Gallery">
-                <PlanGatedSection
-                  allowed={isFeatureAllowed(profileLimits?.factoryImages)}
-                  upgradeMessage="Factory Gallery is available on Basic plan and above."
-                >
-                  <p className="text-xs text-[#B8B8B8] mb-2">
-                    {isUnlimited(profileLimits?.factoryImages)
-                      ? "Unlimited factory images on your plan."
-                      : `Your plan allows up to ${getDisplayLimit(profileLimits?.factoryImages)} factory images.`}
-                  </p>
-                  <FieldArray name="factoryGallery">
-                    {({ push, remove }) => (
-                      <div className="space-y-4">
-                        {values.factoryGallery.map((item: any, i: number) => (
-                          <div key={i} className="p-4 border border-[#292C30] rounded-xl space-y-3 bg-[#171A1E] text-[#CCCCCC]">
-                            <div className="flex justify-between items-start">
-                              <span className="text-sm font-medium text-[#FFFFFF]">Factory Image {i + 1}</span>
-                              {i > 0 && (
-                                <button
-                                  type="button"
-                                  onClick={() => remove(i)}
-                                  className="text-rose-400 hover:text-rose-300 text-xs font-semibold"
-                                >
-                                  ✕ Remove
-                                </button>
-                              )}
-                            </div>
-
-                            <div>
-                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Image</label>
-                              <UploadBox
-                                label="Upload Image"
-                                value={item.image}
-                                onUpload={(file) => handleGalleryImageUpload(file, setFieldValue, values, "factoryGallery", i)}
-                              />
-                            </div>
-
-                            <div>
-                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Image Name</label>
-                              <Field
-                                name={`factoryGallery.${i}.name`}
-                                className="input w-full"
-                                placeholder="Image name (optional)"
-                              />
-                            </div>
-
-                            <div>
-                              <label className="text-sm font-medium block mb-1 text-[#CCCCCC]">Description</label>
-                              <Field
-                                name={`factoryGallery.${i}.description`}
-                                className="input w-full"
-                                placeholder="Image description (optional)"
-                                as="textarea"
-                                rows={2}
-                              />
-                            </div>
-                          </div>
-                        ))}
-
-                        <button
-                          type="button"
-                          onClick={() => push({ image: "", name: "", description: "" })}
-                          disabled={
-                            !isUnlimited(profileLimits?.factoryImages) &&
-                            values.factoryGallery.length >= (getFeatureLimit(profileLimits?.factoryImages) ?? 0)
-                          }
-                          className="disabled:opacity-40 disabled:cursor-not-allowed border border-[#292C30] px-4 py-2.5 rounded-xl bg-[#171A1E] text-[#00B5ED] hover:text-[#0073FF] hover:border-[#00B5ED]/40 text-sm font-semibold transition"
-                        >
-                          + Add Factory Image
-                          {!isUnlimited(profileLimits?.factoryImages) &&
-                            ` (${values.factoryGallery.length}/${getDisplayLimit(profileLimits?.factoryImages)})`}
                         </button>
                       </div>
                     )}
