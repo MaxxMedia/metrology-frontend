@@ -338,7 +338,7 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(220,38,38,0.15),transparent_55%)]" />
                 <div className="relative mx-auto max-w-6xl px-6 py-16 sm:py-20">
                     <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-red-500">
-                        Tooling Trends
+                        Metrology
                     </p>
                     <h1 className="text-4xl font-extrabold text-white sm:text-5xl">Webinars</h1>
                     <p className="mt-2 text-lg font-medium text-slate-300">

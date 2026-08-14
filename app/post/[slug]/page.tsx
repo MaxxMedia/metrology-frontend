@@ -85,7 +85,7 @@ type Post = {
 }
 
 /* ================= DEFAULT AUTHOR ================= */
-const DEFAULT_AUTHOR_NAME = "Tooling Trends"
+const DEFAULT_AUTHOR_NAME = "Metrology"
 const DEFAULT_AUTHOR_AVATAR = "/images/tooling-trends-avatar.png"
 
 /* ================= YOUTUBE HELPERS ================= */

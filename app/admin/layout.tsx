@@ -130,7 +130,7 @@ export default function AdminLayout({
             Admin Panel
           </h1>
           <p className="text-xs text-[#8a8b93] mt-1">
-            Tooling Trends
+            Metrology
           </p>
         </div>
         <button
@@ -396,7 +396,7 @@ export default function AdminLayout({
               Admin
             </p>
             <p className="text-sm font-semibold text-slate-900 truncate">
-              Tooling Trends CMS
+              Metrology CMS
             </p>
           </div>
         </header>

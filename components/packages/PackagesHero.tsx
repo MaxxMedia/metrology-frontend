@@ -28,7 +28,7 @@ export default function PackagesHero({
         <div className="max-w-3xl">
           <div className="inline-flex flex-wrap items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-white/80 backdrop-blur-sm sm:text-xs">
             <Link href="/" className="transition-colors hover:text-white">
-              Tooling Trends
+              Metrology
             </Link>
             <span className="mx-3 text-white/40">/</span>
             <span className="text-white">{breadcrumbLabel ?? title}</span>

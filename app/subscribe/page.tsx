@@ -75,11 +75,11 @@ export default function SubscribePage() {
         {/* LEFT AREA */}
         <div>
           <h1 className="text-6xl font-semibold leading-tight mb-8">
-            Subscribe to Tooling Trends
+            Subscribe to Metrology
           </h1>
 
           <p className="text-gray-700 text-xl leading-relaxed mb-10 max-w-[650px]">
-            Tooling Trends magazine addresses the complete lifecycle of
+            Metrology magazine addresses the complete lifecycle of
             the manufacture and maintenance of a Tooling– from design to first shot –
             by providing solutions and strategies to Toolmaking professionals
             charged with designing, building and repairing molds.
@@ -87,7 +87,7 @@ export default function SubscribePage() {
 
           <label className="flex items-center gap-3 mb-3 text-lg">
             <input type="checkbox" className="w-5 h-5" />
-            Subscribe me to the <b><i>Tooling Trends</i></b> magazine
+            Subscribe me to the <b><i>Metrology</i></b> magazine
           </label>
         </div>
 
@@ -208,7 +208,7 @@ export default function SubscribePage() {
                     disabled={isSubmitting}
                     className="bg-[#004d73] hover:bg-[#003a59] text-white text-xl font-bold px-16 py-4 rounded shadow-md"
                   >
-                    Subscribe To Tooling Trends
+                    Subscribe To Metrology
                   </button>
                 </div>
 

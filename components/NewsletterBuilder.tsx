@@ -23,8 +23,8 @@ interface NewsletterBuilderProps {
 
 export function NewsletterBuilder({ posts, onGenerate }: NewsletterBuilderProps) {
   const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
-  const [headerText, setHeaderText] = useState("Tooling Trends Newsletter");
-  const [footerText, setFooterText] = useState("© 2025 Tooling Trends. All rights reserved.");
+  const [headerText, setHeaderText] = useState("Metrology Newsletter");
+  const [footerText, setFooterText] = useState("© 2025 Metrology. All rights reserved.");
 
   function togglePost(postId: number) {
     setSelectedPosts(prev =>

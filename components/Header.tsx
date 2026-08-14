@@ -53,7 +53,7 @@ const PAGES_LINKS: { label: string; href: string; children?: { label: string; hr
   { label: "Directory", href: "/suppliers" },
   { label: "Industry Talks", href: "/industry-talks" },
   { label: "Events", href: "/events" },
-  { label: "Jobs", href: "/jobs" },
+  { label: "Jobs", href: "/feed" },
   { label: "Blog", href: "/blog" },
   { label: "About / Contact", href: "/contact" },
 ]
@@ -395,7 +395,7 @@ export default function Header() {
               Events
             </Link>
 
-            <Link href="/jobs" className={navLinkClass}>
+            <Link href="/feed" className={navLinkClass}>
               Jobs
             </Link>
 

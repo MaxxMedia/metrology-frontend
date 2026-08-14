@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.toolingtrends.com"),
   
   title: {
-    default: "Tooling Trends - Industrial & Manufacturing Technology News",
-    template: "%s | Tooling Trends",
+    default: "Metrology - Industrial & Manufacturing Technology News",
+    template: "%s | Metrology ",
   },
   
   description: "Latest industrial manufacturing technology news, trends, and insights. Covering smart factories, AI, automation, CNC machining, injection molding, and Industry 4.0 innovations.",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     "injection molding",
     "automation",
     "artificial intelligence manufacturing",
-    "tooling trends",
+    "metrology trends",
     "manufacturing innovation",
     "industrial automation",
     "precision machining",
@@ -44,11 +44,11 @@ export const metadata: Metadata = {
     "manufacturing events"
   ],
   
-  authors: [{ name: "Tooling Trends" }],
+  authors: [{ name: "Metrology" }],
   
-  creator: "Tooling Trends",
+  creator: "Metrology",
   
-  publisher: "Tooling Trends",
+  publisher: "Metrology",
   
   robots: {
     index: true,
@@ -66,26 +66,26 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://www.toolingtrends.com",
-    siteName: "Tooling Trends",
-    title: "Tooling Trends - Industrial & Manufacturing Technology News",
+    siteName: "Metrology",
+    title: "Metrology - Industrial & Manufacturing Technology News",
     description: "Latest industrial manufacturing technology news, trends, and insights. Covering smart factories, AI, automation, CNC machining, and Industry 4.0.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Tooling Trends - Manufacturing Technology News",
+        alt: "Metrology - Manufacturing Technology News",
       },
     ],
   },
   
   twitter: {
     card: "summary_large_image",
-    title: "Tooling Trends - Industrial & Manufacturing Technology News",
+    title: "Metrology - Industrial & Manufacturing Technology News",
     description: "Latest industrial manufacturing technology news, trends, and insights.",
     images: ["/og-image.jpg"],
-    creator: "@toolingtrends",
-    site: "@toolingtrends",
+    creator: "@metrology",
+    site: "@metrology",
   },
   
   alternates: {
@@ -143,26 +143,26 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Tooling Trends",
-    url: "https://www.toolingtrends.com",
+    name: "Metrology",
+    url: "https://www.metrology.com",
     description: "Latest industrial manufacturing technology news, trends, and insights.",
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://www.toolingtrends.com/search?q={search_term_string}",
+      target: "https://www.metrology.com/search?q={search_term_string}",
       "query-input": "required name=search_term_string",
     },
     publisher: {
       "@type": "Organization",
-      name: "Tooling Trends",
+      name: "Metrology",
       logo: {
         "@type": "ImageObject",
-        url: "https://www.toolingtrends.com/logo.png",
+        url: "https://www.metrology.com/logo.png",
       },
     },
     sameAs: [
-      "https://twitter.com/toolingtrends",
-      "https://linkedin.com/company/toolingtrends",
-      "https://youtube.com/toolingtrends",
+      "https://twitter.com/metrology",
+      "https://linkedin.com/company/metrology",
+      "https://youtube.com/metrology",
     ],
   }
 
@@ -180,17 +180,17 @@ export default function RootLayout({
         <meta name="geo.placename" content="Global" />
         
         {/* Dublin Core metadata */}
-        <meta name="DC.title" content="Tooling Trends - Industrial & Manufacturing Technology News" />
-        <meta name="DC.creator" content="Tooling Trends" />
+        <meta name="DC.title" content="Metrology - Industrial & Manufacturing Technology News" />
+        <meta name="DC.creator" content="Metrology" />
         <meta name="DC.subject" content="Manufacturing Technology, Industrial News, Industry 4.0" />
         <meta name="DC.description" content="Latest industrial manufacturing technology news and insights" />
         <meta name="DC.language" content="en" />
-        <meta name="DC.publisher" content="Tooling Trends" />
+        <meta name="DC.publisher" content="Metrology" />
         <meta name="DC.date" content="2026" />
         <meta name="DC.type" content="News and Information" />
         
         {/* RSS Feed */}
-        <link rel="alternate" type="application/rss+xml" title="Tooling Trends RSS Feed" href="/feed.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Metrology RSS Feed" href="/feed.xml" />
         
         {/* Sitemap */}
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />

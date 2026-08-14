@@ -10,13 +10,24 @@
    DESIGN TOKENS
 ====================================================== */
 :root {
-  /* Nerio Technology News Dark page background */
-  --background: #1D2125;
+  --background: #171A1E;
+  --surface: #1D2125;
+  --border: #292C30;
   --foreground: #ffffff;
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --border: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+
+  --text-primary: #FFFFFF;
+  --text-secondary: #CCCCCC;
+  --text-muted: #858585;
+  --text-author: #B8B8B8;
+
+  --cyan: #00B5ED;
+  --blue: #0073FF;
+  --purple: #1D247B;
+  --sidebar-heading: #F7F7F7;
+
+  --card: #1D2125;
+  --card-foreground: #FFFFFF;
+  --ring: #00B5ED;
   --radius: 0.625rem;
 
   /* Recruiter Theme Tokens */

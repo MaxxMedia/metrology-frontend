@@ -828,7 +828,7 @@ export default function JobDetailPage() {
               </div>
 
               {otherJobs.length > 3 && (
-                <Link href="/jobs">
+                <Link href="/feed">
                   <button className="flex items-center gap-1 text-sm font-semibold text-[#00B5ED] hover:underline mt-2">
                     Show more jobs
                     <ChevronRight size={14} />
@@ -903,7 +903,7 @@ export default function JobDetailPage() {
                   icon={<Briefcase size={15} />}
                   title="Browse all jobs"
                   subtitle="Find the right opportunity"
-                  href="/jobs"
+                  href="/feed"
                 />
               </div>
 

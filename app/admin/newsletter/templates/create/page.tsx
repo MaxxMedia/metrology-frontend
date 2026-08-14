@@ -139,7 +139,7 @@ export default function CreateTemplatePage() {
       <body>
         <div class="container">
           <div class="header">
-            <h1>📰 Tooling Trends Newsletter</h1>
+            <h1>📰 Metrology Newsletter</h1>
             <p>${form.subject || "Latest Industry Updates"}</p>
           </div>
     `;
@@ -193,7 +193,7 @@ export default function CreateTemplatePage() {
 
     html += `
           <div class="footer">
-            <p>© ${new Date().getFullYear()} Tooling Trends. All rights reserved.</p>
+            <p>© ${new Date().getFullYear()} Metrology. All rights reserved.</p>
             <p style="margin-top: 5px;">
               <a href="${appUrl}/unsubscribe" style="color: #0073FF;">Unsubscribe</a>
               &nbsp;|&nbsp;
