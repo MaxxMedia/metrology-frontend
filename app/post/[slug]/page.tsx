@@ -5,11 +5,11 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { Calendar, Eye, ChevronRight, ChevronLeft, Facebook, Twitter, Instagram, Linkedin, Mail, FileText, MessageSquare } from "lucide-react"
+import { Calendar, Eye, ChevronRight, ChevronLeft, Facebook, Twitter, Instagram, Linkedin, Mail, FileText, MessageSquare, ArrowUp } from "lucide-react"
 
 import ShareSection from "@/components/share-section"
 import RelatedPostsCarousel from "@/components/related-posts-carousel"
-import ContentGateModal from "@/components/content-gate-modal"
+// import ContentGateModal from "@/components/content-gate-modal"
 import PostViewCounter from "@/components/PostViewCounter"
 import SupplierAds from "@/components/SupplierAds"
 import { CommentsSection } from "@/components/comments-section"
@@ -122,7 +122,16 @@ export default function PostDetailsPage() {
   const [nextPost, setNextPost] = useState<Post | null>(null)
   const [prevPost, setPrevPost] = useState<Post | null>(null)
   const [categories, setCategories] = useState<{ id: number; name: string; slug: string; parentId?: number | null; imageUrl?: string; _count?: { posts?: number } }[]>([])
+  const [showBackToTop, setShowBackToTop] = useState(false)
   const relatedScrollRef = useRef<HTMLDivElement>(null)
+
+  /* ================= BACK TO TOP VISIBILITY ================= */
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 400)
+    window.addEventListener("scroll", onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
   /* ================= CHECK LOGIN ================= */
   const [token, setToken] = useState<string | null>(null)
@@ -225,35 +234,78 @@ export default function PostDetailsPage() {
     fetchRelated()
   }, [post])
 
+  /* ================= RELATED POST AUTO-SCROLL (one card every ~3.5s, seamless loop) ================= */
   useEffect(() => {
-    if (relatedPosts.length <= 3) return
-
+    if (relatedPosts.length === 0) return
     const scrollContainer = relatedScrollRef.current
-    if (scrollContainer) {
-      scrollContainer.scrollLeft = 0
+    if (!scrollContainer) return
+
+    scrollContainer.scrollLeft = 0
+    let paused = false
+    let animId: number | null = null
+
+    const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
+
+    const animateTo = (target: number, duration: number, onDone?: () => void) => {
+      const start = scrollContainer.scrollLeft
+      const distance = target - start
+      const startTime = performance.now()
+
+      const frame = (now: number) => {
+        const elapsed = now - startTime
+        const t = Math.min(elapsed / duration, 1)
+        scrollContainer.scrollLeft = start + distance * easeInOutQuad(t)
+
+        if (t < 1) {
+          animId = requestAnimationFrame(frame)
+        } else {
+          animId = null
+          onDone?.()
+        }
+      }
+      animId = requestAnimationFrame(frame)
     }
 
-    const interval = window.setInterval(() => {
-      const scrollContainer = relatedScrollRef.current
-      if (!scrollContainer) return
+    const tick = () => {
+      if (paused || !scrollContainer || animId !== null) return
 
       const firstCard = scrollContainer.firstElementChild as HTMLElement | null
       if (!firstCard) return
 
       const gap = Number.parseFloat(getComputedStyle(scrollContainer).columnGap || "0")
-      const scrollAmount = firstCard.offsetWidth + gap
-      const reachedEnd = scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 1
+      const cardWidth = firstCard.offsetWidth + gap
+      const halfWidth = scrollContainer.scrollWidth / 2
+      const target = scrollContainer.scrollLeft + cardWidth
 
-      scrollContainer.scrollTo({
-        left: reachedEnd ? 0 : scrollContainer.scrollLeft + scrollAmount,
-        behavior: reachedEnd ? "auto" : "smooth",
+      animateTo(target, 700, () => {
+        if (scrollContainer.scrollLeft >= halfWidth - 1) {
+          // Duplicated content lines up exactly here — instant wrap is invisible
+          scrollContainer.scrollLeft -= halfWidth
+        }
       })
-    }, 4000)
+    }
 
-    return () => window.clearInterval(interval)
+    const intervalId = window.setInterval(tick, 3500)
+
+    const pause = () => { paused = true }
+    const resume = () => { paused = false }
+
+    scrollContainer.addEventListener("mouseenter", pause)
+    scrollContainer.addEventListener("mouseleave", resume)
+    scrollContainer.addEventListener("touchstart", pause, { passive: true })
+    scrollContainer.addEventListener("touchend", resume)
+
+    return () => {
+      window.clearInterval(intervalId)
+      if (animId !== null) cancelAnimationFrame(animId)
+      scrollContainer.removeEventListener("mouseenter", pause)
+      scrollContainer.removeEventListener("mouseleave", resume)
+      scrollContainer.removeEventListener("touchstart", pause)
+      scrollContainer.removeEventListener("touchend", resume)
+    }
   }, [relatedPosts.length])
 
-  const carouselPosts = relatedPosts.length === 4 ? [...relatedPosts, ...relatedPosts] : relatedPosts
+  const carouselPosts = relatedPosts.length > 0 ? [...relatedPosts, ...relatedPosts] : relatedPosts
 
   /* ================= FETCH COMMENTS ================= */
   useEffect(() => {
@@ -378,14 +430,14 @@ export default function PostDetailsPage() {
   /* ================= LAYOUT ================= */
   return (
     <>
-      <ContentGateModal
+      {/* <ContentGateModal
         isOpen={showGate}
         onClose={() => setShowGate(false)}
         onSuccess={handleRegistrationSuccess}
         contentTitle={post.category?.name || "premium content"}
-      />
+      /> */}
 
-      <main className="bg-[#0a0d14] overflow-x-hidden">
+      <main className="bg-[#0a0d14]">
         {slugValue && <PostViewCounter slug={slugValue} />}
 
         {/* ========== SINGLE MERGED GRID: main column + sidebar ========== */}
@@ -607,20 +659,34 @@ export default function PostDetailsPage() {
 
               {/* RELATED POST (card carousel) */}
               {relatedPosts.length > 0 && (
-                <div className="mt-10 pt-6 border-t border-gray-800">
-                  <div className="flex items-center justify-between mb-5">
-                    <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+                <div className="mt-10 pt-6">
+                  <div
+                    className="flex items-center gap-4"
+                    style={{ margin: "55px 0px 30px" }}
+                  >
+                    <h2 className="flex-shrink-0 text-xl font-bold text-white sm:text-2xl">
                       Related Post
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                     </h2>
+
+                    <div className="flex min-w-0 flex-1 items-center gap-2">
+                      <span className="h-1.5 w-1.5 flex-shrink-0 rotate-45 bg-blue-500" />
+
+                      <div className="flex min-w-0 flex-1 flex-col justify-center gap-[7px]">
+                        <div style={{ height: "1px", backgroundColor: "#374151" }} />
+                        <div style={{ height: "1px", backgroundColor: "#374151" }} />
+                      </div>
+
+                      <span className="h-1.5 w-1.5 flex-shrink-0 rotate-45 bg-blue-500" />
+                    </div>
+
                     {relatedPosts.length > 3 && (
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-shrink-0 items-center gap-2">
                         <button
                           type="button"
                           onClick={() =>
                             document.getElementById("related-post-scroll")?.scrollBy({ left: -280, behavior: "smooth" })
                           }
-                          className="w-8 h-8 flex items-center justify-center rounded-md border border-gray-700 text-gray-300 hover:border-blue-600 hover:text-blue-400 transition-colors"
+                          className="w-9 h-9 flex items-center justify-center rounded-md border border-blue-600 text-blue-500 hover:bg-blue-600 hover:text-white transition-colors"
                         >
                           <ChevronLeft size={16} />
                         </button>
@@ -629,7 +695,7 @@ export default function PostDetailsPage() {
                           onClick={() =>
                             document.getElementById("related-post-scroll")?.scrollBy({ left: 280, behavior: "smooth" })
                           }
-                          className="w-8 h-8 flex items-center justify-center rounded-md border border-gray-700 text-gray-300 hover:border-blue-600 hover:text-blue-400 transition-colors"
+                          className="w-9 h-9 flex items-center justify-center rounded-md border border-blue-600 text-blue-500 hover:bg-blue-600 hover:text-white transition-colors"
                         >
                           <ChevronRight size={16} />
                         </button>
@@ -640,14 +706,18 @@ export default function PostDetailsPage() {
                   <div
                     id="related-post-scroll"
                     ref={relatedScrollRef}
-                    className={`flex gap-5 ${relatedPosts.length > 3 ? "overflow-x-auto" : "overflow-x-hidden"} scroll-smooth pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}
+                    className="fpg-post-slider flex gap-5 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                   >
                     {carouselPosts.map((p, index) => (
                       <Link
                         key={`${p.id}-${index}`}
                         href={`/post/${p.slug}`}
-                        className="group flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-600 transition-colors"
-                        style={{ width: "calc((100% - 2.5rem) / 3)" }}
+                        className="fpg-card-style style-one group flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-600 transition-colors"
+                        style={{
+                          width: "calc((100% - 2.5rem) / 3)",
+                          margin: "0px 0px 10px",
+                          padding: "12px 12px 25px",
+                        }}
                       >
                         <div className="relative w-full aspect-[4/3] bg-gray-800">
                           <Image
@@ -658,7 +728,7 @@ export default function PostDetailsPage() {
                             sizes="260px"
                           />
                         </div>
-                        <div className="p-4">
+                        <div className="fpg-post-content" style={{ padding: "12px 15px 0px" }}>
                           {p.category?.name && (
                             <span className="inline-block text-[10px] font-bold uppercase tracking-wide text-white bg-blue-600 px-2.5 py-1 rounded mb-3">
                               {p.category.name}
@@ -685,8 +755,8 @@ export default function PostDetailsPage() {
             </article>
 
             {/* RIGHT: Sidebar - Sticky, sits alongside the main column */}
-            <div className="w-full overflow-hidden">
-              <div className="lg:sticky lg:top-6 space-y-6">
+            <div className="w-full">
+              <div className="lg:sticky lg:top-[130px] self-start space-y-6">
 
                 {/* Author Card */}
                 {/* {author && (
@@ -736,34 +806,41 @@ export default function PostDetailsPage() {
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                     </h3>
                     <div className="space-y-3">
-                      {categories.slice(0, 6).map((cat) => (
-                        <Link
-                          key={cat.id}
-                          href={`/category/${cat.slug || cat.name.toLowerCase()}`}
-                          className="relative flex items-center justify-between h-14 rounded-lg overflow-hidden group"
-                        >
-                          <Image
-                            src={
-                              cat.imageUrl?.startsWith("http")
-                                ? cat.imageUrl
-                                : cat.imageUrl
-                                  ? `${process.env.NEXT_PUBLIC_API_URL}${cat.imageUrl}`
-                                  : "/placeholder.svg"
-                            }
-                            alt={cat.name}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            sizes="320px"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
-                          <span className="relative pl-4 text-sm font-semibold text-white">
-                            {cat.name} {typeof cat._count?.posts === "number" && `(${cat._count.posts})`}
-                          </span>
-                          <span className="relative mr-4 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 text-white group-hover:bg-blue-600 transition-colors">
-                            <ChevronRight size={14} />
-                          </span>
-                        </Link>
-                      ))}
+                      {categories.slice(0, 6).map((cat) => {
+                        const catImgSrc = cat.imageUrl?.startsWith("http")
+                          ? cat.imageUrl
+                          : cat.imageUrl
+                            ? `${process.env.NEXT_PUBLIC_API_URL}${cat.imageUrl}`
+                            : null
+
+                        return (
+                          <Link
+                            key={cat.id}
+                            href={`/category/${cat.slug || cat.name.toLowerCase()}`}
+                            className="relative flex items-center justify-between h-14 rounded-lg overflow-hidden group bg-gray-800"
+                          >
+                            {catImgSrc && (
+                              <Image
+                                src={catImgSrc}
+                                alt={cat.name}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                sizes="320px"
+                                onError={(e) => {
+                                  ;(e.currentTarget as HTMLImageElement).style.display = "none"
+                                }}
+                              />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+                            <span className="relative pl-4 text-sm font-semibold text-white">
+                              {cat.name} {typeof cat._count?.posts === "number" && `(${cat._count.posts})`}
+                            </span>
+                            <span className="relative mr-4 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 text-white group-hover:bg-blue-600 transition-colors">
+                              <ChevronRight size={14} />
+                            </span>
+                          </Link>
+                        )
+                      })}
                     </div>
                   </div>
                 )}
@@ -896,6 +973,18 @@ export default function PostDetailsPage() {
         )}
         */}
      {/* <RelatedPostsCarousel /> */}
+
+        {/* BACK TO TOP */}
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Back to top"
+          className={`fixed bottom-6 right-6 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-[#0073ff] text-white shadow-lg transition-all duration-300 hover:bg-[#0062d9] ${
+            showBackToTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-3 pointer-events-none"
+          }`}
+        >
+          <ArrowUp size={18} />
+        </button>
       </main>
     </>
   )
