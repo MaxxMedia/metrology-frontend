@@ -797,3 +797,125 @@ body {
   @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900;
 }
 
+/* ======================================================
+   CANDIDATE PROFILE — dark metrology theme
+====================================================== */
+.candidate-profile-page {
+  background-color: #0a0d14;
+  color: #cccccc;
+}
+
+.candidate-profile-page :where(.bg-white, .bg-\[\#ffffff\], .bg-\[\#FFFFFF\]) {
+  background-color: #1d2125 !important;
+}
+
+.candidate-profile-page :where(.border-\[\#e0e0e0\], .border-gray-200, .border-gray-100, .border-gray-300) {
+  border-color: #292c30 !important;
+}
+
+.candidate-profile-page :where(.text-\[\#000000\], .text-\[\#121213\]) {
+  color: #ffffff !important;
+}
+
+.candidate-profile-page :where(.text-\[\#5A5F69\]) {
+  color: #9ca3af !important;
+}
+
+.candidate-profile-page :where(.text-\[\#0F5B78\]) {
+  color: #00b5ed !important;
+}
+
+.candidate-profile-page :where(.bg-\[\#0F5B78\]) {
+  background-color: #0073ff !important;
+}
+
+.candidate-profile-page :where(.border-\[\#0F5B78\]) {
+  border-color: #0073ff !important;
+}
+
+.candidate-profile-page :where(.hover\:bg-\[\#0b445a\]:hover) {
+  background-color: #0060d0 !important;
+}
+
+.candidate-profile-page :where(.hover\:text-\[\#0F5B78\]:hover) {
+  color: #00b5ed !important;
+}
+
+.candidate-profile-page :where(.hover\:text-\[\#000000\]:hover) {
+  color: #ffffff !important;
+}
+
+.candidate-profile-page :where(.hover\:bg-gray-100:hover, .hover\:bg-gray-50:hover) {
+  background-color: #171a1e !important;
+}
+
+.candidate-profile-page :where(.divide-gray-100 > :not([hidden]) ~ :not([hidden])) {
+  border-color: #292c30 !important;
+}
+
+.candidate-profile-page :where(.bg-gray-50, .bg-gray-100) {
+  background-color: #171a1e !important;
+}
+
+.candidate-profile-page :where(.bg-\[\#0F5B78\]\/10, .bg-\[\#0F5B78\]\/5) {
+  background-color: rgba(0, 115, 255, 0.12) !important;
+}
+
+.candidate-profile-page :where(.border-\[\#0F5B78\]\/20, .border-\[\#0F5B78\]\/30) {
+  border-color: rgba(0, 115, 255, 0.35) !important;
+}
+
+.candidate-profile-page :where(.hover\:bg-\[\#0F5B78\]\/10:hover, .hover\:bg-\[\#0F5B78\]\/5:hover, .hover\:bg-\[\#0F5B78\]\/20:hover) {
+  background-color: rgba(0, 115, 255, 0.18) !important;
+}
+
+.candidate-profile-page :where(.hover\:border-\[\#0F5B78\]:hover) {
+  border-color: #0073ff !important;
+}
+
+.candidate-profile-page :where(.group-hover\:bg-\[\#0F5B78\]) {
+  /* filled via group-hover rule below */
+}
+
+.candidate-profile-page :where(.group:hover .group-hover\:bg-\[\#0F5B78\]) {
+  background-color: #0073ff !important;
+}
+
+.candidate-profile-page :where(.group:hover .group-hover\:text-white) {
+  color: #ffffff !important;
+}
+
+.candidate-profile-page input:not([type="checkbox"]):not([type="radio"]),
+.candidate-profile-page textarea,
+.candidate-profile-page select {
+  background-color: #171a1e !important;
+  border-color: #292c30 !important;
+  color: #ffffff !important;
+}
+
+.candidate-profile-page input::placeholder,
+.candidate-profile-page textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+.candidate-profile-page .profile-tab-active {
+  border-color: #0073ff !important;
+  color: #00b5ed !important;
+}
+
+.candidate-profile-page .profile-tab-inactive {
+  color: #9ca3af !important;
+}
+
+.candidate-profile-page .profile-tab-inactive:hover {
+  color: #ffffff !important;
+}
+
+.candidate-profile-page :where(.bg-gray-200) {
+  background-color: #292c30 !important;
+}
+
+.candidate-profile-page :where(.text-red-600) {
+  color: #f87171 !important;
+}
+
