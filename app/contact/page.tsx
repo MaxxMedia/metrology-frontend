@@ -86,29 +86,29 @@ export default function ContactPage() {
   ];
 
   return (
-    <main className="w-full bg-[#0c0d10] text-white">
+    <main className="w-full bg-[#171A1E] text-white min-h-screen">
       {/* ================= HERO / BREADCRUMB ================= */}
-      <section className="relative bg-[#111318] py-24 text-center border-b border-white/5">
-        <h1 className="text-4xl font-semibold text-white">Contact</h1>
-        <div className="mt-3 flex items-center justify-center gap-2 text-sm text-[#8b93a1]">
-          <Link href="/" className="hover:text-blue-500 transition">
+      <section className="relative bg-gradient-to-r from-[#171A1E] via-[#1D2125] to-[#1D247B] py-20 text-center border-b border-[#292C30]">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-white">Contact Us</h1>
+        <div className="mt-3 flex items-center justify-center gap-2 text-sm text-[#CCCCCC]">
+          <Link href="/" className="hover:text-[#00B5ED] transition-colors">
             Tooling Trends
           </Link>
-          <span className="text-[#3d424c]">→</span>
-          <span className="text-blue-500">Contact</span>
+          <span className="text-[#858585]">→</span>
+          <span className="text-[#00B5ED] font-semibold">Contact</span>
         </div>
       </section>
 
       {/* ================= LOCATIONS ================= */}
-      <section className="pt-16 pb-24">
+      <section className="pt-16 pb-20">
         <div className="max-w-[1320px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {locations.map((item) => (
               <div
                 key={item.title}
-                className="bg-[#16181d] rounded-2xl overflow-hidden text-center"
+                className="bg-[#1D2125] border border-[#292C30] rounded-2xl overflow-hidden text-center shadow-lg hover:border-[#0073FF]/50 transition-all duration-300"
               >
-                <div className="relative w-full h-[260px]">
+                <div className="relative w-full h-[240px] bg-[#171A1E]">
                   <Image
                     src={item.img}
                     alt={`${item.title} office`}
@@ -119,20 +119,20 @@ export default function ContactPage() {
                 </div>
 
                 <div className="p-8">
-                  <h3 className="text-xl font-semibold text-white">
+                  <h3 className="text-xl font-bold text-white">
                     {item.title}
                   </h3>
 
-                  {/* blue underline divider */}
-                  <div className="w-10 h-[2px] bg-blue-500 mx-auto my-4" />
+                  {/* cyan underline divider */}
+                  <div className="w-12 h-[3px] bg-[#00B5ED] rounded-full mx-auto my-4" />
 
-                  <p className="text-sm text-[#9aa0ab] leading-relaxed">
+                  <p className="text-sm text-[#CCCCCC] leading-relaxed">
                     {item.address}
                   </p>
-                  <p className="text-sm text-[#9aa0ab] mt-1">
+                  <p className="text-sm text-[#B8B8B8] mt-1.5 font-medium">
                     {item.phone}
                   </p>
-                  <p className="text-sm text-[#9aa0ab] mt-1">
+                  <p className="text-sm text-[#00B5ED] mt-1 font-medium">
                     {item.email}
                   </p>
                 </div>
@@ -142,100 +142,103 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ================= CONTACT FORM (overlaps the map below it) ================= */}
-      <section className="relative z-10 pb-0">
+      {/* ================= CONTACT FORM (Floats / Overlays on the Map below) ================= */}
+      <section className="relative z-20 -mb-44 md:-mb-56 lg:-mb-64">
         <div className="max-w-[1320px] mx-auto px-6">
-          <div className="relative bg-[#16181d] rounded-2xl p-10 md:p-14 grid grid-cols-1 lg:grid-cols-2 gap-12 overflow-hidden">
-            {/* blue top border accent */}
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-blue-500" />
+          <div className="relative bg-[#1D2125] border border-[#292C30] rounded-2xl p-8 md:p-12 lg:p-14 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 overflow-hidden shadow-2xl shadow-black/90">
+            {/* blue/cyan top border accent */}
+            <div className="absolute top-0 left-0 right-0 h-[4px] bg-gradient-to-r from-[#00B5ED] to-[#0073FF]" />
 
             {/* FORM */}
             <div>
-              <h2 className="text-3xl font-semibold text-white mb-8">
+              <h2 className="text-3xl font-extrabold text-white mb-2">
                 Feel Free to Contact Us
               </h2>
+              <p className="text-sm text-[#CCCCCC] mb-8">
+                Have questions or need assistance? Send us a message and our team will get back to you shortly.
+              </p>
 
               {successMessage && (
-                <div className="mb-4 p-3 bg-green-500/10 border border-green-500/40 text-green-400 rounded-lg">
+                <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-xl text-sm font-medium">
                   {successMessage}
                 </div>
               )}
 
               {errorMessage && (
-                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/40 text-red-400 rounded-lg">
+                <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-xl text-sm font-medium">
                   {errorMessage}
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="text-sm text-[#c7cbd3]">Full Name*</label>
+                  <label className="text-xs font-semibold text-[#B8B8B8] uppercase tracking-wider">Full Name*</label>
                   <input
                     type="text"
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
                     placeholder="Type Name"
-                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#0c0d10] text-white placeholder:text-[#5b616c] px-4 py-3.5 text-sm outline-none focus:border-blue-500 transition-colors"
+                    className="mt-2 w-full rounded-xl border border-[#292C30] bg-[#171A1E] text-white placeholder:text-[#858585] px-4 py-3.5 text-sm outline-none focus:border-[#00B5ED] focus:ring-1 focus:ring-[#00B5ED] transition-colors"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-[#c7cbd3]">Email Address*</label>
+                  <label className="text-xs font-semibold text-[#B8B8B8] uppercase tracking-wider">Email Address*</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="info@example.com"
-                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#0c0d10] text-white placeholder:text-[#5b616c] px-4 py-3.5 text-sm outline-none focus:border-blue-500 transition-colors"
+                    className="mt-2 w-full rounded-xl border border-[#292C30] bg-[#171A1E] text-white placeholder:text-[#858585] px-4 py-3.5 text-sm outline-none focus:border-[#00B5ED] focus:ring-1 focus:ring-[#00B5ED] transition-colors"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-[#c7cbd3]">Phone Number*</label>
+                  <label className="text-xs font-semibold text-[#B8B8B8] uppercase tracking-wider">Phone Number*</label>
                   <input
                     type="text"
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleChange}
                     placeholder="(480) 555-0103"
-                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#0c0d10] text-white placeholder:text-[#5b616c] px-4 py-3.5 text-sm outline-none focus:border-blue-500 transition-colors"
+                    className="mt-2 w-full rounded-xl border border-[#292C30] bg-[#171A1E] text-white placeholder:text-[#858585] px-4 py-3.5 text-sm outline-none focus:border-[#00B5ED] focus:ring-1 focus:ring-[#00B5ED] transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-[#c7cbd3]">Website*</label>
+                  <label className="text-xs font-semibold text-[#B8B8B8] uppercase tracking-wider">Website*</label>
                   <input
                     type="text"
                     name="website"
                     value={formData.website}
                     onChange={handleChange}
-                    placeholder="www.nerio.com"
-                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#0c0d10] text-white placeholder:text-[#5b616c] px-4 py-3.5 text-sm outline-none focus:border-blue-500 transition-colors"
+                    placeholder="www.example.com"
+                    className="mt-2 w-full rounded-xl border border-[#292C30] bg-[#171A1E] text-white placeholder:text-[#858585] px-4 py-3.5 text-sm outline-none focus:border-[#00B5ED] focus:ring-1 focus:ring-[#00B5ED] transition-colors"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="text-sm text-[#c7cbd3]">Message*</label>
+                  <label className="text-xs font-semibold text-[#B8B8B8] uppercase tracking-wider">Message*</label>
                   <textarea
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    rows={6}
-                    placeholder="Type here..."
-                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#0c0d10] text-white placeholder:text-[#5b616c] px-4 py-3.5 text-sm outline-none focus:border-blue-500 transition-colors resize-y"
+                    rows={5}
+                    placeholder="Type your message here..."
+                    className="mt-2 w-full rounded-xl border border-[#292C30] bg-[#171A1E] text-white placeholder:text-[#858585] px-4 py-3.5 text-sm outline-none focus:border-[#00B5ED] focus:ring-1 focus:ring-[#00B5ED] transition-colors resize-y"
                     required
                   />
                 </div>
 
-                <div className="md:col-span-2">
+                <div className="md:col-span-2 mt-2">
                   <button
                     type="submit"
                     disabled={loading}
-                    className="inline-flex items-center gap-2 bg-blue-600 text-white px-7 py-3.5 rounded-lg text-sm font-medium hover:bg-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 bg-[#0073FF] hover:bg-[#0060d6] text-white px-8 py-3.5 rounded-xl text-sm font-bold shadow-lg shadow-[#0073FF]/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <>
@@ -259,7 +262,7 @@ export default function ContactPage() {
             </div>
 
             {/* IMAGE */}
-            <div className="relative w-full h-full min-h-[480px] rounded-2xl overflow-hidden">
+            <div className="relative w-full h-full min-h-[440px] rounded-xl overflow-hidden border border-[#292C30] bg-[#171A1E]">
               <Image
                 src="/images/contact.png"
                 alt="Customer support representative"
@@ -272,12 +275,12 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ================= MAP ================= */}
-      <section>
-        <div className="w-full h-[420px]">
+      {/* ================= MAP (Tall Vertical Map with Form Overlay) ================= */}
+      <section className="relative z-10 w-full pt-16">
+        <div className="w-full h-[600px] md:h-[700px] lg:h-[800px] relative">
           <iframe
             loading="lazy"
-            className="w-full h-full border-0"
+            className="w-full h-full border-0 opacity-90 contrast-[1.05]"
             src="https://maps.google.com/maps?q=London%2C%20westminstar&t=m&z=10&output=embed&iwloc=near"
             title="Office location map"
             aria-label="Office location map"
