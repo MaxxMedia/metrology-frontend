@@ -36,7 +36,7 @@ export default function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center bg-[#1D2125] px-4">
       <div className="max-w-md w-full bg-[#15171f] rounded-[8px] border border-white/10 shadow-md p-8">
         <h2 className="text-2xl font-bold text-center mb-2 text-white">Admin Login</h2>
-        <p className="text-center text-sm text-[#8a8b93] mb-6">Tooling Trends</p>
+        <p className="text-center text-sm text-[#8a8b93] mb-6">Metrology</p>
         <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="email"

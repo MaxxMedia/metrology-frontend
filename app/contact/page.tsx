@@ -92,7 +92,7 @@ export default function ContactPage() {
         <h1 className="text-4xl md:text-5xl font-extrabold text-white">Contact Us</h1>
         <div className="mt-3 flex items-center justify-center gap-2 text-sm text-[#CCCCCC]">
           <Link href="/" className="hover:text-[#00B5ED] transition-colors">
-            Tooling Trends
+            Metrology
           </Link>
           <span className="text-[#858585]">→</span>
           <span className="text-[#00B5ED] font-semibold">Contact</span>

@@ -16,7 +16,7 @@ function getImageUrl(url?: string | null) {
 function getAuthorName(post: Post) {
   if (post.author?.name) return post.author.name;
   if (post.Company?.name) return post.Company.name;
-  return "Tooling Trends";
+  return "Metrology";
 }
 
 function formatDate(date?: string | null) {

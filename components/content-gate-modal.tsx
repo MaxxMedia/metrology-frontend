@@ -90,6 +90,7 @@ export default function ContentGateModal({
           <button
             onClick={onClose}
             className="rounded-lg p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+
             disabled={loading}
             aria-label="Close"
           >

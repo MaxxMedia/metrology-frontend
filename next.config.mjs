@@ -45,6 +45,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/jobs",
+        destination: "/feed",
+        permanent: true,
+      },
+      {
         source: "/recruiter/directories/new",
         destination: "/recruiter/directory/new",
         permanent: true,

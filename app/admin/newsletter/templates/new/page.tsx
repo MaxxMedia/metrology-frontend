@@ -128,7 +128,7 @@ export default function CreateTemplatePage() {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${form.subject || "Tooling Trends Newsletter"}</title>
+        <title>${form.subject || "Metrology Newsletter"}</title>
         <style>
           /* RESET */
           body, h1, h2, h3, p, div, a { margin: 0; padding: 0; font-family: 'Inter Tight', Arial, Helvetica, sans-serif; }
@@ -470,7 +470,7 @@ export default function CreateTemplatePage() {
           
           <!-- HEADER BANNER IMAGE -->
           <div class="header-banner">
-            <img src="${headerImage}" alt="Tooling Trends Banner" />
+            <img src="${headerImage}" alt="Metrology Banner" />
           </div>
           
           <!-- NEWSLETTER LABEL -->
@@ -712,7 +712,7 @@ export default function CreateTemplatePage() {
     <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-2">Create Dynamic Newsletter Template</h1>
       <p className="text-gray-500 mb-8">
-        Select posts from your site to build a dynamic newsletter template matching the Tooling Trends design
+        Select posts from your site to build a dynamic newsletter template matching the Metrology design
       </p>
 
       {/* Info Note */}
@@ -720,7 +720,7 @@ export default function CreateTemplatePage() {
         <strong>📝 How it works:</strong>
         <ol className="list-decimal list-inside mt-2 space-y-1 text-sm">
           <li>Select posts from the list below to include in your newsletter</li>
-          <li>The template will automatically include these posts with the Tooling Trends design</li>
+          <li>The template will automatically include these posts with the Metrology design</li>
           <li>Images from posts will be displayed automatically</li>
           <li>Use the preview to see how your newsletter will look</li>
         </ol>
