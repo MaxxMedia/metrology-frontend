@@ -9,14 +9,17 @@ interface ContentGateModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess?: () => void
-  contentTitle?: string // Optional: to customize the message
+  contentTitle?: string
 }
 
-export default function ContentGateModal({ 
-  isOpen, 
-  onClose, 
+const inputClassName =
+  "w-full rounded-lg border border-[#292C30] bg-[#171A1E] px-4 py-3 text-white placeholder:text-[#6B7280] outline-none transition focus:border-[#0073FF] focus:ring-2 focus:ring-[#0073FF]/25 disabled:cursor-not-allowed disabled:opacity-50"
+
+export default function ContentGateModal({
+  isOpen,
+  onClose,
   onSuccess,
-  contentTitle = "premium content" 
+  contentTitle = "premium content",
 }: ContentGateModalProps) {
   const [formData, setFormData] = useState<ContentGateFormData>({
     firstName: "",
@@ -47,10 +50,9 @@ export default function ContentGateModal({
 
     try {
       await submitContentGateForm(formData)
-      
+
       setSuccessMessage(`Registration successful! You now have access to ${contentTitle}.`)
-      
-      // Reset form
+
       setFormData({
         firstName: "",
         lastName: "",
@@ -59,18 +61,15 @@ export default function ContentGateModal({
         email: "",
         subscribe: false,
       })
-      
-      // Call onSuccess callback if provided
+
       if (onSuccess) {
         onSuccess()
       }
-      
-      // Close modal after a delay
+
       setTimeout(() => {
         onClose()
         setSuccessMessage("")
       }, 2000)
-      
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Failed to register. Please try again."
@@ -83,15 +82,16 @@ export default function ContentGateModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[#292C30] bg-[#1D2125] shadow-2xl">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-[#003049] to-[#0077b6] text-white p-6 flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Welcome to Tooling Technology!</h2>
-          <button 
-            onClick={onClose} 
-            className="text-white hover:bg-white hover:bg-opacity-20 p-1 rounded transition"
+        <div className="sticky top-0 flex items-center justify-between border-b border-[#292C30] bg-gradient-to-r from-[#0a0d14] via-[#171A1E] to-[#0073FF] p-6">
+          <h2 className="text-2xl font-bold text-white">Welcome to Metrology!</h2>
+          <button
+            onClick={onClose}
+            className="rounded-lg p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
             disabled={loading}
+            aria-label="Close"
           >
             <X size={24} />
           </button>
@@ -99,50 +99,50 @@ export default function ContentGateModal({
 
         {/* Content */}
         <div className="p-8">
-          <p className="text-center text-gray-700 text-lg font-semibold mb-6">
+          <p className="mb-6 text-center text-lg font-semibold text-[#CCCCCC]">
             Unlimited access to our free premium content requires a little more information from you.
           </p>
 
           {successMessage && (
-            <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            <div className="mb-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-300">
               {successMessage}
             </div>
           )}
 
           {errorMessage && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-red-300">
               {errorMessage}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Name Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  First Name <span className="text-red-500">*</span>
+                <label className="mb-2 block text-sm font-semibold text-[#CCCCCC]">
+                  First Name <span className="text-[#00B5ED]">*</span>
                 </label>
                 <input
                   type="text"
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#0077b6] focus:border-transparent outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={inputClassName}
                   required
                   disabled={loading}
                   placeholder="John"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Last Name <span className="text-red-500">*</span>
+                <label className="mb-2 block text-sm font-semibold text-[#CCCCCC]">
+                  Last Name <span className="text-[#00B5ED]">*</span>
                 </label>
                 <input
                   type="text"
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#0077b6] focus:border-transparent outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={inputClassName}
                   required
                   disabled={loading}
                   placeholder="Doe"
@@ -151,27 +151,27 @@ export default function ContentGateModal({
             </div>
 
             {/* Job and Company Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Job Title</label>
+                <label className="mb-2 block text-sm font-semibold text-[#CCCCCC]">Job Title</label>
                 <input
                   type="text"
                   name="jobTitle"
                   value={formData.jobTitle}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#0077b6] focus:border-transparent outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={inputClassName}
                   disabled={loading}
                   placeholder="Software Engineer"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Company</label>
+                <label className="mb-2 block text-sm font-semibold text-[#CCCCCC]">Company</label>
                 <input
                   type="text"
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#0077b6] focus:border-transparent outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={inputClassName}
                   disabled={loading}
                   placeholder="Tech Corp"
                 />
@@ -180,15 +180,15 @@ export default function ContentGateModal({
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Email <span className="text-red-500">*</span>
+              <label className="mb-2 block text-sm font-semibold text-[#CCCCCC]">
+                Email <span className="text-[#00B5ED]">*</span>
               </label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#0077b6] focus:border-transparent outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className={inputClassName}
                 required
                 disabled={loading}
                 placeholder="john.doe@example.com"
@@ -196,18 +196,18 @@ export default function ContentGateModal({
             </div>
 
             {/* Subscribe Checkbox */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-start gap-3">
               <input
                 type="checkbox"
                 id="subscribe"
                 name="subscribe"
                 checked={formData.subscribe}
                 onChange={handleChange}
-                className="w-4 h-4 rounded border-gray-300 text-[#0077b6] focus:ring-[#0077b6] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-[#292C30] bg-[#171A1E] text-[#0073FF] focus:ring-[#0073FF] disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={loading}
               />
-              <label htmlFor="subscribe" className="text-sm text-gray-700">
-                Also, please subscribe me to the MMT Today Weekly e-newsletter!
+              <label htmlFor="subscribe" className="text-sm text-[#B8B8B8]">
+                Also, please subscribe me to the Metrology Weekly e-newsletter!
               </label>
             </div>
 
@@ -215,13 +215,29 @@ export default function ContentGateModal({
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#003049] to-[#0077b6] text-white font-bold py-4 rounded uppercase tracking-widest hover:from-[#002340] hover:to-[#005a8d] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="flex w-full items-center justify-center rounded-xl bg-[#0073FF] py-4 font-bold uppercase tracking-widest text-white transition hover:bg-[#0060D0] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
                   </svg>
                   Registering...
                 </>
@@ -231,10 +247,10 @@ export default function ContentGateModal({
             </button>
 
             {/* Privacy notice */}
-            <p className="text-xs text-gray-600 text-center mt-4">
-              Your email address will be used to communicate with you about Tooling Technology subscription offers,
-              related products and services. Refer to our{" "}
-              <a href="#" className="text-[#0077b6] hover:underline">
+            <p className="mt-4 text-center text-xs text-[#B8B8B8]">
+              Your email address will be used to communicate with you about Metrology subscription
+              offers, related products and services. Refer to our{" "}
+              <a href="/privacy-policy" className="text-[#00B5ED] hover:underline">
                 Privacy Policy
               </a>{" "}
               for more information.

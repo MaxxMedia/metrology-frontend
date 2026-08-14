@@ -75,8 +75,8 @@ export default function SupplierTeamTab({ companySlug }: SupplierTeamTabProps) {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <Loader2 className="animate-spin text-blue-600" size={32} />
-                <span className="ml-2 text-gray-600">Loading team members...</span>
+                <Loader2 className="animate-spin text-[#0073FF]" size={32} />
+                <span className="ml-2 text-gray-400">Loading team members...</span>
             </div>
         )
     }
@@ -93,7 +93,7 @@ export default function SupplierTeamTab({ companySlug }: SupplierTeamTabProps) {
 
     if (teamMembers.length === 0) {
         return (
-            <div className="text-center py-12 bg-gray-50 rounded-xl">
+            <div className="text-center py-12 bg-[#171A1E] border border-[#292C30] rounded-xl">
                 <div className="text-4xl mb-3">👥</div>
                 <p className="text-gray-500">No team members listed</p>
                 <p className="text-sm text-gray-400 mt-1">This company hasn't added any team members yet</p>
@@ -104,8 +104,8 @@ export default function SupplierTeamTab({ companySlug }: SupplierTeamTabProps) {
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2 mb-6">
-                <Users className="text-gray-600" size={20} />
-                <h3 className="text-lg font-semibold text-gray-900">
+                <Users className="text-gray-400" size={20} />
+                <h3 className="text-lg font-semibold text-white">
                     Team Members ({teamMembers.length})
                 </h3>
             </div>
@@ -114,7 +114,7 @@ export default function SupplierTeamTab({ companySlug }: SupplierTeamTabProps) {
                 {teamMembers.map((member) => (
                     <div
                         key={member.id}
-                        className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition"
+                        className="bg-[#1D2125] rounded-lg border border-[#292C30] p-4 hover:border-[#0073FF] transition"
                     >
                         <div className="flex items-start gap-3">
                             {/* Avatar */}
@@ -124,10 +124,10 @@ export default function SupplierTeamTab({ companySlug }: SupplierTeamTabProps) {
 
                             {/* Member Info */}
                             <div className="flex-1 min-w-0">
-                                <h4 className="font-semibold text-gray-900 truncate">
+                                <h4 className="font-semibold text-white truncate">
                                     {member.user.fullName || 'Unknown'}
                                 </h4>
-                                <p className="text-sm text-gray-600 truncate">{member.designation}</p>
+                                <p className="text-sm text-gray-400 truncate">{member.designation}</p>
 
                                 {member.department && (
                                     <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">

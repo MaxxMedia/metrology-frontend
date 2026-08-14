@@ -108,13 +108,16 @@ export default function QuoteRequestButton({
         }
     }
 
+    const inputClass =
+        "mt-1 w-full border border-[#292C30] bg-[#171A1E] text-white rounded-lg px-3 py-2 text-sm placeholder:text-gray-500 outline-none focus:border-[#0073FF] focus:ring-2 focus:ring-[#0073FF]/25"
+
     const modalContent = open && (
         <div
-            className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4 overflow-y-auto"
+            className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 p-4 overflow-y-auto backdrop-blur-sm"
             onClick={closeModal}
         >
             <div
-                className="bg-white w-full max-w-md rounded-lg shadow-xl relative my-8 max-h-[85vh] overflow-y-auto"
+                className="bg-[#1D2125] border border-[#292C30] w-full max-w-md rounded-xl shadow-xl relative my-8 max-h-[85vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
             >
                 <button
@@ -123,7 +126,7 @@ export default function QuoteRequestButton({
                         e.stopPropagation()
                         closeModal()
                     }}
-                    className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 text-gray-400 hover:text-gray-600 bg-white rounded-full p-1.5 shadow-sm"
+                    className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 text-gray-400 hover:text-white rounded-full p-1.5"
                     aria-label="Close"
                 >
                     <X size={20} />
@@ -132,11 +135,11 @@ export default function QuoteRequestButton({
                 <div className="p-5 sm:p-6">
                     {success ? (
                         <div className="text-center py-6">
-                            <CheckCircle2 className="mx-auto text-green-600" size={40} />
-                            <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                            <CheckCircle2 className="mx-auto text-emerald-400" size={40} />
+                            <h3 className="mt-4 text-lg font-semibold text-white">
                                 Request sent
                             </h3>
-                            <p className="mt-1 text-sm text-gray-500">
+                            <p className="mt-1 text-sm text-gray-400">
                                 {supplierName} will get back to you directly at the email
                                 you provided.
                             </p>
@@ -146,28 +149,28 @@ export default function QuoteRequestButton({
                                     e.stopPropagation()
                                     closeModal()
                                 }}
-                                className="mt-6 bg-[#0b3954] text-white px-6 py-2 text-sm font-semibold uppercase rounded hover:bg-[#092f46] transition"
+                                className="mt-6 bg-[#0073FF] text-white px-6 py-2 text-sm font-semibold uppercase rounded-lg hover:bg-[#0060D0] transition"
                             >
                                 Close
                             </button>
                         </div>
                     ) : (
                         <>
-                            <h3 className="text-lg font-semibold text-gray-900 pr-8">
+                            <h3 className="text-lg font-semibold text-white pr-8">
                                 Request a Quote
                             </h3>
-                            <p className="mt-1 text-sm text-gray-500">
+                            <p className="mt-1 text-sm text-gray-400">
                                 Send your requirement to {supplierName}. They&apos;ll reply
                                 directly to your email.
                             </p>
 
                             <form onSubmit={handleSubmit} className="mt-5 space-y-4">
                                 <div>
-                                    <label className="text-xs font-semibold text-gray-600 uppercase">
+                                    <label className="text-xs font-semibold text-[#CCCCCC] uppercase">
                                         Full Name
                                     </label>
                                     <input
-                                        className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                                        className={inputClass}
                                         value={form.fullName}
                                         onChange={(e) => updateField("fullName", e.target.value)}
                                         required
@@ -176,23 +179,23 @@ export default function QuoteRequestButton({
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
-                                        <label className="text-xs font-semibold text-gray-600 uppercase">
+                                        <label className="text-xs font-semibold text-[#CCCCCC] uppercase">
                                             Email
                                         </label>
                                         <input
                                             type="email"
-                                            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                                            className={inputClass}
                                             value={form.email}
                                             onChange={(e) => updateField("email", e.target.value)}
                                             required
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-semibold text-gray-600 uppercase">
+                                        <label className="text-xs font-semibold text-[#CCCCCC] uppercase">
                                             Phone
                                         </label>
                                         <input
-                                            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                                            className={inputClass}
                                             value={form.phone}
                                             onChange={(e) => updateField("phone", e.target.value)}
                                         />
@@ -200,35 +203,35 @@ export default function QuoteRequestButton({
                                 </div>
 
                                 <div>
-                                    <label className="text-xs font-semibold text-gray-600 uppercase">
+                                    <label className="text-xs font-semibold text-[#CCCCCC] uppercase">
                                         Company Name
                                     </label>
                                     <input
-                                        className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                                        className={inputClass}
                                         value={form.companyName}
                                         onChange={(e) => updateField("companyName", e.target.value)}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="text-xs font-semibold text-gray-600 uppercase">
+                                    <label className="text-xs font-semibold text-[#CCCCCC] uppercase">
                                         What do you need?
                                     </label>
                                     <textarea
                                         rows={4}
-                                        className="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                                        className={inputClass}
                                         value={form.message}
                                         onChange={(e) => updateField("message", e.target.value)}
                                         required
                                     />
                                 </div>
 
-                                {error && <p className="text-sm text-red-600">{error}</p>}
+                                {error && <p className="text-sm text-red-400">{error}</p>}
 
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0b3954] text-white px-6 py-2.5 text-sm font-semibold uppercase rounded hover:bg-[#092f46] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0073FF] text-white px-6 py-2.5 text-sm font-semibold uppercase rounded-lg hover:bg-[#0060D0] transition disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <Send size={16} />
                                     {submitting ? "Sending..." : "Send Request"}
@@ -248,7 +251,7 @@ export default function QuoteRequestButton({
                 onClick={() => setOpen(true)}
                 className={
                     className ||
-                    "inline-flex items-center justify-center gap-2 bg-[#0b3954] text-white px-5 py-2 text-xs sm:text-sm font-semibold uppercase tracking-wide hover:bg-[#092f46] transition rounded whitespace-nowrap"
+                    "inline-flex items-center justify-center gap-2 bg-[#0073FF] text-white px-5 py-2 text-xs sm:text-sm font-semibold uppercase tracking-wide hover:bg-[#0060D0] transition rounded-lg whitespace-nowrap"
                 }
             >
                 Request a Quote

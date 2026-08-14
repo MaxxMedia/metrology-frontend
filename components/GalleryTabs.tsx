@@ -39,7 +39,7 @@ const NO_PLAN_MESSAGE =
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="h-72 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-center px-6">
+    <div className="h-72 rounded-xl border-2 border-dashed border-[#292C30] flex items-center justify-center text-gray-500 text-center px-6">
       {message}
     </div>
   )
@@ -176,7 +176,7 @@ function MachineryListGrid({ html }: { html: string }) {
   if (items.length === 0) {
     return (
       <div
-        className="prose prose-sm max-w-none text-gray-700"
+        className="prose prose-sm prose-invert max-w-none text-gray-300"
         dangerouslySetInnerHTML={{ __html: html }}
       />
     )
@@ -187,12 +187,12 @@ function MachineryListGrid({ html }: { html: string }) {
       {items.map((item, i) => (
         <div
           key={i}
-          className="flex items-start gap-3 p-3 rounded-lg border border-gray-200 bg-gray-50"
+          className="flex items-start gap-3 p-3 rounded-lg border border-[#292C30] bg-[#171A1E]"
         >
-          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-red-600 text-white text-xs font-semibold shrink-0">
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#0073FF] text-white text-xs font-semibold shrink-0">
             {i + 1}
           </span>
-          <span className="text-sm text-gray-700 leading-snug">{item}</span>
+          <span className="text-sm text-[#CCCCCC] leading-snug">{item}</span>
         </div>
       ))}
     </div>
@@ -233,7 +233,7 @@ function ImageGridWithLightbox({
               key={i}
               type="button"
               onClick={() => setSelected(item)}
-              className="text-left bg-white rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition"
+              className="text-left bg-[#1D2125] rounded-lg overflow-hidden border border-[#292C30] shadow-sm hover:shadow-md transition"
             >
               <div className="aspect-square overflow-hidden">
                 <img
@@ -244,8 +244,8 @@ function ImageGridWithLightbox({
               </div>
               {(name || description) && (
                 <div className="p-3">
-                  {name && <h4 className="font-medium text-gray-800 text-sm">{name}</h4>}
-                  {description && <p className="text-xs text-gray-600 mt-1 line-clamp-2">{description}</p>}
+                  {name && <h4 className="font-medium text-white text-sm">{name}</h4>}
+                  {description && <p className="text-xs text-gray-400 mt-1 line-clamp-2">{description}</p>}
                 </div>
               )}
             </button>
@@ -259,7 +259,7 @@ function ImageGridWithLightbox({
           onClick={() => setSelected(null)}
         >
           <div
-            className="bg-white rounded-lg overflow-hidden max-w-md w-full max-h-[80vh] overflow-y-auto"
+            className="bg-[#1D2125] rounded-lg overflow-hidden max-w-md w-full max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative bg-black">
@@ -280,10 +280,10 @@ function ImageGridWithLightbox({
             {(getGalleryName(selected) || getGalleryDescription(selected)) && (
               <div className="p-4">
                 {getGalleryName(selected) && (
-                  <h4 className="font-semibold text-gray-800">{getGalleryName(selected)}</h4>
+                  <h4 className="font-semibold text-white">{getGalleryName(selected)}</h4>
                 )}
                 {getGalleryDescription(selected) && (
-                  <p className="text-sm text-gray-600 mt-1">{getGalleryDescription(selected)}</p>
+                  <p className="text-sm text-gray-400 mt-1">{getGalleryDescription(selected)}</p>
                 )}
               </div>
             )}
@@ -367,18 +367,18 @@ export function DocumentViewer({
 
   return (
     <div className="mt-6 space-y-4">
-      <h4 className="text-sm font-semibold text-gray-700">{title}</h4>
+      <h4 className="text-sm font-semibold text-[#CCCCCC]">{title}</h4>
 
       <div className="flex flex-wrap gap-3">
         {filteredDocs.map((doc, index) => (
           <div
             key={index}
-            className="flex items-center gap-3 pl-3 pr-2 py-2 rounded-xl border border-gray-200 bg-white shadow-sm"
+            className="flex items-center gap-3 pl-3 pr-2 py-2 rounded-xl border border-[#292C30] bg-[#1D2125] shadow-sm"
           >
             <span className="text-lg shrink-0">{getFileIcon(doc)}</span>
 
             <div className="flex flex-col min-w-0">
-              <span className="truncate max-w-[160px] text-sm font-medium text-gray-800">
+              <span className="truncate max-w-[160px] text-sm font-medium text-white">
                 {getDisplayName(doc)}
               </span>
               <span className="text-xs text-gray-400">
@@ -389,7 +389,7 @@ export function DocumentViewer({
             <div className="flex items-center gap-1.5 ml-2 shrink-0">
               <button
                 onClick={() => setPreviewDoc(doc)}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-[#0073FF] text-white rounded-lg hover:bg-[#0060D0] transition"
                 title="View"
               >
                 <Eye className="w-3.5 h-3.5" />
@@ -399,7 +399,7 @@ export function DocumentViewer({
               {allowDownload && (
                 <button
                   onClick={() => downloadFile(doc, getDisplayName(doc))}
-                  className="p-1.5 text-gray-500 hover:text-green-600 transition rounded-lg hover:bg-green-50"
+                  className="p-1.5 text-gray-500 hover:text-green-400 transition rounded-lg hover:bg-green-500/10"
                   title="Download"
                 >
                   <Download className="w-4 h-4" />
@@ -416,13 +416,13 @@ export function DocumentViewer({
           onClick={() => setPreviewDoc(null)}
         >
           <div
-            className="bg-white rounded-lg overflow-hidden max-w-2xl w-full max-h-[85vh] flex flex-col"
+            className="bg-[#1D2125] rounded-lg overflow-hidden max-w-2xl w-full max-h-[85vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between bg-gray-50 px-4 py-2 border-b border-gray-200">
+            <div className="flex items-center justify-between bg-[#171A1E] px-4 py-2 border-b border-[#292C30]">
               <div className="flex items-center gap-2 min-w-0">
-                <FileText className="w-4 h-4 text-gray-600 shrink-0" />
-                <span className="text-sm font-medium text-gray-700 truncate">
+                <FileText className="w-4 h-4 text-gray-400 shrink-0" />
+                <span className="text-sm font-medium text-[#CCCCCC] truncate">
                   {getDisplayName(previewDoc)}
                 </span>
               </div>
@@ -439,17 +439,17 @@ export function DocumentViewer({
                 <button
                   onClick={() => setPreviewDoc(null)}
                   aria-label="Close"
-                  className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-full transition"
+                  className="p-1.5 text-gray-500 hover:text-white hover:bg-[#292C30] rounded-full transition"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            <div className="p-3 bg-white flex-1 overflow-hidden">
+            <div className="p-3 bg-[#1D2125] flex-1 overflow-hidden">
               <iframe
                 src={getPreviewSrc(previewDoc)}
-                className="w-full h-[65vh] rounded border border-gray-200"
+                className="w-full h-[65vh] rounded border border-[#292C30]"
                 title="Document Viewer"
               />
             </div>
@@ -478,7 +478,7 @@ function ProductShowcase({ items }: { items: SectionItem[] }) {
     setThumbStart((s) => Math.min(Math.max(0, items.length - THUMBS_VISIBLE), s + 1))
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+    <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-sm p-6">
       <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr] gap-6">
         {/* Thumbnail rail */}
         <div className="flex md:flex-col items-center gap-2 order-2 md:order-1">
@@ -486,7 +486,7 @@ function ProductShowcase({ items }: { items: SectionItem[] }) {
             <button
               onClick={scrollThumbsUp}
               disabled={thumbStart === 0}
-              className="p-1 rounded text-gray-400 hover:text-gray-600 disabled:opacity-30"
+              className="p-1 rounded text-gray-400 hover:text-gray-400 disabled:opacity-30"
               aria-label="Scroll thumbnails up"
             >
               <ChevronUp className="w-4 h-4" />
@@ -499,8 +499,8 @@ function ProductShowcase({ items }: { items: SectionItem[] }) {
                 key={realIndex}
                 onClick={() => setSelectedIndex(realIndex)}
                 className={`w-14 h-14 rounded-lg overflow-hidden border-2 transition shrink-0 ${selectedIndex === realIndex
-                  ? "border-red-600"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-[#0073FF]"
+                  : "border-[#292C30] hover:border-[#0073FF]/60"
                   }`}
               >
                 <img src={item.image} alt={item.name || `Product ${realIndex + 1}`} className="w-full h-full object-cover" />
@@ -511,7 +511,7 @@ function ProductShowcase({ items }: { items: SectionItem[] }) {
             <button
               onClick={scrollThumbsDown}
               disabled={thumbStart + THUMBS_VISIBLE >= items.length}
-              className="p-1 rounded text-gray-400 hover:text-gray-600 disabled:opacity-30"
+              className="p-1 rounded text-gray-400 hover:text-gray-400 disabled:opacity-30"
               aria-label="Scroll thumbnails down"
             >
               <ChevronDown className="w-4 h-4" />
@@ -520,7 +520,7 @@ function ProductShowcase({ items }: { items: SectionItem[] }) {
         </div>
 
         {/* Main image */}
-        <div className="rounded-lg overflow-hidden border border-gray-200 bg-gray-50 aspect-square order-1 md:order-2">
+        <div className="rounded-lg overflow-hidden border border-[#292C30] bg-[#171A1E] aspect-square order-1 md:order-2">
           <img
             src={selected.image}
             alt={selected.name || "Selected product"}
@@ -531,10 +531,10 @@ function ProductShowcase({ items }: { items: SectionItem[] }) {
         {/* Info panel */}
         <div className="flex flex-col justify-center order-3">
           {selected.name && (
-            <h3 className="text-lg font-bold text-gray-800">{selected.name}</h3>
+            <h3 className="text-lg font-bold text-white">{selected.name}</h3>
           )}
           {selected.description && (
-            <p className="text-sm text-gray-600 mt-3 leading-relaxed">{selected.description}</p>
+            <p className="text-sm text-gray-400 mt-3 leading-relaxed">{selected.description}</p>
           )}
         </div>
       </div>
@@ -568,7 +568,7 @@ function VideoShowcase({ videos, productItems }: { videos: string[]; productItem
     setThumbStart((s) => Math.min(Math.max(0, filtered.length - THUMBS_VISIBLE), s + 1))
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+    <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-sm p-6">
       <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr] gap-6">
         {/* Thumbnail rail */}
         <div className="flex md:flex-col items-center gap-2 order-2 md:order-1">
@@ -576,7 +576,7 @@ function VideoShowcase({ videos, productItems }: { videos: string[]; productItem
             <button
               onClick={scrollThumbsUp}
               disabled={thumbStart === 0}
-              className="p-1 rounded text-gray-400 hover:text-gray-600 disabled:opacity-30"
+              className="p-1 rounded text-gray-400 hover:text-gray-400 disabled:opacity-30"
               aria-label="Scroll thumbnails up"
             >
               <ChevronUp className="w-4 h-4" />
@@ -590,8 +590,8 @@ function VideoShowcase({ videos, productItems }: { videos: string[]; productItem
                 key={realIndex}
                 onClick={() => setSelectedIndex(realIndex)}
                 className={`relative w-14 h-14 rounded-lg overflow-hidden border-2 transition shrink-0 bg-gray-900 ${selectedIndex === realIndex
-                  ? "border-red-600"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-[#0073FF]"
+                  : "border-[#292C30] hover:border-[#0073FF]/60"
                   }`}
               >
                 {thumbnail ? (
@@ -612,7 +612,7 @@ function VideoShowcase({ videos, productItems }: { videos: string[]; productItem
             <button
               onClick={scrollThumbsDown}
               disabled={thumbStart + THUMBS_VISIBLE >= filtered.length}
-              className="p-1 rounded text-gray-400 hover:text-gray-600 disabled:opacity-30"
+              className="p-1 rounded text-gray-400 hover:text-gray-400 disabled:opacity-30"
               aria-label="Scroll thumbnails down"
             >
               <ChevronDown className="w-4 h-4" />
@@ -621,7 +621,7 @@ function VideoShowcase({ videos, productItems }: { videos: string[]; productItem
         </div>
 
         {/* Main video player */}
-        <div className="rounded-lg overflow-hidden border border-gray-200 bg-black aspect-square order-1 md:order-2">
+        <div className="rounded-lg overflow-hidden border border-[#292C30] bg-black aspect-square order-1 md:order-2">
           <iframe
             key={selectedVideo}
             src={toEmbedUrl(selectedVideo)}
@@ -634,10 +634,10 @@ function VideoShowcase({ videos, productItems }: { videos: string[]; productItem
         {/* Info panel — swaps per selected video, cycling product data */}
         <div className="flex flex-col justify-center order-3">
           {selectedProduct?.name && (
-            <h3 className="text-lg font-bold text-gray-800">{selectedProduct.name}</h3>
+            <h3 className="text-lg font-bold text-white">{selectedProduct.name}</h3>
           )}
           {selectedProduct?.description && (
-            <p className="text-sm text-gray-600 mt-3 leading-relaxed">{selectedProduct.description}</p>
+            <p className="text-sm text-gray-400 mt-3 leading-relaxed">{selectedProduct.description}</p>
           )}
         </div>
       </div>
@@ -680,20 +680,20 @@ function CatalogueCards({ documents, title = "Product Catalogues" }: { documents
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-      <h4 className="text-sm font-semibold text-gray-700 mb-4">{title}</h4>
+    <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-sm p-5">
+      <h4 className="text-sm font-semibold text-[#CCCCCC] mb-4">{title}</h4>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {visibleDocs.map((doc, i) => (
-          <div key={i} className="border border-gray-200 rounded-lg p-3 flex flex-col items-center text-center gap-2">
+          <div key={i} className="border border-[#292C30] rounded-lg p-3 flex flex-col items-center text-center gap-2">
             <span className="text-2xl">📄</span>
             <div className="min-w-0 w-full">
-              <p className="text-xs font-medium text-gray-800 truncate">{getDisplayName(doc)}</p>
+              <p className="text-xs font-medium text-white truncate">{getDisplayName(doc)}</p>
               <p className="text-[11px] text-gray-400">{getFileType(doc)}</p>
             </div>
             <div className="flex items-center gap-2 w-full">
               <button
                 onClick={() => setPreviewDoc(doc)}
-                className="flex-1 flex items-center gap-1 px-2 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 transition justify-center"
+                className="flex-1 flex items-center gap-1 px-2 py-1 text-xs font-medium bg-[#0073FF] text-white rounded hover:bg-[#0060D0] transition justify-center"
               >
                 <Eye className="w-3 h-3" />
                 Preview
@@ -713,7 +713,7 @@ function CatalogueCards({ documents, title = "Product Catalogues" }: { documents
       {filtered.length > VISIBLE && (
         <button
           onClick={() => setShowAll((s) => !s)}
-          className="mt-4 w-full text-center text-xs font-semibold text-red-600 border border-red-200 rounded-lg py-2 hover:bg-red-50 transition"
+          className="mt-4 w-full text-center text-xs font-semibold text-[#00B5ED] border border-[#292C30] rounded-lg py-2 hover:bg-[#171A1E] transition"
         >
           {showAll ? "Show less" : `View all catalogues (${filtered.length})`}
         </button>
@@ -725,11 +725,11 @@ function CatalogueCards({ documents, title = "Product Catalogues" }: { documents
           onClick={() => setPreviewDoc(null)}
         >
           <div
-            className="bg-white rounded-lg overflow-hidden max-w-2xl w-full max-h-[85vh] flex flex-col"
+            className="bg-[#1D2125] rounded-lg overflow-hidden max-w-2xl w-full max-h-[85vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between bg-gray-50 px-4 py-2 border-b border-gray-200">
-              <span className="text-sm font-medium text-gray-700 truncate">{getDisplayName(previewDoc)}</span>
+            <div className="flex items-center justify-between bg-[#171A1E] px-4 py-2 border-b border-[#292C30]">
+              <span className="text-sm font-medium text-[#CCCCCC] truncate">{getDisplayName(previewDoc)}</span>
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => downloadFile(previewDoc, getDisplayName(previewDoc))}
@@ -741,14 +741,14 @@ function CatalogueCards({ documents, title = "Product Catalogues" }: { documents
                 <button
                   onClick={() => setPreviewDoc(null)}
                   aria-label="Close"
-                  className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-full transition"
+                  className="p-1.5 text-gray-500 hover:text-white hover:bg-[#292C30] rounded-full transition"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
-            <div className="p-3 bg-white flex-1 overflow-hidden">
-              <iframe src={getPreviewSrc(previewDoc)} className="w-full h-[65vh] rounded border border-gray-200" title="Document preview" />
+            <div className="p-3 bg-[#1D2125] flex-1 overflow-hidden">
+              <iframe src={getPreviewSrc(previewDoc)} className="w-full h-[65vh] rounded border border-[#292C30]" title="Document preview" />
             </div>
           </div>
         </div>
@@ -808,15 +808,15 @@ export default function GalleryTabs({
     <div>
       {/* Main tabs */}
       <div className="mb-8">
-        <div className="inline-flex flex-wrap gap-1 p-1 bg-gray-100 rounded-xl">
+        <div className="inline-flex flex-wrap gap-1 p-1 bg-[#171A1E] rounded-xl">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all
                 ${activeTab === tab.id
-                  ? "bg-red-600 text-white shadow-sm"
-                  : "text-gray-600 hover:text-black hover:bg-gray-200"
+                  ? "bg-[#0073FF] text-white shadow-sm"
+                  : "text-gray-400 hover:text-white hover:bg-[#292C30]"
                 }
               `}
             >
@@ -835,13 +835,13 @@ export default function GalleryTabs({
             <>
               {/* Inner sub-tabs */}
               <div className="mb-6">
-                <div className="inline-flex gap-1 p-1 bg-gray-50 border border-gray-200 rounded-lg">
+                <div className="inline-flex gap-1 p-1 bg-[#171A1E] border border-[#292C30] rounded-lg">
                   <button
                     onClick={() => setActiveProductSubTab("products")}
                     className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all
                       ${activeProductSubTab === "products"
-                        ? "bg-white text-red-600 shadow-sm border border-gray-200"
-                        : "text-gray-500 hover:text-gray-700"
+                        ? "bg-[#1D2125] text-[#00B5ED] shadow-sm border border-[#292C30]"
+                        : "text-gray-500 hover:text-[#CCCCCC]"
                       }
                     `}
                   >
@@ -851,8 +851,8 @@ export default function GalleryTabs({
                     onClick={() => setActiveProductSubTab("capabilities")}
                     className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all
                       ${activeProductSubTab === "capabilities"
-                        ? "bg-white text-red-600 shadow-sm border border-gray-200"
-                        : "text-gray-500 hover:text-gray-700"
+                        ? "bg-[#1D2125] text-[#00B5ED] shadow-sm border border-[#292C30]"
+                        : "text-gray-500 hover:text-[#CCCCCC]"
                       }
                     `}
                   >
@@ -887,11 +887,11 @@ export default function GalleryTabs({
                   {hasCapabilitiesContent ? (
                     <div className="space-y-6">
                       {hasManufacturingContent && (
-                        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
-                          <h4 className="text-sm font-semibold text-gray-600 uppercase">Manufacturing Capabilities</h4>
+                        <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-sm p-6 space-y-4">
+                          <h4 className="text-sm font-semibold text-gray-400 uppercase">Manufacturing Capabilities</h4>
                           {manufacturingCapabilities && (
                             <div
-                              className="prose prose-sm max-w-none text-gray-700"
+                              className="prose prose-sm prose-invert max-w-none text-gray-300"
                               dangerouslySetInnerHTML={{ __html: manufacturingCapabilities }}
                             />
                           )}
@@ -901,7 +901,7 @@ export default function GalleryTabs({
                           {manufacturingCapabilityVideos && manufacturingCapabilityVideos.filter(Boolean).length > 0 && (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               {manufacturingCapabilityVideos.filter(Boolean).map((url, i) => (
-                                <div key={i} className="aspect-video rounded-lg overflow-hidden border border-gray-200">
+                                <div key={i} className="aspect-video rounded-lg overflow-hidden border border-[#292C30]">
                                   <iframe
                                     src={toEmbedUrl(url)}
                                     className="w-full h-full"
@@ -916,8 +916,8 @@ export default function GalleryTabs({
                       )}
 
                       {hasMachineryContent && (
-                        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
-                          <h4 className="text-sm font-semibold text-gray-600 uppercase">Machinery List</h4>
+                        <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-sm p-6 space-y-4">
+                          <h4 className="text-sm font-semibold text-gray-400 uppercase">Machinery List</h4>
                           {machineryList && (
                             <MachineryListGrid html={machineryList} />
                           )}
@@ -950,13 +950,13 @@ export default function GalleryTabs({
               items={toSectionItems(companyGallery)}
             />
             {companyBrochure && companyBrochure.filter(Boolean).length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-sm p-6">
                 <DocumentViewer documents={companyBrochure} title="Company Brochure" />
               </div>
             )}
           </div>
         ) : companyBrochure && companyBrochure.filter(Boolean).length > 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-sm p-6">
             <DocumentViewer documents={companyBrochure} title="Company Brochure" />
           </div>
         ) : (

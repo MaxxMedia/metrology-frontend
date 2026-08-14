@@ -444,7 +444,7 @@ export default function PostDetailsPage() {
                   {author?.name || DEFAULT_AUTHOR_NAME}
                 </Link>
 
-                <span className="text-gray-700">•</span>
+                <span className="text-gray-500">•</span>
 
                 <span className="flex items-center gap-1">
                   <Calendar size={14} className="text-gray-500" />
@@ -453,7 +453,7 @@ export default function PostDetailsPage() {
 
                 {post.category?.name && (
                   <>
-                    <span className="text-gray-700">•</span>
+                    <span className="text-gray-500">•</span>
                     <span className="flex items-center gap-1">
                       <FileText size={14} className="text-gray-500" />
                       {post.category.name}
@@ -461,7 +461,7 @@ export default function PostDetailsPage() {
                   </>
                 )}
 
-                <span className="text-gray-700">•</span>
+                <span className="text-gray-500">•</span>
 
                 <span className="flex items-center gap-1">
                   <MessageSquare size={14} className="text-gray-500" />
@@ -477,7 +477,7 @@ export default function PostDetailsPage() {
               )}
 
               {/* CONTENT */}
-              <div className="prose prose-lg prose-invert max-w-none break-words overflow-hidden prose-headings:text-white prose-a:text-blue-400 prose-img:rounded-xl prose-blockquote:border-blue-500 prose-blockquote:bg-gray-900 mt-6">
+              <div className="post-article-content prose prose-lg prose-invert max-w-none break-words overflow-hidden mt-6 text-gray-300 prose-headings:!text-white prose-p:!text-gray-300 prose-li:!text-gray-300 prose-strong:!text-white prose-em:!text-gray-300 prose-blockquote:!text-gray-300 prose-blockquote:border-blue-500 prose-blockquote:bg-gray-900/50 prose-a:!text-blue-400 prose-img:rounded-xl prose-th:!text-gray-200 prose-td:!text-gray-300 [&_h1]:!text-white [&_h2]:!text-white [&_h3]:!text-white [&_p]:!text-gray-300 [&_li]:!text-gray-300 [&_strong]:!text-white [&_blockquote]:!text-gray-300 [&_.prose]:prose-invert [&_.prose_p]:!text-gray-300 [&_.prose_h1]:!text-white [&_.prose_h2]:!text-white [&_.prose_h3]:!text-white [&_.prose_strong]:!text-white [&_.prose_blockquote]:!text-gray-300">
                 {post.contentBlocks && post.contentBlocks.length > 0 ? (
                   <BlockRenderer blocks={post.contentBlocks} />
                 ) : post.content ? (

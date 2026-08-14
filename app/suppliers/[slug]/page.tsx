@@ -154,7 +154,7 @@ function GalleryItemCard({ item, title }: { item: any; title?: string }) {
   const description = getGalleryDescription(item)
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
+    <div className="bg-[#1D2125] rounded-lg overflow-hidden shadow-md border border-[#292C30]">
       <div className="aspect-square overflow-hidden">
         {image ? (
           <img
@@ -163,15 +163,15 @@ function GalleryItemCard({ item, title }: { item: any; title?: string }) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
+          <div className="w-full h-full bg-[#171A1E] flex items-center justify-center text-gray-500">
             No image
           </div>
         )}
       </div>
       {(name || description) && (
         <div className="p-4">
-          {name && <h4 className="text-[20px] font-medium text-gray-800">{name}</h4>}
-          {description && <p className="text-[15px] text-gray-600 mt-1">{description}</p>}
+          {name && <h4 className="text-[20px] font-medium text-white">{name}</h4>}
+          {description && <p className="text-[15px] text-gray-400 mt-1">{description}</p>}
         </div>
       )}
     </div>
@@ -207,7 +207,7 @@ export default async function SupplierShowroomPage({
 
   if (!supplierRes.ok) {
     return (
-      <div className="p-10 text-center text-[16px] text-gray-600">
+      <div className="min-h-screen bg-[#0a0d14] p-10 text-center text-[16px] text-gray-400">
         Supplier not found
       </div>
     )
@@ -319,8 +319,8 @@ export default async function SupplierShowroomPage({
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="relative bg-black h-[140px] sm:h-[170px] md:h-[200px]" />
+    <div className="min-h-screen bg-[#0a0d14]">
+      <div className="relative bg-[#0a0d14] h-[140px] sm:h-[170px] md:h-[200px]" />
 
       {isPaid && limitedBannerImages.length > 0 && (
         <div className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 -mt-6 sm:-mt-10 md:-mt-14">
@@ -346,17 +346,17 @@ export default async function SupplierShowroomPage({
       )}
 
       <div
-        className={`relative z-10 max-w-6xl mx-auto px-4 sm:px-6 ${isPaid ? "mt-6" : "-mt-16 sm:-mt-20 md:-mt-24"
+        className={`relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pb-16 ${isPaid ? "mt-6" : "-mt-16 sm:-mt-20 md:-mt-24"
           }`}
       >
         {!isPaid && (
-          <div className="bg-white rounded-lg shadow p-6 sm:p-10 border-t-4 border-red-700">
-            <h1 className="text-[24px] font-bold text-center text-[#0b3954]">
+          <div className="bg-[#1D2125] rounded-xl shadow-lg p-6 sm:p-10 border border-[#292C30] border-t-4 border-t-[#0073FF]">
+            <h1 className="text-[24px] font-bold text-center text-white">
               {supplier.name}
             </h1>
 
             {location && (
-              <p className="flex items-center justify-center gap-2 text-[12px] text-gray-500 mt-2">
+              <p className="flex items-center justify-center gap-2 text-[12px] text-gray-400 mt-2">
                 <MapPin size={16} />
                 {location}
               </p>
@@ -373,36 +373,36 @@ export default async function SupplierShowroomPage({
                 )}
 
                 <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                  <div className="text-[12px] space-y-3">
+                  <div className="text-[12px] space-y-3 text-[#CCCCCC]">
                     {supplier.tradeNames && supplier.tradeNames.length > 0 && (
-                      <p className="text-gray-600">
-                        <strong>Trade Names:</strong>{" "}
+                      <p className="text-gray-400">
+                        <strong className="text-[#CCCCCC]">Trade Names:</strong>{" "}
                         {supplier.tradeNames.join(", ")}
                       </p>
                     )}
 
                     {supplier.phoneNumber && (
                       <p className="flex items-center gap-2">
-                        <Phone size={14} />
+                        <Phone size={14} className="text-gray-500" />
                         {supplier.phoneNumber}
                       </p>
                     )}
 
                     {supplier.email && (
                       <p className="flex items-center gap-2">
-                        <Mail size={14} />
+                        <Mail size={14} className="text-gray-500" />
                         {supplier.email}
                       </p>
                     )}
 
                     {websiteLink && (
                       <p className="flex items-center gap-2">
-                        <Globe size={14} />
+                        <Globe size={14} className="text-gray-500" />
                         <a
                           href={websiteLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
+                          className="text-[#00B5ED] hover:underline"
                         >
                           {websiteLink}
                         </a>
@@ -425,7 +425,7 @@ export default async function SupplierShowroomPage({
                   social.twitter ||
                   social.youtube) && (
                     <div>
-                      <h4 className="text-[12px] font-semibold text-gray-600 uppercase mb-3">
+                      <h4 className="text-[12px] font-semibold text-gray-400 uppercase mb-3">
                         Connect
                       </h4>
 
@@ -459,7 +459,7 @@ export default async function SupplierShowroomPage({
 
               <section className="md:col-span-2">
                 <div
-                  className="prose max-w-none text-[16px] text-gray-700"
+                  className="post-article-content prose prose-invert max-w-none text-[16px] text-gray-300 prose-headings:!text-white prose-p:!text-gray-300 prose-strong:!text-white prose-a:!text-[#00B5ED] [&_h2]:!text-white [&_h3]:!text-white [&_p]:!text-gray-300"
                   dangerouslySetInnerHTML={{ __html: supplier.description }}
                 />
               </section>
@@ -472,7 +472,7 @@ export default async function SupplierShowroomPage({
                   return item && item.image && item.image.trim().length > 0
                 }).length > 0) && (
                     <div className="mt-8">
-                      <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Product Gallery</h3>
+                      <h3 className="text-[20px] font-semibold text-white mb-4">Product Gallery</h3>
                       <GalleryGrid items={supplier.productGallery as any[]} title="Product" />
                     </div>
                   )}
@@ -483,7 +483,7 @@ export default async function SupplierShowroomPage({
                 }).length > 0) && (
                     <div className="mt-8">
 
-                      <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Company Gallery</h3>
+                      <h3 className="text-[20px] font-semibold text-white mb-4">Company Gallery</h3>
 
                       <GalleryGridWithLightbox items={supplier.companyGallery as any[]} title="Company" />
 
@@ -495,7 +495,7 @@ export default async function SupplierShowroomPage({
                   return item && item.image && item.image.trim().length > 0
                 }).length > 0) && (
                     <div className="mt-8">
-                      <h3 className="text-[20px] font-semibold text-gray-800 mb-4">Factory Gallery</h3>
+                      <h3 className="text-[20px] font-semibold text-white mb-4">Factory Gallery</h3>
 
                       <GalleryGridWithLightbox items={supplier.factoryGallery as any[]} title="Factory" />
                     </div>
@@ -515,12 +515,12 @@ export default async function SupplierShowroomPage({
           />
 
           {hasValidMap ? (
-            <div className="bg-white rounded-lg shadow p-6 h-full">
-              <h4 className="text-sm font-semibold text-gray-600 uppercase mb-3 flex items-center gap-2">
+            <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-lg p-6 h-full">
+              <h4 className="text-sm font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
                 <MapPin size={16} />
                 Location Map
               </h4>
-              <div className="rounded-lg overflow-hidden border border-gray-200 h-[300px] relative">
+              <div className="rounded-lg overflow-hidden border border-[#292C30] h-[300px] relative">
                 <iframe
                   src={mapEmbedUrl}
                   width="100%"
@@ -544,23 +544,23 @@ export default async function SupplierShowroomPage({
                 href={supplier.googleMapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block mt-3 text-blue-600 hover:underline text-sm"
+                className="inline-block mt-3 text-[#00B5ED] hover:underline text-sm"
               >
                 Open in Google Maps →
               </a>
             </div>
           ) : location ? (
-            <div className="bg-white rounded-lg shadow p-6 h-full">
-              <h4 className="text-sm font-semibold text-gray-600 uppercase mb-3 flex items-center gap-2">
+            <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-lg p-6 h-full">
+              <h4 className="text-sm font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
                 <MapPin size={16} />
                 Location
               </h4>
-              <p className="text-gray-700">{location}</p>
+              <p className="text-[#CCCCCC]">{location}</p>
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block mt-3 text-blue-600 hover:underline text-sm"
+                className="inline-block mt-3 text-[#00B5ED] hover:underline text-sm"
               >
                 View on Google Maps →
               </a>
@@ -573,19 +573,19 @@ export default async function SupplierShowroomPage({
 
         {showUpsellToOwner && <ClaimCompanyBanner />}
 
-        <hr className="my-10 md:my-12" />
+        <hr className="my-10 md:my-12 border-[#292C30]" />
 
         {showUpsellToOwner && (
-          <div className="text-center py-8 px-6 mb-8 bg-white border border-dashed border-gray-300 rounded-lg">
-            <p className="text-[20px] text-gray-700 font-semibold">
+          <div className="text-center py-8 px-6 mb-8 bg-[#1D2125] border border-dashed border-[#292C30] rounded-xl">
+            <p className="text-[20px] text-[#CCCCCC] font-semibold">
               Want to upload your own photos and videos?
             </p>
-            <p className="text-[15px] text-gray-500 mt-1">
+            <p className="text-[15px] text-gray-400 mt-1">
               Upgrade your plan to add and manage your own gallery content.
             </p>
             <Link
               href="/login"
-              className="inline-block mt-4 bg-[#0b3954] text-white px-6 py-2 text-[15px] font-semibold uppercase hover:bg-[#092f46] transition"
+              className="inline-block mt-4 bg-[#0073FF] text-white px-6 py-2 text-[15px] font-semibold uppercase hover:bg-[#0060D0] transition rounded-lg"
             >
               Purchase a Plan
             </Link>
@@ -611,7 +611,7 @@ export default async function SupplierShowroomPage({
 
         {articles.length > 0 && (
           <>
-            <hr className="my-10 md:my-12" />
+            <hr className="my-10 md:my-12 border-[#292C30]" />
             <CompanyArticlesCarousel articles={articles} />
           </>
         )}

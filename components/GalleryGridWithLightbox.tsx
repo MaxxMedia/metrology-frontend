@@ -41,7 +41,7 @@ export default function GalleryGridWithLightbox({
                             key={index}
                             type="button"
                             onClick={() => setSelected(item)}
-                            className="text-left bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 hover:shadow-lg transition"
+                            className="text-left bg-[#1D2125] rounded-lg overflow-hidden shadow-md border border-[#292C30] hover:border-[#0073FF] transition"
                         >
                             <div className="aspect-square overflow-hidden">
                                 {image ? (
@@ -51,16 +51,16 @@ export default function GalleryGridWithLightbox({
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
+                                    <div className="w-full h-full bg-[#171A1E] flex items-center justify-center text-gray-500">
                                         No image
                                     </div>
                                 )}
                             </div>
                             {(name || description) && (
                                 <div className="p-4">
-                                    {name && <h4 className="font-medium text-gray-800">{name}</h4>}
+                                    {name && <h4 className="font-medium text-white">{name}</h4>}
                                     {description && (
-                                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{description}</p>
+                                        <p className="text-sm text-gray-400 mt-1 line-clamp-2">{description}</p>
                                     )}
                                 </div>
                             )}
@@ -71,11 +71,11 @@ export default function GalleryGridWithLightbox({
 
             {selected && (
                 <div
-                    className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+                    className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm"
                     onClick={() => setSelected(null)}
                 >
                     <div
-                        className="bg-white rounded-lg overflow-hidden max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                        className="bg-[#1D2125] border border-[#292C30] rounded-xl overflow-hidden max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="relative bg-black">
@@ -96,10 +96,10 @@ export default function GalleryGridWithLightbox({
                         {(getName(selected) || getDescription(selected)) && (
                             <div className="p-5">
                                 {getName(selected) && (
-                                    <h4 className="font-semibold text-lg text-gray-800">{getName(selected)}</h4>
+                                    <h4 className="font-semibold text-lg text-white">{getName(selected)}</h4>
                                 )}
                                 {getDescription(selected) && (
-                                    <p className="text-sm text-gray-600 mt-2">{getDescription(selected)}</p>
+                                    <p className="text-sm text-gray-400 mt-2">{getDescription(selected)}</p>
                                 )}
                             </div>
                         )}

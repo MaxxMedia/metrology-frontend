@@ -94,13 +94,13 @@ function HeadingBlock({ block }: HeadingBlockProps) {
 
   switch (level) {
     case 1:
-      return <h1 className={`${size} mb-3`}>{block.text}</h1>;
+      return <h1 className={`${size} mb-3 text-white`}>{block.text}</h1>;
     case 2:
-      return <h2 className={`${size} mb-3`}>{block.text}</h2>;
+      return <h2 className={`${size} mb-3 text-white`}>{block.text}</h2>;
     case 3:
-      return <h3 className={`${size} mb-3`}>{block.text}</h3>;
+      return <h3 className={`${size} mb-3 text-white`}>{block.text}</h3>;
     default:
-      return <h2 className={`${size} mb-3`}>{block.text}</h2>;
+      return <h2 className={`${size} mb-3 text-white`}>{block.text}</h2>;
   }
 }
 
@@ -113,7 +113,7 @@ interface ParagraphBlockProps {
 function ParagraphBlock({ block }: ParagraphBlockProps) {
   return (
     <div
-      className="prose prose-lg max-w-none mb-6"
+      className="prose prose-lg prose-invert max-w-none mb-6 text-gray-300 prose-headings:text-white prose-strong:text-white prose-a:text-blue-400"
       dangerouslySetInnerHTML={{ __html: block.content }}
     />
   );
@@ -226,7 +226,7 @@ interface QuoteBlockProps {
 
 function QuoteBlock({ block }: QuoteBlockProps) {
   return (
-    <blockquote className="border-l-4 border-indigo-600 pl-6 italic text-xl text-gray-700 mb-6">
+    <blockquote className="border-l-4 border-blue-500 pl-6 italic text-xl text-gray-300 mb-6">
       {block.quote}
     </blockquote>
   );
