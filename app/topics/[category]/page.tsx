@@ -79,15 +79,15 @@ export default async function TopicCategoryPage({ params }: Props) {
   const recentPosts: Post[] = recentData.data || recentData;
 
   return (
-    <main className="bg-white">
+    <main className="bg-[#0a0d14]">
       {recentPosts.length > 0 && (
-        <section className="border-b border-gray-200 bg-white">
+        <section className="border-b border-[#292C30] bg-[#1D2125]">
           <div className="max-w-[1320px] mx-auto px-4 sm:px-6 py-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
               {recentPosts.map((post) => (
                 <Link key={post.id} href={`/post/${post.slug}`} className="group">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className="bg-[#0073ff] text-white text-[10px] font-bold px-2 py-0.5 uppercase">
+                    <span className="bg-[#0073FF] text-white text-[10px] font-bold px-2 py-0.5 uppercase rounded">
                       {(post as Post & { subCategory?: { name?: string } }).subCategory?.name ||
                         (typeof post.category === "object" ? post.category?.name : "") ||
                         "News"}
@@ -102,7 +102,7 @@ export default async function TopicCategoryPage({ params }: Props) {
                         : ""}
                     </span>
                   </div>
-                  <p className="text-sm font-semibold text-[#121213] leading-snug group-hover:text-[#0073ff]">
+                  <p className="text-sm font-semibold text-[#CCCCCC] leading-snug group-hover:text-[#00B5ED]">
                     {post.title}
                   </p>
                 </Link>

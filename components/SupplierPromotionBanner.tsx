@@ -225,7 +225,7 @@ function ConnectButton({
             disabled={!companyId}
             className={
                 className ||
-                "w-full md:w-auto inline-flex items-center justify-center gap-2 border border-[#0b3954] text-[#0b3954] px-6 py-2.5 text-sm font-semibold uppercase tracking-wide hover:bg-[#0b3954] hover:text-white transition rounded disabled:opacity-60"
+                "w-full md:w-auto inline-flex items-center justify-center gap-2 border border-[#0073FF] text-[#00B5ED] px-6 py-2.5 text-sm font-semibold uppercase tracking-wide hover:bg-[#0073FF] hover:text-white transition rounded-lg disabled:opacity-60"
             }
         >
             {connected ? "Connected" : "Connect"}
@@ -276,7 +276,7 @@ export default function SupplierPromotionBanner({
 
     return (
         <div
-            className={`w-full overflow-hidden rounded-2xl border ${tier.accent} shadow-xl bg-white mb-8 md:mb-10`}
+            className={`w-full overflow-hidden rounded-2xl border ${tier.accent} shadow-xl bg-[#1D2125] mb-8 md:mb-10`}
         >
             {/* ===== IMAGE / GRADIENT ZONE ===== */}
             <div className="relative min-h-[220px] sm:min-h-[260px] md:min-h-[300px]">
@@ -324,10 +324,9 @@ export default function SupplierPromotionBanner({
 
             {/* ===== SOLID INFO PANEL ===== */}
             {(hasContactInfo || hasSocial || showActions) && (
-                <div className="bg-white border-t-2 border-gray-100 px-4 sm:px-6 py-4 sm:py-5">
+                <div className="bg-[#1D2125] border-t border-[#292C30] px-4 sm:px-6 py-4 sm:py-5">
                     <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-6 items-start md:items-center">
-                        {/* LEFT COLUMN: contact details + social */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-700 min-w-0">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-[#CCCCCC] min-w-0">
                             {phoneNumber && (
                                 <span className="flex items-center gap-2 min-w-0">
                                     <Phone className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -347,7 +346,7 @@ export default function SupplierPromotionBanner({
                                     href={website}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="truncate text-blue-600 hover:underline"
+                                    className="truncate text-[#00B5ED] hover:underline"
                                     >
                                     {website}
                                 </a>
@@ -410,7 +409,7 @@ export default function SupplierPromotionBanner({
                         <QuoteRequestButton
                             supplierSlug={slug}
                             supplierName={name}
-                            className="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-[#0b3954] text-white px-6 py-2.5 text-sm font-semibold uppercase tracking-wide hover:bg-[#092f46] transition rounded"
+                            className="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-[#0073FF] text-white px-6 py-2.5 text-sm font-semibold uppercase tracking-wide hover:bg-[#0060D0] transition rounded-lg"
                         />
                     )}
                     <ConnectButton

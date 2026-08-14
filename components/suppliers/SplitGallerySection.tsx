@@ -41,9 +41,9 @@ export default function SplitGallerySection({
     const goNext = () => setPage((p) => (p + 1) % totalPages)
 
     return (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-lg p-6">
             <div className="flex items-center justify-between mb-6">
-                <span className="text-xs font-medium text-gray-400">
+                <span className="text-xs font-medium text-gray-500">
                     Showing {start + 1}-{Math.min(start + cardsPerPage, items.length)} of {items.length}
                 </span>
 
@@ -51,14 +51,14 @@ export default function SplitGallerySection({
                     <div className="flex gap-2">
                         <button
                             onClick={goPrev}
-                            className="p-1.5 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50 transition"
+                            className="p-1.5 rounded-full border border-[#292C30] text-gray-400 hover:bg-[#171A1E] hover:text-white transition"
                             aria-label="Previous"
                         >
                             <ChevronLeft className="w-4 h-4" />
                         </button>
                         <button
                             onClick={goNext}
-                            className="p-1.5 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50 transition"
+                            className="p-1.5 rounded-full border border-[#292C30] text-gray-400 hover:bg-[#171A1E] hover:text-white transition"
                             aria-label="Next"
                         >
                             <ChevronRight className="w-4 h-4" />
@@ -69,12 +69,12 @@ export default function SplitGallerySection({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-1 flex flex-col justify-center">
-                    <h3 className="text-lg font-bold text-[#0b3954] leading-snug">{heading}</h3>
-                    {description && <p className="text-sm text-gray-600 mt-3">{description}</p>}
+                    <h3 className="text-lg font-bold text-white leading-snug">{heading}</h3>
+                    {description && <p className="text-sm text-gray-400 mt-3">{description}</p>}
                     {ctaLabel && ctaHref && (
                         <a
                             href={ctaHref}
-                            className="inline-flex items-center gap-1 mt-5 text-sm font-medium border border-gray-300 rounded-lg px-4 py-2 w-fit hover:border-gray-400 hover:bg-gray-50 transition"
+                            className="inline-flex items-center gap-1 mt-5 text-sm font-medium border border-[#292C30] text-[#CCCCCC] rounded-lg px-4 py-2 w-fit hover:border-[#0073FF] hover:text-white transition"
                         >
                             {ctaLabel} →
                         </a>
@@ -106,7 +106,7 @@ export default function SplitGallerySection({
                         onClick={() => setSelected(null)}
                     >
                         <div
-                            className="bg-white rounded-lg overflow-hidden max-w-md w-full max-h-[80vh] overflow-y-auto"
+                            className="bg-[#1D2125] border border-[#292C30] rounded-xl overflow-hidden max-w-md w-full max-h-[80vh] overflow-y-auto"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="relative bg-black">
@@ -127,10 +127,10 @@ export default function SplitGallerySection({
                             {(selected.name || selected.description) && (
                                 <div className="p-4">
                                     {selected.name && (
-                                        <h4 className="font-semibold text-gray-800">{selected.name}</h4>
+                                        <h4 className="font-semibold text-white">{selected.name}</h4>
                                     )}
                                     {selected.description && (
-                                        <p className="text-sm text-gray-600 mt-1">{selected.description}</p>
+                                        <p className="text-sm text-gray-400 mt-1">{selected.description}</p>
                                     )}
                                 </div>
                             )}

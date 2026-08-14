@@ -591,7 +591,7 @@ body {
   font-weight: var(--fw-bold) !important;
 }
 
-.prose h2 {
+.prose:not(.prose-invert) h2 {
   margin-top: 2.5rem;
   margin-bottom: 1rem;
   font-size: var(--fs-h2) !important;
@@ -600,13 +600,20 @@ body {
   color: #0f172a;
 }
 
-.prose h3 {
+.prose:not(.prose-invert) h3 {
   margin-top: 2rem;
   margin-bottom: 0.75rem;
   font-size: var(--fs-h3) !important;
   line-height: var(--lh-h3) !important;
   font-weight: var(--fw-semibold) !important;
   color: #1e293b;
+}
+
+.prose-invert h2,
+.prose-invert h3,
+.post-article-content h2,
+.post-article-content h3 {
+  color: #ffffff !important;
 }
 
 .prose ol,
@@ -625,12 +632,17 @@ body {
   margin: 0;
 }
 
-.prose blockquote {
+.prose:not(.prose-invert) blockquote {
   margin: 2rem 0;
   padding-left: 1.25rem;
   border-left: 4px solid #3b82f6;
   color: #334155;
   font-style: italic;
+}
+
+.prose-invert blockquote,
+.post-article-content blockquote {
+  color: #d1d5db !important;
 }
 
 .prose strong {
