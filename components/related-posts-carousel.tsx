@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { ChevronLeft, ChevronRight, Eye } from "lucide-react"
 
 type Post = {
   id: number
@@ -12,6 +13,8 @@ type Post = {
   imageUrl?: string
   publishedAt?: string
   category?: any
+  author?: { name?: string }
+  views?: number
 }
 
 export default function RelatedPostsCarousel() {
@@ -46,8 +49,8 @@ export default function RelatedPostsCarousel() {
 
   if (loading) {
     return (
-      <section className="bg-white border-b border-gray-200">
-        <div className="max-w-[1320px] mx-auto px-4 py-16">
+      <section className="bg-[#0a0d14] border-b border-gray-800">
+        <div className="max-w-[1400px] mx-auto px-4 py-16">
           <div className="text-center text-gray-500 text-[16px]">
             Loading related content...
           </div>
@@ -57,13 +60,49 @@ export default function RelatedPostsCarousel() {
   }
 
   return (
-    <section className="bg-white border-b border-gray-200">
-      <div className="max-w-[1320px] mx-auto px-4 py-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#003049] mb-10 text-center">
-          Related Content
-        </h2>
+    <section className="bg-[#0a0d14] border-b border-gray-800">
+      <div className="max-w-[1400px] mx-auto px-4 py-10">
+        {/* Header: title + diamond/line + nav arrows */}
+        <div
+          className="flex items-center gap-4"
+          style={{ margin: "55px 0px 30px" }}
+        >
+          <h2 className="flex-shrink-0 text-xl font-bold text-white sm:text-2xl">
+            Related Post
+          </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <span className="h-1.5 w-1.5 flex-shrink-0 rotate-45 bg-blue-500" />
+          <span className="h-px min-w-0 flex-1 bg-gray-700" />
+          <span className="h-1.5 w-1.5 flex-shrink-0 rotate-45 bg-blue-500" />
+
+          {posts.length > 3 && (
+            <div className="flex flex-shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  document.getElementById("related-content-scroll")?.scrollBy({ left: -280, behavior: "smooth" })
+                }
+                className="w-9 h-9 flex items-center justify-center rounded-md border border-blue-600 text-blue-500 hover:bg-blue-600 hover:text-white transition-colors"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  document.getElementById("related-content-scroll")?.scrollBy({ left: 280, behavior: "smooth" })
+                }
+                className="w-9 h-9 flex items-center justify-center rounded-md border border-blue-600 text-blue-500 hover:bg-blue-600 hover:text-white transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div
+          id="related-content-scroll"
+          className="fpg-post-slider flex gap-5 overflow-x-auto scroll-smooth pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        >
           {posts.map((post) => {
             const imageUrl =
               post.imageUrl?.startsWith("http")
@@ -72,14 +111,6 @@ export default function RelatedPostsCarousel() {
                   ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
                   : "/placeholder.svg"
 
-            const date = post.publishedAt
-              ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })
-              : "Today"
-
             const categoryName =
               typeof post.category === "object" ? post.category?.name || "LATEST" : "LATEST"
 
@@ -87,46 +118,43 @@ export default function RelatedPostsCarousel() {
               <Link
                 key={post.id}
                 href={`/post/${post.slug}`}
-                className="group flex flex-col bg-white border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                className="fpg-card-style style-one group flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-600 transition-colors"
+                style={{
+                  width: "calc((100% - 2.5rem) / 3)",
+                  margin: "0px 0px 10px",
+                  padding: "12px 12px 25px",
+                }}
               >
                 {/* Image */}
-                <div className="relative w-full h-[220px] overflow-hidden bg-gray-200">
+                <div className="relative w-full aspect-[4/3] bg-gray-800">
                   <Image
                     src={imageUrl}
                     alt={post.title}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    sizes="260px"
                   />
                 </div>
 
                 {/* Content */}
-                <div className="p-6 flex flex-col flex-1">
-                  {/* Category */}
-                  <span className="inline-block mb-3 bg-[#0077b6] text-white text-xs font-bold px-3 py-1 uppercase tracking-widest">
+                <div className="fpg-post-content" style={{ padding: "12px 15px 0px" }}>
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-wide text-white bg-blue-600 px-2.5 py-1 rounded mb-3">
                     {categoryName}
                   </span>
 
-                  {/* Date */}
-                  <p className="text-gray-500 text-sm uppercase tracking-widest mb-3">
-                    {date}
-                  </p>
-
-                  {/* Title */}
-                  <h3 className="text-[18px] font-bold text-[#003049] mb-4 line-clamp-2 group-hover:text-[#0077b6] transition-colors">
+                  <h3 className="text-sm font-bold text-white leading-snug line-clamp-2 group-hover:text-blue-400">
                     {post.title}
                   </h3>
 
-                  {/* Excerpt */}
-                  {post.excerpt && (
-                    <p className="text-[#444] text-[16px] line-clamp-2 mb-6 flex-1 leading-relaxed">
-                      {post.excerpt}
-                    </p>
-                  )}
-
-                  {/* Read More */}
-                  <span className="text-[#d62839] font-bold text-sm uppercase tracking-widest group-hover:text-[#003049] transition-colors">
-                    READ MORE -&gt;
-                  </span>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
+                    {post.author?.name && <span>By {post.author.name}</span>}
+                    {typeof post.views === "number" && (
+                      <span className="flex items-center gap-1">
+                        <Eye size={12} className="text-gray-500" />
+                        {post.views.toLocaleString()} Views
+                      </span>
+                    )}
+                  </div>
                 </div>
               </Link>
             )

@@ -133,7 +133,11 @@ export function CommentsSection({
   }
 
   return (
-    <div className="mt-12 rounded-lg bg-[#1d2125] px-6 py-10 sm:px-10 sm:py-12 lg:p-[50px]">
+    <div
+      id="respond"
+      className="comment-respond mt-12 rounded-lg bg-[#1D2125]"
+      style={{ background: "#1D2125", padding: "50px" }}
+    >
       <h3 className="text-2xl font-bold text-white">
         Leave a Comment
       </h3>

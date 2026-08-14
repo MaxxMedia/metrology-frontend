@@ -169,7 +169,10 @@ export default function NewsLetters() {
           />
           <div className="pointer-events-none absolute inset-0 bg-[rgba(8,10,16,0.35)]" />
 
-          <div className="relative grid min-h-[200px] grid-cols-1 items-center gap-6 px-6 py-6 sm:min-h-[220px] sm:px-10 sm:py-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-4 lg:px-14 lg:py-8">
+          <div
+            className="relative grid w-full grid-cols-1 items-center gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-4"
+            style={{ height: "254.8px", padding: "0px 10px" }}
+          >
             {/* Form column */}
             <div className="relative z-10 max-w-[520px]">
               <h3 className="mb-4 text-[24px] font-bold leading-[1.2] tracking-[-0.02em] text-white sm:text-[28px] lg:text-[30px]">
@@ -253,17 +256,3 @@ export default function NewsLetters() {
     </section>
   );
 }
-
-
-
-
-
-// **Flow**
-
-// 1. **Header loads** → calls `/api/geo-weather` (or uses a 30‑minute session cache).
-// 2. **API reads the visitor IP** from headers (`x-forwarded-for`, `x-real-ip`, etc.). Localhost/private IPs are skipped so the lookup uses the machine’s public IP instead.
-// 3. **IP → location** via [ipwho.is](https://ipwho.is/) → country + lat/lon.
-// 4. **Lat/lon → temperature** via [Open-Meteo](https://open-meteo.com/) (current °C, no API key).
-// 5. **Header renders** something like `32.1°C` + `India`.
-
-// Nothing is hard-coded anymore; place and temp both come from the visitor’s IP-based location.
