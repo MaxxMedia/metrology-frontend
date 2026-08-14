@@ -769,10 +769,10 @@ export default function CandidateLinkedInProfile({ username }: Props) {
 
   if (loading) {
     return (
-      <div className="bg-[#FFFFFF] min-h-screen flex items-center justify-center">
+      <div className="candidate-profile-page bg-[#0a0d14] min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#0F5B78] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="mt-4 text-[#5A5F69] font-medium text-sm">Loading candidate profile...</p>
+          <div className="w-12 h-12 border-4 border-[#0073FF] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="mt-4 text-gray-400 font-medium text-sm">Loading candidate profile...</p>
         </div>
       </div>
     );
@@ -805,7 +805,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
       : undefined;
 
   return (
-    <div className="bg-[#ffffff] min-h-screen text-[#000000] relative">
+    <div className="candidate-profile-page bg-[#0a0d14] min-h-screen text-[#CCCCCC] relative">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#000000] text-white px-10 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium animate-bounce">
@@ -833,13 +833,13 @@ export default function CandidateLinkedInProfile({ username }: Props) {
         />
 
         {/* SHARED SUB-NAV TAB BAR */}
-        <div className="bg-white rounded-xl border border-[#e0e0e0] shadow-sm mb-4">
+        <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-lg mb-4">
           <div className="flex items-center gap-8 px-6 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab("profile")}
               className={`py-3.5 text-sm font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${activeTab === "profile"
-                ? "border-[#0F5B78] text-[#0F5B78]"
-                : "border-transparent text-[#5A5F69] hover:text-[#000000]"
+                ? "profile-tab-active border-[#0073FF] text-[#00B5ED]"
+                : "profile-tab-inactive border-transparent text-gray-400 hover:text-white"
                 }`}
             >
               Profile
@@ -848,8 +848,8 @@ export default function CandidateLinkedInProfile({ username }: Props) {
             <button
               onClick={() => setActiveTab("projects")}
               className={`py-3.5 text-sm font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${activeTab === "projects"
-                ? "border-[#0F5B78] text-[#0F5B78]"
-                : "border-transparent text-[#5A5F69] hover:text-[#000000]"
+                ? "profile-tab-active border-[#0073FF] text-[#00B5ED]"
+                : "profile-tab-inactive border-transparent text-gray-400 hover:text-white"
                 }`}
             >
               Projects
@@ -859,8 +859,8 @@ export default function CandidateLinkedInProfile({ username }: Props) {
               <button
                 onClick={() => setActiveTab("connections")}
                 className={`py-3.5 text-sm font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${activeTab === "connections"
-                  ? "border-[#0F5B78] text-[#0F5B78]"
-                  : "border-transparent text-[#5A5F69] hover:text-[#000000]"
+                  ? "profile-tab-active border-[#0073FF] text-[#00B5ED]"
+                  : "profile-tab-inactive border-transparent text-gray-400 hover:text-white"
                   }`}
               >
                 Connections

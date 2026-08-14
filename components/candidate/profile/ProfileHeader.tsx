@@ -2,7 +2,7 @@
 
 import { Pencil, Camera, CheckCircle, MapPin, UserPlus, FileUp, Download, Loader2 } from "lucide-react";
 import CandidateAvatar from "@/components/candidate/CandidateAvatar";
-import ConnectionButton from "@/components/network/ConnectionButton"; // adjust path to wherever you place it
+import ConnectionButton from "@/components/network/ConnectionButton";
 
 interface ProfileHeaderProps {
   displayName: string;
@@ -12,7 +12,7 @@ interface ProfileHeaderProps {
   displayLocation: string;
   avatarUrl?: string;
   isOwner?: boolean;
-  targetUserId?: number; // the profile currently being viewed
+  targetUserId?: number;
   onEditIntroClick: () => void;
   resume?: { fileName?: string; fileUrl?: string } | null;
   onResumeUpload?: (file: File) => Promise<void>;
@@ -34,54 +34,47 @@ export default function ProfileHeader({
   resumeUploading = false,
 }: ProfileHeaderProps) {
   return (
-    <div className="bg-white rounded-xl border border-[#e0e0e0] shadow-sm overflow-hidden mb-4 relative">
-      {/* Cover Banner using Secondary Brand Color #0F5B78 */}
-      <div className="h-36 sm:h-44 bg-gradient-to-r from-[#0F5B78] via-[#0F5B78] to-[#B40F24] relative">
+    <div className="bg-[#1D2125] rounded-xl border border-[#292C30] shadow-lg overflow-hidden mb-4 relative">
+      <div className="h-36 sm:h-44 bg-gradient-to-r from-[#0a0d14] via-[#171A1E] to-[#0073FF] relative">
         {isOwner && (
           <button
             onClick={onEditIntroClick}
-            className="absolute top-3 right-3 p-2 rounded-full shadow text-[#5A5F69] hover:text-[#000000] transition-colors flex items-center gap-1.5 text-xs font-semibold px-3 cursor-pointer"
+            className="absolute top-3 right-3 p-2 rounded-full shadow text-gray-400 hover:text-white transition-colors flex items-center gap-1.5 text-xs font-semibold px-3 cursor-pointer"
             title="Edit Banner & Intro"
-          >
-            {/* <Pencil size={14} /> */}
-            {/* <span>Edit Bannr</span> */}
-          </button>
+          />
         )}
       </div>
 
-      {/* Profile Header Main */}
       <div className="px-6 pb-6 relative">
-        {/* Avatar */}
         <div className="absolute -top-16 left-6 z-10">
           <div className="relative">
             <CandidateAvatar
               avatarUrl={avatarUrl}
               name={displayName}
               size="xl"
-              borderClassName="border-4 border-white shadow-md"
+              borderClassName="border-4 border-[#1D2125] shadow-md"
             />
             {isOwner && (
               <button
                 onClick={onEditIntroClick}
-                className="absolute bottom-1 right-1 bg-white rounded-full p-1.5 shadow border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
+                className="absolute bottom-1 right-1 bg-[#171A1E] rounded-full p-1.5 shadow border border-[#292C30] hover:bg-[#292C30] transition-colors cursor-pointer"
                 title="Edit Photo"
               >
-                <Camera size={13} className="text-[#5A5F69]" />
+                <Camera size={13} className="text-gray-400" />
               </button>
             )}
           </div>
         </div>
 
-        {/* Header Actions & Text */}
         <div className="pt-20 sm:pt-16 flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#000000]">{displayName}</h1>
-              <CheckCircle size={20} className="text-[#0F5B78] fill-[#0F5B78]/10" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">{displayName}</h1>
+              <CheckCircle size={20} className="text-[#00B5ED] fill-[#0073FF]/20" />
               {isOwner && (
                 <button
                   onClick={onEditIntroClick}
-                  className="text-[#5A5F69] hover:text-[#0F5B78] transition-colors p-1 rounded-full hover:bg-gray-100 cursor-pointer ml-1"
+                  className="text-gray-400 hover:text-[#00B5ED] transition-colors p-1 rounded-full hover:bg-[#171A1E] cursor-pointer ml-1"
                   title="Edit Intro"
                 >
                   <Pencil size={16} />
@@ -89,37 +82,36 @@ export default function ProfileHeader({
               )}
             </div>
             {displayHeadline && (
-              <p className="text-sm sm:text-base text-[#5A5F69] font-medium mt-1 max-w-2xl leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-400 font-medium mt-1 max-w-2xl leading-relaxed">
                 {displayHeadline}
               </p>
             )}
-            <div className="flex items-center gap-2 text-xs sm:text-sm text-[#5A5F69] mt-2 flex-wrap">
-              {displayCompany && <span className="font-semibold text-[#000000]">{displayCompany}</span>}
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-400 mt-2 flex-wrap">
+              {displayCompany && <span className="font-semibold text-[#CCCCCC]">{displayCompany}</span>}
               {displayCompany && displayEducation && <span>•</span>}
               {displayEducation && <span>{displayEducation}</span>}
               {(displayCompany || displayEducation) && displayLocation && <span>•</span>}
               {displayLocation && (
                 <span className="flex items-center gap-1">
-                  <MapPin size={13} className="text-[#5A5F69]" />
+                  <MapPin size={13} className="text-gray-500" />
                   {displayLocation}
                 </span>
               )}
             </div>
           </div>
 
-          {/* Action Buttons using #0F5B78 */}
           <div className="flex items-center gap-2 self-start flex-wrap mt-2 md:mt-0">
             {isOwner ? (
               <>
                 <button
                   onClick={onEditIntroClick}
-                  className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
+                  className="bg-[#0073FF] hover:bg-[#0060D0] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
                 >
                   <Pencil size={15} />
                   Edit Profile
                 </button>
 
-                <label className="border border-[#0F5B78] text-[#0F5B78] hover:bg-[#0F5B78]/10 px-4 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer">
+                <label className="border border-[#0073FF] text-[#00B5ED] hover:bg-[#0073FF]/10 px-4 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer">
                   {resumeUploading ? (
                     <Loader2 size={16} className="animate-spin" />
                   ) : (
@@ -146,7 +138,7 @@ export default function ProfileHeader({
                     target="_blank"
                     rel="noopener noreferrer"
                     download={resume.fileName || "Resume.pdf"}
-                    className="bg-[#0F5B78]/10 hover:bg-[#0F5B78]/20 text-[#0F5B78] border border-[#0F5B78]/30 px-4 py-2 rounded-full font-semibold text-sm transition-colors flex items-center gap-1.5 cursor-pointer"
+                    className="bg-[#0073FF]/10 hover:bg-[#0073FF]/20 text-[#00B5ED] border border-[#0073FF]/30 px-4 py-2 rounded-full font-semibold text-sm transition-colors flex items-center gap-1.5 cursor-pointer"
                   >
                     <Download size={16} />
                     <span>Download Resume</span>
@@ -158,7 +150,7 @@ export default function ProfileHeader({
                 {targetUserId ? (
                   <ConnectionButton userId={targetUserId} />
                 ) : (
-                  <button className="bg-[#0F5B78] hover:bg-[#0b445a] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer">
+                  <button className="bg-[#0073FF] hover:bg-[#0060D0] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer">
                     <UserPlus size={16} />
                     Connect
                   </button>
@@ -170,16 +162,12 @@ export default function ProfileHeader({
                     target="_blank"
                     rel="noopener noreferrer"
                     download={resume.fileName || "Resume.pdf"}
-                    className="border border-[#0F5B78] text-[#0F5B78] hover:bg-[#0F5B78]/10 px-4 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
+                    className="border border-[#0073FF] text-[#00B5ED] hover:bg-[#0073FF]/10 px-4 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
                   >
                     <Download size={16} />
                     <span>Download Resume</span>
                   </a>
                 )}
-                {/* 
-                <button className="border border-gray-300 hover:bg-gray-100 text-[#5A5F69] px-4 py-2 rounded-full font-semibold text-sm transition-colors cursor-pointer">
-                  More...
-                </button> */}
               </>
             )}
           </div>

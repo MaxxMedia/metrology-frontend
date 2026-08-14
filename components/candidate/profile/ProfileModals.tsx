@@ -67,11 +67,10 @@ export default function ProfileModals({
   if (!activeModal) return null;
 
   return (
-    <div className="fixed inset-0 bg-[#000000]/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
-        {/* Sticky LinkedIn Modal Header */}
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-white shrink-0">
-          <h3 className="text-lg sm:text-xl font-bold text-[#000000]">
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+      <div className="bg-[#1D2125] border border-[#292C30] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
+        <div className="px-6 py-4 border-b border-[#292C30] flex items-center justify-between bg-[#1D2125] shrink-0">
+          <h3 className="text-lg sm:text-xl font-bold text-white">
             {activeModal === "intro" && "Edit intro"}
             {activeModal === "about" && "Edit about"}
             {activeModal === "experience" && "Edit experience"}
@@ -86,7 +85,7 @@ export default function ProfileModals({
           </h3>
           <button
             onClick={onClose}
-            className="text-[#5A5F69] hover:text-[#000000] p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+            className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-[#171A1E] transition-colors cursor-pointer"
             title="Close"
           >
             <X size={20} />
