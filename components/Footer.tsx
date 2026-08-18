@@ -35,7 +35,7 @@ function SectionTitle({ children }: { children: ReactNode }) {
   return (
     <div className="mb-5">
       <h5 className="text-white text-[18px] font-bold mb-3">{children}</h5>
-      <span className="block w-10 h-[3px] bg-white rounded-full" aria-hidden />
+      <span className="block w-10 h-[3px] bg-[#00B5ED] rounded-full" aria-hidden />
     </div>
   );
 }
@@ -47,9 +47,9 @@ function CategoryLinks({ items }: { items: { label: string; href: string }[] }) 
         <li key={item.label}>
           <Link
             href={item.href}
-            className="group inline-flex items-center gap-2.5 text-[14px] text-[#a1a1a1] hover:text-white transition-colors"
+            className="group inline-flex items-center gap-2.5 text-[14px] text-[#CCCCCC] hover:text-[#00B5ED] transition-colors"
           >
-            <span className="w-[5px] h-[5px] rounded-full bg-white/70 group-hover:bg-[#0073ff] shrink-0" />
+            <span className="w-[5px] h-[5px] rounded-full bg-[#00B5ED]/70 group-hover:bg-[#0073FF] shrink-0" />
             {item.label}
           </Link>
         </li>
@@ -115,6 +115,11 @@ async function getFooterCategories() {
   }
 }
 
+const RESOURCE_LINKS = [
+  { label: "Newsletter", href: "/news" },
+  { label: "Contact Us", href: "/contact" },
+];
+
 export default async function Footer() {
   const [recentPosts, { top: TOP_CATEGORIES, more: MORE_CATEGORIES }] =
     await Promise.all([getRecentPosts(), getFooterCategories()]);
@@ -127,9 +132,9 @@ export default async function Footer() {
   ];
 
   return (
-    <footer className="relative bg-[#121213] text-[#a1a1a1]">
+    <footer className="relative bg-[#171A1E] text-[#CCCCCC] border-t border-[#292C30]">
       <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-14 md:pt-16 pb-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.15fr_0.85fr_0.85fr_1.2fr] gap-10 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-6">
 
           {/* ================= COL 1: BRAND ================= */}
           <div>
@@ -143,7 +148,7 @@ export default async function Footer() {
               />
             </Link>
 
-            <p className="text-[14px] leading-relaxed text-[#a1a1a1] mb-5 max-w-[280px]">
+            <p className="text-[14px] leading-relaxed text-[#CCCCCC] mb-5 max-w-[280px]">
               Tooling Technology covers the full life cycle of mold design, build,
               and maintenance—solutions for professionals shaping modern manufacturing.
             </p>
@@ -154,7 +159,7 @@ export default async function Footer() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-9 h-9 flex items-center justify-center rounded-[4px] bg-[#1a1c24] text-white hover:bg-[#0073ff] transition-colors"
+                  className="w-9 h-9 flex items-center justify-center rounded-[6px] bg-[#1D2125] border border-[#292C30] text-white hover:bg-[#0073FF] hover:border-[#0073FF] transition-colors"
                 >
                   <Icon size={15} />
                 </Link>
@@ -204,7 +209,13 @@ export default async function Footer() {
             <CategoryLinks items={MORE_CATEGORIES} />
           </div>
 
-          {/* ================= COL 4: RECENT POSTS (right) ================= */}
+          {/* ================= COL 4: RESOURCES ================= */}
+          <div>
+            <SectionTitle>Resources</SectionTitle>
+            <CategoryLinks items={RESOURCE_LINKS} />
+          </div>
+
+          {/* ================= COL 5: RECENT POSTS ================= */}
           <div>
             <SectionTitle>Recent Post</SectionTitle>
             <div>
@@ -213,10 +224,11 @@ export default async function Footer() {
                   <Link
                     key={post.id}
                     href={`/post/${post.slug}`}
-                    className={`group flex items-start gap-3 ${i < recentPosts.length - 1 ? "pb-4 mb-4 border-b border-white/10" : ""
-                      }`}
+                    className={`group flex items-start gap-3 ${
+                      i < recentPosts.length - 1 ? "pb-4 mb-4 border-b border-[#292C30]" : ""
+                    }`}
                   >
-                    <div className="relative w-[64px] h-[64px] rounded-[6px] overflow-hidden shrink-0">
+                    <div className="relative w-[64px] h-[64px] rounded-[6px] overflow-hidden shrink-0 bg-[#1D2125]">
                       <Image
                         src={getImageUrl(post)}
                         alt={post.title}
@@ -226,14 +238,14 @@ export default async function Footer() {
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h6 className="text-[14px] font-semibold text-white leading-snug mb-1.5 line-clamp-2 group-hover:text-[#0073ff] transition-colors">
+                      <h6 className="text-[14px] font-semibold text-white leading-snug mb-1.5 line-clamp-2 group-hover:text-[#00B5ED] transition-colors">
                         {post.title}
                       </h6>
-                      <ul className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-[#8a8b93]">
+                      <ul className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-[#B8B8B8]">
                         <li>By {getAuthorName(post)}</li>
                         {typeof post.views === "number" && (
                           <li className="inline-flex items-center gap-1">
-                            <PulseIcon className="w-3 h-3 text-[#0073ff]" />
+                            <PulseIcon className="w-3 h-3 text-[#0073FF]" />
                             {post.views.toLocaleString()} Views
                           </li>
                         )}
@@ -242,7 +254,7 @@ export default async function Footer() {
                   </Link>
                 ))
               ) : (
-                <p className="text-[13px] text-[#8a8b93]">No recent posts yet.</p>
+                <p className="text-[13px] text-[#B8B8B8]">No recent posts yet.</p>
               )}
             </div>
           </div>
@@ -250,16 +262,16 @@ export default async function Footer() {
       </div>
 
       {/* ================= BOTTOM BAR ================= */}
-      <div className="border-t border-white/10 bg-[#1D2125]">
+      <div className="border-t border-[#292C30] bg-[#1D2125]">
         <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[13px]">
-          <p className="text-[#8a8b93] text-center sm:text-left">
+          <p className="text-[#B8B8B8] text-center sm:text-left">
             © {new Date().getFullYear()} Metrology. All rights reserved.
           </p>
           <div className="flex items-center gap-5">
-            <Link href="/privacy-policy" className="text-[#8a8b93] hover:text-white transition-colors">
+            <Link href="/privacy-policy" className="text-[#B8B8B8] hover:text-[#00B5ED] transition-colors">
               Privacy policy
             </Link>
-            <Link href="/terms" className="text-[#8a8b93] hover:text-white transition-colors">
+            <Link href="/terms" className="text-[#B8B8B8] hover:text-[#00B5ED] transition-colors">
               Terms &amp; Agreements
             </Link>
           </div>
