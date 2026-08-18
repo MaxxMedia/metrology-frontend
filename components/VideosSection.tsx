@@ -55,6 +55,11 @@ function getAuthorName(post?: Post) {
   return "rstheme";
 }
 
+function truncateTitle(title: string, max = 48) {
+  if (title.length <= max) return title;
+  return `${title.slice(0, max).trimEnd()}…`;
+}
+
 function PulseIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -180,7 +185,7 @@ export default function VideosSection({ posts }: Props) {
     return (
       <Link
         href={`/post/${post.slug}`}
-        className={`group relative block h-[500px] rounded-[4px] overflow-hidden ${className}`}
+        className={`group relative block h-[320px] sm:h-[420px] lg:h-[500px] rounded-[4px] overflow-hidden ${className}`}
       >
         <Image
           src={imageUrl(post)}
@@ -251,32 +256,74 @@ export default function VideosSection({ posts }: Props) {
           </Link>
         </div>
 
-        {/* ================= TOP: 2 FEATURED ================= */}
-        <div className="flex flex-col md:flex-row gap-4 sm:gap-5 lg:gap-6 mb-5 lg:mb-6">
+        {/* ================= MOBILE: 3 SMALL CARDS ONLY ================= */}
+        {smallPosts.length > 0 && (
+          <div className="md:hidden flex flex-col gap-3 mb-5">
+            {smallPosts.map(({ post, tagText, tagColor }) => (
+              <Link
+                key={`mobile-video-${post.id}`}
+                href={`/post/${post.slug}`}
+                className="group flex items-center gap-2.5 rounded-[12px] border border-white/15 bg-white/[0.07] backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.35)] p-2 hover:bg-white/[0.12] hover:border-white/25 transition-colors"
+              >
+                <div className="relative w-[54px] h-[54px] overflow-hidden shrink-0 rounded-[8px]">
+                  <Image
+                    src={imageUrl(post)}
+                    alt={post.title}
+                    fill
+                    sizes="54px"
+                    quality={70}
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  {tagText ? (
+                    <span
+                      className={`inline-block ${tagColor} text-white text-[8px] font-semibold uppercase tracking-wide px-[6px] py-[1px] rounded-tl-none rounded-tr-[4px] rounded-br-[4px] rounded-bl-[4px] mb-1`}
+                    >
+                      {tagText}
+                    </span>
+                  ) : null}
+
+                  <h6 className="text-white text-[12px] font-bold leading-[1.2] mb-0.5 group-hover:text-[#0073ff] transition-colors line-clamp-2">
+                    {truncateTitle(post.title, 34)}
+                  </h6>
+
+                  <p className="text-[10px] text-[#a8aab3]">
+                    By {getAuthorName(post)}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* ================= DESKTOP: 2 FEATURED ================= */}
+        <div className="hidden md:flex flex-col md:flex-row gap-4 sm:gap-5 lg:gap-6 mb-5 lg:mb-6">
           {leftFeatured && (
             <FeaturedCard itemObj={leftFeatured} className="w-full lg:w-[923.33px] shrink-0" />
           )}
           {rightFeatured && (
-            <FeaturedCard itemObj={rightFeatured} className="w-full lg:w-[446.66px] shrink-0" />
+            <FeaturedCard itemObj={rightFeatured} className="hidden md:block w-full lg:w-[446.66px] shrink-0" />
           )}
         </div>
 
         {/* ================= BOTTOM: 3 SMALL CARDS ================= */}
         {smallPosts.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-5 gap-y-4 lg:gap-6">
+          <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-5 gap-y-4 lg:gap-6">
             {smallPosts.map(({ post, tagText, tagColor }) => {
               return (
                 <Link
                   key={post.id}
                   href={`/post/${post.slug}`}
-                  className="group flex items-center gap-3.5 min-w-0 w-[450px] h-[151.6px] py-[10px]"
+                  className="group flex items-center gap-3.5 min-w-0 w-full max-w-full sm:w-[450px] sm:h-[151.6px] py-[10px]"
                 >
-                  <div className="relative w-[140px] h-[130px] rounded-[4px] overflow-hidden shrink-0">
+                  <div className="relative w-[96px] h-[96px] sm:w-[140px] sm:h-[130px] rounded-[4px] overflow-hidden shrink-0">
                     <Image
                       src={imageUrl(post)}
                       alt={post.title}
                       fill
-                      sizes="140px"
+                      sizes="(max-width: 640px) 96px, 140px"
                       quality={70}
                       className="object-cover"
                     />
@@ -291,7 +338,7 @@ export default function VideosSection({ posts }: Props) {
                       </span>
                     )}
 
-                    <h6 className="text-[18px] font-semibold leading-snug text-white mb-[8px] group-hover:text-[#0073ff] transition-colors line-clamp-2">
+                    <h6 className="text-[16px] sm:text-[18px] font-semibold leading-snug text-white mb-[8px] group-hover:text-[#0073ff] transition-colors line-clamp-2">
                       {post.title}
                     </h6>
 

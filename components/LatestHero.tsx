@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type { Post } from "@/types/Post"
 
 type LatestHeroProps = {
@@ -145,6 +145,15 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   )
 }
 
+function DiamondDot({ className = "" }: { className?: string }) {
+  return (
+    <span
+      className={`w-[7px] h-[7px] bg-[#0073ff] rotate-45 shrink-0 ${className}`}
+      aria-hidden
+    />
+  )
+}
+
 function PlayIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 ml-0.5" aria-hidden>
@@ -154,6 +163,15 @@ function PlayIcon() {
 }
 
 export default function LatestHero({ post, posts }: LatestHeroProps) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 1024)
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
+  }, [])
+
   const pool = useMemo(() => buildPool(posts), [posts])
 
   const visible = useMemo(() => {
@@ -204,6 +222,63 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
   const imageUrl = getImageUrl(heroPost)
   const date = formatDate(heroPost) || "Today"
 
+  if (isMobile) {
+    return (
+      <section className="w-full bg-[#1D2125]">
+        <div className="w-full px-4 pt-3 pb-6">
+          <div className="flex items-center gap-3 mb-4 min-w-0">
+            <h2 className="text-[20px] font-bold text-white shrink-0 leading-none">
+              Latest News
+            </h2>
+            <div className="relative flex-1 min-w-[40px] flex items-center">
+              <DiamondDot />
+              <span className="flex-1 h-px bg-white/15" />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2.5">
+            {recentListWithTags.slice(0, 3).map(({ item, tagText, tagColor }, i) => (
+              <Link
+                key={`${item.id}-mobile-${i}`}
+                href={`/post/${item.slug}`}
+                className="group flex items-center gap-2.5 rounded-[12px] border border-white/15 bg-white/[0.07] backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.35)] p-2 hover:bg-white/[0.12] hover:border-white/25 transition-colors"
+              >
+                <div className="relative w-[54px] h-[54px] overflow-hidden shrink-0 rounded-[8px]">
+                  <Image
+                    src={getImageUrl(item)}
+                    alt={item.title}
+                    fill
+                    sizes="54px"
+                    quality={70}
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  {tagText ? (
+                    <span
+                      className={`inline-block ${tagColor} text-white text-[8px] font-semibold uppercase tracking-wide px-[6px] py-[1px] rounded-tl-none rounded-tr-[4px] rounded-br-[4px] rounded-bl-[4px] mb-1`}
+                    >
+                      {tagText}
+                    </span>
+                  ) : null}
+
+                  <h6 className="text-white text-[12px] font-bold leading-[1.2] mb-0.5 group-hover:text-[#0073ff] transition-colors line-clamp-2">
+                    {truncateTitle(item.title, 34)}
+                  </h6>
+
+                  <p className="text-[10px] text-[#a8aab3]">
+                    By {getAuthorName(item)}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="w-full bg-[#1D2125]">
       {/* Latest Hero: Left photo fills absolute left dead-end of screen with no gap & square corners */}
@@ -211,7 +286,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(360px,420px)] gap-4 sm:gap-5 lg:gap-6 items-stretch">
 
           {/* ================= LEFT: HERO BG + TITLE + STYLE-TWO ================= */}
-          <div className="relative min-h-[460px] sm:min-h-[560px] lg:min-h-[720px] overflow-hidden rounded-none border-y border-r border-white/10 shadow-lg">
+          <div className="relative min-h-[180px] sm:min-h-[560px] lg:min-h-[720px] overflow-hidden rounded-none border-y border-r border-white/10 shadow-lg">
             <Image
               src={imageUrl}
               alt={heroPost.title}
@@ -226,27 +301,27 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
             <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/15 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-            <div className="relative z-10 flex h-full min-h-[460px] sm:min-h-[560px] lg:min-h-[720px] flex-col justify-between px-6 py-6 sm:px-10 sm:py-8 lg:px-14 lg:py-10">
+            <div className="relative z-10 flex h-full min-h-[180px] sm:min-h-[560px] lg:min-h-[720px] flex-col justify-between px-4 py-4 sm:px-10 sm:py-8 lg:px-14 lg:py-10">
               {/* style-one: main featured */}
-              <div className="w-full max-w-none text-[60px] lg:max-w-[640px] xl:max-w-[700px] pt-1 sm:pt-3">
+              <div className="w-full max-w-none text-[60px] lg:max-w-[640px] xl:max-w-[700px] pt-0 sm:pt-3">
                 {heroItem.tagText ? (
                   <span
-                    className={`inline-block ${heroItem.tagColor} text-white text-[11px] font-semibold uppercase tracking-wide px-[10px] py-[3px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-4`}
+                    className={`inline-block ${heroItem.tagColor} text-white text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide px-[8px] sm:px-[10px] py-[2px] sm:py-[3px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-2 sm:mb-4`}
                   >
                     {heroItem.tagText}
                   </span>
                 ) : null}
 
-                <h1 className="hero-main-title text-white !font-extrabold !leading-[1.2] tracking-[-0.01em] mb-4 sm:mb-5 line-clamp-3">
+                <h1 className="hero-main-title text-white !font-extrabold !leading-[1.15] tracking-[-0.01em] mb-2 sm:mb-5 line-clamp-2 sm:line-clamp-3 text-[20px] sm:text-inherit">
                   <Link
                     href={`/post/${heroPost.slug}`}
-                    className="hover:text-[#0073ff] transition-colors line-clamp-3"
+                    className="hover:text-[#0073ff] transition-colors line-clamp-2 sm:line-clamp-3"
                   >
                     {heroPost.title}
                   </Link>
                 </h1>
 
-                <ul className="flex flex-wrap items-center gap-x-[16px] gap-y-[8px] text-[14px] sm:text-[15px] text-[#c8c9ce] mb-[22px]">
+                <ul className="hidden sm:flex flex-wrap items-center gap-x-[16px] gap-y-[8px] text-[14px] sm:text-[15px] text-[#c8c9ce] mb-[22px]">
                   <li>
                     By{" "}
                     <span className="text-white/90">{getAuthorName(heroPost)}</span>
@@ -265,7 +340,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
 
                 <Link
                   href={`/post/${heroPost.slug}`}
-                  className="inline-flex items-center justify-center bg-[#0073ff] hover:bg-[#0060d6] text-white text-[15px] sm:text-[16px] font-semibold px-[28px] py-[13px] sm:px-[32px] sm:py-[14px] rounded-[4px] transition-colors"
+                  className="hidden sm:inline-flex items-center justify-center bg-[#0073ff] hover:bg-[#0060d6] text-white text-[15px] sm:text-[16px] font-semibold px-[28px] py-[13px] sm:px-[32px] sm:py-[14px] rounded-[4px] transition-colors"
                 >
                   Read Article
                 </Link>
@@ -273,15 +348,15 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
 
               {/* style-two: glass / smoky cards */}
               {bottomWithTags.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8 w-full max-w-none lg:max-w-[780px] xl:max-w-[850px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 mt-3 sm:mt-8 w-full max-w-none lg:max-w-[780px] xl:max-w-[850px]">
                   {bottomWithTags.map(({ item, tagText, tagColor }, i) => {
                     return (
                       <Link
                         key={`${item.id}-bottom-${i}`}
                         href={`/post/${item.slug}`}
-                        className="group flex items-center gap-3.5 rounded-[12px] border border-white/15 bg-white/[0.07] backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.35)] p-3 sm:p-3.5 hover:bg-white/[0.12] hover:border-white/25 transition-colors"
+                        className="group flex items-center gap-2.5 sm:gap-3.5 rounded-[12px] border border-white/15 bg-white/[0.07] backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.35)] p-2.5 sm:p-3.5 hover:bg-white/[0.12] hover:border-white/25 transition-colors"
                       >
-                        <div className="relative w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] overflow-hidden shrink-0 rounded-[8px]">
+                        <div className="relative w-[56px] h-[56px] sm:w-[80px] sm:h-[80px] overflow-hidden shrink-0 rounded-[8px]">
                           <Image
                             src={getImageUrl(item)}
                             alt={item.title}
@@ -302,17 +377,17 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                         <div className="min-w-0 flex-1">
                           {tagText ? (
                             <span
-                              className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-tl-none rounded-tr-[4px] rounded-br-[4px] rounded-bl-[4px] mb-1.5`}
-                            >
-                              {tagText}
-                            </span>
-                          ) : null}
+                              className={`inline-block ${tagColor} text-white text-[9px] sm:text-[10px] font-semibold uppercase tracking-wide px-[7px] sm:px-[8px] py-[1px] sm:py-[2px] rounded-tl-none rounded-tr-[4px] rounded-br-[4px] rounded-bl-[4px] mb-1`}
+                          >
+                            {tagText}
+                          </span>
+                        ) : null}
 
-                          <h6 className="text-white !text-[15px] sm:!text-[16px] !font-bold leading-[1.35] mb-1.5 group-hover:text-[#0073ff] transition-colors line-clamp-2">
+                          <h6 className="text-white !text-[14px] sm:!text-[16px] !font-bold leading-[1.25] mb-1 group-hover:text-[#0073ff] transition-colors line-clamp-2">
                             {truncateTitle(item.title, 48)}
                           </h6>
 
-                          <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-[#c8c9ce]">
+                          <ul className="hidden sm:flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-[#c8c9ce]">
                             <li>By {getAuthorName(item)}</li>
                             {typeof item.views === "number" && (
                               <li className="inline-flex items-center gap-1">
@@ -331,7 +406,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
           </div>
 
           {/* ================= RIGHT: RECENT NEWS ================= */}
-          <aside className="bg-[#15171f] rounded-[6px] px-4 py-5 sm:px-6 sm:py-6 flex flex-col min-h-0 lg:min-h-[720px] w-full min-w-0">
+          <aside className="hidden lg:flex bg-[#15171f] rounded-[6px] px-4 py-5 sm:px-6 sm:py-6 flex-col min-h-0 lg:min-h-[720px] w-full min-w-0">
             <div className="flex items-center justify-between gap-3 mb-5">
               <h4 className="text-white text-[20px] sm:text-[22px] font-bold leading-none">
                 Recent News

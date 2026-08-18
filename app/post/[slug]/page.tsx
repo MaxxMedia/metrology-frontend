@@ -676,20 +676,20 @@ export default function PostDetailsPage() {
 
               {/* PREVIOUS / NEXT POST */}
               {(prevPost || nextPost) && (
-                <div className="mt-8 grid grid-cols-1 gap-6 border-t border-gray-800 pt-6 sm:grid-cols-2">
+                <div className="mt-8 grid grid-cols-1 gap-4 border-t border-gray-800 pt-6 sm:gap-6 sm:grid-cols-2">
                   {prevPost ? (
                     <Link
                       href={`/post/${prevPost.slug}`}
-                      className="group flex min-w-0 items-center gap-4"
+                      className="group flex min-w-0 items-center gap-3 sm:gap-4"
                       aria-label={`Previous post: ${prevPost.title}`}
                     >
-                      <div className="relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
+                      <div className="relative w-14 h-14 sm:w-20 sm:h-20 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
                         <Image
                           src={relatedImageUrl(prevPost)}
                           alt=""
                           fill
                           className="object-cover"
-                          sizes="80px"
+                          sizes="(max-width: 640px) 56px, 80px"
                           aria-hidden="true"
                         />
                       </div>
@@ -697,7 +697,7 @@ export default function PostDetailsPage() {
                         <p className="flex items-center gap-1 text-xs font-semibold text-gray-500 mb-1">
                           <ChevronLeft size={14} /> Previous
                         </p>
-                        <p className="line-clamp-2 text-[18px] font-bold text-white group-hover:text-blue-400">
+                        <p className="line-clamp-2 text-[15px] sm:text-[18px] font-bold text-white group-hover:text-blue-400">
                           {prevPost.title}
                         </p>
                       </div>
@@ -707,24 +707,24 @@ export default function PostDetailsPage() {
                   {nextPost && (
                     <Link
                       href={`/post/${nextPost.slug}`}
-                      className="group flex min-w-0 items-center justify-end gap-4 text-right"
+                      className="group flex min-w-0 items-center justify-end gap-3 sm:gap-4 text-right"
                       aria-label={`Next post: ${nextPost.title}`}
                     >
                       <div className="min-w-0">
                         <p className="flex items-center justify-end gap-1 text-xs font-semibold text-gray-500 mb-1">
                           Next <ChevronRight size={14} />
                         </p>
-                        <p className="line-clamp-2 text-[18px] font-bold text-white group-hover:text-blue-400">
+                        <p className="line-clamp-2 text-[15px] sm:text-[18px] font-bold text-white group-hover:text-blue-400">
                           {nextPost.title}
                         </p>
                       </div>
-                      <div className="relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
+                      <div className="relative w-14 h-14 sm:w-20 sm:h-20 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
                         <Image
                           src={relatedImageUrl(nextPost)}
                           alt=""
                           fill
                           className="object-cover"
-                          sizes="80px"
+                          sizes="(max-width: 640px) 56px, 80px"
                           aria-hidden="true"
                         />
                       </div>
