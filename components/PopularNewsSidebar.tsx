@@ -29,7 +29,7 @@ export default function PopularNewsSidebar() {
       <h3 className="text-xl font-semibold mb-6">Popular News</h3>
 
       <div className="space-y-6">
-        {posts.slice(0, 3).map((post) => (
+        {posts.slice(0, 4).map((post) => (
           <Link
             key={post.id}
             href={`/post/${post.slug}`}

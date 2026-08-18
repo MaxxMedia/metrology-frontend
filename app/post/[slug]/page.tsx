@@ -441,8 +441,8 @@ export default function PostDetailsPage() {
         {slugValue && <PostViewCounter slug={slugValue} />}
 
         {/* ========== SINGLE MERGED GRID: main column + sidebar ========== */}
-        <div className="max-w-[1400px] mx-auto px-4 pt-6 lg:px-0">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[970px_390px]">
+        <div className="max-w-[1500px] mx-auto px-4 pt-6 sm:px-6 lg:px-10 xl:px-12">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_390px] xl:grid-cols-[minmax(0,1fr)_420px]">
             {/* LEFT: everything flows in one continuous column */}
             <article className="min-w-0 overflow-hidden">
               {/* Breadcrumb */}

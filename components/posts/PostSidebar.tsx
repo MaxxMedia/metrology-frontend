@@ -44,7 +44,7 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
       try {
         // Fetch recent posts
         const recentRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=4&page=1`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=5&page=1`
         );
         let recentList: any[] = [];
         if (recentRes.ok) {
@@ -61,7 +61,7 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
         let popularList: any[] = [];
         try {
           const popularRes = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/posts/popular?limit=4`
+            `${process.env.NEXT_PUBLIC_API_URL}/api/posts/popular?limit=5`
           );
           if (popularRes.ok) {
             const popularData = await popularRes.json();
@@ -95,7 +95,7 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
         // Trendy = recently published posts sorted by views (short-term momentum)
         try {
           const trendyRes = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=15&page=1`
+            `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=16&page=1`
           );
           if (trendyRes.ok) {
             const trendyData = await trendyRes.json();
@@ -114,7 +114,7 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
         // Fetch company posts
         if (categorySlug) {
           const companyRes = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${categorySlug}&limit=4`
+            `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${categorySlug}&limit=5`
           );
           if (companyRes.ok) {
             const companyData = await companyRes.json();
