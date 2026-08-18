@@ -249,7 +249,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
   const heroBg = getImageUrl(visiblePosts[0]);
 
   return (
-    <section className="w-full h-[655.6px] bg-[#1D2125] overflow-hidden">
+    <section className="w-full bg-[#1D2125] overflow-hidden md:h-[655.6px]">
       <style jsx>{`
         .company-card-title-18 {
           font-size: 18px !important;
@@ -269,23 +269,23 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
         <div className="absolute inset-0 bg-[#1D2125]/50" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1D2125] via-[#1D2125]/45 to-[#1D2125]/20" />
 
-        <div className="absolute inset-x-0 top-[430px] z-10">
-          <div className="w-full max-w-[1420px] h-[595.6px] mx-auto px-[10px] py-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
+        <div className="relative z-10 md:absolute md:inset-x-0 md:top-[430px]">
+          <div className="w-full max-w-[1420px] mx-auto px-4 md:px-[10px] py-4 md:py-0 md:h-[595.6px]">
+            <div className="flex flex-col gap-3 md:grid md:grid-cols-1 md:gap-3 lg:grid-cols-3 md:sm:gap-4 w-full">
               {visiblePostsWithTags.map(({ post, tagText, tagColor }) => {
 
                 return (
                   <Link
                     key={post.id}
                     href={`/post/${post.slug}`}
-                    className="group flex items-center gap-3.5 rounded-[12px] border border-white/15 bg-[#FFFFFF0D] backdrop-blur-md w-[446.66px] h-[165.6px] pt-[12px] pr-[30px] pb-[12px] pl-[12px] hover:border-white/30 hover:bg-black/55 transition-colors"
+                    className="group flex items-center gap-3 rounded-[12px] border border-white/15 bg-[#FFFFFF0D] backdrop-blur-md w-full min-h-[120px] md:w-[446.66px] md:h-[165.6px] pt-3 pr-3 pb-3 pl-3 md:pr-[30px] md:pl-[12px] hover:border-white/30 hover:bg-black/55 transition-colors"
                   >
-                    <div className="relative w-[140px] h-[140px] rounded-full overflow-hidden shrink-0 ring-1 ring-white/20">
+                    <div className="relative w-[88px] h-[88px] md:w-[140px] md:h-[140px] rounded-full overflow-hidden shrink-0 ring-1 ring-white/20">
                       <Image
                         src={getImageUrl(post)}
                         alt={post.title || "Article"}
                         fill
-                        sizes="140px"
+                        sizes="(max-width: 768px) 88px, 140px"
                         className="object-cover"
                       />
                     </div>
@@ -293,17 +293,17 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
                     <div className="min-w-0 flex-1">
                       {tagText && (
                         <span
-                          className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-1.5`}
+                          className={`inline-block ${tagColor} text-white text-[9px] md:text-[10px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-1.5`}
                         >
                           {tagText}
                         </span>
                       )}
 
-                      <h6 className="company-card-title-18 text-white font-bold leading-snug mb-1.5 line-clamp-2 group-hover:text-[#7dd3fc] transition-colors">
+                      <h6 className="company-card-title-18 text-white font-bold leading-snug mb-1.5 line-clamp-2 group-hover:text-[#7dd3fc] transition-colors text-[15px] md:text-[18px]">
                         {truncateTitle(post.title || "", 42)}
                       </h6>
 
-                      <ul className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-white/75">
+                      <ul className="hidden md:flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-white/75">
                         <li>By {getAuthorName(post)}</li>
                         <li className="inline-flex items-center gap-1">
                           <PulseIcon className="w-3 h-3 text-[#7dd3fc]" />
