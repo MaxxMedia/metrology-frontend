@@ -246,7 +246,7 @@ export default function CreateMagazinePage() {
       />
 
       {form.flipbookPages?.length > 0 && (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {form.flipbookPages.map((img: string, index: number) => (
             <div key={index} className="relative">
               <img
