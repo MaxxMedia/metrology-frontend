@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { Calendar, Eye, ChevronRight, ChevronLeft, Facebook, Twitter, Instagram, Linkedin, Mail, FileText, MessageSquare, ArrowUp } from "lucide-react"
+import { Calendar, Eye, ChevronRight, ChevronLeft, Facebook, Twitter, Instagram, Linkedin, Mail, FileText, MessageSquare, ArrowUp, Home } from "lucide-react"
 
 import ShareSection from "@/components/share-section"
 import RelatedPostsCarousel from "@/components/related-posts-carousel"
@@ -16,6 +16,7 @@ import { CommentsSection } from "@/components/comments-section"
 import { UserAvatar } from "@/components/user-avatar"
 import BlockRenderer from "@/app/admin/components/post/BlockRenderer"
 import PostSidebar from "@/components/posts/PostSidebar"
+import PostQuoteCard from "@/components/posts/PostQuoteCard"
 
 /* ================= TYPES ================= */
 type Author = {
@@ -76,6 +77,11 @@ type Post = {
   badge?: string
   comments?: Comment[]
   status?: string
+  quote?: string
+  quoteAuthor?: string
+  quotes?: ({ quote: string; author?: string } | string)[]
+  highlightQuote?: string
+  gallery?: (string | { url?: string; imageUrl?: string; caption?: string })[]
   qa?: {
     question: string
     answer: string
@@ -437,26 +443,30 @@ export default function PostDetailsPage() {
         contentTitle={post.category?.name || "premium content"}
       /> */}
 
-      <main className="bg-[#0a0d14]">
+      <main className="bg-[#0a0d14] min-h-screen">
         {slugValue && <PostViewCounter slug={slugValue} />}
 
-        {/* ========== SINGLE MERGED GRID: main column + sidebar ========== */}
-        <div className="max-w-[1500px] mx-auto px-4 pt-6 sm:px-6 lg:px-10 xl:px-12">
+        <div className="max-w-[1500px] mx-auto px-4 pt-3 sm:pt-4 sm:px-6 lg:px-10 xl:px-12">
+          {/* Breadcrumb Navigation - Styled according to photo */}
+          <nav className="flex items-center flex-wrap gap-2 text-xs sm:text-sm text-gray-300 mb-10 sm:mb-12 pb-3 border-b border-gray-800/50">
+            <Link href="/" className="inline-flex items-center gap-1.5 text-gray-200 hover:text-white font-medium transition-colors">
+              <Home size={14} className="text-gray-300" />
+              <span>Home</span>
+            </Link>
+            <span className="text-gray-400 font-sans text-sm">→</span>
+            <Link href="/blog" className="text-gray-200 hover:text-white font-medium transition-colors">
+              Blog
+            </Link>
+            <span className="text-gray-400 font-sans text-sm">→</span>
+            <span className="text-gray-300 font-normal truncate max-w-xs sm:max-w-md md:max-w-xl">
+              {post.title}
+            </span>
+          </nav>
+
+          {/* ========== MAIN CONTENT + SIDEBAR GRID ========== */}
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_390px] xl:grid-cols-[minmax(0,1fr)_420px]">
-            {/* LEFT: everything flows in one continuous column */}
+            {/* LEFT: main content */}
             <article className="min-w-0 overflow-hidden">
-              {/* Breadcrumb */}
-              <nav className="flex items-center gap-1.5 text-xs text-gray-400 mb-4">
-                <Link href="/" className="hover:text-blue-400">Home</Link>
-                <ChevronRight size={12} />
-                <Link href="/blog" className="hover:text-blue-400">Blog</Link>
-                {post.category?.name && (
-                  <>
-                    <ChevronRight size={12} />
-                    <span className="hover:text-blue-400">{post.category.name}</span>
-                  </>
-                )}
-              </nav>
 
               {/* HERO IMAGE */}
               <div className="relative w-full bg-gray-900 rounded-2xl overflow-hidden border border-gray-800">
@@ -528,8 +538,31 @@ export default function PostDetailsPage() {
                 </p>
               )}
 
+              {/* BACKEND QUOTE DISPLAY */}
+              {(() => {
+                const fetchedQuote =
+                  post.quote ||
+                  post.highlightQuote ||
+                  (Array.isArray(post.quotes) && post.quotes.length > 0
+                    ? typeof post.quotes[0] === "string"
+                      ? post.quotes[0]
+                      : post.quotes[0]?.quote
+                    : undefined);
+
+                const fetchedAuthor =
+                  post.quoteAuthor ||
+                  (Array.isArray(post.quotes) && post.quotes.length > 0 && typeof post.quotes[0] === "object"
+                    ? post.quotes[0]?.author
+                    : undefined) ||
+                  author?.name;
+
+                if (!fetchedQuote) return null;
+
+                return <PostQuoteCard quote={fetchedQuote} author={fetchedAuthor} />;
+              })()}
+
               {/* CONTENT */}
-              <div className="post-article-content prose prose-lg prose-invert max-w-none break-words overflow-hidden mt-6 text-gray-300 prose-headings:!text-white prose-p:!text-gray-300 prose-li:!text-gray-300 prose-strong:!text-white prose-em:!text-gray-300 prose-blockquote:!text-gray-300 prose-blockquote:border-blue-500 prose-blockquote:bg-gray-900/50 prose-a:!text-blue-400 prose-img:rounded-xl prose-th:!text-gray-200 prose-td:!text-gray-300 [&_h1]:!text-white [&_h2]:!text-white [&_h3]:!text-white [&_p]:!text-gray-300 [&_li]:!text-gray-300 [&_strong]:!text-white [&_blockquote]:!text-gray-300 [&_.prose]:prose-invert [&_.prose_p]:!text-gray-300 [&_.prose_h1]:!text-white [&_.prose_h2]:!text-white [&_.prose_h3]:!text-white [&_.prose_strong]:!text-white [&_.prose_blockquote]:!text-gray-300">
+              <div className="post-article-content prose prose-lg prose-invert max-w-none break-words overflow-hidden mt-6 text-gray-300 prose-headings:!text-white prose-p:!text-gray-300 prose-li:!text-gray-300 prose-strong:!text-white prose-em:!text-gray-300 prose-a:!text-blue-400 prose-img:rounded-xl prose-th:!text-gray-200 prose-td:!text-gray-300 [&_h1]:!text-white [&_h2]:!text-white [&_h3]:!text-white [&_p]:!text-gray-300 [&_li]:!text-gray-300 [&_strong]:!text-white [&_.prose]:prose-invert [&_.prose_p]:!text-gray-300 [&_.prose_h1]:!text-white [&_.prose_h2]:!text-white [&_.prose_h3]:!text-white [&_.prose_strong]:!text-white">
                 {post.contentBlocks && post.contentBlocks.length > 0 ? (
                   <BlockRenderer blocks={post.contentBlocks} />
                 ) : post.content ? (
@@ -538,6 +571,46 @@ export default function PostDetailsPage() {
                   <p className="text-gray-500">No content available</p>
                 )}
               </div>
+
+              {/* BACKEND GALLERY DISPLAY */}
+              {(() => {
+                if (!post.gallery || !Array.isArray(post.gallery) || post.gallery.length === 0) {
+                  return null;
+                }
+
+                const galleryImages = post.gallery
+                  .map((item: any) => (typeof item === "string" ? item : item.imageUrl || item.url || ""))
+                  .filter(Boolean);
+
+                if (galleryImages.length === 0) return null;
+
+                const isTwoPhotos = galleryImages.length === 2;
+
+                return (
+                  <div className="mt-8 mb-6">
+                    <h3 className="text-xl font-bold text-white mb-4">Gallery</h3>
+                    <div
+                      className={`grid ${
+                        isTwoPhotos
+                          ? "grid-cols-1 md:grid-cols-2 gap-6"
+                          : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+                      }`}
+                    >
+                      {galleryImages.map((src: string, idx: number) => (
+                        <div key={idx} className="relative w-full overflow-hidden rounded-xl border border-gray-800/80">
+                          <img
+                            src={src}
+                            alt={`Gallery image ${idx + 1}`}
+                            className={`w-full ${
+                              isTwoPhotos ? "h-80 md:h-[420px]" : "h-48 md:h-60"
+                            } object-cover rounded-xl transition-transform duration-300 hover:scale-105`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* YOUTUBE VIDEO */}
               {allowYoutube && post.youtubeUrl && (
@@ -568,9 +641,7 @@ export default function PostDetailsPage() {
               )}
 
               {/* SHARE SECTION */}
-              <div className="mt-6 pt-6 border-t border-gray-800">
-                <ShareSection post={post} />
-              </div>
+              <ShareSection post={post} />
 
               {/* AUTHOR BIO */}
               {author && (

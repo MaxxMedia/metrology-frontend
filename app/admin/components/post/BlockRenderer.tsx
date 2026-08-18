@@ -2,6 +2,7 @@
 "use client";
 
 import { ContentBlock } from "../types";
+import PostQuoteCard from "@/components/posts/PostQuoteCard";
 
 type ImageBlock = Extract<ContentBlock, { type: "image" }>;
 
@@ -195,22 +196,28 @@ interface GalleryBlockProps {
 }
 
 function GalleryBlock({ block }: GalleryBlockProps) {
-  const columns = block.columns || 3;
+  const images = block.images || [];
+  const count = images.length;
+  const isTwoPhotos = count === 2;
+
+  const columns = block.columns || (isTwoPhotos ? 2 : 3);
   const colsMap: Record<number, string> = {
-    2: "grid-cols-2",
-    3: "grid-cols-3",
-    4: "grid-cols-4",
+    2: "grid-cols-1 md:grid-cols-2",
+    3: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3",
+    4: "grid-cols-2 md:grid-cols-4",
   };
   const cols = colsMap[columns] || colsMap[3];
 
   return (
-    <div className={`grid ${cols} gap-4 mb-6`}>
-      {block.images.map((image: string, index: number) => (
-        <div key={index} className="relative">
+    <div className={`grid ${cols} gap-4 md:gap-6 mb-8`}>
+      {images.map((image: string, index: number) => (
+        <div key={index} className="relative w-full overflow-hidden rounded-xl">
           <img
             src={image}
             alt={`Gallery image ${index + 1}`}
-            className="rounded-xl w-full h-48 object-cover"
+            className={`w-full ${
+              isTwoPhotos ? "h-80 md:h-[420px]" : "h-48 md:h-56"
+            } object-cover rounded-xl shadow-md transition-transform duration-300 hover:scale-105`}
           />
         </div>
       ))}
@@ -221,13 +228,10 @@ function GalleryBlock({ block }: GalleryBlockProps) {
 interface QuoteBlockProps {
   block: {
     quote: string;
+    author?: string;
   };
 }
 
 function QuoteBlock({ block }: QuoteBlockProps) {
-  return (
-    <blockquote className="border-l-4 border-blue-500 pl-6 italic text-xl text-gray-300 mb-6">
-      {block.quote}
-    </blockquote>
-  );
+  return <PostQuoteCard quote={block.quote} author={block.author} />;
 }
