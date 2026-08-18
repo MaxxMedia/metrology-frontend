@@ -748,7 +748,7 @@ export default function PostDetailsPage() {
               {relatedPosts.length > 0 && (
                 <div className="mt-10 pt-6">
                   <div
-                    className="flex items-center gap-4"
+                    className="flex items-center gap-4 lg:mb-0 mb-4"
                     style={{ margin: "55px 0px 30px" }}
                   >
                     <h2 className="flex-shrink-0 text-xl font-bold text-white sm:text-2xl">
@@ -790,18 +790,58 @@ export default function PostDetailsPage() {
                     )}
                   </div>
 
+                  <div className="lg:hidden">
+                    <Link
+                      href={`/post/${relatedPosts[0].slug}`}
+                      className="group block bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-600 transition-colors"
+                      style={{
+                        margin: "0px 0px 10px",
+                        padding: "12px 12px 18px",
+                      }}
+                    >
+                      <div className="relative w-full aspect-[4/3] bg-gray-800">
+                        <Image
+                          src={relatedImageUrl(relatedPosts[0])}
+                          alt={relatedPosts[0].title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="100vw"
+                        />
+                      </div>
+                      <div className="pt-3">
+                        {relatedPosts[0].category?.name && (
+                          <span className="inline-block text-[10px] font-bold uppercase tracking-wide text-white bg-blue-600 px-2.5 py-1 rounded mb-3">
+                            {relatedPosts[0].category.name}
+                          </span>
+                        )}
+                        <h3 className="text-sm font-bold text-white leading-snug line-clamp-2 group-hover:text-blue-400">
+                          {relatedPosts[0].title}
+                        </h3>
+                        <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
+                          {relatedPosts[0].author?.name && <span>By {relatedPosts[0].author.name}</span>}
+                          {typeof relatedPosts[0].views === "number" && (
+                            <span className="flex items-center gap-1">
+                              <Eye size={12} className="text-gray-500" />
+                              {relatedPosts[0].views.toLocaleString()} Views
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+
                   <div
                     id="related-post-scroll"
                     ref={relatedScrollRef}
-                    className="fpg-post-slider flex gap-4 sm:gap-5 overflow-x-auto pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                    className="hidden lg:flex fpg-post-slider gap-5 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                   >
                     {carouselPosts.map((p, index) => (
                       <Link
                         key={`${p.id}-${index}`}
                         href={`/post/${p.slug}`}
-                        className="fpg-card-style style-one group flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-600 transition-colors snap-center w-full sm:w-auto"
+                        className="fpg-card-style style-one group flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-600 transition-colors"
                         style={{
-                          width: "100%",
+                          width: "calc((100% - 2.5rem) / 3)",
                           margin: "0px 0px 10px",
                           padding: "12px 12px 25px",
                         }}
@@ -812,7 +852,7 @@ export default function PostDetailsPage() {
                             alt={p.title}
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            sizes="(max-width: 640px) 100vw, 260px"
+                            sizes="260px"
                           />
                         </div>
                         <div className="fpg-post-content" style={{ padding: "12px 15px 0px" }}>
