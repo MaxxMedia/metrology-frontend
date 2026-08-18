@@ -134,7 +134,7 @@ export default async function Footer() {
   return (
     <footer className="relative bg-[#171A1E] text-[#CCCCCC] border-t border-[#292C30]">
       <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-14 md:pt-16 pb-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.3fr_1fr_1fr_0.85fr_1.5fr] xl:grid-cols-[320px_1fr_1fr_180px_1.4fr] gap-8 lg:gap-6 xl:gap-8">
 
           {/* ================= COL 1: BRAND ================= */}
           <div>

@@ -18,6 +18,7 @@ import CompanyArticles from "@/components/company/CompanyArticles"
 import HomeCompanyArticles from "@/components/HomeCompanyArticles"
 import Banner from "@/components/Banners/Banner";
 import NewsLetters from "@/components/NewsLetters";
+import HomeContentGate from "@/components/HomeContentGate";
 
 
 export default async function Home() {
@@ -77,6 +78,9 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col w-full min-w-0 overflow-x-clip bg-[#1D2125]">
+      {/* 🔒 Timed Content Gate Popup */}
+      <HomeContentGate delayMs={7000} />
+
       {/* ================= HOME TOP BANNER ================= */}
       <Banner placement="HOME_TOP" />
 

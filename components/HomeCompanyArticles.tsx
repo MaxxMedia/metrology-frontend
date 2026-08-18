@@ -284,10 +284,10 @@ export default function HomeCompanyArticles({ posts }: Props) {
         }
       `}</style>
       <div className="w-full max-w-[1420px] mx-auto px-0 pt-[70px] pb-[80px]">
-        <div className="grid grid-cols-1 lg:grid-cols-[970px_400px] gap-5 lg:gap-10 w-full lg:w-[1400px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[minmax(0,970px)_400px] gap-5 lg:gap-8 xl:gap-10 w-full max-w-[1400px] mx-auto">
 
           {/* ================= LEFT: TOP OF THIS WEEK ================= */}
-          <div className="min-w-0 w-full lg:w-[970px]">
+          <div className="min-w-0 w-full max-w-[970px]">
             <div className="flex items-center gap-3 sm:gap-4 mb-6 lg:mb-7 min-w-0">
               <h2 className="section-title-32 font-bold text-white shrink-0 leading-none">
                 Top of This Week

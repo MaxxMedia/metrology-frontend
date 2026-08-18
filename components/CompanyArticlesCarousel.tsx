@@ -67,7 +67,7 @@ export default function CompanyArticlesCarousel({ articles }: Props) {
           <Link
             key={article.id}
             href={`/post/${article.slug}`}
-            className="min-w-[300px] max-w-[300px] bg-[#1D2125] rounded-lg border border-[#292C30] hover:border-[#0073FF] transition overflow-hidden group"
+            className="min-w-[260px] sm:min-w-[300px] max-w-[300px] bg-[#1D2125] rounded-lg border border-[#292C30] hover:border-[#0073FF] transition overflow-hidden group"
           >
             {article.imageUrl && (
               <div className="relative h-40 w-full">
