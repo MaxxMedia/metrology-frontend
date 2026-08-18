@@ -793,15 +793,15 @@ export default function PostDetailsPage() {
                   <div
                     id="related-post-scroll"
                     ref={relatedScrollRef}
-                    className="fpg-post-slider flex gap-5 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                    className="fpg-post-slider flex gap-4 sm:gap-5 overflow-x-auto pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                   >
                     {carouselPosts.map((p, index) => (
                       <Link
                         key={`${p.id}-${index}`}
                         href={`/post/${p.slug}`}
-                        className="fpg-card-style style-one group flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-600 transition-colors"
+                        className="fpg-card-style style-one group flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-600 transition-colors snap-center w-full sm:w-auto"
                         style={{
-                          width: "calc((100% - 2.5rem) / 3)",
+                          width: "100%",
                           margin: "0px 0px 10px",
                           padding: "12px 12px 25px",
                         }}
@@ -812,7 +812,7 @@ export default function PostDetailsPage() {
                             alt={p.title}
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            sizes="260px"
+                            sizes="(max-width: 640px) 100vw, 260px"
                           />
                         </div>
                         <div className="fpg-post-content" style={{ padding: "12px 15px 0px" }}>
