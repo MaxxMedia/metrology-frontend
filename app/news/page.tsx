@@ -1,135 +1,5 @@
-// import Link from "next/link"
-// import Image from "next/image"
-// import type { Post } from "@/types/Post"
-// import SupplierAds from "@/components/SupplierAds"
-// import NewsletterForm from "@/components/news/NewsletterForm"
-
-// export default async function NewsPage() {
-//   const res = await fetch(
-//     `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`,
-//     { cache: "no-store" }
-//   )
-
-//   const data = await res.json()
-//   const posts: Post[] = data.data || data
-
-//   const slugOf = (post: Post) =>
-//     typeof post.category === "object"
-//       ? post.category?.slug?.toLowerCase()
-//       : String(post.category || "").toLowerCase()
-
-//   const getImage = (url?: string | null) => {
-//     if (!url) return "/placeholder.svg"
-//     if (url.startsWith("http")) return url
-//     return `${process.env.NEXT_PUBLIC_API_URL}${url}`
-//   }
-
-//   // ================= WHAT'S NEW =================
-//   const whatsNewPosts = posts
-//     .filter((p) => slugOf(p).includes("whatsnew"))
-//     .slice(0, 5)
-
-//   // ================= NEWS POSTS =================
-//   const newsPosts = posts.filter(
-//     (p) => slugOf(p) === "news"
-//   )
-
-//   return (
-//     <main className="bg-white">
-
-//       {/* ================= WHAT'S NEW STRIP ================= */}
-//       <section className="border-b border-gray-200">
-//         <div className="max-w-[1320px] mx-auto px-6 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-//           {whatsNewPosts.map((post) => (
-//             <Link key={post.id} href={`/post/${post.slug}`}>
-//               <p className="text-sm font-semibold hover:text-[#C8102E]">
-//                 {post.title}
-//               </p>
-//             </Link>
-//           ))}
-//         </div>
-//       </section>
-
-//       {/* ================= NEWSLETTER ================= */}
-//       <NewsletterForm />
-
-//       {/* ================= NEWS LIST ================= */}
-//       <section className="max-w-[1320px] mx-auto px-6 py-16">
-//         <h1 className="text-[36px] font-bold text-[#003B5C] mb-10">
-//           News
-//         </h1>
-
-//         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12">
-
-//           {/* LEFT */}
-//           <div className="space-y-12">
-//             {newsPosts.map((post) => (
-//               <article
-//                 key={post.id}
-//                 className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-6 pb-10 border-b"
-//               >
-//                <div className="relative w-full h-[160px]">
-//   <Image
-//     src={getImage(post.imageUrl)}
-//     alt={post.title}
-//     fill
-//     className="object-cover rounded"
-//     sizes="(max-width:768px) 100vw, 260px"
-//   />
-// </div>
-
-//                 <div>
-//                   <span className="text-xs text-gray-500 block mb-1">
-//                     {post.publishedAt
-//                       ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-//                           day: "2-digit",
-//                           month: "short",
-//                           year: "numeric",
-//                         })
-//                       : ""}
-//                   </span>
-
-//                   <h2 className="text-[22px] font-bold mb-2">
-//                     {post.title}
-//                   </h2>
-
-//                   <p className="text-gray-600 mb-3">
-//                     {post.excerpt ||
-//                       post.content
-//                         ?.replace(/<[^>]+>/g, "")
-//                         .slice(0, 140) + "..."}
-//                   </p>
-
-//                   <Link
-//                     href={`/post/${post.slug}`}
-//                     className="text-[#0072BC] font-bold uppercase text-sm"
-//                   >
-//                     Read More →
-//                   </Link>
-//                 </div>
-//               </article>
-//             ))}
-
-//             {/* PAGINATION */}
-//             <div className="flex gap-2">
-//               <button className="border px-3 py-2">‹</button>
-//               <button className="border px-3 py-2 bg-[#003B5C] text-white">1</button>
-//               <button className="border px-3 py-2">2</button>
-//               <button className="border px-3 py-2">3</button>
-//               <button className="border px-3 py-2">›</button>
-//             </div>
-//           </div>
-
-//           {/* RIGHT ADS */}
-//           <aside className="sticky top-24 space-y-6">
-//             <SupplierAds />
-//           </aside>
-//         </div>
-//       </section>
-//     </main>
-//   )
-// }
 "use client"
+
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
@@ -137,7 +7,7 @@ import type { Post } from "@/types/Post"
 import SupplierAds from "@/components/SupplierAds"
 import NewsletterForm from "@/components/news/NewsletterForm"
 
-const POSTS_PER_PAGE = 6 // Number of posts per page
+const POSTS_PER_PAGE = 6
 
 export default function NewsPage() {
   const [posts, setPosts] = useState<Post[]>([])
@@ -195,11 +65,9 @@ export default function NewsPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
-    // Scroll to top of the section
     document.getElementById('news-section')?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  // Generate page numbers
   const getPageNumbers = () => {
     const pages = []
     const maxVisible = 5
@@ -218,10 +86,10 @@ export default function NewsPage() {
 
   if (loading) {
     return (
-      <main className="bg-white">
+      <main className="bg-[#171A1E] min-h-screen text-[#CCCCCC]">
         <div className="max-w-[1320px] mx-auto px-6 py-16">
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C8102E]"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00B5ED]"></div>
           </div>
         </div>
       </main>
@@ -229,15 +97,15 @@ export default function NewsPage() {
   }
 
   return (
-    <main className="bg-white">
+    <main className="bg-[#171A1E] min-h-screen text-[#CCCCCC]">
 
       {/* ================= WHAT'S NEW STRIP ================= */}
       {whatsNewPosts.length > 0 && (
-        <section className="border-b border-gray-200">
+        <section className="border-b border-[#292C30] bg-[#1D2125]/60">
           <div className="max-w-[1320px] mx-auto px-6 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {whatsNewPosts.map((post) => (
               <Link key={post.id} href={`/post/${post.slug}`}>
-                <p className="text-sm font-semibold hover:text-[#C8102E] transition-colors">
+                <p className="text-sm font-semibold text-[#CCCCCC] hover:text-[#00B5ED] transition-colors">
                   {post.title}
                 </p>
               </Link>
@@ -251,62 +119,64 @@ export default function NewsPage() {
 
       {/* ================= NEWS LIST ================= */}
       <section id="news-section" className="max-w-[1320px] mx-auto px-6 py-16">
-        <h1 className="text-[36px] font-bold text-[#003B5C] mb-10">
+        <h1 className="text-[36px] font-bold text-white mb-10">
           News
         </h1>
 
         {newsPosts.length === 0 ? (
-          <div className="text-center py-16 bg-gray-50 rounded-lg">
-            <p className="text-gray-500 text-lg">No news articles available at the moment.</p>
-            <p className="text-gray-400 text-sm mt-2">Check back later for updates.</p>
+          <div className="text-center py-16 bg-[#1D2125] border border-[#292C30] rounded-[12px]">
+            <p className="text-white text-lg font-semibold">No news articles available at the moment.</p>
+            <p className="text-[#B8B8B8] text-sm mt-2">Check back later for updates.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12">
 
-            {/* LEFT */}
-            <div className="space-y-12">
+            {/* LEFT ARTICLES COLUMN */}
+            <div className="space-y-8">
               {currentPosts.map((post) => (
                 <article
                   key={post.id}
-                  className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-6 pb-10 border-b border-gray-200 last:border-0"
+                  className="bg-[#1D2125] border border-[#292C30] rounded-[12px] p-6 grid grid-cols-1 md:grid-cols-[260px_1fr] gap-6 transition-all duration-200 hover:border-[#0073FF]/60 shadow-lg"
                 >
-                  <div className="relative w-full h-[160px]">
+                  <div className="relative w-full h-[160px] rounded-[8px] overflow-hidden bg-[#171A1E]">
                     <Image
                       src={getImage(post.imageUrl)}
                       alt={post.title}
                       fill
-                      className="object-cover rounded"
+                      className="object-cover rounded-[8px] transition-transform duration-300 hover:scale-105"
                       sizes="(max-width:768px) 100vw, 260px"
                     />
                   </div>
 
-                  <div>
-                    <span className="text-xs text-gray-500 block mb-1">
-                      {post.publishedAt
-                        ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })
-                        : ""}
-                    </span>
+                  <div className="flex flex-col justify-between">
+                    <div>
+                      <span className="text-xs text-[#B8B8B8] block mb-2 font-medium">
+                        {post.publishedAt
+                          ? new Date(post.publishedAt).toLocaleDateString("en-US", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })
+                          : ""}
+                      </span>
 
-                    <h2 className="text-[22px] font-bold mb-2 hover:text-[#C8102E] transition-colors">
-                      <Link href={`/post/${post.slug}`}>
-                        {post.title}
-                      </Link>
-                    </h2>
+                      <h2 className="text-[22px] font-bold text-white mb-2 leading-snug hover:text-[#00B5ED] transition-colors">
+                        <Link href={`/post/${post.slug}`}>
+                          {post.title}
+                        </Link>
+                      </h2>
 
-                    <p className="text-gray-600 mb-3 line-clamp-3">
-                      {post.excerpt ||
-                        post.content
-                          ?.replace(/<[^>]+>/g, "")
-                          .slice(0, 140) + "..."}
-                    </p>
+                      <p className="text-[#CCCCCC] text-sm leading-relaxed mb-4 line-clamp-3">
+                        {post.excerpt ||
+                          post.content
+                            ?.replace(/<[^>]+>/g, "")
+                            .slice(0, 140) + "..."}
+                      </p>
+                    </div>
 
                     <Link
                       href={`/post/${post.slug}`}
-                      className="text-[#0072BC] font-bold uppercase text-sm hover:underline"
+                      className="inline-flex items-center gap-1 text-[#0073FF] font-bold uppercase text-xs tracking-wider hover:text-[#00B5ED] transition-colors"
                     >
                       Read More →
                     </Link>
@@ -316,15 +186,16 @@ export default function NewsPage() {
 
               {/* ================= DYNAMIC PAGINATION ================= */}
               {totalPages > 1 && (
-                <div className="flex flex-wrap items-center justify-center gap-2 pt-8 border-t border-gray-200">
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-8 border-t border-[#292C30]">
                   {/* Previous Button */}
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className={`px-4 py-2 rounded-md transition ${currentPage === 1
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
+                    className={`px-4 py-2 rounded-[8px] text-sm font-medium transition-all ${
+                      currentPage === 1
+                        ? 'bg-[#171A1E] border border-[#292C30] text-[#858585] cursor-not-allowed'
+                        : 'bg-[#1D2125] border border-[#292C30] text-[#CCCCCC] hover:bg-[#292C30] hover:text-white'
+                    }`}
                   >
                     ‹ Previous
                   </button>
@@ -334,10 +205,11 @@ export default function NewsPage() {
                     <button
                       key={page}
                       onClick={() => handlePageChange(page)}
-                      className={`px-4 py-2 rounded-md transition ${currentPage === page
-                          ? 'bg-[#003B5C] text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
+                      className={`px-4 py-2 rounded-[8px] text-sm font-semibold transition-all ${
+                        currentPage === page
+                          ? 'bg-[#0073FF] text-white shadow-md'
+                          : 'bg-[#1D2125] border border-[#292C30] text-[#CCCCCC] hover:bg-[#292C30] hover:text-white'
+                      }`}
                     >
                       {page}
                     </button>
@@ -347,10 +219,11 @@ export default function NewsPage() {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className={`px-4 py-2 rounded-md transition ${currentPage === totalPages
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
+                    className={`px-4 py-2 rounded-[8px] text-sm font-medium transition-all ${
+                      currentPage === totalPages
+                        ? 'bg-[#171A1E] border border-[#292C30] text-[#858585] cursor-not-allowed'
+                        : 'bg-[#1D2125] border border-[#292C30] text-[#CCCCCC] hover:bg-[#292C30] hover:text-white'
+                    }`}
                   >
                     Next ›
                   </button>
@@ -358,7 +231,7 @@ export default function NewsPage() {
               )}
 
               {/* Show total posts count */}
-              <div className="text-center text-sm text-gray-500 mt-4">
+              <div className="text-center text-sm text-[#B8B8B8] mt-4">
                 Showing {startIndex + 1} - {Math.min(endIndex, newsPosts.length)} of {newsPosts.length} news articles
               </div>
             </div>

@@ -30,7 +30,7 @@ const FullSchema = Yup.object({
 })
 
 interface NewsletterFormProps {
-  hasNewsletterContent?: boolean // Prop to determine if newsletter content exists
+  hasNewsletterContent?: boolean
 }
 
 export default function NewsletterForm({ hasNewsletterContent = true }: NewsletterFormProps) {
@@ -55,7 +55,6 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
 
   const handleSubmit = async (values: typeof formData, { setSubmitting, resetForm }: any) => {
     try {
-      // Prepare data for API
       const subscriberData = {
         fullName: `${values.firstName} ${values.lastName}`,
         email: values.email,
@@ -66,7 +65,6 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
         smsSubscribed: false,
       }
 
-      // Call the subscribe API
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/newsletter/subscribe`,
         {
@@ -84,20 +82,16 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
         throw new Error(data.error || "Subscription failed")
       }
 
-      // Check if user is admin (has token and admin role)
       const token = localStorage.getItem("token")
       const userRole = localStorage.getItem("userRole")
 
       if (token && userRole === "admin") {
-        // Redirect to admin subscribers page with success message
         router.push("/admin/newsletter/subscribers?subscribed=true")
         return
       }
 
-      // For regular users, show success message
       setIsSubmitted(true)
 
-      // Reset form after 5 seconds
       setTimeout(() => {
         setIsSubmitted(false)
         resetForm()
@@ -121,10 +115,10 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
   // Success Message
   if (isSubmitted) {
     return (
-      <section className="max-w-[1320px] mx-auto px-6 py-16">
+      <section className="max-w-[1320px] mx-auto px-6 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-16 items-center">
           <div>
-            <div className="relative w-full h-[420px]">
+            <div className="relative w-full h-[380px]">
               <Image
                 src="/images/moldnews.png"
                 alt="TOOLING Newsletter"
@@ -136,22 +130,22 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
             </div>
           </div>
 
-          <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center">
+          <div className="bg-[#1D2125] border border-emerald-500/40 rounded-[12px] p-8 text-center shadow-xl">
             <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-green-800 mb-2">
+            <h3 className="text-2xl font-bold text-white mb-2">
               Successfully Subscribed!
             </h3>
-            <p className="text-green-700">
-              Thank you for subscribing to Tooling Newsletters.
+            <p className="text-[#CCCCCC]">
+              Thank you for subscribing to Metrology Newsletters.
             </p>
-            <p className="text-sm text-green-600 mt-2">
-              You'll receive the latest updates from the Toolmaking industry.
+            <p className="text-sm text-[#B8B8B8] mt-2">
+              You'll receive the latest updates from the Measurement and Inspection industry.
             </p>
           </div>
         </div>
@@ -160,12 +154,12 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
   }
 
   return (
-    <section className="max-w-[1320px] mx-auto px-6 py-16">
-      <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-16 items-center">
+    <section className="max-w-[1320px] mx-auto px-6 py-12 my-6 bg-[#1D2125] border border-[#292C30] rounded-[12px] shadow-xl">
+      <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-12 items-center">
 
         {/* LEFT IMAGE */}
         <div>
-          <div className="relative w-full h-[420px]">
+          <div className="relative w-full h-[380px]">
             <Image
               src="/images/moldnews.png"
               alt="TOOLING Newsletter"
@@ -179,38 +173,41 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
 
         {/* FORM */}
         <div>
-          <h2 className="text-[32px] font-bold text-[#003B5C] mb-4">
-            Subscribe to Tooling Newsletters
+          <h2 className="text-[32px] font-bold text-white mb-4">
+            Subscribe to Metrology Newsletters
           </h2>
 
-          <p className="text-gray-600 mb-8">
-            Tooling Technology magazine is devoted to the Toolmaking industry.
+          <p className="text-[#CCCCCC] mb-8 leading-relaxed">
+            Metrology Technology magazine is devoted to the Measurement and Inspection industry.
             Find out the processes and strategies shops around the world use to
             become more effective and efficient.
           </p>
 
           {/* ============ CONDITIONAL PAGINATION ============ */}
           {hasNewsletterContent ? (
-            // SHOW MULTI-STEP FORM WITH PAGINATION
             <>
               {/* Step Indicator */}
               <div className="flex items-center gap-3 mb-6">
-                <div className={`flex items-center gap-2`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${step === 1 ? 'bg-[#C8102E] text-white' : 'bg-green-500 text-white'
-                    }`}>
+                <div className="flex items-center gap-2">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                    step === 1 ? 'bg-[#0073FF] text-white' : 'bg-[#00B5ED] text-white'
+                  }`}>
                     {step === 1 ? '1' : '✓'}
                   </div>
-                  <span className={`text-sm ${step === 1 ? 'font-semibold text-gray-900' : 'text-gray-500'}`}>
+                  <span className={`text-sm ${step === 1 ? 'font-semibold text-white' : 'text-[#B8B8B8]'}`}>
                     Personal Info
                   </span>
                 </div>
-                <div className="w-12 h-0.5 bg-gray-300" />
-                <div className={`flex items-center gap-2`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${step === 2 ? 'bg-[#C8102E] text-white' : 'bg-gray-300 text-gray-600'
-                    }`}>
+
+                <div className="w-12 h-0.5 bg-[#292C30]" />
+
+                <div className="flex items-center gap-2">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                    step === 2 ? 'bg-[#0073FF] text-white' : 'bg-[#171A1E] border border-[#292C30] text-[#858585]'
+                  }`}>
                     2
                   </div>
-                  <span className={`text-sm ${step === 2 ? 'font-semibold text-gray-900' : 'text-gray-500'}`}>
+                  <span className={`text-sm ${step === 2 ? 'font-semibold text-white' : 'text-[#B8B8B8]'}`}>
                     Email
                   </span>
                 </div>
@@ -231,12 +228,12 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                             <Field
                               name="firstName"
                               placeholder="First Name"
-                              className="w-full border px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C8102E] focus:border-transparent"
+                              className="w-full bg-[#171A1E] border border-[#292C30] text-white placeholder:text-[#858585] px-4 py-3 rounded-[10px] focus:outline-none focus:border-[#0073FF] focus:ring-1 focus:ring-[#0073FF] transition-colors"
                             />
                             <ErrorMessage
                               name="firstName"
                               component="p"
-                              className="text-red-600 text-xs mt-1"
+                              className="text-red-400 text-xs mt-1 font-medium"
                             />
                           </div>
 
@@ -244,12 +241,12 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                             <Field
                               name="lastName"
                               placeholder="Last Name"
-                              className="w-full border px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C8102E] focus:border-transparent"
+                              className="w-full bg-[#171A1E] border border-[#292C30] text-white placeholder:text-[#858585] px-4 py-3 rounded-[10px] focus:outline-none focus:border-[#0073FF] focus:ring-1 focus:ring-[#0073FF] transition-colors"
                             />
                             <ErrorMessage
                               name="lastName"
                               component="p"
-                              className="text-red-600 text-xs mt-1"
+                              className="text-red-400 text-xs mt-1 font-medium"
                             />
                           </div>
 
@@ -257,12 +254,12 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                             <Field
                               name="company"
                               placeholder="Company"
-                              className="w-full border px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C8102E] focus:border-transparent"
+                              className="w-full bg-[#171A1E] border border-[#292C30] text-white placeholder:text-[#858585] px-4 py-3 rounded-[10px] focus:outline-none focus:border-[#0073FF] focus:ring-1 focus:ring-[#0073FF] transition-colors"
                             />
                             <ErrorMessage
                               name="company"
                               component="p"
-                              className="text-red-600 text-xs mt-1"
+                              className="text-red-400 text-xs mt-1 font-medium"
                             />
                           </div>
                         </div>
@@ -282,7 +279,7 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                                 })
                               }
                             }}
-                            className="bg-[#C8102E] text-white px-10 py-3 font-bold rounded-md hover:bg-[#a00d24] transition"
+                            className="bg-[#0073FF] text-white px-10 py-3 font-bold rounded-[10px] hover:bg-[#0060df] transition-colors shadow-md"
                           >
                             Next Step →
                           </button>
@@ -293,10 +290,9 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                     {step === 2 && (
                       <>
                         <div className="space-y-6">
-                          {/* Show summary of step 1 */}
-                          <div className="bg-gray-50 p-4 rounded-md text-sm">
-                            <p><strong>Name:</strong> {values.firstName} {values.lastName}</p>
-                            <p><strong>Company:</strong> {values.company}</p>
+                          <div className="bg-[#171A1E] border border-[#292C30] p-4 rounded-[10px] text-sm text-[#CCCCCC]">
+                            <p><strong className="text-white">Name:</strong> {values.firstName} {values.lastName}</p>
+                            <p><strong className="text-white">Company:</strong> {values.company}</p>
                           </div>
 
                           <div>
@@ -304,12 +300,12 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                               name="email"
                               type="email"
                               placeholder="Email Address"
-                              className="w-full border px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C8102E] focus:border-transparent"
+                              className="w-full bg-[#171A1E] border border-[#292C30] text-white placeholder:text-[#858585] px-4 py-3 rounded-[10px] focus:outline-none focus:border-[#0073FF] focus:ring-1 focus:ring-[#0073FF] transition-colors"
                             />
                             <ErrorMessage
                               name="email"
                               component="p"
-                              className="text-red-600 text-xs mt-1"
+                              className="text-red-400 text-xs mt-1 font-medium"
                             />
                           </div>
                         </div>
@@ -318,7 +314,7 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                           <button
                             type="button"
                             onClick={handleBack}
-                            className="bg-gray-300 text-gray-700 px-8 py-3 font-bold rounded-md hover:bg-gray-400 transition"
+                            className="bg-[#171A1E] border border-[#292C30] text-[#CCCCCC] px-8 py-3 font-bold rounded-[10px] hover:bg-[#292C30] hover:text-white transition-colors"
                           >
                             ← Back
                           </button>
@@ -326,7 +322,7 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                           <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="bg-[#C8102E] text-white px-10 py-3 font-bold rounded-md hover:bg-[#a00d24] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="bg-[#0073FF] text-white px-10 py-3 font-bold rounded-[10px] hover:bg-[#0060df] transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                           >
                             {isSubmitting ? (
                               <>
@@ -348,7 +344,6 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
               </Formik>
             </>
           ) : (
-            // SHOW SINGLE PAGE FORM (NO PAGINATION)
             <Formik
               initialValues={{
                 firstName: "",
@@ -366,12 +361,12 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                     <Field
                       name="firstName"
                       placeholder="First Name"
-                      className="w-full border px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C8102E] focus:border-transparent"
+                      className="w-full bg-[#171A1E] border border-[#292C30] text-white placeholder:text-[#858585] px-4 py-3 rounded-[10px] focus:outline-none focus:border-[#0073FF] focus:ring-1 focus:ring-[#0073FF] transition-colors"
                     />
                     <ErrorMessage
                       name="firstName"
                       component="p"
-                      className="text-red-600 text-xs mt-1"
+                      className="text-red-400 text-xs mt-1 font-medium"
                     />
                   </div>
 
@@ -379,12 +374,12 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                     <Field
                       name="lastName"
                       placeholder="Last Name"
-                      className="w-full border px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C8102E] focus:border-transparent"
+                      className="w-full bg-[#171A1E] border border-[#292C30] text-white placeholder:text-[#858585] px-4 py-3 rounded-[10px] focus:outline-none focus:border-[#0073FF] focus:ring-1 focus:ring-[#0073FF] transition-colors"
                     />
                     <ErrorMessage
                       name="lastName"
                       component="p"
-                      className="text-red-600 text-xs mt-1"
+                      className="text-red-400 text-xs mt-1 font-medium"
                     />
                   </div>
 
@@ -392,12 +387,12 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                     <Field
                       name="company"
                       placeholder="Company"
-                      className="w-full border px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C8102E] focus:border-transparent"
+                      className="w-full bg-[#171A1E] border border-[#292C30] text-white placeholder:text-[#858585] px-4 py-3 rounded-[10px] focus:outline-none focus:border-[#0073FF] focus:ring-1 focus:ring-[#0073FF] transition-colors"
                     />
                     <ErrorMessage
                       name="company"
                       component="p"
-                      className="text-red-600 text-xs mt-1"
+                      className="text-red-400 text-xs mt-1 font-medium"
                     />
                   </div>
 
@@ -406,12 +401,12 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                       name="email"
                       type="email"
                       placeholder="Email Address"
-                      className="w-full border px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C8102E] focus:border-transparent"
+                      className="w-full bg-[#171A1E] border border-[#292C30] text-white placeholder:text-[#858585] px-4 py-3 rounded-[10px] focus:outline-none focus:border-[#0073FF] focus:ring-1 focus:ring-[#0073FF] transition-colors"
                     />
                     <ErrorMessage
                       name="email"
                       component="p"
-                      className="text-red-600 text-xs mt-1"
+                      className="text-red-400 text-xs mt-1 font-medium"
                     />
                   </div>
 
@@ -419,7 +414,7 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="bg-[#C8102E] text-white px-10 py-3 font-bold rounded-md hover:bg-[#a00d24] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="bg-[#0073FF] text-white px-10 py-3 font-bold rounded-[10px] hover:bg-[#0060df] transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {isSubmitting ? (
                         <>
