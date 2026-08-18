@@ -842,11 +842,12 @@ export default function PostDetailsPage() {
                         className="fpg-card-style style-one group flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-600 transition-colors"
                         style={{
                           width: "calc((100% - 2.5rem) / 3)",
+                          height: "331.94px",
                           margin: "0px 0px 10px",
                           padding: "12px 12px 25px",
                         }}
                       >
-                        <div className="relative w-full aspect-[4/3] bg-gray-800">
+                        <div className="relative w-full h-[141.09px] bg-gray-800 rounded-[10px] overflow-hidden">
                           <Image
                             src={relatedImageUrl(p)}
                             alt={p.title}
@@ -861,7 +862,10 @@ export default function PostDetailsPage() {
                               {p.category.name}
                             </span>
                           )}
-                          <h3 className="text-sm font-bold text-white leading-snug line-clamp-2 group-hover:text-blue-400">
+                          <h3
+                            className="font-bold text-white leading-snug line-clamp-2 group-hover:text-blue-400"
+                            style={{ fontSize: "18px" }}
+                          >
                             {p.title}
                           </h3>
                           <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
