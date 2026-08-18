@@ -113,6 +113,22 @@ function getYoutubeEmbed(url?: string) {
   return null
 }
 
+function sanitizeImageUrl(input?: string | null) {
+  if (!input) return "/placeholder.svg"
+
+  const trimmed = input.trim()
+
+  if (trimmed.startsWith("http")) return trimmed
+
+  const srcMatch = trimmed.match(/src=["']([^"']+)["']/i)
+  if (srcMatch?.[1]) return srcMatch[1]
+
+  const urlMatch = trimmed.match(/https?:\/\/[^"'<>\\s]+/i)
+  if (urlMatch?.[0]) return urlMatch[0]
+
+  return `${process.env.NEXT_PUBLIC_API_URL}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`
+}
+
 /* ================= PAGE ================= */
 export default function PostDetailsPage() {
   const { slug } = useParams()
@@ -427,11 +443,7 @@ export default function PostDetailsPage() {
   const author = post.author
 
   const relatedImageUrl = (p: Post) =>
-    p.imageUrl?.startsWith("http")
-      ? p.imageUrl
-      : p.imageUrl
-        ? `${process.env.NEXT_PUBLIC_API_URL}${p.imageUrl}`
-        : "/placeholder.svg"
+    sanitizeImageUrl(p.imageUrl)
 
   /* ================= LAYOUT ================= */
   return (
@@ -464,7 +476,7 @@ export default function PostDetailsPage() {
           </nav>
 
           {/* ========== MAIN CONTENT + SIDEBAR GRID ========== */}
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_390px] xl:grid-cols-[minmax(0,1fr)_420px]">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_390px] xl:grid-cols-[minmax(0,1fr)_390px]">
             {/* LEFT: main content */}
             <article className="min-w-0 overflow-hidden">
 
@@ -669,21 +681,23 @@ export default function PostDetailsPage() {
                     <Link
                       href={`/post/${prevPost.slug}`}
                       className="group flex min-w-0 items-center gap-4"
+                      aria-label={`Previous post: ${prevPost.title}`}
                     >
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
+                      <div className="relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
                         <Image
                           src={relatedImageUrl(prevPost)}
-                          alt={prevPost.title}
+                          alt=""
                           fill
                           className="object-cover"
-                          sizes="64px"
+                          sizes="80px"
+                          aria-hidden="true"
                         />
                       </div>
                       <div className="min-w-0">
                         <p className="flex items-center gap-1 text-xs font-semibold text-gray-500 mb-1">
                           <ChevronLeft size={14} /> Previous
                         </p>
-                        <p className="line-clamp-2 text-sm font-bold text-white group-hover:text-blue-400">
+                        <p className="line-clamp-2 text-[18px] font-bold text-white group-hover:text-blue-400">
                           {prevPost.title}
                         </p>
                       </div>
@@ -694,22 +708,24 @@ export default function PostDetailsPage() {
                     <Link
                       href={`/post/${nextPost.slug}`}
                       className="group flex min-w-0 items-center justify-end gap-4 text-right"
+                      aria-label={`Next post: ${nextPost.title}`}
                     >
                       <div className="min-w-0">
                         <p className="flex items-center justify-end gap-1 text-xs font-semibold text-gray-500 mb-1">
                           Next <ChevronRight size={14} />
                         </p>
-                        <p className="line-clamp-2 text-sm font-bold text-white group-hover:text-blue-400">
+                        <p className="line-clamp-2 text-[18px] font-bold text-white group-hover:text-blue-400">
                           {nextPost.title}
                         </p>
                       </div>
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
+                      <div className="relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
                         <Image
                           src={relatedImageUrl(nextPost)}
-                          alt={nextPost.title}
+                          alt=""
                           fill
                           className="object-cover"
-                          sizes="64px"
+                          sizes="80px"
+                          aria-hidden="true"
                         />
                       </div>
                     </Link>
