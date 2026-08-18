@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { FormEvent, useState, type CSSProperties } from "react";
+import { subscribeNewsletter } from "@/lib/api/newsletter";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 const BG = "/images/newsletter/nerio_adds-1.jpg";
 
@@ -91,6 +93,8 @@ const SUBMIT_ARROW = (
 );
 
 export default function NewsLetters() {
+  const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(true);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(
     null
   );
@@ -98,16 +102,22 @@ export default function NewsLetters() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = String(data.get("your-email") ?? "").trim();
-    const consent = data.get("your-consent");
+    const cleanEmail = email.trim();
 
-    if (!email) {
+    if (!cleanEmail) {
       setMessage({ type: "error", text: "Please enter your email address." });
       return;
     }
+
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setMessage({ type: "error", text: "Please enter a valid email address." });
+      return;
+    }
+
     if (!consent) {
-      setMessage({ type: "error", text: "Please accept the terms & conditions." });
+      setMessage({ type: "error", text: "Please accept the terms & conditions to subscribe." });
       return;
     }
 
@@ -115,30 +125,17 @@ export default function NewsLetters() {
     setMessage(null);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/newsletter/subscribe`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            fullName: "",
-            companyName: "",
-            frequency: "MONTHLY",
-            emailSubscribed: true,
-            whatsappSubscribed: false,
-            smsSubscribed: false,
-          }),
-        }
-      );
+      const result = await subscribeNewsletter({
+        email: cleanEmail,
+        frequency: "MONTHLY",
+        emailSubscribed: true,
+      });
 
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(result.error || "Subscription failed");
-      }
-
-      setMessage({ type: "success", text: "Thank you for subscribing!" });
-      event.currentTarget.reset();
+      setMessage({
+        type: "success",
+        text: result.message || "Thank you for subscribing to Metrology News Updates!",
+      });
+      setEmail("");
     } catch (err: unknown) {
       const text = err instanceof Error ? err.message : "Failed to subscribe. Please try again.";
       setMessage({ type: "error", text });
@@ -169,10 +166,7 @@ export default function NewsLetters() {
           />
           <div className="pointer-events-none absolute inset-0 bg-[rgba(8,10,16,0.35)]" />
 
-          <div
-            className="relative grid w-full grid-cols-1 items-center gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-4"
-            style={{ height: "254.8px", padding: "0px 10px" }}
-          >
+          <div className="relative grid min-h-[255px] w-full grid-cols-1 items-center gap-6 px-4 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-4 lg:py-6">
             {/* Form column */}
             <div className="relative z-10 max-w-[520px]">
               <h3 className="mb-4 text-[24px] font-bold leading-[1.2] tracking-[-0.02em] text-white sm:text-[28px] lg:text-[30px]">
@@ -189,47 +183,86 @@ export default function NewsLetters() {
                   <input
                     type="email"
                     name="your-email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
                     aria-required="true"
                     placeholder="Enter your email..."
                     maxLength={400}
-                    className="min-w-0 flex-1 border-0 bg-transparent py-2.5 text-[15px] text-[#1D2125] outline-none placeholder:text-[#9AA0A6]"
+                    disabled={pending}
+                    className="min-w-0 flex-1 border-0 bg-transparent py-2.5 text-[15px] text-[#1D2125] outline-none placeholder:text-[#9AA0A6] disabled:opacity-50"
                   />
                   <button
                     type="submit"
                     disabled={pending}
-                    className="group/btn inline-flex shrink-0 items-center rounded-[8px] bg-[#0073ff] px-4 py-2.5 text-[14px] font-semibold capitalize text-white transition hover:bg-[#0062d9] disabled:opacity-70 sm:px-5"
+                    className="group/btn inline-flex shrink-0 items-center gap-1.5 rounded-[8px] bg-[#0073ff] px-4 py-2.5 text-[14px] font-semibold capitalize text-white transition hover:bg-[#0062d9] disabled:opacity-70 sm:px-5"
                   >
-                    {pending ? "…" : "Subscribe"}
-                    {!pending && SUBMIT_ARROW}
+                    {pending ? (
+                      <span className="flex items-center gap-1.5">
+                        <svg
+                          className="h-4 w-4 animate-spin text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                        <span>Subscribing...</span>
+                      </span>
+                    ) : (
+                      <>
+                        <span>Subscribe</span>
+                        {SUBMIT_ARROW}
+                      </>
+                    )}
                   </button>
                 </div>
 
-                <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-[13px] leading-[1.45] text-white/90 sm:text-[14px]">
+                <label className="mt-3.5 flex cursor-pointer items-start gap-2.5 text-[13px] leading-[1.45] text-white/90 sm:text-[14px]">
                   <input
                     type="checkbox"
                     name="your-consent"
-                    value="1"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
                     className="mt-[3px] h-[15px] w-[15px] shrink-0 cursor-pointer rounded-[3px] border border-white/40 bg-transparent accent-[#0073ff]"
                   />
                   <span>
                     I have read and agree to the{" "}
-                    <a href="/terms" className="underline underline-offset-2 hover:text-white">
+                    <a href="/terms" className="underline underline-offset-2 hover:text-white" target="_blank" rel="noopener noreferrer">
                       terms &amp; conditions
                     </a>
                   </span>
                 </label>
 
                 {message && (
-                  <p
-                    className={`mt-3 text-[13px] ${
-                      message.type === "success" ? "text-[#7dffa8]" : "text-[#ff8f8f]"
+                  <div
+                    className={`mt-3 flex items-center gap-2 rounded-[8px] px-3.5 py-2 text-[13px] font-medium backdrop-blur-sm ${
+                      message.type === "success"
+                        ? "border border-emerald-500/30 bg-emerald-500/20 text-[#a7f3d0]"
+                        : "border border-rose-500/30 bg-rose-500/20 text-[#fecdd3]"
                     }`}
                     role="status"
                     aria-live="polite"
                   >
-                    {message.text}
-                  </p>
+                    {message.type === "success" ? (
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
+                    )}
+                    <span>{message.text}</span>
+                  </div>
                 )}
               </form>
             </div>
