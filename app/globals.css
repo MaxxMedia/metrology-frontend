@@ -165,9 +165,9 @@
 
   /* Home hero title — must beat the global h1 clamp */
   h1.hero-main-title {
-    font-size: clamp(28px, 2.8vw, 42px) !important;
-    line-height: 1.2 !important;
-    font-weight: 800 !important;
+    font-size: clamp(30px, 3.6vw, 58px) !important;
+    line-height: 1.18 !important;
+    font-weight: 600 !important;
     display: -webkit-box !important;
     -webkit-box-orient: vertical !important;
     -webkit-line-clamp: 3 !important;

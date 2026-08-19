@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 import { Plus, Trash2, Save, Loader2 } from "lucide-react";
 
-// ✅ FIX: apiBase was defaulting to "/api" — a relative path that resolves
-// against the Next.js app itself (localhost:3000), which has no such
-// route and 404s. Every other fetch in this codebase (see Header.tsx)
-// builds the full URL from NEXT_PUBLIC_API_URL, so this does the same.
 const DEFAULT_API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
-// ✅ FIX: same 401 issue as the list page — these requests never sent the
-// stored auth token. Reads the same "token" key Header.tsx writes/clears.
 function authHeaders(extra?: Record<string, string>): Record<string, string> {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     return {
@@ -17,7 +11,6 @@ function authHeaders(extra?: Record<string, string>): Record<string, string> {
     };
 }
 
-// Type definitions
 interface WebinarForm {
     title: string;
     shortDescription: string;
@@ -56,7 +49,8 @@ interface Resource {
 interface AdminWebinarFormProps {
     webinarId?: string | null;
     apiBase?: string;
-    onSaved?: (data: any) => void;
+    embedded?: boolean;
+    onSaved?: (data: unknown) => void;
 }
 
 interface SectionProps {
@@ -99,12 +93,12 @@ const EMPTY_FORM: WebinarForm = {
 
 function Section({ title, description, children }: SectionProps) {
     return (
-        <div className="border-b border-slate-200 py-8 first:pt-0 last:border-0">
-            <div className="mb-5">
+        <div className="border-b border-slate-200 py-6 first:pt-0 last:border-0">
+            <div className="mb-4">
                 <h2 className="text-base font-bold text-slate-900">{title}</h2>
                 {description && <p className="mt-0.5 text-sm text-slate-500">{description}</p>}
             </div>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">{children}</div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{children}</div>
         </div>
     );
 }
@@ -112,7 +106,7 @@ function Section({ title, description, children }: SectionProps) {
 function Field({ label, required, full, children, hint }: FieldProps) {
     return (
         <div className={full ? "sm:col-span-2" : ""}>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label className="admin-label">
                 {label} {required && <span className="text-red-600">*</span>}
             </label>
             {children}
@@ -121,12 +115,10 @@ function Field({ label, required, full, children, hint }: FieldProps) {
     );
 }
 
-const inputClass =
-    "w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500";
-
 export default function AdminWebinarForm({
     webinarId = null,
     apiBase = DEFAULT_API_BASE,
+    embedded = false,
     onSaved,
 }: AdminWebinarFormProps) {
     const [form, setForm] = useState<WebinarForm>(EMPTY_FORM);
@@ -155,7 +147,15 @@ export default function AdminWebinarForm({
                 if (Array.isArray(data.agenda) && data.agenda.length) setAgenda(data.agenda);
                 if (Array.isArray(data.learningPoints) && data.learningPoints.length)
                     setLearningPoints(data.learningPoints);
-                if (Array.isArray(data.resources) && data.resources.length) setResources(data.resources);
+                if (Array.isArray(data.resources) && data.resources.length) {
+                    setResources(
+                        data.resources.map((item: { title?: string; fileUrl?: string; url?: string; fileSize?: string; size?: string }) => ({
+                            title: item.title || "",
+                            fileUrl: item.fileUrl || item.url || "",
+                            fileSize: item.fileSize || item.size || "",
+                        }))
+                    );
+                }
             })
             .catch(() => setError("Could not load this webinar for editing."))
             .finally(() => setLoading(false));
@@ -210,34 +210,35 @@ export default function AdminWebinarForm({
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center py-24 text-slate-400">
+            <div className="flex items-center justify-center py-16 text-slate-400">
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Loading webinar…
             </div>
         );
     }
 
+    const shellClass = embedded ? "" : "mx-auto max-w-4xl space-y-6";
+
     return (
-        <div className="mx-auto max-w-4xl bg-white px-6 py-8 font-sans">
-            <div className="mb-8 flex items-center justify-between">
+        <div className={shellClass}>
+            {!embedded && (
                 <div>
-                    <h1 className="text-xl font-bold text-slate-900">
+                    <h1 className="text-2xl font-bold text-slate-900">
                         {isEditing ? "Edit Webinar" : "Create Webinar"}
                     </h1>
                     <p className="mt-1 text-sm text-slate-500">
-                        Saved as a draft — use Approve then Publish from the webinar list to
-                        make it live.
+                        Saved as a draft — use Approve then Publish from the webinar list to make it live.
                     </p>
                 </div>
-            </div>
+            )}
 
             {error && (
-                <div className="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                     {error}
                 </div>
             )}
             {success && (
-                <div className="mb-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
                     {success}
                 </div>
             )}
@@ -245,58 +246,54 @@ export default function AdminWebinarForm({
             <form onSubmit={submit}>
                 <Section title="Basic Information">
                     <Field label="Title" required full>
-                        <input value={form.title} onChange={update("title")} className={inputClass} placeholder="AI in Smart Manufacturing: The Next Revolution" />
+                        <input value={form.title} onChange={update("title")} className="admin-field" placeholder="AI in Smart Manufacturing: The Next Revolution" />
                     </Field>
 
-                    {/* <Field label="Language">
-                        <input value={form.language} onChange={update("language")} className={inputClass} />
-                    </Field> */}
-
                     <Field label="Short Description" full hint="Shown on webinar cards and listing page.">
-                        <textarea value={form.shortDescription} onChange={update("shortDescription")} rows={2} className={inputClass} />
+                        <textarea value={form.shortDescription} onChange={update("shortDescription")} rows={2} className="admin-field" />
                     </Field>
 
                     <Field label="Full Description" full hint="Shown in the 'About the Webinar' section on the detail page.">
-                        <textarea value={form.fullDescription} onChange={update("fullDescription")} rows={5} className={inputClass} />
+                        <textarea value={form.fullDescription} onChange={update("fullDescription")} rows={5} className="admin-field" />
                     </Field>
 
                     <Field label="Hero Image URL" full>
-                        <input value={form.heroImage} onChange={update("heroImage")} className={inputClass} placeholder="https://…" />
+                        <input value={form.heroImage} onChange={update("heroImage")} className="admin-field" placeholder="https://…" />
                     </Field>
 
                     <Field label="Thumbnail Image URL" full hint="Used on listing cards — falls back to hero image if left blank.">
-                        <input value={form.thumbnail} onChange={update("thumbnail")} className={inputClass} placeholder="https://…" />
+                        <input value={form.thumbnail} onChange={update("thumbnail")} className="admin-field" placeholder="https://…" />
                     </Field>
                 </Section>
 
                 <Section title="Video & Access" description="Where attendees join, and where the recording lives once it's on demand.">
                     <Field label="Meeting URL" hint="Zoom / Teams / Google Meet link for the live session.">
-                        <input value={form.meetingUrl} onChange={update("meetingUrl")} className={inputClass} placeholder="https://zoom.us/…" />
+                        <input value={form.meetingUrl} onChange={update("meetingUrl")} className="admin-field" placeholder="https://zoom.us/…" />
                     </Field>
                     <Field label="YouTube / Recording URL" hint="Set this once the session is over to power On-Demand playback.">
-                        <input value={form.youtubeUrl} onChange={update("youtubeUrl")} className={inputClass} placeholder="https://youtube.com/…" />
+                        <input value={form.youtubeUrl} onChange={update("youtubeUrl")} className="admin-field" placeholder="https://youtube.com/…" />
                     </Field>
                     <Field label="Registration URL" hint="Leave blank to use the built-in registration form.">
-                        <input value={form.registrationUrl} onChange={update("registrationUrl")} className={inputClass} placeholder="https://…" />
+                        <input value={form.registrationUrl} onChange={update("registrationUrl")} className="admin-field" placeholder="https://…" />
                     </Field>
                 </Section>
 
                 <Section title="Schedule">
                     <Field label="Start Date & Time" required>
-                        <input type="datetime-local" value={form.startDate} onChange={update("startDate")} className={inputClass} />
+                        <input type="datetime-local" value={form.startDate} onChange={update("startDate")} className="admin-field" />
                     </Field>
                     <Field label="End Date & Time">
-                        <input type="datetime-local" value={form.endDate} onChange={update("endDate")} className={inputClass} />
+                        <input type="datetime-local" value={form.endDate} onChange={update("endDate")} className="admin-field" />
                     </Field>
                     <Field label="Duration (minutes)">
-                        <input type="number" value={form.duration} onChange={update("duration")} className={inputClass} />
+                        <input type="number" value={form.duration} onChange={update("duration")} className="admin-field" />
                     </Field>
                     <Field label="Max Seats" hint="Leave blank for unlimited.">
-                        <input type="number" value={form.maxSeats} onChange={update("maxSeats")} className={inputClass} />
+                        <input type="number" value={form.maxSeats} onChange={update("maxSeats")} className="admin-field" />
                     </Field>
                     <Field label="Certificate available">
                         <label className="flex items-center gap-2 pt-2 text-sm text-slate-700">
-                            <input type="checkbox" checked={form.certificateAvailable} onChange={update("certificateAvailable")} className="h-4 w-4 rounded border-slate-300" />
+                            <input type="checkbox" checked={form.certificateAvailable} onChange={update("certificateAvailable")} className="h-4 w-4 rounded border-slate-300 text-[#0073ff]" />
                             Attendees receive a certificate
                         </label>
                     </Field>
@@ -304,19 +301,19 @@ export default function AdminWebinarForm({
 
                 <Section title="Speaker">
                     <Field label="Speaker Name" required>
-                        <input value={form.speakerName} onChange={update("speakerName")} className={inputClass} />
+                        <input value={form.speakerName} onChange={update("speakerName")} className="admin-field" />
                     </Field>
                     <Field label="Designation">
-                        <input value={form.speakerDesignation} onChange={update("speakerDesignation")} className={inputClass} />
+                        <input value={form.speakerDesignation} onChange={update("speakerDesignation")} className="admin-field" />
                     </Field>
                     <Field label="Company">
-                        <input value={form.speakerCompany} onChange={update("speakerCompany")} className={inputClass} />
+                        <input value={form.speakerCompany} onChange={update("speakerCompany")} className="admin-field" />
                     </Field>
                     <Field label="LinkedIn URL">
-                        <input value={form.speakerLinkedin} onChange={update("speakerLinkedin")} className={inputClass} placeholder="https://linkedin.com/in/…" />
+                        <input value={form.speakerLinkedin} onChange={update("speakerLinkedin")} className="admin-field" placeholder="https://linkedin.com/in/…" />
                     </Field>
                     <Field label="Speaker Photo URL" full>
-                        <input value={form.speakerImage} onChange={update("speakerImage")} className={inputClass} placeholder="https://…" />
+                        <input value={form.speakerImage} onChange={update("speakerImage")} className="admin-field" placeholder="https://…" />
                     </Field>
                 </Section>
 
@@ -332,7 +329,7 @@ export default function AdminWebinarForm({
                                         setAgenda(next);
                                     }}
                                     placeholder="03:00 PM – 03:10 PM"
-                                    className={`${inputClass} w-48 shrink-0`}
+                                    className="admin-field w-48 shrink-0"
                                 />
                                 <input
                                     value={item.title}
@@ -342,12 +339,12 @@ export default function AdminWebinarForm({
                                         setAgenda(next);
                                     }}
                                     placeholder="Welcome & Introduction"
-                                    className={inputClass}
+                                    className="admin-field"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setAgenda(agenda.filter((_, idx) => idx !== i))}
-                                    className="shrink-0 rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-red-600"
+                                    className="shrink-0 rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-red-600"
                                     aria-label="Remove agenda item"
                                 >
                                     <Trash2 className="h-4 w-4" />
@@ -357,7 +354,7 @@ export default function AdminWebinarForm({
                         <button
                             type="button"
                             onClick={() => setAgenda([...agenda, { time: "", title: "" }])}
-                            className="flex items-center gap-1.5 text-sm font-medium text-red-600 hover:text-red-700"
+                            className="flex items-center gap-1.5 text-sm font-medium text-[#0073ff] hover:text-[#0060d6]"
                         >
                             <Plus className="h-4 w-4" /> Add agenda item
                         </button>
@@ -376,12 +373,12 @@ export default function AdminWebinarForm({
                                         setLearningPoints(next);
                                     }}
                                     placeholder="Predictive maintenance using AI"
-                                    className={inputClass}
+                                    className="admin-field"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setLearningPoints(learningPoints.filter((_, idx) => idx !== i))}
-                                    className="shrink-0 rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-red-600"
+                                    className="shrink-0 rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-red-600"
                                     aria-label="Remove learning point"
                                 >
                                     <Trash2 className="h-4 w-4" />
@@ -391,7 +388,7 @@ export default function AdminWebinarForm({
                         <button
                             type="button"
                             onClick={() => setLearningPoints([...learningPoints, ""])}
-                            className="flex items-center gap-1.5 text-sm font-medium text-red-600 hover:text-red-700"
+                            className="flex items-center gap-1.5 text-sm font-medium text-[#0073ff] hover:text-[#0060d6]"
                         >
                             <Plus className="h-4 w-4" /> Add learning point
                         </button>
@@ -401,7 +398,7 @@ export default function AdminWebinarForm({
                 <Section title="Resources" description="Downloadable files shown on the detail page.">
                     <div className="sm:col-span-2 space-y-3">
                         {resources.map((res, i) => (
-                            <div key={i} className="flex gap-2">
+                            <div key={i} className="flex flex-wrap gap-2">
                                 <input
                                     value={res.title}
                                     onChange={(e) => {
@@ -410,7 +407,7 @@ export default function AdminWebinarForm({
                                         setResources(next);
                                     }}
                                     placeholder="Webinar Presentation.pdf"
-                                    className={`${inputClass} w-56 shrink-0`}
+                                    className="admin-field w-56 shrink-0"
                                 />
                                 <input
                                     value={res.fileUrl}
@@ -420,7 +417,7 @@ export default function AdminWebinarForm({
                                         setResources(next);
                                     }}
                                     placeholder="https://…"
-                                    className={inputClass}
+                                    className="admin-field min-w-[200px] flex-1"
                                 />
                                 <input
                                     value={res.fileSize}
@@ -430,12 +427,12 @@ export default function AdminWebinarForm({
                                         setResources(next);
                                     }}
                                     placeholder="2.4 MB"
-                                    className={`${inputClass} w-24 shrink-0`}
+                                    className="admin-field w-24 shrink-0"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setResources(resources.filter((_, idx) => idx !== i))}
-                                    className="shrink-0 rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-red-600"
+                                    className="shrink-0 rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-red-600"
                                     aria-label="Remove resource"
                                 >
                                     <Trash2 className="h-4 w-4" />
@@ -445,7 +442,7 @@ export default function AdminWebinarForm({
                         <button
                             type="button"
                             onClick={() => setResources([...resources, { title: "", fileUrl: "", fileSize: "" }])}
-                            className="flex items-center gap-1.5 text-sm font-medium text-red-600 hover:text-red-700"
+                            className="flex items-center gap-1.5 text-sm font-medium text-[#0073ff] hover:text-[#0060d6]"
                         >
                             <Plus className="h-4 w-4" /> Add resource
                         </button>
@@ -454,18 +451,18 @@ export default function AdminWebinarForm({
 
                 <Section title="SEO" description="Optional — falls back to title/description if left blank.">
                     <Field label="SEO Title">
-                        <input value={form.seoTitle} onChange={update("seoTitle")} className={inputClass} />
+                        <input value={form.seoTitle} onChange={update("seoTitle")} className="admin-field" />
                     </Field>
                     <Field label="SEO Description" full>
-                        <textarea value={form.seoDescription} onChange={update("seoDescription")} rows={2} className={inputClass} />
+                        <textarea value={form.seoDescription} onChange={update("seoDescription")} rows={2} className="admin-field" />
                     </Field>
                 </Section>
 
-                <div className="flex items-center justify-end gap-3 pt-6">
+                <div className="flex items-center justify-end gap-3 border-t border-slate-200 pt-6">
                     <button
                         type="submit"
                         disabled={saving}
-                        className="flex items-center gap-2 rounded-md bg-red-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="admin-btn-primary"
                     >
                         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                         {isEditing ? "Save Changes" : "Create Webinar"}
