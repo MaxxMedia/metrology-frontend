@@ -715,45 +715,52 @@ export default function Header() {
           </div>
         </div>
       )}
+    </header>
 
       {/* ================= MOBILE / OFFCANVAS PANEL ================= */}
       {(isMenuOpen || isMenuClosing) && (
         <>
           <div
-            className={`fixed inset-0 z-40 bg-black/80 ${isMenuClosing ? "mobile-menu-wipe-out" : "mobile-menu-wipe-in"}`}
+            className={`fixed inset-0 z-[99998] bg-black/80 ${isMenuClosing ? "mobile-menu-wipe-out" : "mobile-menu-wipe-in"}`}
             onClick={closeMobileMenu}
           />
           <aside
-            className={`fixed top-0 right-0 bottom-0 w-[min(400px,100vw)] bg-[#121213] z-50 overflow-y-auto shadow-2xl ${
+            className={`fixed top-0 right-0 bottom-0 w-[min(420px,100vw)] bg-[#0e1015] text-white z-[99999] overflow-y-auto shadow-2xl ${
               isMenuClosing ? "mobile-menu-panel-out" : "mobile-menu-panel-in"
             }`}
             aria-label="Mobile navigation and contact details"
           >
-            <button
-              onClick={closeMobileMenu}
-              className="flex h-10 w-[45px] items-center justify-center bg-[#0073ff] text-white hover:bg-[#0060d6] transition-colors"
-              aria-label="Close menu"
-            >
-              <X size={20} strokeWidth={1.5} />
-            </button>
+            {/* Top Left Close X Button */}
+            <div className="flex justify-start">
+              <button
+                onClick={closeMobileMenu}
+                className="flex h-12 w-12 items-center justify-center bg-[#0073ff] text-white hover:bg-[#0060d6] transition-colors"
+                aria-label="Close menu"
+              >
+                <X size={22} strokeWidth={2.2} />
+              </button>
+            </div>
 
-            <div className="pt-[12px] pb-[50px] px-[50px] text-white">
-              <div className="pb-0">
+            <div className="px-7 sm:px-8 pt-2 pb-7 space-y-5">
+              {/* Brand Logo */}
+              <div className="-mt-2 -mb-3">
                 <Image
                   src="/images/logo5.png"
                   alt="Tooling Trends"
-                  width={380}
-                  height={120}
+                  width={480}
+                  height={130}
                   priority
-                  className="h-[120px] w-[380px] object-contain object-left"
+                  className="h-[126px] w-auto object-contain object-left block"
                 />
               </div>
 
-              <p className="mt-0 text-[16px] leading-[1.6] text-white/70">
+              {/* Description */}
+              <p className="text-[15px] leading-relaxed text-white/80 font-normal">
                 Bringing the latest tooling, manufacturing and mold-making insights to the people shaping the industry.
               </p>
 
-              <div className="grid grid-cols-3 gap-2 mt-3" aria-label="Featured manufacturing gallery">
+              {/* 3x2 Image Grid */}
+              <div className="grid grid-cols-3 gap-3 pt-1" aria-label="Featured manufacturing gallery">
                 {[
                   ["/modern-manufacturing-facility.png", "Modern manufacturing facility"],
                   ["/cad-cam-software-design.jpg", "CAD and CAM design"],
@@ -762,60 +769,64 @@ export default function Header() {
                   ["/mold-design-venting.jpg", "Mold design"],
                   ["/manufacturing-worker-training.jpg", "Manufacturing worker"],
                 ].map(([src, alt]) => (
-                  <div key={src} className="relative aspect-square overflow-hidden rounded-[10px] bg-[#1D2125]">
-                    <Image src={src} alt={alt} fill sizes="120px" className="object-cover" />
+                  <div key={src} className="relative aspect-square overflow-hidden rounded-xl bg-[#1D2125]">
+                    <Image src={src} alt={alt} fill sizes="120px" className="object-cover hover:scale-105 transition-transform duration-300" />
                   </div>
                 ))}
               </div>
 
-              <section className="mt-6">
-                <h2 className="text-[20px] font-semibold tracking-[-0.03em]">Quick Contact:</h2>
-                <div className="mt-3 space-y-3 text-[16px]">
-                  <a href="tel:+990123456789" className="flex items-center gap-3 text-white hover:text-[#0073ff] transition-colors">
-                    <Phone size={18} className="text-[#0073ff] shrink-0" strokeWidth={1.7} />
-                    <span>+990 123 456 789</span>
+              {/* Quick Contact Section */}
+              <section className="pt-2">
+                <h3 className="text-[20px] font-bold text-white mb-4">Quick Contact:</h3>
+                <div className="space-y-3.5 text-[15px]">
+                  <a href="tel:+990123456789" className="flex items-center gap-3.5 text-white/90 hover:text-[#0073ff] transition-colors group">
+                    <Phone size={19} className="text-[#0073ff] shrink-0" strokeWidth={1.8} />
+                    <span className="font-medium">+990 123 456 789</span>
                   </a>
-                  <a href="mailto:info@toolingtrends.com" className="flex items-center gap-3 text-white hover:text-[#0073ff] transition-colors">
-                    <Mail size={18} className="text-[#0073ff] shrink-0" strokeWidth={1.7} />
-                    <span>info@toolingtrends.com</span>
+                  <a href="mailto:info@toolingtrends.com" className="flex items-center gap-3.5 text-white/90 hover:text-[#0073ff] transition-colors group">
+                    <Mail size={19} className="text-[#0073ff] shrink-0" strokeWidth={1.8} />
+                    <span className="font-medium">info@toolingtrends.com</span>
                   </a>
-                  <div className="flex items-start gap-3 text-white">
-                    <MapPin size={18} className="text-[#0073ff] shrink-0 mt-0.5" strokeWidth={1.7} />
-                    <span>Madison Avenue, New York</span>
+                  <div className="flex items-start gap-3.5 text-white/90">
+                    <MapPin size={19} className="text-[#0073ff] shrink-0 mt-0.5" strokeWidth={1.8} />
+                    <span className="font-medium">Madison Avenue, New York</span>
                   </div>
                 </div>
               </section>
 
-              <div className="flex gap-2 mt-6">
+              {/* Social Buttons */}
+              <div className="pt-4 flex items-center gap-2.5">
                 {[
                   { label: "Facebook", Icon: Facebook },
                   { label: "Instagram", Icon: Instagram },
-                  { label: "LinkedIn", Icon: Linkedin },
+                  { label: "Pinterest", Icon: PinterestIcon },
                   { label: "X", Icon: X },
                 ].map(({ label, Icon }) => (
                   <a
                     key={label}
                     href="#"
                     aria-label={label}
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-white/15 text-white hover:border-[#0073ff] hover:bg-[#0073ff] transition-colors"
+                    className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/15 text-white hover:border-[#0073ff] hover:bg-[#0073ff] transition-colors"
                   >
-                    <Icon size={16} />
+                    <Icon size={18} />
                   </a>
                 ))}
               </div>
 
-              <Link
-                href="/contact"
-                onClick={closeMobileMenu}
-                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#0073ff] px-6 py-3.5 text-[16px] font-semibold text-white hover:bg-[#0060d6] transition-colors"
-              >
-                Get In Touch <ArrowRight size={18} strokeWidth={2.5} />
-              </Link>
+              {/* Get In Touch Button */}
+              <div className="pt-1">
+                <Link
+                  href="/contact"
+                  onClick={closeMobileMenu}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0073ff] px-5 py-3 text-[14px] font-semibold text-white hover:bg-[#0060d6] transition-colors"
+                >
+                  Get In Touch <ArrowRight size={17} strokeWidth={2.5} />
+                </Link>
+              </div>
             </div>
           </aside>
         </>
       )}
-    </header>
   </>
   )
 }
