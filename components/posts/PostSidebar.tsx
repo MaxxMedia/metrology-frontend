@@ -169,10 +169,10 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
       return (
         <div className="space-y-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="animate-pulse flex gap-3">
-              <div className="w-16 h-16 bg-gray-800 rounded-full flex-shrink-0"></div>
+            <div key={i} className="animate-pulse flex items-center gap-3.5">
+              <div className="w-[100px] h-[100px] bg-gray-800 rounded-full flex-shrink-0"></div>
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-800 rounded w-3/4"></div>
+                <div className="h-5 bg-gray-800 rounded w-3/4"></div>
                 <div className="h-3 bg-gray-800 rounded w-1/2"></div>
               </div>
             </div>
@@ -197,22 +197,22 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
           <Link
             key={post.id}
             href={`/post/${post.slug}`}
-            className="flex gap-3 group"
+            className="flex items-center gap-3.5 group"
           >
-            <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
+            <div className="relative w-[100px] h-[100px] rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
               <Image
                 src={getImageUrl(post)}
                 alt={post.title}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
-                sizes="64px"
+                sizes="100px"
               />
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-bold text-white leading-snug line-clamp-2 group-hover:text-blue-400">
+              <h4 className="text-[18px] font-bold text-white leading-snug line-clamp-2 group-hover:text-blue-400">
                 {post.title}
               </h4>
-              <div className="flex items-center gap-2 mt-1.5 text-xs text-gray-400">
+              <div className="flex items-center gap-2 mt-2 text-xs text-gray-400">
                 {post.author?.name && (
                   <span>By {post.author.name}</span>
                 )}

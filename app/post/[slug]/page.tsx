@@ -145,15 +145,28 @@ export default function PostDetailsPage() {
   const [prevPost, setPrevPost] = useState<Post | null>(null)
   const [categories, setCategories] = useState<{ id: number; name: string; slug: string; parentId?: number | null; imageUrl?: string; _count?: { posts?: number } }[]>([])
   const [showBackToTop, setShowBackToTop] = useState(false)
+  const [isScrolledDown, setIsScrolledDown] = useState(false)
+  const [lastY, setLastY] = useState(0)
   const relatedScrollRef = useRef<HTMLDivElement>(null)
 
-  /* ================= BACK TO TOP VISIBILITY ================= */
+  /* ================= SCROLL & HEADER AWARENESS ================= */
   useEffect(() => {
-    const onScroll = () => setShowBackToTop(window.scrollY > 400)
+    const onScroll = () => {
+      const currentY = window.scrollY || document.documentElement.scrollTop
+      setShowBackToTop(currentY > 400)
+
+      if (currentY > lastY && currentY > 100) {
+        setIsScrolledDown(true)
+      } else if (currentY < lastY || currentY <= 60) {
+        setIsScrolledDown(false)
+      }
+      setLastY(currentY)
+    }
+
     window.addEventListener("scroll", onScroll, { passive: true })
     onScroll()
     return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+  }, [lastY])
 
   /* ================= CHECK LOGIN ================= */
   const [token, setToken] = useState<string | null>(null)
@@ -887,7 +900,11 @@ export default function PostDetailsPage() {
 
             {/* RIGHT: Sidebar - Sticky, sits alongside the main column */}
             <div className="w-full">
-              <div className="lg:sticky lg:top-[130px] self-start space-y-6">
+              <div
+                className={`lg:sticky space-y-6 transition-all duration-300 ease-in-out ${
+                  isScrolledDown ? "lg:top-6" : "lg:top-[125px]"
+                }`}
+              >
 
                 {/* Author Card */}
                 {/* {author && (
@@ -1105,17 +1122,6 @@ export default function PostDetailsPage() {
         */}
      {/* <RelatedPostsCarousel /> */}
 
-        {/* BACK TO TOP */}
-        <button
-          type="button"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Back to top"
-          className={`fixed bottom-6 right-6 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-[#0073ff] text-white shadow-lg transition-all duration-300 hover:bg-[#0062d9] ${
-            showBackToTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-3 pointer-events-none"
-          }`}
-        >
-          <ArrowUp size={18} />
-        </button>
       </main>
     </>
   )
