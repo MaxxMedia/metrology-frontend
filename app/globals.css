@@ -61,7 +61,7 @@
   --fs-meta:   13px;
   --fs-card-heading: 22px;
   --fs-card-featured-heading: 22px;
-  --fs-card-small-heading: 14px;
+  --fs-card-small-heading: 18px;
   --fs-card-text: 14px;
   --fs-card-sub: 16px;
   --fs-card-body: 14px;
@@ -286,9 +286,9 @@ article h4 a,
 [class*="Card"] h4,
 [class*="Card"] h3 a,
 [class*="Card"] h4 a {
-  font-size: var(--fs-card-heading) !important;
-  line-height: var(--lh-h4) !important;
-  font-weight: var(--fw-semibold) !important;
+  font-size: var(--fs-card-heading);
+  line-height: var(--lh-h4);
+  font-weight: var(--fw-semibold);
 }
 
 [class*="featured"] h1,
@@ -297,9 +297,9 @@ article h4 a,
 [class*="Featured"] h1,
 [class*="Featured"] h2,
 [class*="Featured"] h3 {
-  font-size: var(--fs-card-featured-heading) !important;
-  line-height: var(--lh-h3) !important;
-  font-weight: var(--fw-semibold) !important;
+  font-size: var(--fs-card-featured-heading);
+  line-height: var(--lh-h3);
+  font-weight: var(--fw-semibold);
 }
 
 [class*="small"] h3,
@@ -310,9 +310,9 @@ aside [class*="card"] h3,
 aside [class*="card"] h4,
 aside [class*="Card"] h3,
 aside [class*="Card"] h4 {
-  font-size: var(--fs-card-small-heading) !important;
-  line-height: var(--lh-h5) !important;
-  font-weight: var(--fw-semibold) !important;
+  font-size: var(--fs-card-small-heading);
+  line-height: var(--lh-h5);
+  font-weight: var(--fw-semibold);
 }
 
 [class*="card"] p,
