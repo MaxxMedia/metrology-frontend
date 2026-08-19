@@ -238,13 +238,43 @@ export default function Header() {
     window.location.href = `/blog?q=${encodeURIComponent(q)}`
   }
 
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY || document.documentElement.scrollTop
+
+      if (currentScrollY <= 60) {
+        setIsHeaderVisible(true)
+      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scroll DOWN -> Hide header
+        setIsHeaderVisible(false)
+      } else if (currentScrollY < lastScrollY) {
+        // Scroll UP -> Show header
+        setIsHeaderVisible(true)
+      }
+
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [lastScrollY])
+
   const navLinkClass =
     "relative inline-flex items-center gap-1 whitespace-nowrap text-[14px] font-semibold text-white hover:text-[#0073ff] transition-colors"
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-[#1D2125]">
-      {/* Scroll Progress Bar at the very top of header */}
+    <>
+      {/* Top Scroll Progress Bar - Always pinned at top edge z-[100] above everything */}
       <ScrollProgressBar />
+
+      <header
+        className={`fixed top-0 left-0 w-full z-50 bg-[#1D2125] transition-transform duration-300 ease-in-out ${
+          isHeaderVisible || openMega !== null || isMenuOpen ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
 
       <style jsx global>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -786,5 +816,6 @@ export default function Header() {
         </>
       )}
     </header>
+  </>
   )
 }
