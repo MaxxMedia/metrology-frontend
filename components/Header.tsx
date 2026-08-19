@@ -19,6 +19,7 @@ import {
 import { useState, useEffect, type FormEvent } from "react"
 import type { Post } from "@/types/Post"
 import { ARTICLE_TOPICS as TOPICS, RESOURCE_TOPICS as RESOURCES } from "@/lib/topic"
+import ScrollProgressBar from "@/components/ScrollProgressBar"
 
 type MegaType = "topics" | "resources" | "pages" | null
 
@@ -217,6 +218,9 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[#1D2125]">
+      {/* Scroll Progress Bar at the very top of header */}
+      <ScrollProgressBar />
+
       <style jsx global>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }
       `}</style>

@@ -255,7 +255,7 @@ export default function BasicsSection({ posts }: Props) {
                 <SwiperSlide key={post.id}>
                   <Link
                     href={`/post/${post.slug}`}
-                    className="group relative block h-[360px] sm:h-[400px] lg:h-[440px] overflow-hidden rounded-2xl border border-white/10"
+                    className="group relative block h-[400px] sm:h-[440px] lg:h-[480px] overflow-hidden rounded-2xl border border-white/10"
                   >
                     <Image
                       src={imageUrl(post)}
@@ -267,32 +267,32 @@ export default function BasicsSection({ posts }: Props) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
 
-                    <div className="absolute inset-x-0 bottom-0 px-[16px] py-[16px] sm:px-[18px] sm:py-[18px]">
+                    <div className="absolute inset-x-0 bottom-0 px-[18px] py-[20px] sm:px-[20px] sm:py-[22px]">
                       {tagText && (
                         <span
-                          className={`inline-block ${tagColor} text-white text-[10px] font-semibold uppercase tracking-wide px-[8px] py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[10px]`}
+                          className={`inline-block ${tagColor} text-white text-[11px] font-semibold uppercase tracking-wide px-[9px] py-[2.5px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[12px]`}
                         >
                           {tagText}
                         </span>
                       )}
 
-                      <h5 className="text-white text-[16px] sm:text-[17px] font-bold leading-[1.35] mb-[10px] line-clamp-3 group-hover:text-[#0073ff] transition-colors">
+                      <h5 className="text-white text-[20px] font-bold leading-[1.35] mb-[12px] line-clamp-3 group-hover:text-[#0073ff] transition-colors">
                         {post.title}
                       </h5>
 
-                      <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[12px] text-white/80">
+                      <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[12px] sm:text-[13px] text-white/80">
                         <li>
                           By <span className="text-white/95">{getAuthorName(post)}</span>
                         </li>
                         {typeof post.views === "number" && (
                           <li className="inline-flex items-center gap-[4px]">
-                            <PulseIcon className="w-3 h-3 text-[#0073ff]" />
+                            <PulseIcon className="w-3.5 h-3.5 text-[#0073ff]" />
                             {post.views.toLocaleString()} Views
                           </li>
                         )}
                         {date && (
                           <li className="inline-flex items-center gap-[4px]">
-                            <CalendarIcon className="w-3 h-3 text-[#0073ff]" />
+                            <CalendarIcon className="w-3.5 h-3.5 text-[#0073ff]" />
                             {date}
                           </li>
                         )}

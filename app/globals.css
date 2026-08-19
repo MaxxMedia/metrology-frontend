@@ -158,16 +158,16 @@
 
   /* ── Headings ── */
   h1 {
-    font-size: var(--fs-h1) !important;
-    line-height: var(--lh-h1) !important;
-    font-weight: var(--fw-bold) !important;
+    font-size: var(--fs-h1);
+    line-height: var(--lh-h1);
+    font-weight: var(--fw-bold);
   }
 
   /* Home hero title — must beat the global h1 clamp */
   h1.hero-main-title {
-    font-size: clamp(28px, 2.8vw, 42px) !important;
-    line-height: 1.2 !important;
-    font-weight: 800 !important;
+    font-size: clamp(30px, 3.6vw, 58px) !important;
+    line-height: 1.18 !important;
+    font-weight: 600 !important;
     display: -webkit-box !important;
     -webkit-box-orient: vertical !important;
     -webkit-line-clamp: 3 !important;
@@ -182,27 +182,27 @@
   }
 
   h2 {
-    font-size: var(--fs-h2) !important;
-    line-height: var(--lh-h2) !important;
-    font-weight: var(--fw-bold) !important;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+    font-weight: var(--fw-bold);
   }
 
   h3 {
-    font-size: var(--fs-h3) !important;
-    line-height: var(--lh-h3) !important;
-    font-weight: var(--fw-semibold) !important;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-h3);
+    font-weight: var(--fw-semibold);
   }
 
   h4 {
-    font-size: var(--fs-h4) !important;
-    line-height: var(--lh-h4) !important;
-    font-weight: var(--fw-semibold) !important;
+    font-size: var(--fs-h4);
+    line-height: var(--lh-h4);
+    font-weight: var(--fw-semibold);
   }
 
   h5 {
-    font-size: var(--fs-h5) !important;
-    line-height: var(--lh-h5) !important;
-    font-weight: var(--fw-semibold) !important;
+    font-size: var(--fs-h5);
+    line-height: var(--lh-h5);
+    font-weight: var(--fw-semibold);
   }
 
   h6 {
@@ -426,8 +426,8 @@ footer span {
 
 .text-xl,
 [class~="text-[20px]"] {
-  font-size: var(--fs-body-lg) !important;
-  line-height: var(--lh-body) !important;
+  font-size: var(--fs-20) !important;
+  line-height: var(--lh-h4) !important;
 }
 
 .text-2xl,
