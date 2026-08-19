@@ -15,6 +15,10 @@ import {
   Instagram,
   Linkedin,
   Activity,
+  ArrowRight,
+  Mail,
+  MapPin,
+  Phone,
 } from "lucide-react"
 import { useState, useEffect, type FormEvent } from "react"
 import type { Post } from "@/types/Post"
@@ -59,10 +63,14 @@ const PAGES_LINKS: { label: string; href: string; children?: { label: string; hr
   { label: "About / Contact", href: "/contact" },
 ]
 
+// Keep this in sync with the CSS animation durations below.
+const MOBILE_MENU_ANIM_MS = 900
+
 export default function Header() {
   const [openMega, setOpenMega] = useState<MegaType>(null)
   const [openPagesChild, setOpenPagesChild] = useState<string | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuClosing, setIsMenuClosing] = useState(false)
   const [user, setUser] = useState<User | null>(null)
   const [openUserMenu, setOpenUserMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -182,9 +190,26 @@ export default function Header() {
     }
   }
 
+  // Lock body scroll while the panel is open OR mid-close-animation, so the
+  // page doesn't jump/scroll underneath while the wipe-out plays.
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "unset"
-  }, [isMenuOpen])
+    document.body.style.overflow = isMenuOpen || isMenuClosing ? "hidden" : "unset"
+  }, [isMenuOpen, isMenuClosing])
+
+  // Closing plays the reverse wipe animation, then actually unmounts the panel.
+  function closeMobileMenu() {
+    if (!isMenuOpen || isMenuClosing) return
+    setIsMenuClosing(true)
+    window.setTimeout(() => {
+      setIsMenuOpen(false)
+      setIsMenuClosing(false)
+    }, MOBILE_MENU_ANIM_MS)
+  }
+
+  function openMobileMenu() {
+    setIsMenuClosing(false)
+    setIsMenuOpen(true)
+  }
 
   const activePosts = postsCache[activeSlug] ?? []
   const activeTicker = tickerPosts[tickerIndex]
@@ -223,6 +248,54 @@ export default function Header() {
 
       <style jsx global>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+        /* The off-canvas backdrop/panel behave like a curtain: they enter
+           from the right edge and wipe across the page on open, and wipe
+           back off to the right on close. */
+        @keyframes mobile-menu-wipe-in {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+
+        @keyframes mobile-menu-wipe-out {
+          from { transform: translateX(0); }
+          to { transform: translateX(100%); }
+        }
+
+        @keyframes mobile-menu-panel-in {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+
+        @keyframes mobile-menu-panel-out {
+          from { transform: translateX(0); }
+          to { transform: translateX(100%); }
+        }
+
+        .mobile-menu-wipe-in {
+          animation: mobile-menu-wipe-in 900ms cubic-bezier(0.77, 0, 0.18, 1) both;
+        }
+
+        .mobile-menu-wipe-out {
+          animation: mobile-menu-wipe-out 900ms cubic-bezier(0.77, 0, 0.18, 1) both;
+        }
+
+        .mobile-menu-panel-in {
+          animation: mobile-menu-panel-in 900ms cubic-bezier(0.77, 0, 0.18, 1) both;
+        }
+
+        .mobile-menu-panel-out {
+          animation: mobile-menu-panel-out 900ms cubic-bezier(0.77, 0, 0.18, 1) both;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .mobile-menu-wipe-in,
+          .mobile-menu-wipe-out,
+          .mobile-menu-panel-in,
+          .mobile-menu-panel-out {
+            animation: none;
+          }
+        }
       `}</style>
 
       {/* ================= TOP UTILITY BAR ================= */}
@@ -340,57 +413,6 @@ export default function Header() {
               Resources <ChevronDown size={14} className="shrink-0" />
             </button>
 
-            {/* ---- Pages: trigger + anchored narrow dropdown ---- */}
-            {/* <div
-              className="relative"
-              onMouseEnter={() => setOpenMega("pages")}
-              onMouseLeave={() => {
-                setOpenMega(null)
-                setOpenPagesChild(null)
-              }}
-            >
-              <button className={navLinkClass}>
-                Pages <ChevronDown size={14} className="shrink-0" />
-              </button>
-
-              {openMega === "pages" && (
-                <div className="absolute top-full left-0 mt-2 w-60 bg-[#111318] shadow-2xl overflow-visible z-30 py-2 mt-6">
-                  {PAGES_LINKS.map((item) => (
-                    <div
-                      key={item.href}
-                      className="relative"
-                      onMouseEnter={() => item.children && setOpenPagesChild(item.href)}
-                      onMouseLeave={() => item.children && setOpenPagesChild(null)}
-                    >
-                      <Link
-                        href={item.href}
-                        onClick={() => setOpenMega(null)}
-                        className="flex items-center justify-between px-4 py-2.5 text-[13.5px] text-white/80 hover:text-white hover:bg-white/5 transition-colors truncate"
-                      >
-                        {item.label}
-                        {item.children && <ChevronRightSmall size={14} className="shrink-0 text-white/40" />}
-                      </Link>
-
-                      {item.children && openPagesChild === item.href && (
-                        <div className="absolute top-0 left-full ml-1 w-52 bg-[#111318] border border-white/10 rounded-lg shadow-2xl py-2 z-40">
-                          {item.children.map((child) => (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              onClick={() => setOpenMega(null)}
-                              className="block px-4 py-2.5 text-[13.5px] text-white/80 hover:text-white hover:bg-white/5 transition-colors truncate"
-                            >
-                              {child.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div> */}
-
             <Link href="/suppliers" className={navLinkClass}>
               Directory
             </Link>
@@ -496,7 +518,7 @@ export default function Header() {
             )}
 
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => (isMenuOpen ? closeMobileMenu() : openMobileMenu())}
               aria-label="Menu"
               className="h-10 w-10 flex items-center justify-center rounded-[4px] bg-[#15171f] border border-white/10 text-white hover:border-[#0073ff] transition-colors lg:hidden shrink-0"
             >
@@ -504,7 +526,7 @@ export default function Header() {
             </button>
 
             <button
-              onClick={() => setIsMenuOpen(true)}
+              onClick={openMobileMenu}
               aria-label="Open menu"
               className="hidden lg:flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#15171f] border border-white/10 text-white hover:border-[#0073ff] transition-colors shrink-0"
             >
@@ -524,9 +546,6 @@ export default function Header() {
             <div className="bg-[#111318] shadow-2xl w-full">
               {isResourcesMega ? (
                 // ---------------- RESOURCES: no sidebar, flat article grid ----------------
-                // Mirrors the reference "Technology" mega menu: one header row
-                // (label + View All) followed by a single even row of article
-                // cards — same size, no big featured tile.
                 <div className="p-5">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white text-[15px] font-bold">{activeLabel}</h3>
@@ -576,7 +595,6 @@ export default function Header() {
                 </div>
               ) : (
                 // ---------------- TOPICS: sidebar + featured post + 2x2 grid ----------------
-                // Mirrors the reference "Features" mega menu.
                 <div className="grid grid-cols-[172px_1fr]">
                   <aside className="bg-[#15171f] overflow-hidden py-1">
                     {TOPICS.map((item) => (
@@ -617,8 +635,6 @@ export default function Header() {
                         <p className="text-white/60 text-sm">No articles found for this topic.</p>
                       </div>
                     ) : (
-                      // Featured item + 2x2 grid — sized to match the Resources
-                      // panel's overall height, whatever the post data is.
                       <div className="grid grid-cols-[220px_1fr] gap-5">
                         {activePosts[0] && (
                           <Link href={`/post/${activePosts[0].slug}`} className="group flex flex-col">
@@ -671,84 +687,102 @@ export default function Header() {
       )}
 
       {/* ================= MOBILE / OFFCANVAS PANEL ================= */}
-      {isMenuOpen && (
+      {(isMenuOpen || isMenuClosing) && (
         <>
-          <div className="fixed inset-0 bg-black/60 z-40" onClick={() => setIsMenuOpen(false)} />
-          <div className="fixed top-0 right-0 bottom-0 w-[min(360px,90vw)] bg-[#1D2125] z-50 overflow-y-auto border-l border-white/10">
-            <div className="flex items-center justify-between px-5 h-[72px] border-b border-white/10">
-              <Image
-                src="/images/logo5.png"
-                alt="Tooling Trends"
-                width={140}
-                height={44}
-                className="h-10 w-auto object-contain"
-              />
-              <button
-                onClick={() => setIsMenuOpen(false)}
-                className="h-9 w-9 flex items-center justify-center rounded text-white hover:bg-white/10 shrink-0"
-                aria-label="Close"
+          <div
+            className={`fixed inset-0 z-40 bg-black/80 ${isMenuClosing ? "mobile-menu-wipe-out" : "mobile-menu-wipe-in"}`}
+            onClick={closeMobileMenu}
+          />
+          <aside
+            className={`fixed top-0 right-0 bottom-0 w-[min(400px,100vw)] bg-[#121213] z-50 overflow-y-auto shadow-2xl ${
+              isMenuClosing ? "mobile-menu-panel-out" : "mobile-menu-panel-in"
+            }`}
+            aria-label="Mobile navigation and contact details"
+          >
+            <button
+              onClick={closeMobileMenu}
+              className="flex h-10 w-[45px] items-center justify-center bg-[#0073ff] text-white hover:bg-[#0060d6] transition-colors"
+              aria-label="Close menu"
+            >
+              <X size={20} strokeWidth={1.5} />
+            </button>
+
+            <div className="pt-[12px] pb-[50px] px-[50px] text-white">
+              <div className="pb-0">
+                <Image
+                  src="/images/logo5.png"
+                  alt="Tooling Trends"
+                  width={380}
+                  height={120}
+                  priority
+                  className="h-[120px] w-[380px] object-contain object-left"
+                />
+              </div>
+
+              <p className="mt-0 text-[16px] leading-[1.6] text-white/70">
+                Bringing the latest tooling, manufacturing and mold-making insights to the people shaping the industry.
+              </p>
+
+              <div className="grid grid-cols-3 gap-2 mt-3" aria-label="Featured manufacturing gallery">
+                {[
+                  ["/modern-manufacturing-facility.png", "Modern manufacturing facility"],
+                  ["/cad-cam-software-design.jpg", "CAD and CAM design"],
+                  ["/cnc-workholding-platform.jpg", "CNC workholding platform"],
+                  ["/industrial-mold-tool-product.jpg", "Industrial mold tool"],
+                  ["/mold-design-venting.jpg", "Mold design"],
+                  ["/manufacturing-worker-training.jpg", "Manufacturing worker"],
+                ].map(([src, alt]) => (
+                  <div key={src} className="relative aspect-square overflow-hidden rounded-[10px] bg-[#1D2125]">
+                    <Image src={src} alt={alt} fill sizes="120px" className="object-cover" />
+                  </div>
+                ))}
+              </div>
+
+              <section className="mt-6">
+                <h2 className="text-[20px] font-semibold tracking-[-0.03em]">Quick Contact:</h2>
+                <div className="mt-3 space-y-3 text-[16px]">
+                  <a href="tel:+990123456789" className="flex items-center gap-3 text-white hover:text-[#0073ff] transition-colors">
+                    <Phone size={18} className="text-[#0073ff] shrink-0" strokeWidth={1.7} />
+                    <span>+990 123 456 789</span>
+                  </a>
+                  <a href="mailto:info@toolingtrends.com" className="flex items-center gap-3 text-white hover:text-[#0073ff] transition-colors">
+                    <Mail size={18} className="text-[#0073ff] shrink-0" strokeWidth={1.7} />
+                    <span>info@toolingtrends.com</span>
+                  </a>
+                  <div className="flex items-start gap-3 text-white">
+                    <MapPin size={18} className="text-[#0073ff] shrink-0 mt-0.5" strokeWidth={1.7} />
+                    <span>Madison Avenue, New York</span>
+                  </div>
+                </div>
+              </section>
+
+              <div className="flex gap-2 mt-6">
+                {[
+                  { label: "Facebook", Icon: Facebook },
+                  { label: "Instagram", Icon: Instagram },
+                  { label: "LinkedIn", Icon: Linkedin },
+                  { label: "X", Icon: X },
+                ].map(({ label, Icon }) => (
+                  <a
+                    key={label}
+                    href="#"
+                    aria-label={label}
+                    className="flex h-10 w-10 items-center justify-center rounded-md border border-white/15 text-white hover:border-[#0073ff] hover:bg-[#0073ff] transition-colors"
+                  >
+                    <Icon size={16} />
+                  </a>
+                ))}
+              </div>
+
+              <Link
+                href="/contact"
+                onClick={closeMobileMenu}
+                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#0073ff] px-6 py-3.5 text-[16px] font-semibold text-white hover:bg-[#0060d6] transition-colors"
               >
-                <X size={20} />
-              </button>
+                Get In Touch <ArrowRight size={18} strokeWidth={2.5} />
+              </Link>
             </div>
-
-            <nav className="py-3 text-white font-semibold">
-              <Link href="/" className="block px-5 py-3.5 border-b border-white/10 hover:bg-white/5 truncate" onClick={() => setIsMenuOpen(false)}>Home</Link>
-              <Link href="/topics" className="block px-5 py-3.5 border-b border-white/10 hover:bg-white/5 truncate" onClick={() => setIsMenuOpen(false)}>Topics</Link>
-              <Link href="/Webinar" className="block px-5 py-3.5 border-b border-white/10 hover:bg-white/5 truncate" onClick={() => setIsMenuOpen(false)}>Resources</Link>
-              {PAGES_LINKS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block px-5 py-3.5 border-b border-white/10 hover:bg-white/5 truncate"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-
-              {!user ? (
-                <div className="px-5 py-5 flex flex-col gap-3">
-                  <Link
-                    href="/login"
-                    className="block w-full py-3 border border-white/20 text-white rounded-[4px] text-center font-semibold hover:bg-white/5"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="block w-full py-3 bg-[#0073ff] text-white rounded-[4px] text-center font-semibold hover:bg-[#0060d6]"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
-                </div>
-              ) : (
-                <div className="px-5 py-5 flex flex-col gap-3">
-                  <Link
-                    href={
-                      user.role === "admin"
-                        ? "/admin/dashboard"
-                        : user.role === "recruiter"
-                          ? "/recruiter/dashboard"
-                          : `/candidate/${user.username || user.email?.split("@")[0] || "profile"}`
-                    }
-                    className="block w-full py-3 bg-[#0073ff] text-white rounded-[4px] text-center font-semibold"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full py-3 border border-red-500/40 text-red-400 rounded-[4px] font-semibold"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </nav>
-          </div>
+          </aside>
         </>
       )}
     </header>
