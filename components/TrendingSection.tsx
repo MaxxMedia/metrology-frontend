@@ -155,13 +155,12 @@ export default function TrendingSection({ posts }: Props) {
 
   const featuredDate =
     formatDate(featured.publishedAt) || formatDate(featured.createdAt);
-
-  return (
+  return (
     <section className="w-full bg-[#111824] text-white">
-      <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 pt-[28px] pb-[28px] lg:pt-[36px] lg:pb-[40px]">
+      <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 pt-4 pb-4 lg:pt-6 lg:pb-6">
 
         {/* ================= TRENDING NEWS HEADER ================= */}
-        <div className="flex items-center justify-between gap-3 sm:gap-6 mb-4 lg:mb-5 min-w-0">
+        <div className="flex items-center justify-between gap-3 sm:gap-6 mb-5 lg:mb-[22px] min-w-0">
           <h2 className="text-[26px] sm:text-[34px] lg:text-[38px] font-bold text-white shrink-0 leading-none tracking-tight">
             Trending News
           </h2>
@@ -183,20 +182,20 @@ export default function TrendingSection({ posts }: Props) {
         </div>
 
         {/* Mobile decorative separator */}
-        <div className="sm:hidden w-full h-[1px] bg-[#35383C] mb-4" />
+        <div className="sm:hidden w-full h-[1px] bg-[#35383C] mb-5" />
         {/* ================= FEATURE GRID (Exact Reference Proportions) ================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,490px)_1fr] items-stretch gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,460px)_1fr] items-stretch gap-[28px]">
 
           {/* ================= LEFT: LARGE FEATURED ARTICLE CARD ================= */}
           <Link
             href={`/post/${featured.slug}`}
-            className="group relative block w-full max-w-[450px] min-h-[340px] sm:min-h-[370px] lg:min-h-[480px] rounded-[6px] overflow-hidden shadow-2xl border border-white/10"
+            className="group relative block w-full max-w-[460px] min-h-[330px] sm:min-h-[370px] lg:min-h-[440px] xl:min-h-[470px] rounded-[6px] overflow-hidden shadow-2xl border border-white/10"
           >
             <Image
               src={imageUrl(featured)}
               alt={featured.title}
               fill
-              sizes="(max-width: 1024px) 300px, 450px"
+              sizes="(max-width: 1024px) 350px, 460px"
               quality={85}
               className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             />
@@ -211,9 +210,9 @@ export default function TrendingSection({ posts }: Props) {
             />
 
             {/* Overlay Content at bottom-left */}
-            <div className="absolute inset-x-0 bottom-0 z-20 p-5 sm:p-6 lg:p-[28px] flex flex-col justify-end">
+            <div className="absolute inset-x-0 bottom-0 z-20 p-5 sm:p-6 lg:p-[26px] flex flex-col justify-end">
               {featuredTag.text && (
-                <div className="mb-2">
+                <div className="mb-2.5">
                   <span
                     className={`inline-flex items-center h-[26px] px-[11px] ${featuredTag.color} text-white text-[12px] font-bold uppercase tracking-wider rounded-tl-none rounded-tr-full rounded-br-full rounded-bl-full shadow-sm`}
                   >
@@ -222,11 +221,11 @@ export default function TrendingSection({ posts }: Props) {
                 </div>
               )}
 
-              <h3 className="text-white text-[20px] sm:text-[24px] lg:text-[26px] xl:text-[27px] font-bold leading-[1.2] mb-3 group-hover:text-[#087CF5] transition-colors line-clamp-3 max-w-[500px]">
+              <h3 className="text-white text-[20px] sm:text-[24px] lg:text-[26px] xl:text-[27px] font-bold leading-[1.2] mb-2.5 group-hover:text-[#087CF5] transition-colors line-clamp-3 max-w-[500px]">
                 {featured.title}
               </h3>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] sm:text-[15px] text-white/90 font-normal">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] sm:text-[14px] text-white/90 font-normal">
                 <span>By <span className="font-medium text-white">{getAuthorName(featured)}</span></span>
                 {typeof featured.views === "number" && (
                   <span className="inline-flex items-center gap-1.5">
@@ -245,7 +244,7 @@ export default function TrendingSection({ posts }: Props) {
           </Link>
 
           {/* ================= RIGHT: 2 COLS × 3 ROWS NEWS GRID ================= */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 lg:gap-x-[24px] xl:gap-x-[28px] gap-y-0 content-between">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[28px] gap-y-0 content-between h-full min-h-full">
             {listPosts.map((post, idx) => {
               const tag = listTags[idx] || { text: "News", color: NON_REPEATING_PALETTE[(idx + 1) % NON_REPEATING_PALETTE.length] };
 
@@ -253,19 +252,19 @@ export default function TrendingSection({ posts }: Props) {
               return (
                 <div
                   key={post.id}
-                  className="flex flex-col justify-between py-2.5 lg:py-3 border-b border-[#35383C] min-w-0"
+                  className="flex flex-col justify-between py-2 lg:py-2.5 border-b border-[#35383C]/70 min-w-0"
                 >
                   <Link
                     href={`/post/${post.slug}`}
-                    className="group flex gap-3 lg:gap-[14px] xl:gap-[16px] items-center min-w-0"
+                    className="group flex gap-3 lg:gap-[16px] items-center min-w-0"
                   >
                     {/* Compact Square Thumbnail Image */}
-                    <div className="relative w-[80px] sm:w-[92px] lg:w-[100px] xl:w-[108px] aspect-square rounded-[7px] overflow-hidden shrink-0 bg-[#1D2125]">
+                    <div className="relative w-[85px] sm:w-[100px] lg:w-[108px] xl:w-[115px] aspect-square rounded-[7px] overflow-hidden shrink-0 bg-[#1D2125]">
                       <Image
                         src={imageUrl(post)}
                         alt={post.title}
                         fill
-                        sizes="108px"
+                        sizes="115px"
                         quality={80}
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
@@ -283,7 +282,7 @@ export default function TrendingSection({ posts }: Props) {
                         </div>
                       )}
 
-                      <h4 className="text-white text-[15px] sm:text-[17px] lg:text-[18px] xl:text-[20px] font-bold leading-[1.3] mb-1.5 group-hover:text-[#087CF5] transition-colors line-clamp-2">
+                      <h4 className="text-white text-[15px] sm:text-[17px] lg:text-[18px] xl:text-[19.5px] font-bold leading-[1.3] mb-1.5 group-hover:text-[#087CF5] transition-colors line-clamp-2">
                         {post.title}
                       </h4>
 
