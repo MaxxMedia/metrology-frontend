@@ -193,7 +193,7 @@ export default function VideosSection({ posts }: Props) {
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 60vw, 50vw"
           quality={80}
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
