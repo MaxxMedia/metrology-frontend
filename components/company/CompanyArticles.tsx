@@ -10,6 +10,10 @@ import type { Post } from "@/types/Post";
 const CATEGORY_SLUG = "optical-and-vision-metrology";
 const CATEGORY_NAME = "Optical & Vision Metrology";
 
+// Fixed hero background — drop the uploaded image into /public/images/
+// as vr-metrology-hero.jpg (see the file I generated alongside this component).
+const HERO_BG_SRC = "/5.jpg"; 
+
 const NON_REPEATING_PALETTE = [
   "bg-[#00b5ed]", // Cyan
   "bg-[#00B95C]", // Green
@@ -246,8 +250,6 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
 
   if (!visiblePosts.length) return null;
 
-  const heroBg = getImageUrl(visiblePosts[0]);
-
   return (
     <section className="w-full bg-[#1D2125] overflow-hidden md:h-[655.6px]">
       <style jsx>{`
@@ -258,7 +260,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
       `}</style>
       <div className="relative w-full h-full overflow-hidden bg-[#1D2125]">
         <Image
-          src={heroBg}
+          src={HERO_BG_SRC}
           alt=""
           fill
           priority
@@ -278,7 +280,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
                   <Link
                     key={post.id}
                     href={`/post/${post.slug}`}
-                    className="group flex items-center gap-3 rounded-[12px] border border-white/15 bg-[#FFFFFF0D] backdrop-blur-md w-full min-h-[120px] md:w-[446.66px] md:h-[165.6px] pt-3 pr-3 pb-3 pl-3 md:pr-[30px] md:pl-[12px] hover:border-white/30 hover:bg-black/55 transition-colors"
+                    className="group flex items-center gap-3 rounded-[12px] border border-white/15 bg-[#FFFFFF0D] backdrop-blur-md w-full min-h-[120px] md:w-[446.66px] md:h-[165.6px] pt-3 pr-3 pb-3 pl-3 md:pr-[30px] md:pl-[12px] hover:border-white/30 transition-colors"
                   >
                     <div className="relative w-[88px] h-[88px] md:w-[140px] md:h-[140px] rounded-full overflow-hidden shrink-0 ring-1 ring-white/20">
                       <Image
