@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { Upload, X } from "lucide-react"
 
@@ -8,6 +8,7 @@ interface UploadBoxProps {
   label: string
   value?: string
   onUpload: (file: File) => Promise<void>
+  onClear?: () => void
   accept?: string
   className?: string
   height?: string
@@ -18,6 +19,7 @@ export default function UploadBox({
   label,
   value,
   onUpload,
+  onClear,
   accept = "image/*,application/pdf",
   className = "",
   height = "aspect-video",
@@ -27,6 +29,10 @@ export default function UploadBox({
   const [preview, setPreview] = useState<string>(value || "")
   const [uploadError, setUploadError] = useState<string>("")
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    setPreview(value || "")
+  }, [value])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -195,12 +201,17 @@ export default function UploadBox({
 
   const handleRemove = () => {
     setPreview("")
+    onClear?.()
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
   }
 
-  const isImagePreview = preview && (preview.startsWith("data:image") || preview.match(/\.(jpeg|jpg|png|webp)$/i))
+  const isImagePreview =
+    preview &&
+    (preview.startsWith("data:image") ||
+      preview.startsWith("http") ||
+      preview.match(/\.(jpeg|jpg|png|webp|gif)$/i))
 
   return (
     <div className={`w-full ${className}`}>
