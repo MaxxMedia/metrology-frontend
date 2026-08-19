@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Plus, Trash2, Save, Loader2 } from "lucide-react";
+import UploadBox from "@/components/UploadBox";
 
 const DEFAULT_API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
@@ -66,6 +67,8 @@ interface FieldProps {
     children?: React.ReactNode;
     hint?: string;
 }
+
+type ImageFieldKey = "heroImage" | "thumbnail" | "speakerImage";
 
 const EMPTY_FORM: WebinarForm = {
     title: "",
@@ -166,6 +169,27 @@ export default function AdminWebinarForm({
         setForm((f) => ({ ...f, [key]: value }));
     };
 
+    const uploadImage = async (file: File, field: ImageFieldKey) => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
+            method: "POST",
+            body: formData,
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.imageUrl) {
+            throw new Error(data.error || "Image upload failed");
+        }
+
+        setForm((f) => ({ ...f, [field]: data.imageUrl }));
+    };
+
+    const clearImage = (field: ImageFieldKey) => {
+        setForm((f) => ({ ...f, [field]: "" }));
+    };
+
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -257,12 +281,40 @@ export default function AdminWebinarForm({
                         <textarea value={form.fullDescription} onChange={update("fullDescription")} rows={5} className="admin-field" />
                     </Field>
 
-                    <Field label="Hero Image URL" full>
-                        <input value={form.heroImage} onChange={update("heroImage")} className="admin-field" placeholder="https://…" />
+                    <Field label="Hero Image" full hint="Banner on the webinar detail page.">
+                        <UploadBox
+                            label="Click to upload hero image"
+                            value={form.heroImage}
+                            onUpload={(file) => uploadImage(file, "heroImage")}
+                            onClear={() => clearImage("heroImage")}
+                            accept="image/*"
+                            height="h-48"
+                            uploadType="image"
+                        />
+                        <input
+                            value={form.heroImage}
+                            onChange={update("heroImage")}
+                            className="admin-field mt-2"
+                            placeholder="Or paste image URL…"
+                        />
                     </Field>
 
-                    <Field label="Thumbnail Image URL" full hint="Used on listing cards — falls back to hero image if left blank.">
-                        <input value={form.thumbnail} onChange={update("thumbnail")} className="admin-field" placeholder="https://…" />
+                    <Field label="Thumbnail Image" full hint="Used on listing cards — falls back to hero image if left blank.">
+                        <UploadBox
+                            label="Click to upload thumbnail"
+                            value={form.thumbnail}
+                            onUpload={(file) => uploadImage(file, "thumbnail")}
+                            onClear={() => clearImage("thumbnail")}
+                            accept="image/*"
+                            height="h-40"
+                            uploadType="image"
+                        />
+                        <input
+                            value={form.thumbnail}
+                            onChange={update("thumbnail")}
+                            className="admin-field mt-2"
+                            placeholder="Or paste image URL…"
+                        />
                     </Field>
                 </Section>
 
@@ -312,8 +364,22 @@ export default function AdminWebinarForm({
                     <Field label="LinkedIn URL">
                         <input value={form.speakerLinkedin} onChange={update("speakerLinkedin")} className="admin-field" placeholder="https://linkedin.com/in/…" />
                     </Field>
-                    <Field label="Speaker Photo URL" full>
-                        <input value={form.speakerImage} onChange={update("speakerImage")} className="admin-field" placeholder="https://…" />
+                    <Field label="Speaker Photo" full>
+                        <UploadBox
+                            label="Click to upload speaker photo"
+                            value={form.speakerImage}
+                            onUpload={(file) => uploadImage(file, "speakerImage")}
+                            onClear={() => clearImage("speakerImage")}
+                            accept="image/*"
+                            height="h-40"
+                            uploadType="image"
+                        />
+                        <input
+                            value={form.speakerImage}
+                            onChange={update("speakerImage")}
+                            className="admin-field mt-2"
+                            placeholder="Or paste image URL…"
+                        />
                     </Field>
                 </Section>
 

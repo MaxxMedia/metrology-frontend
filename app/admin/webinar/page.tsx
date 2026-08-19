@@ -420,7 +420,7 @@ export default function AdminWebinarListPage({
                                                     {(w.status === "PENDING" || w.status === "DRAFT") && (
                                                         <IconButton
                                                             icon={Check}
-                                                            label="Approve"
+                                                            label="Approve & Publish"
                                                             tone="green"
                                                             disabled={busyId === String(w.id)}
                                                             onClick={() => runAction(String(w.id), "/approve")}

@@ -6,125 +6,39 @@ import {
     Search,
     ChevronLeft,
     ChevronRight,
-    Mail,
     Calendar,
     Clock,
+    Loader2,
 } from "lucide-react";
 
-const MOCK_WEBINARS = [
-    {
-        id: 1,
-        slug: "ai-in-smart-manufacturing-the-next-revolution",
-        title: "AI in Smart Manufacturing The Next Revolution",
-        thumbnail:
-            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80",
-        speakerName: "John Smith",
-        speakerDesignation: "Manufacturing Director",
-        speakerCompany: "Siemens",
-        speakerImage: "https://i.pravatar.cc/80?img=12",
-        startDate: "2026-08-22T15:00:00",
-        duration: 60,
-        status: "PUBLISHED",
-        isOnDemand: false,
-        featured: true,
-        category: { name: "Factory Automation", slug: "factory-automation" },
-    },
-    {
-        id: 2,
-        title: "Advanced 5-Axis Machining Best Practices",
-        thumbnail:
-            "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&q=80",
-        speakerName: "Michael Brown",
-        speakerDesignation: "Applications Engineer",
-        speakerCompany: "DMG MORI",
-        startDate: "2026-08-25T15:00:00",
-        duration: 60,
-        isOnDemand: false,
-        listState: "upcoming",
-        category: { name: "Machine", slug: "machine" },
-    },
-    {
-        id: 3,
-        title: "Digital Twin in Tool & Die Manufacturing",
-        thumbnail:
-            "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80",
-        speakerName: "Priya Sharma",
-        speakerDesignation: "Lead Engineer",
-        speakerCompany: "Autodesk",
-        startDate: "2026-08-28T16:00:00",
-        duration: 60,
-        isOnDemand: false,
-        listState: "upcoming",
-        category: { name: "Dies, Moulds and Tooling", slug: "dies-moulds-and-tooling" },
-    },
-    {
-        id: 4,
-        title: "Tool Wear Analysis and Optimization",
-        thumbnail:
-            "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=800&q=80",
-        speakerName: "Rajesh Kumar",
-        speakerDesignation: "Technical Specialist",
-        speakerCompany: "Sandvik",
-        duration: 60,
-        isOnDemand: true,
-        listState: "on-demand",
-        category: { name: "Cutting Tools", slug: "cuttingtools" },
-    },
-    {
-        id: 5,
-        title: "Industry 4.0 for Small & Medium Manufacturers",
-        thumbnail:
-            "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
-        speakerName: "Anil Patel",
-        speakerDesignation: "CEO",
-        speakerCompany: "Manufacturing Insights",
-        duration: 60,
-        isOnDemand: true,
-        listState: "on-demand",
-        category: { name: "Factory Automation", slug: "factory-automation" },
-    },
-    {
-        id: 6,
-        title: "Robotics & Automation in Machine Shops",
-        thumbnail:
-            "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
-        speakerName: "Vikram Mehta",
-        speakerDesignation: "Automation Expert",
-        duration: 60,
-        isOnDemand: false,
-        listState: "completed",
-        category: { name: "Factory Automation", slug: "factory-automation" },
-    },
-    {
-        id: 7,
-        title: "Metrology Trends Shaping Quality",
-        thumbnail:
-            "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80",
-        speakerName: "Neha Singh",
-        speakerDesignation: "Quality Manager",
-        speakerCompany: "Hexagon",
-        duration: 60,
-        isOnDemand: true,
-        listState: "on-demand",
-        category: { name: "Metrology and Quality", slug: "metrologyandquality" },
-    },
-];
+const DEFAULT_API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
-// ✅ FIX: real webinars from the API never had a `listState` field — that
-// only ever existed on the hardcoded MOCK_WEBINARS above. Because of that,
-// every real webinar fell through badgeForWebinar()'s listState checks and
-// got no badge at all, and `isPast` was only ever true for on-demand items
-// — so a webinar that already happened still showed a "Register" button
-// instead of "Watch Now". This derives the same state from fields the API
-// actually returns (isOnDemand + startDate), but still respects an
-// explicit listState when one is present (e.g. on the mock data), so
-// nothing about the preview cards changes.
-function deriveListState(w: {
-    listState?: string;
+interface WebinarCategory {
+    name?: string;
+    slug?: string;
+}
+
+interface WebinarItem {
+    id?: number | string;
+    slug?: string;
+    title: string;
+    thumbnail?: string;
+    heroImage?: string;
+    speakerName?: string;
+    speakerDesignation?: string;
+    speakerCompany?: string;
+    speakerImage?: string;
+    startDate?: string;
+    duration?: number;
+    featured?: boolean;
     isOnDemand?: boolean;
-    startDate?: string | number | Date;
+    category?: WebinarCategory;
+}
+
+function deriveListState(w: {
+    isOnDemand?: boolean;
+    startDate?: string;
 }): string | undefined {
-    if (w.listState) return w.listState;
     if (w.isOnDemand) return "on-demand";
     if (w.startDate) {
         return new Date(w.startDate).getTime() >= Date.now() ? "upcoming" : "completed";
@@ -132,59 +46,93 @@ function deriveListState(w: {
     return undefined;
 }
 
-function badgeForWebinar(w: { featured: any; listState?: string; isOnDemand: any; startDate?: string | number | Date }) {
+function badgeForWebinar(w: {
+    featured?: boolean;
+    isOnDemand?: boolean;
+    startDate?: string;
+}) {
     const listState = deriveListState(w);
-    if (w.featured) return { label: "LIVE", tone: "live" };
-    if (listState === "upcoming") return { label: "UPCOMING", tone: "upcoming" };
-    if (listState === "completed") return { label: "COMPLETED", tone: "completed" };
-    if (w.isOnDemand) return { label: "ON DEMAND", tone: "demand" };
+    if (w.featured) return { label: "LIVE", tone: "live" as const };
+    if (listState === "upcoming") return { label: "UPCOMING", tone: "upcoming" as const };
+    if (listState === "completed") return { label: "COMPLETED", tone: "completed" as const };
+    if (w.isOnDemand) return { label: "ON DEMAND", tone: "demand" as const };
     return null;
 }
 
-const BADGE_STYLES: { [key in "live" | "upcoming" | "completed" | "demand"]: string } = {
+const BADGE_STYLES = {
     live: "bg-red-600 text-white",
     upcoming: "bg-red-600 text-white",
     completed: "bg-slate-500 text-white",
     demand: "bg-slate-900 text-white",
 };
 
-function formatDate(dateStr: string | number | Date) {
-    if (!dateStr) return null;
+function formatDate(dateStr: string) {
     const d = new Date(dateStr);
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase();
 }
 
-function formatFullDate(dateStr: string | number | Date) {
-    if (!dateStr) return null;
+function formatFullDate(dateStr: string) {
     const d = new Date(dateStr);
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-function WebinarCard({ webinar }: { webinar: any }) {
+function WebinarThumbnail({
+    src,
+    alt,
+    className = "",
+}: {
+    src?: string;
+    alt: string;
+    className?: string;
+}) {
+    if (src) {
+        return (
+            <img
+                src={src}
+                alt={alt}
+                className={`h-full w-full object-cover ${className}`}
+            />
+        );
+    }
+
+    return (
+        <div className={`flex h-full w-full items-center justify-center bg-slate-800 text-slate-500 ${className}`}>
+            <VideoPlaceholder />
+        </div>
+    );
+}
+
+function VideoPlaceholder() {
+    return (
+        <svg className="h-10 w-10 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+            />
+        </svg>
+    );
+}
+
+function WebinarCard({ webinar }: { webinar: WebinarItem }) {
     const badge = badgeForWebinar(webinar);
     const listState = deriveListState(webinar);
     const isPast = listState === "completed" || webinar.isOnDemand;
-
-    // ✅ FIX: this card had zero navigation before — no Link, no onClick,
-    // nothing. Clicking "Register" (or anywhere on the card) did nothing.
-    // Real webinars from the API always have a slug (see shapeWebinar()
-    // on the backend), so we route to /Webinar/[slug]. The handful of
-    // MOCK_WEBINARS entries without a slug (ids 2,3,4,5,6,7 — only
-    // preview/demo data) fall back to a non-clickable card instead of
-    // silently linking to /Webinar/undefined.
+    const imageSrc = webinar.thumbnail || webinar.heroImage;
     const href = webinar.slug ? `/Webinar/${webinar.slug}` : null;
 
     const cardBody = (
         <>
             <div className="relative aspect-video overflow-hidden bg-slate-800">
-                <img
-                    src={webinar.thumbnail}
+                <WebinarThumbnail
+                    src={imageSrc}
                     alt={webinar.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="transition-transform duration-300 group-hover:scale-105"
                 />
                 {badge && (
                     <span
-                        className={`absolute left-3 top-3 rounded px-2 py-1 text-[11px] font-bold tracking-wide ${BADGE_STYLES[badge.tone as keyof typeof BADGE_STYLES]}`}
+                        className={`absolute left-3 top-3 rounded px-2 py-1 text-[11px] font-bold tracking-wide ${BADGE_STYLES[badge.tone]}`}
                     >
                         {badge.label}
                     </span>
@@ -205,12 +153,12 @@ function WebinarCard({ webinar }: { webinar: any }) {
                     {webinar.speakerImage ? (
                         <img
                             src={webinar.speakerImage}
-                            alt={webinar.speakerName}
+                            alt={webinar.speakerName || "Speaker"}
                             className="h-8 w-8 rounded-full object-cover"
                         />
                     ) : (
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-600">
-                            {webinar.speakerName?.[0]}
+                            {webinar.speakerName?.[0] || "?"}
                         </div>
                     )}
                     <div className="leading-tight">
@@ -224,15 +172,16 @@ function WebinarCard({ webinar }: { webinar: any }) {
                 <div className="flex items-center gap-1.5 text-xs text-slate-500">
                     <Clock className="h-3.5 w-3.5" />
                     {webinar.startDate && !isPast
-                        ? `${new Date(webinar.startDate).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })} IST · ${webinar.duration} Min`
-                        : `${webinar.duration} Min`}
+                        ? `${new Date(webinar.startDate).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })} IST · ${webinar.duration ?? 60} Min`
+                        : `${webinar.duration ?? 60} Min`}
                 </div>
 
                 <span
-                    className={`mt-auto block w-full rounded-md py-2 text-center text-sm font-semibold transition-colors ${isPast
-                        ? "border border-slate-300 text-slate-700 group-hover:bg-slate-50"
-                        : "bg-red-600 text-white group-hover:bg-red-700"
-                        }`}
+                    className={`mt-auto block w-full rounded-md py-2 text-center text-sm font-semibold transition-colors ${
+                        isPast
+                            ? "border border-slate-300 text-slate-700 group-hover:bg-slate-50"
+                            : "bg-red-600 text-white group-hover:bg-red-700"
+                    }`}
                 >
                     {isPast ? "Watch Now" : "Register"}
                 </span>
@@ -242,7 +191,7 @@ function WebinarCard({ webinar }: { webinar: any }) {
 
     if (!href) {
         return (
-            <div className="group flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white opacity-90">
+            <div className="group flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white">
                 {cardBody}
             </div>
         );
@@ -258,36 +207,39 @@ function WebinarCard({ webinar }: { webinar: any }) {
     );
 }
 
-// ✅ FIX: apiBase now consistently comes from NEXT_PUBLIC_API_URL (same
-// pattern as the admin pages and detail page).
-const DEFAULT_API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api`;
-
 export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
-    const [webinars, setWebinars] = useState(MOCK_WEBINARS);
+    const [webinars, setWebinars] = useState<WebinarItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("All Categories");
     const [carouselIndex, setCarouselIndex] = useState(0);
-    // ✅ FIX: the three hero buttons (Upcoming / On Demand / Register) had
-    // no onClick at all before. Upcoming/On Demand now act as quick
-    // filters on the grid below and scroll you to it; Register jumps to
-    // the featured webinar's own page.
     const [quickFilter, setQuickFilter] = useState<"all" | "upcoming" | "on-demand">("all");
     const gridRef = useRef<HTMLDivElement>(null);
-    const [newsletterEmail, setNewsletterEmail] = useState("");
-    const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
     useEffect(() => {
         let cancelled = false;
+
+        setLoading(true);
+        setError("");
+
         fetch(`${apiBase}/webinars`)
-            .then((r) => (r.ok ? r.json() : Promise.reject()))
+            .then((r) => (r.ok ? r.json() : Promise.reject(new Error("Failed to load"))))
             .then((res) => {
-                if (!cancelled && Array.isArray(res?.data) && res.data.length) {
-                    setWebinars(res.data);
+                if (!cancelled) {
+                    setWebinars(Array.isArray(res?.data) ? res.data : []);
                 }
             })
             .catch(() => {
-                // Keep preview data if the API isn't reachable from this environment
+                if (!cancelled) {
+                    setError("Could not load webinars. Please try again later.");
+                    setWebinars([]);
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false);
             });
+
         return () => {
             cancelled = true;
         };
@@ -297,19 +249,16 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
         () => webinars.filter((w) => w.featured),
         [webinars]
     );
-    const featured = featuredList[carouselIndex % Math.max(featuredList.length, 1)] || webinars[0];
 
-    // ✅ FIX: your backend tags every webinar with a single fixed category
-    // row ("Webinars" — see getOrCreateWebinarCategory() in
-    // Webinarcontroller.js), so the hardcoded CATEGORIES list below could
-    // never match a real webinar's actual category name. Building the
-    // dropdown from whatever category names are actually present in the
-    // loaded data means the filter always has something real to match
-    // against, whatever your backend ends up sending.
+    const featured =
+        featuredList.length > 0
+            ? featuredList[carouselIndex % featuredList.length]
+            : webinars[0] ?? null;
+
     const categoryOptions = useMemo(() => {
         const names = Array.from(
             new Set(webinars.map((w) => w.category?.name).filter(Boolean))
-        );
+        ) as string[];
         return ["All Categories", ...names];
     }, [webinars]);
 
@@ -333,7 +282,6 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans">
-            {/* Hero */}
             <div className="relative overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(220,38,38,0.15),transparent_55%)]" />
                 <div className="relative mx-auto max-w-6xl px-6 py-16 sm:py-20">
@@ -350,26 +298,30 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                     </p>
                     <div className="mt-6 flex flex-wrap gap-3">
                         <button
+                            type="button"
                             onClick={() => {
                                 setQuickFilter("upcoming");
                                 scrollToGrid();
                             }}
-                            className={`rounded-md px-5 py-2.5 text-sm font-semibold transition-colors ${quickFilter === "upcoming"
-                                ? "bg-red-600 text-white hover:bg-red-700"
-                                : "border border-slate-600 text-slate-200 hover:border-slate-400"
-                                }`}
+                            className={`rounded-md px-5 py-2.5 text-sm font-semibold transition-colors ${
+                                quickFilter === "upcoming"
+                                    ? "bg-red-600 text-white hover:bg-red-700"
+                                    : "border border-slate-600 text-slate-200 hover:border-slate-400"
+                            }`}
                         >
                             Upcoming
                         </button>
                         <button
+                            type="button"
                             onClick={() => {
                                 setQuickFilter("on-demand");
                                 scrollToGrid();
                             }}
-                            className={`rounded-md px-5 py-2.5 text-sm font-semibold transition-colors ${quickFilter === "on-demand"
-                                ? "bg-red-600 text-white hover:bg-red-700"
-                                : "border border-slate-600 text-slate-200 hover:border-slate-400"
-                                }`}
+                            className={`rounded-md px-5 py-2.5 text-sm font-semibold transition-colors ${
+                                quickFilter === "on-demand"
+                                    ? "bg-red-600 text-white hover:bg-red-700"
+                                    : "border border-slate-600 text-slate-200 hover:border-slate-400"
+                            }`}
                         >
                             On Demand
                         </button>
@@ -382,17 +334,17 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                             </Link>
                         ) : (
                             <button
+                                type="button"
                                 onClick={scrollToGrid}
                                 className="rounded-md border border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-200 hover:border-slate-400"
                             >
-                                Register
+                                Browse Webinars
                             </button>
                         )}
                     </div>
                 </div>
             </div>
 
-            {/* Filters */}
             <div className="border-b border-slate-200 bg-white">
                 <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-6 py-4">
                     <div className="relative min-w-[220px] flex-1">
@@ -404,123 +356,164 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                             className="w-full rounded-md border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                         />
                     </div>
+                    {categoryOptions.length > 1 && (
+                        <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            className="rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                        >
+                            {categoryOptions.map((name) => (
+                                <option key={name} value={name}>
+                                    {name}
+                                </option>
+                            ))}
+                        </select>
+                    )}
                 </div>
             </div>
 
             <div className="mx-auto max-w-6xl px-6 py-10">
-                {/* Featured live webinar */}
-                {featured && (
-                    <div className="relative mb-12 overflow-hidden rounded-xl bg-slate-900">
-                        <div className="grid gap-0 sm:grid-cols-2">
-                            <div className="relative aspect-video sm:aspect-auto">
-                                <img
-                                    src={featured.thumbnail}
-                                    alt={featured.title}
-                                    className="h-full w-full object-cover opacity-90"
-                                />
-                                <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded bg-red-600 px-2.5 py-1 text-xs font-bold text-white">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                                    LIVE
-                                </span>
-                            </div>
-                            <div className="flex flex-col justify-center p-8">
-                                {featured.startDate && (
-                                    <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-red-400">
-                                        <Calendar className="h-3.5 w-3.5" />
-                                        {formatFullDate(featured.startDate)} · {new Date(featured.startDate).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })} IST
-                                    </p>
-                                )}
-                                <h2 className="text-2xl font-bold leading-snug text-white">
-                                    {featured.title}
-                                </h2>
-                                <div className="mt-4 flex items-center gap-3">
-                                    {featured.speakerImage && (
-                                        <img
-                                            src={featured.speakerImage}
-                                            alt={featured.speakerName}
-                                            className="h-10 w-10 rounded-full object-cover"
+                {loading ? (
+                    <div className="flex items-center justify-center py-24 text-slate-400">
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Loading webinars…
+                    </div>
+                ) : error ? (
+                    <div className="rounded-lg border border-red-200 bg-red-50 px-6 py-16 text-center text-sm text-red-700">
+                        {error}
+                    </div>
+                ) : (
+                    <>
+                        {featured && (
+                            <div className="relative mb-12 overflow-hidden rounded-xl bg-slate-900">
+                                <div className="grid gap-0 sm:grid-cols-2">
+                                    <div className="relative aspect-video sm:aspect-auto">
+                                        <WebinarThumbnail
+                                            src={featured.thumbnail || featured.heroImage}
+                                            alt={featured.title}
+                                            className="opacity-90"
                                         />
-                                    )}
-                                    <div>
-                                        <p className="text-sm font-semibold text-white">{featured.speakerName}</p>
-                                        <p className="text-xs text-slate-400">
-                                            {[featured.speakerDesignation, featured.speakerCompany].filter(Boolean).join(", ")}
-                                        </p>
+                                        <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded bg-red-600 px-2.5 py-1 text-xs font-bold text-white">
+                                            <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                                            {featured.featured ? "LIVE" : "FEATURED"}
+                                        </span>
+                                    </div>
+                                    <div className="flex flex-col justify-center p-8">
+                                        {featured.startDate && (
+                                            <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-red-400">
+                                                <Calendar className="h-3.5 w-3.5" />
+                                                {formatFullDate(featured.startDate)} ·{" "}
+                                                {new Date(featured.startDate).toLocaleTimeString("en-US", {
+                                                    hour: "numeric",
+                                                    minute: "2-digit",
+                                                })}{" "}
+                                                IST
+                                            </p>
+                                        )}
+                                        <h2 className="text-2xl font-bold leading-snug text-white">
+                                            {featured.title}
+                                        </h2>
+                                        <div className="mt-4 flex items-center gap-3">
+                                            {featured.speakerImage ? (
+                                                <img
+                                                    src={featured.speakerImage}
+                                                    alt={featured.speakerName || "Speaker"}
+                                                    className="h-10 w-10 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-700 text-sm font-semibold text-white">
+                                                    {featured.speakerName?.[0] || "?"}
+                                                </div>
+                                            )}
+                                            <div>
+                                                <p className="text-sm font-semibold text-white">{featured.speakerName}</p>
+                                                <p className="text-xs text-slate-400">
+                                                    {[featured.speakerDesignation, featured.speakerCompany]
+                                                        .filter(Boolean)
+                                                        .join(", ")}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {featured.slug && (
+                                            <div className="mt-6 flex gap-3">
+                                                <Link
+                                                    href={`/Webinar/${featured.slug}`}
+                                                    className="rounded-md bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+                                                >
+                                                    Register Now
+                                                </Link>
+                                                <Link
+                                                    href={`/Webinar/${featured.slug}`}
+                                                    className="rounded-md border border-slate-500 px-5 py-2.5 text-sm font-semibold text-white hover:border-slate-300"
+                                                >
+                                                    Learn More →
+                                                </Link>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                                <div className="mt-6 flex gap-3">
-                                    {featured.slug ? (
-                                        <>
-                                            <Link
-                                                href={`/Webinar/${featured.slug}`}
-                                                className="rounded-md bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
-                                            >
-                                                Register Now
-                                            </Link>
-                                            <Link
-                                                href={`/Webinar/${featured.slug}`}
-                                                className="rounded-md border border-slate-500 px-5 py-2.5 text-sm font-semibold text-white hover:border-slate-300"
-                                            >
-                                                Learn More →
-                                            </Link>
-                                        </>
-                                    ) : (
-                                        <span className="text-xs text-slate-400">
-                                            Preview data — no live link yet.
-                                        </span>
-                                    )}
-                                </div>
+
+                                {featuredList.length > 1 && (
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setCarouselIndex(
+                                                    (i) => (i - 1 + featuredList.length) % featuredList.length
+                                                )
+                                            }
+                                            aria-label="Previous featured webinar"
+                                            className="absolute right-16 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+                                        >
+                                            <ChevronLeft className="h-4 w-4" />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setCarouselIndex((i) => (i + 1) % featuredList.length)
+                                            }
+                                            aria-label="Next featured webinar"
+                                            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+                                        >
+                                            <ChevronRight className="h-4 w-4" />
+                                        </button>
+                                    </>
+                                )}
                             </div>
+                        )}
+
+                        <div ref={gridRef} className="mb-6 flex items-center gap-3 scroll-mt-6">
+                            <h2 className="text-xl font-bold text-slate-900">All Webinars</h2>
+                            <span className="h-0.5 w-10 bg-red-600" />
+                            {quickFilter !== "all" && (
+                                <button
+                                    type="button"
+                                    onClick={() => setQuickFilter("all")}
+                                    className="ml-auto rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-200"
+                                >
+                                    Showing: {quickFilter === "upcoming" ? "Upcoming" : "On Demand"} ✕
+                                </button>
+                            )}
                         </div>
 
-                        {featuredList.length > 1 && (
-                            <>
-                                <button
-                                    onClick={() => setCarouselIndex((i) => (i - 1 + featuredList.length) % featuredList.length)}
-                                    aria-label="Previous featured webinar"
-                                    className="absolute right-16 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-                                >
-                                    <ChevronLeft className="h-4 w-4" />
-                                </button>
-                                <button
-                                    onClick={() => setCarouselIndex((i) => (i + 1) % featuredList.length)}
-                                    aria-label="Next featured webinar"
-                                    className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-                                >
-                                    <ChevronRight className="h-4 w-4" />
-                                </button>
-                            </>
+                        {webinars.length === 0 ? (
+                            <p className="rounded-lg border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500">
+                                No webinars published yet. Check back soon.
+                            </p>
+                        ) : filtered.length === 0 ? (
+                            <p className="rounded-lg border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500">
+                                No webinars match your filters — try clearing search or category.
+                            </p>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                {filtered.map((w) => (
+                                    <WebinarCard key={w.id ?? w.slug ?? w.title} webinar={w} />
+                                ))}
+                            </div>
                         )}
-                    </div>
-                )}
-
-                {/* Grid */}
-                <div ref={gridRef} className="mb-6 flex items-center gap-3 scroll-mt-6">
-                    <h2 className="text-xl font-bold text-slate-900">All Webinars</h2>
-                    <span className="h-0.5 w-10 bg-red-600" />
-                    {quickFilter !== "all" && (
-                        <button
-                            onClick={() => setQuickFilter("all")}
-                            className="ml-auto rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-200"
-                        >
-                            Showing: {quickFilter === "upcoming" ? "Upcoming" : "On Demand"} ✕
-                        </button>
-                    )}
-                </div>
-
-                {filtered.length === 0 ? (
-                    <p className="rounded-lg border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500">
-                        No webinars match your filters yet — try clearing search or category.
-                    </p>
-                ) : (
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {filtered.map((w) => (
-                            <WebinarCard key={w.id ?? w.slug} webinar={w} />
-                        ))}
-                    </div>
+                    </>
                 )}
             </div>
-
         </div>
     );
 }
