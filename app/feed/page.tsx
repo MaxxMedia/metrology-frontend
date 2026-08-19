@@ -87,30 +87,33 @@ export default function PublicFeedPage() {
       : heroContent.guest;
 
   return (
-    <div className="bg-[#171A1E] text-white min-h-screen relative" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+    <div className="bg-[#0a0d14] text-white min-h-screen relative" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
 
       {/* ================= HERO ================= */}
 
-      <section className="relative bg-gradient-to-r from-[#171A1E] via-[#1D2125] to-[#1D247B] border-b border-[#292C30] overflow-hidden">
+      <section className="relative bg-[#0a0d14] border-b border-[#292C30] overflow-hidden min-h-[420px] md:min-h-[480px]">
+        {/* Background image — anchored right so it stays visible beside the copy */}
         <div className="absolute inset-0">
           <Image
             src="/images/hirings.png"
             alt="Metrology Hiring Platform"
             fill
             priority
-            className="object-cover opacity-20"
+            className="object-cover object-[70%_center] md:object-right opacity-55 md:opacity-65"
             sizes="100vw"
           />
         </div>
 
-        <div className="absolute inset-0 bg-gradient-to-r from-[#171A1E]/95 via-[#1D2125]/85 to-[#1D247B]/60"></div>
+        {/* Dark fade on the left for text contrast; lighter on the right so the image shows through */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0d14] via-[#0a0d14]/70 to-[#0a0d14]/25" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_40%,rgba(0,115,255,0.18),transparent_45%)]" />
         <div className="relative max-w-[1200px] mx-auto px-6 py-14 md:py-16">
           {!loadingRole && (
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6">
               <div className="max-w-3xl">
-                <div className="inline-flex items-center gap-2 rounded-full bg-[#00B5ED] px-3.5 py-1.5 shadow-md">
-                  <span className="h-2 w-2 rounded-full bg-white animate-pulse"></span>
-                  <span className="text-xs md:text-sm font-bold tracking-wide uppercase text-white">
+                <div className="inline-flex items-center gap-2 rounded-full bg-[#0073FF]/20 border border-[#0073FF]/40 px-3.5 py-1.5">
+                  <span className="h-2 w-2 rounded-full bg-[#00B5ED] animate-pulse"></span>
+                  <span className="text-xs md:text-sm font-bold tracking-wide uppercase text-[#00B5ED]">
                     {hero.badge}
                   </span>
                 </div>
@@ -122,7 +125,7 @@ export default function PublicFeedPage() {
                   </span>
                 </h1>
 
-                <p className="mt-4 text-base md:text-lg leading-relaxed text-[#CCCCCC] max-w-xl">
+                <p className="mt-4 text-base md:text-lg leading-relaxed text-gray-400 max-w-xl">
                   {hero.description}
                 </p>
               </div>
@@ -135,7 +138,7 @@ export default function PublicFeedPage() {
                         ? "#job-results"
                         : "/signup?role=candidate"
                     }
-                    className="inline-flex w-[180px] h-[50px] items-center justify-center rounded-xl bg-[#0073FF] text-white text-base font-bold shadow-lg hover:bg-[#0060d6] hover:shadow-xl transition-all duration-300"
+                    className="inline-flex w-[180px] h-[50px] items-center justify-center rounded-xl bg-[#0073FF] text-white text-base font-bold shadow-lg shadow-[#0073FF]/20 hover:bg-[#0060D0] transition-all duration-300"
                   >
                     Apply for Jobs
                   </Link>
@@ -148,7 +151,7 @@ export default function PublicFeedPage() {
                         ? "/recruiter/jobs/new"
                         : "/signup?role=recruiter"
                     }
-                    className="inline-flex w-[180px] h-[50px] items-center justify-center rounded-xl border border-[#00B5ED] text-[#00B5ED] bg-[#171A1E] text-base font-bold hover:bg-[#00B5ED] hover:text-white transition-all duration-300"
+                    className="inline-flex w-[180px] h-[50px] items-center justify-center rounded-xl border border-[#292C30] text-[#CCCCCC] bg-[#1D2125] text-base font-bold hover:border-[#00B5ED] hover:text-[#00B5ED] transition-all duration-300"
                   >
                     Post a Job
                   </Link>
@@ -161,7 +164,7 @@ export default function PublicFeedPage() {
 
       {/* ================= FILTER BAR ================= */}
       <section className="max-w-[1200px] mx-auto px-4 -mt-8 relative z-10">
-        <div className="bg-[#1D2125] rounded-2xl shadow-2xl border border-[#292C30] px-6 py-5">
+        <div className="bg-[#1D2125] rounded-2xl shadow-xl shadow-black/20 border border-[#292C30] px-6 py-5">
           <div className="flex flex-col md:flex-row md:items-end gap-5">
 
             {/* Type */}
@@ -235,7 +238,7 @@ export default function PublicFeedPage() {
             <div className="w-full md:w-auto">
               <button
                 onClick={handleSearch}
-                className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#0073FF] hover:bg-[#0060d6] text-white text-sm font-bold px-7 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap"
+                className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#0073FF] hover:bg-[#0060D0] text-white text-sm font-bold px-7 py-2.5 rounded-lg shadow-md shadow-[#0073FF]/20 transition-all duration-200 whitespace-nowrap"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -266,11 +269,14 @@ export default function PublicFeedPage() {
         className="max-w-[1200px] mx-auto px-4 py-14"
       >
         <div className="mb-10">
-          <h2 className="text-4xl font-bold text-white">
-            Explore Feed
-          </h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-4xl font-bold text-white">
+              Explore Feed
+            </h2>
+            <span className="h-0.5 w-10 bg-[#0073FF]" />
+          </div>
 
-          <p className="mt-3 text-sm text-[#CCCCCC] max-w-2xl">
+          <p className="mt-3 text-sm text-gray-400 max-w-2xl">
             Browse the latest manufacturing, engineering, tooling,
             automation, and industrial technology opportunities from
             employers around the world.

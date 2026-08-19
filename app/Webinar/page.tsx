@@ -60,10 +60,10 @@ function badgeForWebinar(w: {
 }
 
 const BADGE_STYLES = {
-    live: "bg-red-600 text-white",
-    upcoming: "bg-red-600 text-white",
-    completed: "bg-slate-500 text-white",
-    demand: "bg-slate-900 text-white",
+    live: "bg-[#0073FF] text-white",
+    upcoming: "bg-[#0073FF] text-white",
+    completed: "bg-[#292C30] text-[#CCCCCC]",
+    demand: "bg-[#00B5ED] text-[#0a0d14]",
 };
 
 function formatDate(dateStr: string) {
@@ -96,7 +96,7 @@ function WebinarThumbnail({
     }
 
     return (
-        <div className={`flex h-full w-full items-center justify-center bg-slate-800 text-slate-500 ${className}`}>
+        <div className={`flex h-full w-full items-center justify-center bg-[#171A1E] text-gray-500 ${className}`}>
             <VideoPlaceholder />
         </div>
     );
@@ -124,7 +124,7 @@ function WebinarCard({ webinar }: { webinar: WebinarItem }) {
 
     const cardBody = (
         <>
-            <div className="relative aspect-video overflow-hidden bg-slate-800">
+            <div className="relative aspect-video overflow-hidden bg-[#171A1E]">
                 <WebinarThumbnail
                     src={imageSrc}
                     alt={webinar.title}
@@ -138,14 +138,14 @@ function WebinarCard({ webinar }: { webinar: WebinarItem }) {
                     </span>
                 )}
                 {webinar.startDate && !isPast && (
-                    <span className="absolute right-3 top-3 rounded bg-white/90 px-2 py-1 text-[11px] font-bold text-slate-900">
+                    <span className="absolute right-3 top-3 rounded bg-[#1D2125]/90 px-2 py-1 text-[11px] font-bold text-white border border-[#292C30]">
                         {formatDate(webinar.startDate)}
                     </span>
                 )}
             </div>
 
             <div className="flex flex-1 flex-col gap-3 p-4">
-                <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900">
+                <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-white group-hover:text-[#00B5ED] transition-colors">
                     {webinar.title}
                 </h3>
 
@@ -154,23 +154,23 @@ function WebinarCard({ webinar }: { webinar: WebinarItem }) {
                         <img
                             src={webinar.speakerImage}
                             alt={webinar.speakerName || "Speaker"}
-                            className="h-8 w-8 rounded-full object-cover"
+                            className="h-8 w-8 rounded-full object-cover border border-[#292C30]"
                         />
                     ) : (
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-600">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#171A1E] text-xs font-semibold text-[#CCCCCC] border border-[#292C30]">
                             {webinar.speakerName?.[0] || "?"}
                         </div>
                     )}
                     <div className="leading-tight">
-                        <p className="text-sm font-medium text-slate-900">{webinar.speakerName}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-sm font-medium text-white">{webinar.speakerName}</p>
+                        <p className="text-xs text-gray-400">
                             {[webinar.speakerDesignation, webinar.speakerCompany].filter(Boolean).join(", ")}
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                    <Clock className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                    <Clock className="h-3.5 w-3.5 text-[#00B5ED]" />
                     {webinar.startDate && !isPast
                         ? `${new Date(webinar.startDate).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })} IST · ${webinar.duration ?? 60} Min`
                         : `${webinar.duration ?? 60} Min`}
@@ -179,8 +179,8 @@ function WebinarCard({ webinar }: { webinar: WebinarItem }) {
                 <span
                     className={`mt-auto block w-full rounded-md py-2 text-center text-sm font-semibold transition-colors ${
                         isPast
-                            ? "border border-slate-300 text-slate-700 group-hover:bg-slate-50"
-                            : "bg-red-600 text-white group-hover:bg-red-700"
+                            ? "border border-[#292C30] text-[#CCCCCC] group-hover:border-[#00B5ED] group-hover:text-[#00B5ED]"
+                            : "bg-[#0073FF] text-white group-hover:bg-[#0060D0]"
                     }`}
                 >
                     {isPast ? "Watch Now" : "Register"}
@@ -191,7 +191,7 @@ function WebinarCard({ webinar }: { webinar: WebinarItem }) {
 
     if (!href) {
         return (
-            <div className="group flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white">
+            <div className="group flex flex-col overflow-hidden rounded-xl border border-[#292C30] bg-[#1D2125]">
                 {cardBody}
             </div>
         );
@@ -200,7 +200,7 @@ function WebinarCard({ webinar }: { webinar: WebinarItem }) {
     return (
         <Link
             href={href}
-            className="group flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white transition-shadow hover:shadow-lg"
+            className="group flex flex-col overflow-hidden rounded-xl border border-[#292C30] bg-[#1D2125] transition-all hover:border-[#0073FF]/50 hover:shadow-lg hover:shadow-[#0073FF]/10"
         >
             {cardBody}
         </Link>
@@ -281,20 +281,20 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans">
-            <div className="relative overflow-hidden bg-slate-900">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(220,38,38,0.15),transparent_55%)]" />
+        <div className="min-h-screen bg-[#0a0d14] font-sans text-[#CCCCCC]">
+            <div className="relative overflow-hidden bg-[#0a0d14] border-b border-[#292C30]">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(0,115,255,0.12),transparent_55%)]" />
                 <div className="relative mx-auto max-w-6xl px-6 py-16 sm:py-20">
-                    <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-red-500">
+                    <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#00B5ED]">
                         Metrology
                     </p>
                     <h1 className="text-4xl font-extrabold text-white sm:text-5xl">Webinars</h1>
-                    <p className="mt-2 text-lg font-medium text-slate-300">
+                    <p className="mt-2 text-lg font-medium text-[#CCCCCC]">
                         Insights. Innovation. Industry.
                     </p>
-                    <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-400">
+                    <p className="mt-4 max-w-xl text-sm leading-relaxed text-gray-400">
                         Join live and on-demand webinars by industry experts on the latest
-                        trends in tooling, machining and smart manufacturing.
+                        trends in metrology, measurement systems, and smart manufacturing.
                     </p>
                     <div className="mt-6 flex flex-wrap gap-3">
                         <button
@@ -305,8 +305,8 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                             }}
                             className={`rounded-md px-5 py-2.5 text-sm font-semibold transition-colors ${
                                 quickFilter === "upcoming"
-                                    ? "bg-red-600 text-white hover:bg-red-700"
-                                    : "border border-slate-600 text-slate-200 hover:border-slate-400"
+                                    ? "bg-[#0073FF] text-white hover:bg-[#0060D0]"
+                                    : "border border-[#292C30] text-[#CCCCCC] hover:border-[#00B5ED] hover:text-white"
                             }`}
                         >
                             Upcoming
@@ -319,8 +319,8 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                             }}
                             className={`rounded-md px-5 py-2.5 text-sm font-semibold transition-colors ${
                                 quickFilter === "on-demand"
-                                    ? "bg-red-600 text-white hover:bg-red-700"
-                                    : "border border-slate-600 text-slate-200 hover:border-slate-400"
+                                    ? "bg-[#0073FF] text-white hover:bg-[#0060D0]"
+                                    : "border border-[#292C30] text-[#CCCCCC] hover:border-[#00B5ED] hover:text-white"
                             }`}
                         >
                             On Demand
@@ -328,7 +328,7 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                         {featured?.slug ? (
                             <Link
                                 href={`/Webinar/${featured.slug}`}
-                                className="rounded-md border border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-200 hover:border-slate-400"
+                                className="rounded-md border border-[#292C30] px-5 py-2.5 text-sm font-semibold text-[#CCCCCC] hover:border-[#00B5ED] hover:text-white transition-colors"
                             >
                                 Register
                             </Link>
@@ -336,7 +336,7 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                             <button
                                 type="button"
                                 onClick={scrollToGrid}
-                                className="rounded-md border border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-200 hover:border-slate-400"
+                                className="rounded-md border border-[#292C30] px-5 py-2.5 text-sm font-semibold text-[#CCCCCC] hover:border-[#00B5ED] hover:text-white transition-colors"
                             >
                                 Browse Webinars
                             </button>
@@ -345,25 +345,25 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                 </div>
             </div>
 
-            <div className="border-b border-slate-200 bg-white">
+            <div className="border-b border-[#292C30] bg-[#1D2125]">
                 <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-6 py-4">
                     <div className="relative min-w-[220px] flex-1">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                         <input
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search webinars..."
-                            className="w-full rounded-md border text-black border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                            className="w-full rounded-md border border-[#292C30] bg-[#171A1E] py-2 pl-9 pr-3 text-sm text-white placeholder:text-gray-500 focus:border-[#0073FF] focus:outline-none focus:ring-1 focus:ring-[#0073FF]"
                         />
                     </div>
                     {categoryOptions.length > 1 && (
                         <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            className="rounded-md border border-slate-300 px-3 text-black py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                            className="rounded-md border border-[#292C30] bg-[#171A1E] px-3 py-2 text-sm text-white focus:border-[#0073FF] focus:outline-none focus:ring-1 focus:ring-[#0073FF]"
                         >
                             {categoryOptions.map((name) => (
-                                <option key={name} value={name}>
+                                <option key={name} value={name} className="bg-[#171A1E]">
                                     {name}
                                 </option>
                             ))}
@@ -374,18 +374,18 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
 
             <div className="mx-auto max-w-6xl px-6 py-10">
                 {loading ? (
-                    <div className="flex items-center justify-center py-24 text-slate-400">
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <div className="flex items-center justify-center py-24 text-gray-400">
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin text-[#00B5ED]" />
                         Loading webinars…
                     </div>
                 ) : error ? (
-                    <div className="rounded-lg border border-red-200 bg-red-50 px-6 py-16 text-center text-sm text-red-700">
+                    <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-6 py-16 text-center text-sm text-red-300">
                         {error}
                     </div>
                 ) : (
                     <>
                         {featured && (
-                            <div className="relative mb-12 overflow-hidden rounded-xl bg-slate-900">
+                            <div className="relative mb-12 overflow-hidden rounded-xl border border-[#292C30] bg-[#1D2125]">
                                 <div className="grid gap-0 sm:grid-cols-2">
                                     <div className="relative aspect-video sm:aspect-auto">
                                         <WebinarThumbnail
@@ -393,14 +393,14 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                                             alt={featured.title}
                                             className="opacity-90"
                                         />
-                                        <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded bg-red-600 px-2.5 py-1 text-xs font-bold text-white">
-                                            <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                                        <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded bg-[#0073FF] px-2.5 py-1 text-xs font-bold text-white">
+                                            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
                                             {featured.featured ? "LIVE" : "FEATURED"}
                                         </span>
                                     </div>
                                     <div className="flex flex-col justify-center p-8">
                                         {featured.startDate && (
-                                            <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-red-400">
+                                            <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#00B5ED]">
                                                 <Calendar className="h-3.5 w-3.5" />
                                                 {formatFullDate(featured.startDate)} ·{" "}
                                                 {new Date(featured.startDate).toLocaleTimeString("en-US", {
@@ -418,16 +418,16 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                                                 <img
                                                     src={featured.speakerImage}
                                                     alt={featured.speakerName || "Speaker"}
-                                                    className="h-10 w-10 rounded-full object-cover"
+                                                    className="h-10 w-10 rounded-full object-cover border border-[#292C30]"
                                                 />
                                             ) : (
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-700 text-sm font-semibold text-white">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#171A1E] text-sm font-semibold text-white border border-[#292C30]">
                                                     {featured.speakerName?.[0] || "?"}
                                                 </div>
                                             )}
                                             <div>
                                                 <p className="text-sm font-semibold text-white">{featured.speakerName}</p>
-                                                <p className="text-xs text-slate-400">
+                                                <p className="text-xs text-gray-400">
                                                     {[featured.speakerDesignation, featured.speakerCompany]
                                                         .filter(Boolean)
                                                         .join(", ")}
@@ -438,13 +438,13 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                                             <div className="mt-6 flex gap-3">
                                                 <Link
                                                     href={`/Webinar/${featured.slug}`}
-                                                    className="rounded-md bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+                                                    className="rounded-md bg-[#0073FF] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0060D0] transition-colors"
                                                 >
                                                     Register Now
                                                 </Link>
                                                 <Link
                                                     href={`/Webinar/${featured.slug}`}
-                                                    className="rounded-md border border-slate-500 px-5 py-2.5 text-sm font-semibold text-white hover:border-slate-300"
+                                                    className="rounded-md border border-[#292C30] px-5 py-2.5 text-sm font-semibold text-[#CCCCCC] hover:border-[#00B5ED] hover:text-white transition-colors"
                                                 >
                                                     Learn More →
                                                 </Link>
@@ -463,7 +463,7 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                                                 )
                                             }
                                             aria-label="Previous featured webinar"
-                                            className="absolute right-16 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+                                            className="absolute right-16 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-[#171A1E] border border-[#292C30] text-white hover:border-[#00B5ED] transition-colors"
                                         >
                                             <ChevronLeft className="h-4 w-4" />
                                         </button>
@@ -473,7 +473,7 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                                                 setCarouselIndex((i) => (i + 1) % featuredList.length)
                                             }
                                             aria-label="Next featured webinar"
-                                            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+                                            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-[#171A1E] border border-[#292C30] text-white hover:border-[#00B5ED] transition-colors"
                                         >
                                             <ChevronRight className="h-4 w-4" />
                                         </button>
@@ -483,13 +483,13 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                         )}
 
                         <div ref={gridRef} className="mb-6 flex items-center gap-3 scroll-mt-6">
-                            <h2 className="text-xl font-bold text-slate-900">All Webinars</h2>
-                            <span className="h-0.5 w-10 bg-red-600" />
+                            <h2 className="text-xl font-bold text-white">All Webinars</h2>
+                            <span className="h-0.5 w-10 bg-[#0073FF]" />
                             {quickFilter !== "all" && (
                                 <button
                                     type="button"
                                     onClick={() => setQuickFilter("all")}
-                                    className="ml-auto rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-200"
+                                    className="ml-auto rounded-full bg-[#171A1E] border border-[#292C30] px-3 py-1 text-xs font-medium text-gray-400 hover:text-white hover:border-[#00B5ED] transition-colors"
                                 >
                                     Showing: {quickFilter === "upcoming" ? "Upcoming" : "On Demand"} ✕
                                 </button>
@@ -497,11 +497,11 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                         </div>
 
                         {webinars.length === 0 ? (
-                            <p className="rounded-lg border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500">
+                            <p className="rounded-xl border border-dashed border-[#292C30] py-16 text-center text-sm text-gray-400">
                                 No webinars published yet. Check back soon.
                             </p>
                         ) : filtered.length === 0 ? (
-                            <p className="rounded-lg border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500">
+                            <p className="rounded-xl border border-dashed border-[#292C30] py-16 text-center text-sm text-gray-400">
                                 No webinars match your filters — try clearing search or category.
                             </p>
                         ) : (

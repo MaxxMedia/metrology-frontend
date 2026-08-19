@@ -191,10 +191,10 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
 function InfoStat({ icon: Icon, label, value }: InfoStatProps) {
     return (
         <div className="flex items-center gap-3 px-4 py-3">
-            <Icon className="h-5 w-5 shrink-0 text-red-600" />
+            <Icon className="h-5 w-5 shrink-0 text-[#00B5ED]" />
             <div className="leading-tight">
-                <p className="text-[11px] uppercase tracking-wide text-slate-400">{label}</p>
-                <p className="text-sm font-semibold text-slate-800">{String(value)}</p>
+                <p className="text-[11px] uppercase tracking-wide text-gray-400">{label}</p>
+                <p className="text-sm font-semibold text-white">{String(value)}</p>
             </div>
         </div>
     );
@@ -266,8 +266,8 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
 
     if (loading) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-slate-50 font-sans text-slate-400">
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            <div className="flex min-h-screen items-center justify-center bg-[#0a0d14] font-sans text-gray-400">
+                <Loader2 className="mr-2 h-5 w-5 animate-spin text-[#00B5ED]" />
                 Loading webinar…
             </div>
         );
@@ -275,14 +275,14 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
 
     if (notFound) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 px-6 text-center font-sans">
-                <h1 className="text-xl font-bold text-slate-900">Webinar not available</h1>
-                <p className="max-w-md text-sm text-slate-500">
+            <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#0a0d14] px-6 text-center font-sans">
+                <h1 className="text-xl font-bold text-white">Webinar not available</h1>
+                <p className="max-w-md text-sm text-gray-400">
                     This webinar either doesn&apos;t exist, or hasn&apos;t been published yet.
                 </p>
                 <Link
                     href="/Webinar"
-                    className="rounded-md bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+                    className="rounded-md bg-[#0073FF] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0060D0] transition-colors"
                 >
                     Back to Webinars
                 </Link>
@@ -292,12 +292,12 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
 
     if (error || !webinar) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 px-6 text-center font-sans">
-                <h1 className="text-xl font-bold text-slate-900">Something went wrong</h1>
-                <p className="max-w-md text-sm text-slate-500">{error || "Unable to load webinar details."}</p>
+            <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#0a0d14] px-6 text-center font-sans">
+                <h1 className="text-xl font-bold text-white">Something went wrong</h1>
+                <p className="max-w-md text-sm text-gray-400">{error || "Unable to load webinar details."}</p>
                 <Link
                     href="/Webinar"
-                    className="rounded-md bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+                    className="rounded-md bg-[#0073FF] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0060D0] transition-colors"
                 >
                     Back to Webinars
                 </Link>
@@ -318,24 +318,24 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
     const embedUrl = getYouTubeEmbedUrl(webinar.youtubeUrl);
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
-            <div className="border-b border-slate-200 bg-white">
-                <div className="mx-auto max-w-6xl px-6 py-3 text-xs text-slate-500">
-                    <Link href="/" className="hover:text-slate-700">
+        <div className="min-h-screen bg-[#0a0d14] font-sans text-[#CCCCCC]">
+            <div className="border-b border-[#292C30] bg-[#1D2125]">
+                <div className="mx-auto max-w-6xl px-6 py-3 text-xs text-gray-400">
+                    <Link href="/" className="hover:text-[#00B5ED] transition-colors">
                         Home
                     </Link>
                     <span className="mx-1.5">›</span>
-                    <Link href="/Webinar" className="hover:text-slate-700">
+                    <Link href="/Webinar" className="hover:text-[#00B5ED] transition-colors">
                         Webinars
                     </Link>
                     <span className="mx-1.5">›</span>
-                    <span className="text-slate-800">{webinar.title}</span>
+                    <span className="text-white">{webinar.title}</span>
                 </div>
             </div>
 
             <div className="mx-auto max-w-6xl px-6 py-8">
                 <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
-                    <div className="relative aspect-video overflow-hidden rounded-xl bg-slate-900">
+                    <div className="relative aspect-video overflow-hidden rounded-xl bg-[#171A1E] border border-[#292C30]">
                         {isPast && embedUrl ? (
                             <iframe
                                 src={embedUrl}
@@ -353,11 +353,11 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                                         className="h-full w-full object-cover opacity-90"
                                     />
                                 ) : (
-                                    <div className="flex h-full w-full items-center justify-center bg-slate-800 text-slate-500">
+                                    <div className="flex h-full w-full items-center justify-center bg-[#171A1E] text-gray-500">
                                         <Video className="h-12 w-12 opacity-40" />
                                     </div>
                                 )}
-                                <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded bg-red-600 px-2.5 py-1 text-xs font-bold text-white">
+                                <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded bg-[#0073FF] px-2.5 py-1 text-xs font-bold text-white">
                                     <span className="h-1.5 w-1.5 rounded-full bg-white" />
                                     {isPast ? "RECORDED WEBINAR" : "LIVE WEBINAR"}
                                 </span>
@@ -366,14 +366,14 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                     </div>
 
                     <div className="flex flex-col justify-center">
-                        <h1 className="text-2xl font-bold leading-snug text-slate-900 sm:text-3xl">
+                        <h1 className="text-2xl font-bold leading-snug text-white sm:text-3xl">
                             {webinar.title}
                         </h1>
 
-                        <ul className="mt-5 space-y-2.5 text-sm text-slate-600">
+                        <ul className="mt-5 space-y-2.5 text-sm text-[#CCCCCC]">
                             {webinar.startDate && (
                                 <li className="flex items-center gap-2.5">
-                                    <Calendar className="h-4 w-4 text-red-600" />
+                                    <Calendar className="h-4 w-4 text-[#00B5ED]" />
                                     {new Date(webinar.startDate).toLocaleDateString("en-US", {
                                         month: "long",
                                         day: "numeric",
@@ -384,7 +384,7 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                             )}
                             {webinar.startDate && (
                                 <li className="flex items-center gap-2.5">
-                                    <Clock className="h-4 w-4 text-red-600" />
+                                    <Clock className="h-4 w-4 text-[#00B5ED]" />
                                     {new Date(webinar.startDate).toLocaleTimeString("en-US", {
                                         hour: "numeric",
                                         minute: "2-digit",
@@ -392,16 +392,16 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                                 </li>
                             )}
                             <li className="flex items-center gap-2.5">
-                                <Video className="h-4 w-4 text-red-600" />
+                                <Video className="h-4 w-4 text-[#00B5ED]" />
                                 {webinar.duration} Minutes
                             </li>
                             <li className="flex items-center gap-2.5">
-                                <Globe className="h-4 w-4 text-red-600" />
+                                <Globe className="h-4 w-4 text-[#00B5ED]" />
                                 {webinar.language}
                             </li>
                             {webinar.category?.name && (
                                 <li className="flex items-center gap-2.5">
-                                    <Wrench className="h-4 w-4 text-red-600" />
+                                    <Wrench className="h-4 w-4 text-[#00B5ED]" />
                                     {webinar.category.name}
                                 </li>
                             )}
@@ -413,7 +413,7 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                                     href={buildGoogleCalendarUrl(webinar)}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center gap-2 rounded-md bg-red-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+                                    className="flex items-center gap-2 rounded-md bg-[#0073FF] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#0060D0] transition-colors"
                                 >
                                     <Calendar className="h-4 w-4" />
                                     Add to Calendar
@@ -424,7 +424,7 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                                     href={watchUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center gap-2 rounded-md border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-700 hover:border-slate-400"
+                                    className="flex items-center gap-2 rounded-md border border-[#292C30] bg-[#1D2125] px-6 py-2.5 text-sm font-semibold text-[#CCCCCC] hover:border-[#00B5ED] hover:text-white transition-colors"
                                 >
                                     {webinar.youtubeUrl ? (
                                         <Youtube className="h-4 w-4" />
@@ -438,7 +438,7 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                     </div>
                 </div>
 
-                <div className="mt-8 grid grid-cols-2 divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white sm:grid-cols-4 sm:divide-x sm:divide-y-0">
+                <div className="mt-8 grid grid-cols-2 divide-y divide-[#292C30] rounded-xl border border-[#292C30] bg-[#1D2125] sm:grid-cols-4 sm:divide-x sm:divide-y-0">
                     <InfoStat icon={Video} label="Live Session" value="Yes" />
                     <InfoStat icon={MessageCircle} label="Q&A" value="Included" />
                     <InfoStat
@@ -451,18 +451,18 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
 
                 <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_280px_280px]">
                     <div>
-                        <h2 className="mb-3 text-lg font-bold text-slate-900">About the Webinar</h2>
-                        <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
+                        <h2 className="mb-3 text-lg font-bold text-white">About the Webinar</h2>
+                        <p className="whitespace-pre-line text-sm leading-relaxed text-gray-400">
                             {webinar.fullDescription || "Details will be shared soon."}
                         </p>
 
                         {webinar.learningPoints && webinar.learningPoints.length > 0 && (
                             <>
-                                <h2 className="mb-3 mt-8 text-lg font-bold text-slate-900">What You&apos;ll Learn</h2>
+                                <h2 className="mb-3 mt-8 text-lg font-bold text-white">What You&apos;ll Learn</h2>
                                 <ul className="space-y-2.5">
                                     {webinar.learningPoints.map((point, i) => (
-                                        <li key={`learning-${i}-${point}`} className="flex items-start gap-2.5 text-sm text-slate-600">
-                                            <Check className="mt-0.5 h-4 w-4 shrink-0 rounded-sm bg-red-100 p-0.5 text-red-600" />
+                                        <li key={`learning-${i}-${point}`} className="flex items-start gap-2.5 text-sm text-gray-400">
+                                            <Check className="mt-0.5 h-4 w-4 shrink-0 rounded-sm bg-[#0073FF]/20 p-0.5 text-[#00B5ED]" />
                                             {point}
                                         </li>
                                     ))}
@@ -471,26 +471,26 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                         )}
                     </div>
 
-                    <div className="h-fit rounded-lg border border-slate-200 bg-white p-5">
-                        <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-slate-500">Speaker</h3>
+                    <div className="h-fit rounded-xl border border-[#292C30] bg-[#1D2125] p-5">
+                        <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-gray-400">Speaker</h3>
                         <div className="flex flex-col items-center text-center">
                             {webinar.speakerImage ? (
                                 <img
                                     src={webinar.speakerImage}
                                     alt={webinar.speakerName}
-                                    className="h-20 w-20 rounded-full object-cover"
+                                    className="h-20 w-20 rounded-full object-cover border border-[#292C30]"
                                 />
                             ) : (
-                                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-slate-200 text-2xl font-semibold text-slate-600">
+                                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#171A1E] text-2xl font-semibold text-[#CCCCCC] border border-[#292C30]">
                                     {webinar.speakerName?.[0] || "?"}
                                 </div>
                             )}
-                            <p className="mt-3 text-sm font-bold text-slate-900">{webinar.speakerName}</p>
+                            <p className="mt-3 text-sm font-bold text-white">{webinar.speakerName}</p>
                             {webinar.speakerDesignation && (
-                                <p className="text-xs text-slate-500">{webinar.speakerDesignation}</p>
+                                <p className="text-xs text-gray-400">{webinar.speakerDesignation}</p>
                             )}
                             {webinar.speakerCompany && (
-                                <p className="text-xs text-slate-500">{webinar.speakerCompany}</p>
+                                <p className="text-xs text-gray-400">{webinar.speakerCompany}</p>
                             )}
                             {webinar.speakerLinkedin && (
                                 <a
@@ -507,14 +507,14 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                     </div>
 
                     {webinar.agenda && webinar.agenda.length > 0 && (
-                        <div className="h-fit rounded-lg border border-slate-200 bg-white p-5">
-                            <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-slate-500">Agenda</h3>
-                            <ol className="space-y-4 border-l-2 border-slate-100 pl-4">
+                        <div className="h-fit rounded-xl border border-[#292C30] bg-[#1D2125] p-5">
+                            <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-gray-400">Agenda</h3>
+                            <ol className="space-y-4 border-l-2 border-[#292C30] pl-4">
                                 {webinar.agenda.map((item, i) => (
                                     <li key={`${item.time}-${item.title}-${i}`} className="relative">
-                                        <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-red-600" />
-                                        <p className="text-xs font-bold text-red-600">{item.time}</p>
-                                        <p className="text-sm text-slate-700">{item.title}</p>
+                                        <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-[#0073FF]" />
+                                        <p className="text-xs font-bold text-[#00B5ED]">{item.time}</p>
+                                        <p className="text-sm text-[#CCCCCC]">{item.title}</p>
                                     </li>
                                 ))}
                             </ol>
@@ -524,7 +524,7 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
 
                 {webinar.resources && webinar.resources.length > 0 && (
                     <div className="mt-10">
-                        <h2 className="mb-4 text-lg font-bold text-slate-900">Resources</h2>
+                        <h2 className="mb-4 text-lg font-bold text-white">Resources</h2>
                         <div className="space-y-2">
                             {webinar.resources.map((res, i) => (
                                 <a
@@ -532,16 +532,16 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                                     href={res.url || "#"}
                                     target={res.url ? "_blank" : undefined}
                                     rel={res.url ? "noreferrer" : undefined}
-                                    className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3"
+                                    className="flex items-center justify-between rounded-xl border border-[#292C30] bg-[#1D2125] px-4 py-3 hover:border-[#00B5ED]/50 transition-colors"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <FileText className="h-4 w-4 text-red-600" />
+                                        <FileText className="h-4 w-4 text-[#00B5ED]" />
                                         <div>
-                                            <p className="text-sm font-medium text-slate-800">{res.title}</p>
-                                            {res.size && <p className="text-xs text-slate-400">{res.size}</p>}
+                                            <p className="text-sm font-medium text-white">{res.title}</p>
+                                            {res.size && <p className="text-xs text-gray-500">{res.size}</p>}
                                         </div>
                                     </div>
-                                    <Download className="h-4 w-4 text-slate-400" />
+                                    <Download className="h-4 w-4 text-gray-500" />
                                 </a>
                             ))}
                         </div>
@@ -551,19 +551,19 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                 {related.length > 0 && (
                     <div className="mt-12">
                         <div className="mb-4 flex items-center justify-between">
-                            <h2 className="text-lg font-bold text-slate-900">More Webinars You Might Like</h2>
+                            <h2 className="text-lg font-bold text-white">More Webinars You Might Like</h2>
                             <div className="flex gap-2">
                                 <button
                                     type="button"
                                     aria-label="Scroll related webinars left"
-                                    className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-slate-500 hover:border-slate-400"
+                                    className="flex h-8 w-8 items-center justify-center rounded-full border border-[#292C30] bg-[#1D2125] text-gray-400 hover:border-[#00B5ED] hover:text-white transition-colors"
                                 >
                                     <ChevronLeft className="h-4 w-4" />
                                 </button>
                                 <button
                                     type="button"
                                     aria-label="Scroll related webinars right"
-                                    className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-slate-500 hover:border-slate-400"
+                                    className="flex h-8 w-8 items-center justify-center rounded-full border border-[#292C30] bg-[#1D2125] text-gray-400 hover:border-[#00B5ED] hover:text-white transition-colors"
                                 >
                                     <ChevronRight className="h-4 w-4" />
                                 </button>
@@ -573,7 +573,7 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                             {related.map((item, i) => {
                                 const card = (
                                     <>
-                                        <div className="relative aspect-video overflow-hidden rounded-lg bg-slate-800">
+                                        <div className="relative aspect-video overflow-hidden rounded-lg bg-[#171A1E] border border-[#292C30]">
                                             {item.thumbnail || item.image ? (
                                                 <img
                                                     src={item.thumbnail || item.image}
@@ -581,18 +581,18 @@ export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_AP
                                                     className="h-full w-full object-cover opacity-90 transition-transform group-hover:scale-105"
                                                 />
                                             ) : (
-                                                <div className="flex h-full w-full items-center justify-center bg-slate-800">
-                                                    <Video className="h-8 w-8 text-slate-500 opacity-40" />
+                                                <div className="flex h-full w-full items-center justify-center bg-[#171A1E]">
+                                                    <Video className="h-8 w-8 text-gray-500 opacity-40" />
                                                 </div>
                                             )}
                                             <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
                                                 <Play className="h-8 w-8 text-white" />
                                             </div>
                                         </div>
-                                        <p className="mt-2 line-clamp-2 text-sm font-medium text-slate-800">
+                                        <p className="mt-2 line-clamp-2 text-sm font-medium text-white group-hover:text-[#00B5ED] transition-colors">
                                             {item.title}
                                         </p>
-                                        <p className="text-xs text-slate-400">{item.meta || "Webinar"}</p>
+                                        <p className="text-xs text-gray-500">{item.meta || "Webinar"}</p>
                                     </>
                                 );
 
