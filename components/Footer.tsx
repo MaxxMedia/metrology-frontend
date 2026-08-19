@@ -117,6 +117,7 @@ async function getFooterCategories() {
 
 const RESOURCE_LINKS = [
   { label: "Newsletter", href: "/news" },
+  { label: "Webinar", href: "/Webinar" },
   { label: "Contact Us", href: "/contact" },
 ];
 

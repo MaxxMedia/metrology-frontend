@@ -353,14 +353,14 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search webinars..."
-                            className="w-full rounded-md border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                            className="w-full rounded-md border text-black border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                         />
                     </div>
                     {categoryOptions.length > 1 && (
                         <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            className="rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                            className="rounded-md border border-slate-300 px-3 text-black py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                         >
                             {categoryOptions.map((name) => (
                                 <option key={name} value={name}>
