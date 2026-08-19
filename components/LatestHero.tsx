@@ -432,7 +432,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                     fill
                     sizes="(max-width: 1024px) 100vw, 400px"
                     quality={80}
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 px-4 py-4 sm:px-5 sm:py-5">
