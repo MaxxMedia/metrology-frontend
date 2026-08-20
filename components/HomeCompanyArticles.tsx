@@ -270,8 +270,9 @@ export default function HomeCompanyArticles({ posts }: Props) {
           font-size: 32px !important;
           line-height: 1.2 !important;
         }
-        h4.top-card-title-22 {
-          font-size: 17px !important;
+        h4.top-card-title-22,
+        h4.top-card-title-22 a {
+          font-size: 22px !important;
           line-height: 1.3 !important;
         }
         p.top-card-excerpt-16 {
@@ -333,10 +334,10 @@ export default function HomeCompanyArticles({ posts }: Props) {
                         </span>
                       )}
 
-                      <h4 className="top-card-title-22 text-white font-bold leading-snug mb-[8px]">
+                      <h4 className="top-card-title-22 text-[22px] text-white font-bold leading-snug mb-[8px]">
                         <Link
                           href={`/post/${post.slug}`}
-                          className="hover:text-[#0073ff] transition-colors"
+                          className="text-[22px] text-white hover:text-[#0073ff] transition-colors"
                         >
                           {post.title}
                         </Link>
@@ -392,94 +393,94 @@ export default function HomeCompanyArticles({ posts }: Props) {
               {/* Explore Categories */}
               <div className="rounded-[4px] border border-white/10 bg-[#1D2125] w-full pt-[20px] pr-[30px] pb-[30px] pl-[30px]">
                 <h4 className="text-[17px] font-bold text-white mb-[12px]">
-      Explore Categories
-    </h4>
+                  Explore Categories
+                </h4>
 
-    <div className="flex flex-col gap-[14px]">
-      {categories.map((cat) => (
-        <Link
-          key={cat.slug}
-          href={`/topics/${cat.slug}`}
-          className="group relative flex items-center min-h-[54px] py-[10px] pl-[12px] pr-[44px] rounded-[4px] overflow-hidden"
-        >
-          <Image
-            src={cat.image}
-            alt=""
-            fill
-            sizes="260px"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-[#00000080] group-hover:bg-black/60 transition-colors" />
-          <div className="relative z-10 flex items-baseline gap-[6px] text-white min-w-0 pr-1">
-            <h6 className="text-[16px] font-bold leading-snug break-words">{cat.name}</h6>
-            <span className="text-[11px] text-white/85 shrink-0">({cat.count})</span>
-          </div>
-          <span className="absolute z-10 top-1/2 right-[10px] -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-[4px] bg-black/40 text-white group-hover:bg-[#0073ff] transition-colors shrink-0">
-            <ArrowRight size={12} />
-          </span>
-        </Link>
-      ))}
-    </div>
-  </div>
-            {/* Popular News — normal flow */}
-            <div className="rounded-[4px] border border-white/10 bg-[#1D2125] w-full lg:w-[400px] pt-[20px] pr-[30px] pb-[30px] pl-[30px]">
-              <h4 className="text-[17px] font-bold text-white mb-[12px]">
-                Popular News
-              </h4>
-              <div className="flex flex-col divide-y divide-white/10">
-                {popularPosts.map((post) => (
-                  <Link
-                    key={post.id}
-                    href={`/post/${post.slug}`}
-                    className="group flex items-center gap-[12px] py-[10px]"
-                  >
-
-                    <div className="relative w-[100px] h-[100px] rounded-full overflow-hidden shrink-0">
+                <div className="flex flex-col gap-[14px]">
+                  {categories.map((cat) => (
+                    <Link
+                      key={cat.slug}
+                      href={`/topics/${cat.slug}`}
+                      className="group relative flex items-center min-h-[54px] py-[10px] pl-[12px] pr-[44px] rounded-[4px] overflow-hidden"
+                    >
                       <Image
-                        src={getImageUrl(post)}
-                        alt={post.title}
+                        src={cat.image}
+                        alt=""
                         fill
-
-                        sizes="100px"
+                        sizes="260px"
                         className="object-cover"
                       />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h6 className="text-[18px] font-semibold text-white leading-snug mb-[6px] line-clamp-2 group-hover:text-[#0073ff] transition-colors">
-                        {post.title}
-                      </h6>
-                      <ul className="flex flex-wrap items-center gap-x-[10px] text-[14px] text-[#a8aab3]">
-                        <li>By {getAuthorName(post)}</li>
-                        <li className="inline-flex items-center gap-[4px]">
-                          <PulseIcon className="w-3 h-3 text-[#0073ff]" />
-                          {(post.views ?? 0).toLocaleString()} Views
-                        </li>
-                      </ul>
-                    </div>
-                  </Link>
-                ))}
+                      <div className="absolute inset-0 bg-[#00000080] group-hover:bg-black/60 transition-colors" />
+                      <div className="relative z-10 flex items-baseline gap-[6px] text-white min-w-0 pr-1">
+                        <h6 className="text-[16px] font-bold leading-snug break-words">{cat.name}</h6>
+                        <span className="text-[11px] text-white/85 shrink-0">({cat.count})</span>
+                      </div>
+                      <span className="absolute z-10 top-1/2 right-[10px] -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-[4px] bg-black/40 text-white group-hover:bg-[#0073ff] transition-colors shrink-0">
+                        <ArrowRight size={12} />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+              {/* Popular News — normal flow */}
+              <div className="rounded-[4px] border border-white/10 bg-[#1D2125] w-full lg:w-[400px] pt-[20px] pr-[30px] pb-[30px] pl-[30px]">
+                <h4 className="text-[17px] font-bold text-white mb-[12px]">
+                  Popular News
+                </h4>
+                <div className="flex flex-col divide-y divide-white/10">
+                  {popularPosts.map((post) => (
+                    <Link
+                      key={post.id}
+                      href={`/post/${post.slug}`}
+                      className="group flex items-center gap-[12px] py-[10px]"
+                    >
 
-            {/* Follow Us — normal flow */}
-            <div className="rounded-[4px] border border-white/10 bg-[#1D2125] w-full lg:w-[400px] pt-[20px] pr-[30px] pb-[30px] pl-[30px]">
-              <h4 className="text-[17px] font-bold text-white mb-[12px]">
-                Follow Us
-              </h4>
-              <div className="flex flex-col gap-[8px] w-full">
-                {SOCIALS.map(({ name, followers, href, bg, Icon }) => (
-                  <Link
-                    key={name}
-                    href={href}
-                    className={`flex items-center gap-[10px] h-[50px] px-[12px] rounded-[4px] text-white ${bg} hover:opacity-90 transition-opacity`}
-                  >
-                    <Icon size={16} />
-                    <span className="flex-1 text-[16px] font-bold truncate">{name}</span>
-                    <span className="text-[16px] text-white/90 shrink-0">{followers}</span>
-                  </Link>
-                ))}
+                      <div className="relative w-[100px] h-[100px] rounded-full overflow-hidden shrink-0">
+                        <Image
+                          src={getImageUrl(post)}
+                          alt={post.title}
+                          fill
+
+                          sizes="100px"
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h6 className="text-[18px] font-semibold text-white leading-snug mb-[6px] line-clamp-2 group-hover:text-[#0073ff] transition-colors">
+                          {post.title}
+                        </h6>
+                        <ul className="flex flex-wrap items-center gap-x-[10px] text-[14px] text-[#a8aab3]">
+                          <li>By {getAuthorName(post)}</li>
+                          <li className="inline-flex items-center gap-[4px]">
+                            <PulseIcon className="w-3 h-3 text-[#0073ff]" />
+                            {(post.views ?? 0).toLocaleString()} Views
+                          </li>
+                        </ul>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+
+              {/* Follow Us — normal flow */}
+              <div className="rounded-[4px] border border-white/10 bg-[#1D2125] w-full lg:w-[400px] pt-[20px] pr-[30px] pb-[30px] pl-[30px]">
+                <h4 className="text-[17px] font-bold text-white mb-[12px]">
+                  Follow Us
+                </h4>
+                <div className="flex flex-col gap-[8px] w-full">
+                  {SOCIALS.map(({ name, followers, href, bg, Icon }) => (
+                    <Link
+                      key={name}
+                      href={href}
+                      className={`flex items-center gap-[10px] h-[50px] px-[12px] rounded-[4px] text-white ${bg} hover:opacity-90 transition-opacity`}
+                    >
+                      <Icon size={16} />
+                      <span className="flex-1 text-[16px] font-bold truncate">{name}</span>
+                      <span className="text-[16px] text-white/90 shrink-0">{followers}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           </aside>
         </div>

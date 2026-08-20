@@ -327,6 +327,18 @@ aside [class*="Card"] h4 {
   line-height: var(--lh-body) !important;
 }
 
+[class*="card"] h1 a,
+[class*="card"] h2 a,
+[class*="card"] h3 a,
+[class*="card"] h4 a,
+[class*="Card"] h1 a,
+[class*="Card"] h2 a,
+[class*="Card"] h3 a,
+[class*="Card"] h4 a {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
 .text-small {
   font-size: var(--fs-small);
   line-height: var(--lh-small);
@@ -1020,6 +1032,17 @@ img, video, iframe, canvas, svg {
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* ======================================================
+   HOME COMPANY ARTICLES - TOP CARD TITLE OVERRIDE
+====================================================== */
+h4.top-card-title-22,
+h4.top-card-title-22 a,
+.top-card-title-22,
+.top-card-title-22 a {
+  font-size: 22px !important;
+  line-height: 1.3 !important;
 }
 
 
