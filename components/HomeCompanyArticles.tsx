@@ -271,7 +271,7 @@ export default function HomeCompanyArticles({ posts }: Props) {
           line-height: 1.2 !important;
         }
         h4.top-card-title-22 {
-          font-size: 22px !important;
+          font-size: 17px !important;
           line-height: 1.3 !important;
         }
         p.top-card-excerpt-16 {
