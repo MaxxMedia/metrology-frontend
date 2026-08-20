@@ -130,7 +130,7 @@ export default function LatestIssues({
                     {tagText && (
                       <Link
                         href={`/category/${slug}`}
-                        className={`${tagClass} text-white px-3 py-[3px] rounded-full rounded-tl-none w-fit text-[11px] font-medium`}
+                        className={`${tagClass} text-white px-3 py-[3px] rounded-full rounded-tl-none w-fit text-[14px] font-medium`}
                       >
                         {tagText}
                       </Link>
@@ -142,7 +142,7 @@ export default function LatestIssues({
                       </Link>
                     </h6>
 
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[#616C74]">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-[#616C74]">
                       <span>
                         By{" "}
                         <span className="font-medium">

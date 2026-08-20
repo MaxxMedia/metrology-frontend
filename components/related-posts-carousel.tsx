@@ -138,7 +138,7 @@ export default function RelatedPostsCarousel() {
 
                 {/* Content */}
                 <div className="fpg-post-content" style={{ padding: "12px 15px 0px" }}>
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wide text-white bg-blue-600 px-2.5 py-1 rounded mb-3">
+                  <span className="inline-block text-[14px] font-bold uppercase tracking-wide text-white bg-blue-600 px-2.5 py-1 rounded mb-3">
                     {categoryName}
                   </span>
 
@@ -146,7 +146,7 @@ export default function RelatedPostsCarousel() {
                     {post.title}
                   </h3>
 
-                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
+                  <div className="flex items-center gap-2 text-[14px] text-gray-500 mt-2">
                     {post.author?.name && <span>By {post.author.name}</span>}
                     {typeof post.views === "number" && (
                       <span className="flex items-center gap-1">

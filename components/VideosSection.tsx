@@ -200,7 +200,7 @@ export default function VideosSection({ posts }: Props) {
         <div className="absolute inset-x-0 bottom-0 px-[16px] py-[18px] sm:px-[20px] sm:py-[22px]">
           {tagText && (
             <span
-              className={`inline-block ${tagColor} text-white text-[11px] font-semibold uppercase tracking-wide px-[10px] py-[3px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[12px]`}
+              className={`inline-block ${tagColor} text-white text-[14px] font-semibold uppercase tracking-wide px-[10px] py-[3px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[12px]`}
             >
               {tagText}
             </span>

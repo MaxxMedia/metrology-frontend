@@ -448,7 +448,7 @@ export default function HomeCompanyArticles({ posts }: Props) {
                       <h6 className="text-[18px] font-semibold text-white leading-snug mb-[6px] line-clamp-2 group-hover:text-[#0073ff] transition-colors">
                         {post.title}
                       </h6>
-                      <ul className="flex flex-wrap items-center gap-x-[10px] text-[11px] text-[#a8aab3]">
+                      <ul className="flex flex-wrap items-center gap-x-[10px] text-[14px] text-[#a8aab3]">
                         <li>By {getAuthorName(post)}</li>
                         <li className="inline-flex items-center gap-[4px]">
                           <PulseIcon className="w-3 h-3 text-[#0073ff]" />

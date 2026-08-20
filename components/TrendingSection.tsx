@@ -214,7 +214,7 @@ export default function TrendingSection({ posts }: Props) {
               {featuredTag.text && (
                 <div className="mb-2.5">
                   <span
-                    className={`inline-flex items-center h-[26px] px-[11px] ${featuredTag.color} text-white text-[12px] font-bold uppercase tracking-wider rounded-tl-none rounded-tr-full rounded-br-full rounded-bl-full shadow-sm`}
+                    className={`inline-flex items-center h-[26px] px-[11px] ${featuredTag.color} text-white text-[14px] font-bold uppercase tracking-wider rounded-tl-none rounded-tr-full rounded-br-full rounded-bl-full shadow-sm`}
                   >
                     {featuredTag.text}
                   </span>
@@ -225,7 +225,7 @@ export default function TrendingSection({ posts }: Props) {
                 {featured.title}
               </h3>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] sm:text-[14px] text-white/90 font-normal">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[14px] text-white/90 font-normal">
                 <span>By <span className="font-medium text-white">{getAuthorName(featured)}</span></span>
                 {typeof featured.views === "number" && (
                   <span className="inline-flex items-center gap-1.5">
@@ -275,7 +275,7 @@ export default function TrendingSection({ posts }: Props) {
                       {tag.text && (
                         <div className="mb-1.5">
                           <span
-                            className={`inline-flex items-center h-[22px] px-[10px] ${tag.color} text-white text-[11px] sm:text-[12px] font-bold uppercase tracking-wider rounded-tl-none rounded-tr-full rounded-br-full rounded-bl-full`}
+                            className={`inline-flex items-center h-[22px] px-[10px] ${tag.color} text-white text-[14px] font-bold uppercase tracking-wider rounded-tl-none rounded-tr-full rounded-br-full rounded-bl-full`}
                           >
                             {tag.text}
                           </span>
@@ -286,7 +286,7 @@ export default function TrendingSection({ posts }: Props) {
                         {post.title}
                       </h4>
 
-                      <div className="flex flex-wrap items-center gap-x-2 text-[12px] sm:text-[14px] text-[#D0D4DC]">
+                      <div className="flex flex-wrap items-center gap-x-2 text-[14px] text-[#D0D4DC]">
                         <span>By {getAuthorName(post)}</span>
                         {typeof post.views === "number" && (
                           <span className="inline-flex items-center gap-1">

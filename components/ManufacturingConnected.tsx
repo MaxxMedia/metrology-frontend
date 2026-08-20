@@ -66,7 +66,7 @@ function PopularNewsSidebar({ posts }: { posts: Post[] }) {
             </div>
 
             <div>
-              <span className="inline-block mb-1 text-[11px] font-bold uppercase bg-green-500 text-white px-2 py-1 rounded">
+              <span className="inline-block mb-1 text-[14px] font-bold uppercase bg-green-500 text-white px-2 py-1 rounded">
                 {typeof post.category === "object"
                   ? post.category?.name
                   : post.category}
@@ -76,7 +76,7 @@ function PopularNewsSidebar({ posts }: { posts: Post[] }) {
                 {post.title}
               </h4>
 
-              <div className="text-xs text-gray-400 mt-1">
+              <div className="text-[14px] text-gray-400 mt-1">
                 By {post.author?.name} · {post.views?.toLocaleString()} Views
               </div>
             </div>

@@ -255,7 +255,7 @@ export default function BlogPage() {
                       {post.excerpt || post.content?.substring(0, 150) + "..." || "No description available."}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+                    <div className="flex flex-wrap items-center gap-4 text-[14px] text-gray-500">
                       <span className="flex items-center gap-1">
                         <User size={14} />
                         {post.author?.name || "Unknown"}

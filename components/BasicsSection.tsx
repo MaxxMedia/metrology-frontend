@@ -270,7 +270,7 @@ export default function BasicsSection({ posts }: Props) {
                     <div className="absolute inset-x-0 bottom-0 px-[18px] py-[20px] sm:px-[20px] sm:py-[22px]">
                       {tagText && (
                         <span
-                          className={`inline-block ${tagColor} text-white text-[11px] font-semibold uppercase tracking-wide px-[9px] py-[2.5px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[12px]`}
+                          className={`inline-block ${tagColor} text-white text-[14px] font-semibold uppercase tracking-wide px-[9px] py-[2.5px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-[12px]`}
                         >
                           {tagText}
                         </span>
@@ -280,7 +280,7 @@ export default function BasicsSection({ posts }: Props) {
                         {post.title}
                       </h5>
 
-                      <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[12px] sm:text-[13px] text-white/80">
+                      <ul className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] text-[14px] text-white/80">
                         <li>
                           By <span className="text-white/95">{getAuthorName(post)}</span>
                         </li>

@@ -56,9 +56,9 @@
   --fs-body-lg: 16px;
   --fs-nav:    15px;
   --fs-button: 15px;
-  --fs-label:  12px;
-  --fs-small:  12px;
-  --fs-meta:   13px;
+  --fs-label:  14px;
+  --fs-small:  14px;
+  --fs-meta:   14px;
   --fs-card-heading: 22px;
   --fs-card-featured-heading: 22px;
   --fs-card-small-heading: 18px;
@@ -405,10 +405,20 @@ footer span {
 }
 
 .text-sm,
-[class~="text-[14px]"],
 [class~="text-[15px]"] {
   font-size: var(--fs-nav) !important;
   line-height: var(--lh-nav) !important;
+}
+
+[class~="text-[14px]"] {
+  font-size: 14px !important;
+  line-height: var(--lh-nav) !important;
+}
+
+[class~="text-[14px]"] a,
+[class~="text-[14px]"] span,
+[class~="text-[14px]"] li {
+  font-size: inherit !important;
 }
 
 .text-base,
