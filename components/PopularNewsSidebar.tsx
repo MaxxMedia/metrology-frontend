@@ -46,7 +46,7 @@ export default function PopularNewsSidebar() {
             </div>
 
             <div>
-              <span className="inline-block mb-1 text-[11px] font-bold uppercase px-2 py-1 rounded bg-green-500 text-white">
+              <span className="inline-block mb-1 text-[14px] font-bold uppercase px-2 py-1 rounded bg-green-500 text-white">
                 {typeof post.category === "object"
                   ? post.category?.name
                   : post.category}
@@ -56,7 +56,7 @@ export default function PopularNewsSidebar() {
                 {post.title}
               </h4>
 
-              <div className="text-xs text-gray-400 mt-1">
+              <div className="text-[14px] text-gray-400 mt-1">
                 By {post.author?.name} · {post.views?.toLocaleString()} Views
               </div>
             </div>

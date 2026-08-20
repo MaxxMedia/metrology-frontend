@@ -413,7 +413,7 @@ export default function PostDetailsPage() {
                 ) : null}
 
                 <div className="flex flex-wrap items-center justify-between gap-3 pb-5 mb-6 border-b border-gray-100">
-                  <div className="flex items-center gap-5 text-xs text-gray-500">
+                  <div className="flex items-center gap-5 text-[14px] text-gray-500">
                     <span className="flex items-center gap-1.5">
                       <Calendar size={13} />
                       {date}

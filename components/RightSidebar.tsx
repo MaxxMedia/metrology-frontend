@@ -90,7 +90,7 @@ function PopularNewsSidebar() {
                 {(post.badge || post.category) && (
 
 
-              <span className="inline-block mb-1 text-[11px] font-bold uppercase bg-[#54bd05] text-white px-2 py-[2px] rounded">
+              <span className="inline-block mb-1 text-[14px] font-bold uppercase bg-[#54bd05] text-white px-2 py-[2px] rounded">
                  {post.badge
         ? post.badge
         : typeof post.category === "object"
@@ -103,7 +103,7 @@ function PopularNewsSidebar() {
                 {post.title}
               </h6>
 
-              <div className="text-[12px] text-[#9a9a9a] mt-1">
+              <div className="text-[14px] text-[#9a9a9a] mt-1">
                 By {post.author?.name} · {post.views?.toLocaleString()} Views
               </div>
             </div>

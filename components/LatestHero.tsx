@@ -321,7 +321,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                   </Link>
                 </h1>
 
-                <ul className="hidden sm:flex flex-wrap items-center gap-x-[20px] gap-y-[10px] text-[16.5px] sm:text-[18px] text-[#c8c9ce] mb-[27px]">
+                <ul className="hidden sm:flex flex-wrap items-center gap-x-[20px] gap-y-[10px] text-[14px] text-[#c8c9ce] mb-[27px]">
                   <li>
                     By{" "}
                     <span className="text-white/90">{getAuthorName(heroPost)}</span>
@@ -377,7 +377,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                         <div className="min-w-0 flex-1">
                           {tagText ? (
                             <span
-                              className={`inline-block ${tagColor} text-white text-[11px] sm:text-[12px] font-semibold uppercase tracking-wide px-[9px] sm:px-[10px] py-[2px] sm:py-[3px] rounded-tl-none rounded-tr-[6px] rounded-br-[6px] rounded-bl-[6px] mb-2`}
+                              className={`inline-block ${tagColor} text-white text-[14px] font-semibold uppercase tracking-wide px-[9px] sm:px-[10px] py-[2px] sm:py-[3px] rounded-tl-none rounded-tr-[6px] rounded-br-[6px] rounded-bl-[6px] mb-2`}
                             >
                               {tagText}
                             </span>
@@ -387,7 +387,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                             {truncateTitle(item.title, 50)}
                           </h6>
 
-                          <ul className="hidden sm:flex flex-wrap items-center gap-x-4 gap-y-2 text-[14.5px] text-[#c8c9ce]">
+                          <ul className="hidden sm:flex flex-wrap items-center gap-x-4 gap-y-2 text-[14px] text-[#c8c9ce]">
                             <li>By {getAuthorName(item)}</li>
                             {typeof item.views === "number" && (
                               <li className="inline-flex items-center gap-1.5">
@@ -438,7 +438,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                   <div className="absolute inset-x-0 bottom-0 px-4 py-4 sm:px-5 sm:py-5">
                     {recentFeaturedItem.tagText && (
                       <span
-                        className={`inline-block ${recentFeaturedItem.tagColor} text-white text-[12.5px] font-bold uppercase tracking-wide px-[10px] py-[3px] rounded-tl-none rounded-tr-[6px] rounded-br-[6px] rounded-bl-[6px] mb-2`}
+                        className={`inline-block ${recentFeaturedItem.tagColor} text-white text-[14px] font-bold uppercase tracking-wide px-[10px] py-[3px] rounded-tl-none rounded-tr-[6px] rounded-br-[6px] rounded-bl-[6px] mb-2`}
                       >
                         {recentFeaturedItem.tagText}
                       </span>
@@ -446,7 +446,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                     <h4 className="text-white text-[22px] sm:text-[24px] font-bold leading-[1.3] mb-2.5 group-hover:text-[#0073ff] transition-colors line-clamp-2">
                       {recentFeaturedItem.item.title}
                     </h4>
-                    <ul className="flex flex-wrap items-center gap-x-[16px] gap-y-[6px] text-[14.5px] sm:text-[15px] text-[#d1d2d8]">
+                    <ul className="flex flex-wrap items-center gap-x-[16px] gap-y-[6px] text-[14px] text-[#d1d2d8]">
                       <li>By {getAuthorName(recentFeaturedItem.item)}</li>
                       {typeof recentFeaturedItem.item.views === "number" && (
                         <li className="inline-flex items-center gap-[5px]">
@@ -487,7 +487,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                       <div className="min-w-0 flex-1">
                         {tagText ? (
                           <span
-                            className={`inline-block ${tagColor} text-white text-[12px] font-bold uppercase tracking-wide px-[9px] py-[2.5px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-1.5`}
+                            className={`inline-block ${tagColor} text-white text-[14px] font-bold uppercase tracking-wide px-[9px] py-[2.5px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-1.5`}
                           >
                             {tagText}
                           </span>
@@ -497,7 +497,7 @@ export default function LatestHero({ post, posts }: LatestHeroProps) {
                           {truncateTitle(item.title, 56)}
                         </h6>
 
-                        <ul className="flex flex-wrap items-center gap-x-[14px] gap-y-[4px] text-[14px] sm:text-[15px] text-[#b4b6bf]">
+                        <ul className="flex flex-wrap items-center gap-x-[14px] gap-y-[4px] text-[14px] text-[#b4b6bf]">
                           <li>By {getAuthorName(item)}</li>
                           {typeof item.views === "number" && (
                             <li className="inline-flex items-center gap-[5px]">

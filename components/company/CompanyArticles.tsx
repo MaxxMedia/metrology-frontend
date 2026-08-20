@@ -295,7 +295,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
                     <div className="min-w-0 flex-1">
                       {tagText && (
                         <span
-                          className={`inline-block ${tagColor} text-white text-[9px] md:text-[10px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-1.5`}
+                          className={`inline-block ${tagColor} text-white text-[14px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded-tl-none rounded-tr-[5px] rounded-br-[5px] rounded-bl-[5px] mb-1.5`}
                         >
                           {tagText}
                         </span>
@@ -305,7 +305,7 @@ export default function CompanyArticles({ posts: postsProp }: Props) {
                         {truncateTitle(post.title || "", 42)}
                       </h6>
 
-                      <ul className="hidden md:flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-white/75">
+                      <ul className="hidden md:flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[14px] text-white/75">
                         <li>By {getAuthorName(post)}</li>
                         <li className="inline-flex items-center gap-1">
                           <PulseIcon className="w-3 h-3 text-[#7dd3fc]" />

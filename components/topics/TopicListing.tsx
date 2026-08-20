@@ -119,7 +119,7 @@ export default function TopicListing({
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                     <div className="absolute bottom-6 left-6 right-6 text-white">
                       {(hero.badge || getSubcategoryName(hero) || hero.category?.name) && (
-                        <span className="inline-block bg-[#0073FF] text-xs font-bold px-3 py-1 mb-3 uppercase rounded">
+                        <span className="inline-block bg-[#0073FF] text-[14px] font-bold px-3 py-1 mb-3 uppercase rounded">
                           {hero.badge || getSubcategoryName(hero) || hero.category?.name}
                         </span>
                       )}

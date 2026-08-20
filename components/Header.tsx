@@ -614,7 +614,7 @@ export default function Header() {
                             <h4 className="text-[17px] font-semibold text-white leading-snug hover:text-[#0073ff] line-clamp-2 mb-2">
                               <Link href={`/post/${post.slug}`} className="text-[17px]">{post.title}</Link>
                             </h4>
-                            <div className="flex items-center gap-1.5 text-[17px] text-white/60">
+                            <div className="flex items-center gap-1.5 text-[14px] text-white/60">
                               <span className="truncate">By {post.author?.name || post.author || "Matt Rosnor"}</span>
                               <Activity size={13} className="shrink-0" />
                               <span className="shrink-0">{post.views ?? 0} Views</span>
@@ -708,7 +708,7 @@ export default function Header() {
                                     <h4 className="text-[17px] font-semibold text-white leading-snug group-hover:text-[#0073ff] line-clamp-2">
                                       {post.title}
                                     </h4>
-                                    <div className="flex items-center gap-1.5 text-[11px] text-white/60 mt-1">
+                                    <div className="flex items-center gap-1.5 text-[14px] text-white/60 mt-1">
                                       <span className="truncate">By {post.author?.name || post.author || "Matt Rosnor"}</span>
                                       <Activity size={11} className="shrink-0" />
                                       <span className="shrink-0">{post.views ?? 0} Views</span>

@@ -823,14 +823,14 @@ export default function PostDetailsPage() {
                       </div>
                       <div className="pt-3">
                         {relatedPosts[0].category?.name && (
-                          <span className="inline-block text-[10px] font-bold uppercase tracking-wide text-white bg-blue-600 px-2.5 py-1 rounded mb-3">
+                          <span className="inline-block text-[14px] font-bold uppercase tracking-wide text-white bg-blue-600 px-2.5 py-1 rounded mb-3">
                             {relatedPosts[0].category.name}
                           </span>
                         )}
                         <h3 className="text-sm font-bold text-white leading-snug line-clamp-2 group-hover:text-blue-400">
                           {relatedPosts[0].title}
                         </h3>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
+                        <div className="flex items-center gap-2 text-[14px] text-gray-500 mt-2">
                           {relatedPosts[0].author?.name && <span>By {relatedPosts[0].author.name}</span>}
                           {typeof relatedPosts[0].views === "number" && (
                             <span className="flex items-center gap-1">
@@ -881,7 +881,7 @@ export default function PostDetailsPage() {
                           >
                             {p.title}
                           </h3>
-                          <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
+                          <div className="flex items-center gap-2 text-[14px] text-gray-500 mt-2">
                             {p.author?.name && <span>By {p.author.name}</span>}
                             {typeof p.views === "number" && (
                               <span className="flex items-center gap-1">
