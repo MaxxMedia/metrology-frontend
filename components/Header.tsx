@@ -573,7 +573,7 @@ export default function Header() {
           className="hidden lg:block absolute left-0 right-0 z-20"
         >
           <div className={container}>
-            <div className="bg-[#111318] shadow-2xl w-full">
+            <div className="bg-[#1D2125] shadow-2xl w-full">
               {isResourcesMega ? (
                 // ---------------- RESOURCES: no sidebar, flat article grid ----------------
                 <div className="p-5">
@@ -601,7 +601,7 @@ export default function Header() {
                       {activePosts.slice(0, 4).map((post: any) => (
                         <article key={post.id}>
                           <Link href={`/post/${post.slug}`}>
-                            <div className="relative w-full h-[92px] rounded overflow-hidden mb-2">
+                            <div className="relative w-full h-[144px] bg-[#1D2125] overflow-hidden">
                               <Image
                                 src={post.imageUrl || "/placeholder.svg"}
                                 alt={post.title}
@@ -610,13 +610,15 @@ export default function Header() {
                               />
                             </div>
                           </Link>
-                          <h4 className="text-[13px] font-semibold text-white leading-snug hover:text-[#0073ff] line-clamp-2 mb-1.5">
-                            <Link href={`/post/${post.slug}`}>{post.title}</Link>
-                          </h4>
-                          <div className="flex items-center gap-1.5 text-[12px] text-white/50">
-                            <span className="truncate">By {post.author?.name || post.author || "Matt Rosnor"}</span>
-                            <Activity size={12} className="shrink-0" />
-                            <span className="shrink-0">{post.views ?? 0} Views</span>
+                          <div className="pt-3">
+                            <h4 className="text-[17px] font-semibold text-white leading-snug hover:text-[#0073ff] line-clamp-2 mb-2">
+                              <Link href={`/post/${post.slug}`}>{post.title}</Link>
+                            </h4>
+                            <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                              <span className="truncate">By {post.author?.name || post.author || "Matt Rosnor"}</span>
+                              <Activity size={13} className="shrink-0" />
+                              <span className="shrink-0">{post.views ?? 0} Views</span>
+                            </div>
                           </div>
                         </article>
                       ))}
@@ -625,7 +627,7 @@ export default function Header() {
                 </div>
               ) : (
                 // ---------------- TOPICS: sidebar + featured post + 2x2 grid ----------------
-                <div className="grid grid-cols-[172px_1fr]">
+                <div className="grid grid-cols-[210px_1fr]">
                   <aside className="bg-[#15171f] overflow-hidden py-1">
                     {TOPICS.map((item) => (
                       <button
@@ -634,7 +636,7 @@ export default function Header() {
                           setActiveSlug(item.slug)
                           fetchPostsForSlug(item.slug)
                         }}
-                        className={`w-full px-5 py-3.5 text-left text-[13px] font-semibold transition-colors truncate ${activeSlug === item.slug
+                        className={`w-full px-5 py-3 text-left text-[12.5px] font-semibold leading-tight whitespace-normal break-words transition-colors ${activeSlug === item.slug
                           ? "bg-[#0073ff] text-white"
                           : "text-white/80 hover:bg-white/5 hover:text-white"
                           }`}
@@ -665,10 +667,13 @@ export default function Header() {
                         <p className="text-white/60 text-sm">No articles found for this topic.</p>
                       </div>
                     ) : (
-                      <div className="grid grid-cols-[220px_1fr] gap-5">
+                      <div className="flex gap-6 h-[213px]">
                         {activePosts[0] && (
-                          <Link href={`/post/${activePosts[0].slug}`} className="group flex flex-col">
-                            <div className="relative w-full h-[140px] rounded overflow-hidden mb-2">
+                          <Link
+                            href={`/post/${activePosts[0].slug}`}
+                            className="group shrink-0 w-[353px] flex flex-col"
+                          >
+                            <div className="relative w-[353px] h-[144px] rounded overflow-hidden">
                               <Image
                                 src={activePosts[0].imageUrl || "/placeholder.svg"}
                                 alt={activePosts[0].title}
@@ -676,34 +681,42 @@ export default function Header() {
                                 className="object-cover group-hover:opacity-90 transition-opacity"
                               />
                             </div>
-                            <h4 className="text-white font-semibold text-[13px] leading-snug group-hover:text-[#0073ff] line-clamp-2">
+                            <h4 className="w-[353px] text-white font-semibold text-[18px] leading-snug group-hover:text-[#0073ff] line-clamp-2 mt-2">
                               {activePosts[0].title}
                             </h4>
                           </Link>
                         )}
 
-                        <div className="grid grid-cols-2 gap-x-5 gap-y-2">
-                          {activePosts.slice(1, 5).map((post: any) => (
-                            <article key={post.id}>
-                              <Link href={`/post/${post.slug}`}>
-                                <div className="relative w-full h-[58px] rounded overflow-hidden mb-1.5">
-                                  <Image
-                                    src={post.imageUrl || "/placeholder.svg"}
-                                    alt={post.title}
-                                    fill
-                                    className="object-cover hover:opacity-90 transition-opacity"
-                                  />
-                                </div>
-                              </Link>
-                              <h4 className="text-[12px] font-semibold text-white leading-snug hover:text-[#0073ff] line-clamp-1 mb-1">
-                                <Link href={`/post/${post.slug}`}>{post.title}</Link>
-                              </h4>
-                              <div className="flex items-center gap-1.5 text-[11px] text-white/50">
-                                <span className="truncate">By {post.author?.name || post.author || "Matt Rosnor"}</span>
-                                <Activity size={11} className="shrink-0" />
-                                <span className="shrink-0">{post.views ?? 0} Views</span>
-                              </div>
-                            </article>
+                        <div className="flex gap-x-6 flex-1 h-full">
+                          {[0, 1].map((col) => (
+                            <div key={col} className="flex flex-col justify-between flex-1 h-full">
+                              {activePosts.slice(1 + col * 2, 3 + col * 2).map((post: any) => (
+                                <Link
+                                  key={post.id}
+                                  href={`/post/${post.slug}`}
+                                  className="group flex items-center gap-3 w-full h-[91px]"
+                                >
+                                  <div className="relative shrink-0 w-[91px] h-[91px] rounded overflow-hidden">
+                                    <Image
+                                      src={post.imageUrl || "/placeholder.svg"}
+                                      alt={post.title}
+                                      fill
+                                      className="object-cover group-hover:opacity-90 transition-opacity"
+                                    />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <h4 className="text-[13px] font-semibold text-white leading-snug group-hover:text-[#0073ff] line-clamp-2">
+                                      {post.title}
+                                    </h4>
+                                    <div className="flex items-center gap-1.5 text-[11px] text-white/60 mt-1">
+                                      <span className="truncate">By {post.author?.name || post.author || "Matt Rosnor"}</span>
+                                      <Activity size={11} className="shrink-0" />
+                                      <span className="shrink-0">{post.views ?? 0} Views</span>
+                                    </div>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
                           ))}
                         </div>
                       </div>
