@@ -418,10 +418,19 @@ footer span {
 }
 
 .text-lg,
-[class~="text-[17px]"],
 [class~="text-[18px]"] {
   font-size: var(--fs-h4) !important;
   line-height: var(--lh-h4) !important;
+}
+
+[class~="text-[17px]"] {
+  font-size: var(--fs-17, 17px) !important;
+  line-height: var(--lh-h4) !important;
+}
+
+[class~="text-[17px]"] a,
+[class~="text-[17px]"] > a {
+  font-size: inherit !important;
 }
 
 .text-xl,

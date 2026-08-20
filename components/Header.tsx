@@ -330,7 +330,7 @@ export default function Header() {
 
       {/* ================= TOP UTILITY BAR ================= */}
       <div className="">
-        <div className={`${container} h-[42px] flex items-center justify-between gap-4 text-[13px]`}>
+        <div className={`${container} h-[42px] flex items-center justify-between gap-4 text-[17px]`}>
           {/* Live News + ticker + weather (inline, compact) */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <div className="flex items-center gap-2 shrink-0">
@@ -470,7 +470,7 @@ export default function Header() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search..."
-                className="w-full min-w-0 bg-transparent text-[13px] text-white placeholder:text-white/40 outline-none"
+                className="w-full min-w-0 bg-transparent text-[17px] text-white placeholder:text-white/40 outline-none"
               />
               <button type="submit" aria-label="Search" className="text-white/60 hover:text-white shrink-0">
                 <Search size={15} />
@@ -582,7 +582,7 @@ export default function Header() {
                     <Link
                       href="/Webinar"
                       onClick={() => setOpenMega(null)}
-                      className="flex items-center gap-1 text-[13px] font-semibold text-white/70 hover:text-[#0073ff] transition-colors shrink-0"
+                      className="flex items-center gap-1 text-[17px] font-semibold text-white/70 hover:text-[#0073ff] transition-colors shrink-0"
                     >
                       View All <ChevronRight size={14} />
                     </Link>
@@ -612,9 +612,9 @@ export default function Header() {
                           </Link>
                           <div className="pt-3">
                             <h4 className="text-[17px] font-semibold text-white leading-snug hover:text-[#0073ff] line-clamp-2 mb-2">
-                              <Link href={`/post/${post.slug}`}>{post.title}</Link>
+                              <Link href={`/post/${post.slug}`} className="text-[17px]">{post.title}</Link>
                             </h4>
-                            <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                            <div className="flex items-center gap-1.5 text-[17px] text-white/60">
                               <span className="truncate">By {post.author?.name || post.author || "Matt Rosnor"}</span>
                               <Activity size={13} className="shrink-0" />
                               <span className="shrink-0">{post.views ?? 0} Views</span>
@@ -652,7 +652,7 @@ export default function Header() {
                       <Link
                         href={`/topics/${activeSlug}`}
                         onClick={() => setOpenMega(null)}
-                        className="flex items-center gap-1 text-[13px] font-semibold text-white/70 hover:text-[#0073ff] transition-colors shrink-0"
+                        className="flex items-center gap-1 text-[17px] font-semibold text-white/70 hover:text-[#0073ff] transition-colors shrink-0"
                       >
                         View All <ChevronRight size={14} />
                       </Link>
@@ -705,7 +705,7 @@ export default function Header() {
                                     />
                                   </div>
                                   <div className="min-w-0">
-                                    <h4 className="text-[13px] font-semibold text-white leading-snug group-hover:text-[#0073ff] line-clamp-2">
+                                    <h4 className="text-[17px] font-semibold text-white leading-snug group-hover:text-[#0073ff] line-clamp-2">
                                       {post.title}
                                     </h4>
                                     <div className="flex items-center gap-1.5 text-[11px] text-white/60 mt-1">
