@@ -16,6 +16,7 @@ type Job = {
   views: number
   isActive?: boolean
   employmentType?: string
+  applicationsCount?: number
   _count?: {
     JobApplication: number
   }
@@ -208,7 +209,7 @@ export default function MyJobsPage() {
                       className="flex items-center gap-1 text-xs text-[#CCCCCC] hover:text-[#FFFFFF] font-medium"
                     >
                       <Users size={14} />
-                      Applicants ({job._count?.JobApplication ?? 0})
+                      Applicants ({job._count?.JobApplication ?? job.applicationsCount ?? 0})
                     </Link>
                   </div>
                 </div>
