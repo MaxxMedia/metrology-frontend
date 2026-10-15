@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import {
@@ -59,6 +59,7 @@ export default function JobDetailPage() {
   const [savingJob, setSavingJob] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [showFullDesc, setShowFullDesc] = useState(false)
+  const viewRecordedRef = useRef(false)
 
   // Track whether the logged-in candidate has already applied to this job
   const [hasApplied, setHasApplied] = useState(false)
@@ -84,19 +85,27 @@ export default function JobDetailPage() {
 
     async function loadJob() {
       try {
-        await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${slug}/view`,
-          {
-            method: "POST",
-          }
-        );
+        if (!viewRecordedRef.current) {
+          viewRecordedRef.current = true;
+          await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${slug}/view`,
+            {
+              method: "POST",
+            }
+          ).catch((e) => console.error("View increment error:", e));
+        }
 
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${slug}`
         );
 
         const data = await res.json();
-        setJob(data);
+        if (res.ok && data && data.id) {
+          setJob(data);
+        } else {
+          console.error("Job load error:", data);
+          setJob(null);
+        }
 
         const jobsRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/jobs`
@@ -360,7 +369,11 @@ export default function JobDetailPage() {
 
   const trendingSkills: string[] =
     job.skills && job.skills.length > 0 ? job.skills : FALLBACK_SKILLS
-  const applicants = job.applicants ?? job.views ?? 0
+  const applicants =
+    job._count?.JobApplication ??
+    job.applicationsCount ??
+    job.applicants ??
+    0
 
   // Job match (candidate view only)
   const requiredSkills: string[] =
@@ -523,7 +536,7 @@ export default function JobDetailPage() {
                   : daysAgo === 1
                     ? "yesterday"
                     : `${daysAgo} days ago`}
-                {` • ${applicants} applicants`}
+                {` • ${applicants} applicant${applicants === 1 ? "" : "s"}`}
               </p>
 
               {/* Tags */}
@@ -848,7 +861,7 @@ export default function JobDetailPage() {
               <div className="py-3 first:pt-0">
                 <InsightRow
                   icon={<FileText size={15} className="text-[#00B5ED]" />}
-                  title={`${applicants} applicants`}
+                  title={`${applicants} applicant${applicants === 1 ? "" : "s"}`}
                   subtitle="Viewed recently"
                 />
               </div>
