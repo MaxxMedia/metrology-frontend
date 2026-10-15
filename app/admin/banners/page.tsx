@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
@@ -151,6 +151,7 @@ export default function BannerListPage() {
               <th className="p-3 text-left">Image</th>
               <th className="p-3 text-left">Title</th>
               <th className="p-3 text-left">Placement</th>
+              <th className="p-3 text-left">Recommended Size</th>
               <th className="p-3 text-left">Status</th>
               <th className="p-3 text-left">Clicks</th>
               <th className="p-3 text-right">Actions</th>
@@ -176,7 +177,8 @@ export default function BannerListPage() {
 
                 <td className="p-3 font-medium">{b.title}</td>
 
-                <td className="p-3 text-gray-600">{b.placement}</td>
+                <td className="p-3 text-gray-600">{BANNER_PLACEMENTS.find(p => p.value === b.placement)?.label ?? b.placement}</td>
+                <td className="p-3 text-gray-600">{BANNER_PLACEMENTS.find(p => p.value === b.placement)?.standardSize ?? "—"}</td>
 
                 <td className="p-3">
                   <span
@@ -190,7 +192,7 @@ export default function BannerListPage() {
                   </span>
                 </td>
 
-                {/* 👁️ CLICKS */}
+                {/* ðŸ‘ï¸ CLICKS */}
                 <td className="p-3 font-semibold text-gray-700">
                   {b.clicks ?? 0}
                 </td>
@@ -208,7 +210,7 @@ export default function BannerListPage() {
                     disabled={deletingId === b.id}
                     className="text-red-600 hover:underline disabled:opacity-50"
                   >
-                    {deletingId === b.id ? "Deleting…" : "Delete"}
+                    {deletingId === b.id ? "Deletingâ€¦" : "Delete"}
                   </button>
                 </td>
               </tr>
@@ -216,7 +218,7 @@ export default function BannerListPage() {
 
             {filteredBanners.length === 0 && (
               <tr>
-                <td colSpan={7} className="p-8 text-center text-gray-500">
+                <td colSpan={8} className="p-8 text-center text-gray-500">
                   No banners found for this placement
                 </td>
               </tr>
@@ -254,3 +256,5 @@ function StatCard({
     </div>
   )
 }
+
+
