@@ -68,9 +68,11 @@ export default function EditBannerPage() {
   if (!banner) return <p className="p-6 text-red-500">Banner not found</p>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Edit Banner</h1>
-      <BannerForm initialData={banner} onSubmit={updateBanner} />
+    <div className="p-6 max-w-4xl">
+      <h1 className="text-2xl font-bold mb-6 text-slate-900">Edit Banner</h1>
+      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <BannerForm initialData={banner} onSubmit={updateBanner} />
+      </div>
     </div>
   );
 }
