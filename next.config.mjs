@@ -26,7 +26,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    qualities: [70, 75], // ✅ allow quality 70
+    qualities: [70, 75, 80, 85, 90],
 
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },

@@ -29,15 +29,11 @@ export default async function Home() {
     { cache: "no-store" }
   );
 
-  const text = await postsRes.text();
-
-  console.log("Posts API:", text);
-
-  if (!text) {
-    throw new Error("Posts API returned empty response");
+  if (!postsRes.ok) {
+    throw new Error(`Posts API error: ${postsRes.status}`);
   }
 
-  const postsData = JSON.parse(text);
+  const postsData = await postsRes.json();
 
   const posts: Post[] = postsData.data || postsData
 
