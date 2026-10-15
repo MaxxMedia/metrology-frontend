@@ -15,10 +15,6 @@ import {
   Instagram,
   Linkedin,
   Activity,
-  ArrowRight,
-  Mail,
-  MapPin,
-  Phone,
 } from "lucide-react"
 import { useState, useEffect, type FormEvent } from "react"
 import type { Post } from "@/types/Post"
@@ -554,14 +550,6 @@ export default function Header() {
             >
               {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-
-            <button
-              onClick={openMobileMenu}
-              aria-label="Open menu"
-              className="hidden lg:flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#15171f] border border-white/10 text-white hover:border-[#0073ff] transition-colors shrink-0"
-            >
-              <Menu size={18} />
-            </button>
           </div>
         </div>
       </div>
@@ -738,103 +726,151 @@ export default function Header() {
             onClick={closeMobileMenu}
           />
           <aside
-            className={`fixed top-0 right-0 bottom-0 w-[min(420px,100vw)] bg-[#0e1015] text-white z-[99999] overflow-y-auto shadow-2xl ${
+            className={`fixed top-0 right-0 bottom-0 w-[min(380px,100vw)] bg-[#0e1015] text-white z-[99999] overflow-y-auto shadow-2xl ${
               isMenuClosing ? "mobile-menu-panel-out" : "mobile-menu-panel-in"
             }`}
-            aria-label="Mobile navigation and contact details"
+            aria-label="Mobile navigation"
           >
-            {/* Top Left Close X Button */}
-            <div className="flex justify-start">
+            {/* Header with Logo and Close Button */}
+            <div className="flex items-center justify-between p-5 border-b border-white/10">
+              <Link href="/" onClick={closeMobileMenu} className="flex items-center">
+                <Image
+                  src="/images/logo5.png"
+                  alt="Metrology"
+                  width={140}
+                  height={40}
+                  priority
+                  className="h-9 w-auto object-contain"
+                />
+              </Link>
               <button
                 onClick={closeMobileMenu}
-                className="flex h-12 w-12 items-center justify-center bg-[#0073ff] text-white hover:bg-[#0060d6] transition-colors"
+                className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors"
                 aria-label="Close menu"
               >
-                <X size={22} strokeWidth={2.2} />
+                <X size={20} strokeWidth={2} />
               </button>
             </div>
 
-            <div className="px-7 sm:px-8 pt-2 pb-7 space-y-5">
-              {/* Brand Logo */}
-              <div className="-mt-2 -mb-3">
-                <Image
-                  src="/images/logo5.png"
-                  alt="Tooling Trends"
-                  width={480}
-                  height={130}
-                  priority
-                  className="h-[126px] w-auto object-contain object-left block"
+            <div className="p-5 space-y-6">
+              {/* Mobile Search */}
+              <form
+                onSubmit={(e) => {
+                  handleSearch(e)
+                  closeMobileMenu()
+                }}
+                className="flex items-center h-11 w-full rounded bg-[#15171f] border border-white/10 px-3"
+              >
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search..."
+                  className="w-full min-w-0 bg-transparent text-sm text-white placeholder:text-white/40 outline-none"
                 />
-              </div>
+                <button type="submit" aria-label="Search" className="text-white/60 hover:text-white shrink-0">
+                  <Search size={16} />
+                </button>
+              </form>
 
-              {/* Description */}
-              <p className="text-[15px] leading-relaxed text-white/80 font-normal">
-                Bringing the latest tooling, manufacturing and mold-making insights to the people shaping the industry.
-              </p>
-
-              {/* 3x2 Image Grid */}
-              <div className="grid grid-cols-3 gap-3 pt-1" aria-label="Featured manufacturing gallery">
-                {[
-                  ["/modern-manufacturing-facility.png", "Modern manufacturing facility"],
-                  ["/cad-cam-software-design.jpg", "CAD and CAM design"],
-                  ["/cnc-workholding-platform.jpg", "CNC workholding platform"],
-                  ["/industrial-mold-tool-product.jpg", "Industrial mold tool"],
-                  ["/mold-design-venting.jpg", "Mold design"],
-                  ["/manufacturing-worker-training.jpg", "Manufacturing worker"],
-                ].map(([src, alt]) => (
-                  <div key={src} className="relative aspect-square overflow-hidden rounded-xl bg-[#1D2125]">
-                    <Image src={src} alt={alt} fill sizes="120px" className="object-cover hover:scale-105 transition-transform duration-300" />
-                  </div>
-                ))}
-              </div>
-
-              {/* Quick Contact Section */}
-              <section className="pt-2">
-                <h3 className="text-[20px] font-bold text-white mb-4">Quick Contact:</h3>
-                <div className="space-y-3.5 text-[15px]">
-                  <a href="tel:+990123456789" className="flex items-center gap-3.5 text-white/90 hover:text-[#0073ff] transition-colors group">
-                    <Phone size={19} className="text-[#0073ff] shrink-0" strokeWidth={1.8} />
-                    <span className="font-medium">+990 123 456 789</span>
-                  </a>
-                  <a href="mailto:info@toolingtrends.com" className="flex items-center gap-3.5 text-white/90 hover:text-[#0073ff] transition-colors group">
-                    <Mail size={19} className="text-[#0073ff] shrink-0" strokeWidth={1.8} />
-                    <span className="font-medium">info@toolingtrends.com</span>
-                  </a>
-                  <div className="flex items-start gap-3.5 text-white/90">
-                    <MapPin size={19} className="text-[#0073ff] shrink-0 mt-0.5" strokeWidth={1.8} />
-                    <span className="font-medium">Madison Avenue, New York</span>
-                  </div>
-                </div>
-              </section>
-
-              {/* Social Buttons */}
-              <div className="pt-4 flex items-center gap-2.5">
-                {[
-                  { label: "Facebook", Icon: Facebook },
-                  { label: "Instagram", Icon: Instagram },
-                  { label: "Pinterest", Icon: PinterestIcon },
-                  { label: "X", Icon: X },
-                ].map(({ label, Icon }) => (
-                  <a
-                    key={label}
-                    href="#"
-                    aria-label={label}
-                    className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/15 text-white hover:border-[#0073ff] hover:bg-[#0073ff] transition-colors"
-                  >
-                    <Icon size={18} />
-                  </a>
-                ))}
-              </div>
-
-              {/* Get In Touch Button */}
-              <div className="pt-1">
+              {/* Navigation Links */}
+              <nav className="flex flex-col space-y-1">
+                <Link
+                  href="/"
+                  onClick={closeMobileMenu}
+                  className="px-3 py-3 rounded text-[16px] font-medium text-white hover:bg-white/5 transition-colors border-b border-white/5"
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/topics"
+                  onClick={closeMobileMenu}
+                  className="px-3 py-3 rounded text-[16px] font-medium text-white hover:bg-white/5 transition-colors border-b border-white/5"
+                >
+                  Topics
+                </Link>
+                <Link
+                  href="/resources"
+                  onClick={closeMobileMenu}
+                  className="px-3 py-3 rounded text-[16px] font-medium text-white hover:bg-white/5 transition-colors border-b border-white/5"
+                >
+                  Resources
+                </Link>
+                <Link
+                  href="/suppliers"
+                  onClick={closeMobileMenu}
+                  className="px-3 py-3 rounded text-[16px] font-medium text-white hover:bg-white/5 transition-colors border-b border-white/5"
+                >
+                  Directory
+                </Link>
+                <Link
+                  href="/events"
+                  onClick={closeMobileMenu}
+                  className="px-3 py-3 rounded text-[16px] font-medium text-white hover:bg-white/5 transition-colors border-b border-white/5"
+                >
+                  Events
+                </Link>
+                <Link
+                  href="/feed"
+                  onClick={closeMobileMenu}
+                  className="px-3 py-3 rounded text-[16px] font-medium text-white hover:bg-white/5 transition-colors border-b border-white/5"
+                >
+                  Jobs
+                </Link>
                 <Link
                   href="/contact"
                   onClick={closeMobileMenu}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0073ff] px-5 py-3 text-[14px] font-semibold text-white hover:bg-[#0060d6] transition-colors"
+                  className="px-3 py-3 rounded text-[16px] font-medium text-white hover:bg-white/5 transition-colors border-b border-white/5"
                 >
-                  Get In Touch <ArrowRight size={17} strokeWidth={2.5} />
+                  Contact
                 </Link>
+              </nav>
+
+              {/* User / Auth Buttons */}
+              <div className="pt-2">
+                {!user ? (
+                  <div className="flex flex-col gap-3">
+                    <Link
+                      href="/login"
+                      onClick={closeMobileMenu}
+                      className="flex items-center justify-center h-11 w-full rounded bg-[#15171f] border border-white/15 text-white font-semibold hover:border-[#0073ff] transition-colors"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={closeMobileMenu}
+                      className="flex items-center justify-center h-11 w-full rounded bg-[#0073ff] text-white font-semibold hover:bg-[#0060d6] transition-colors"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <Link
+                      href={
+                        user.role === "admin"
+                          ? "/admin/dashboard"
+                          : user.role === "recruiter"
+                            ? "/recruiter/dashboard"
+                            : `/candidate/${user.username || user.email?.split("@")[0] || "profile"}`
+                      }
+                      onClick={closeMobileMenu}
+                      className="flex items-center justify-center h-11 w-full rounded bg-[#0073ff] text-white font-semibold hover:bg-[#0060d6] transition-colors"
+                    >
+                      {user.role === "candidate" ? "My Candidate Profile" : "Dashboard"}
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleLogout()
+                        closeMobileMenu()
+                      }}
+                      className="flex items-center justify-center h-11 w-full rounded border border-red-500/40 text-red-400 font-semibold hover:bg-red-500/10 transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </aside>
