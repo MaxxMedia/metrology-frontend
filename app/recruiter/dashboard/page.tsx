@@ -13,8 +13,7 @@ import {
   FolderOpen,
   Crown,
   CreditCard,
-  Megaphone,
-  Inbox,
+Inbox,
   ArrowUpRight,
   BadgeCheck,
 } from "lucide-react"
@@ -88,8 +87,7 @@ type DashboardData = {
   jobPosting?: JobPostingEligibility
   articlePosting?: ContentLimitEligibility
   productListings?: ContentLimitEligibility
-  homepageFeaturedAd?: ContentLimitEligibility
-  analytics?: RecruiterAnalytics
+analytics?: RecruiterAnalytics
 }
 
 type PackagePurchase = {
@@ -223,8 +221,7 @@ export default function RecruiterDashboard() {
           jobPosting: dashboardData.jobPosting ?? undefined,
           articlePosting: dashboardData.articlePosting ?? undefined,
           productListings: dashboardData.productListings ?? undefined,
-          homepageFeaturedAd: dashboardData.homepageFeaturedAd ?? undefined,
-          analytics: dashboardData.analytics ?? undefined,
+analytics: dashboardData.analytics ?? undefined,
         })
 
         /* PROFILE */
@@ -288,9 +285,7 @@ export default function RecruiterDashboard() {
 
   const planLabel = dashboard.subscription?.displayPlanLabel ?? dashboard.subscription?.planLabel ?? "Free"
   const isFreePlan = !dashboard.subscription || dashboard.subscription.plan === "free"
-  const canCreateDirectory = (dashboard.directories?.length ?? 0) === 0
-
-  /* ================= UI ================= */
+/* ================= UI ================= */
 
   return (
     <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] px-4 sm:px-6 py-8">
@@ -375,22 +370,7 @@ export default function RecruiterDashboard() {
                       : `${dashboard.articlePosting.articlesThisYear ?? 0} of ${dashboard.articlePosting.effectiveLimit} used this year`
               }
             />
-            <KpiCard
-              title="Homepage Featured Ads"
-              value={
-                dashboard.homepageFeaturedAd?.reason === "PLAN_NOT_ELIGIBLE"
-                  ? "🔒"
-                  : dashboard.homepageFeaturedAd?.remaining ?? 0
-              }
-              icon={<Megaphone className="w-4 h-4 text-white" />}
-              accent="bg-rose-500"
-              subtitle={
-                dashboard.homepageFeaturedAd?.reason === "PLAN_NOT_ELIGIBLE"
-                  ? "Upgrade to Professional or Enterprise"
-                  : `${dashboard.homepageFeaturedAd?.usedThisPeriod ?? 0} of ${dashboard.homepageFeaturedAd?.effectiveLimit ?? 0
-                  } used ${dashboard.homepageFeaturedAd?.periodLabel ?? ""}`
-              }
-            />
+
             <KpiCard
               title="Total Applications"
               value={dashboard.applicationsCount}
@@ -557,14 +537,14 @@ export default function RecruiterDashboard() {
           {/* ================= DIRECTORIES ================= */}
           <Panel
             title="My Directories"
-            action={canCreateDirectory ? (
+            action={(
               <Link
                 href="/recruiter/directory/new"
                 className="text-sm bg-[#0073FF] hover:bg-[#0060D0] text-white px-4 py-2 rounded-xl font-medium transition-colors"
               >
                 + Add Directory
               </Link>
-            ) : undefined}
+            )}
           >
             {!dashboard.directories || dashboard.directories.length === 0 ? (
               <EmptyState icon={<FolderOpen className="w-10 h-10 text-[#B8B8B8]" />} message="You haven't added any directories yet.">
@@ -646,7 +626,7 @@ export default function RecruiterDashboard() {
                 href={`/company/${recruiter.Company.slug}`}
                 className="inline-block mt-4 text-sm text-[#00B5ED] hover:text-[#0073FF] font-medium"
               >
-                View Company Profile →
+                View Company Profile 
               </Link>
             )}
 
@@ -684,7 +664,7 @@ export default function RecruiterDashboard() {
                   <li key={purchase.id} className="rounded-xl border border-[#292C30] bg-[#171A1E]/50 px-3 py-2.5 hover:border-[#00B5ED]/40 transition-colors">
                     <p className="font-medium text-[#FFFFFF]">{purchase.packageName}</p>
                     <p className="text-xs text-[#B8B8B8] mt-1">
-                      ₹{purchase.amount.toLocaleString("en-IN")} ·{" "}
+                      {"\u20B9"}{purchase.amount.toLocaleString("en-IN")} {"\u00B7"}{" "}
                       {new Date(purchase.createdAt).toLocaleDateString()}
                     </p>
                   </li>
@@ -816,7 +796,7 @@ function Panel({
         {action}
         {actionHref && actionLabel && (
           <Link href={actionHref} className="text-sm text-[#00B5ED] hover:text-[#0073FF] font-medium">
-            {actionLabel} →
+            {actionLabel}
           </Link>
         )}
       </div>
