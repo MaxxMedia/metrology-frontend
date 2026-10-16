@@ -1,285 +1,150 @@
-import Link from "next/link";
-import Image from "next/image";
-import type { ReactNode } from "react";
-import { Facebook, Instagram, Linkedin } from "lucide-react";
-import BackToTop from "./BackToTop";
-import type { Post } from "@/types/Post";
-import { buildFooterCategoryColumns } from "@/lib/footerCategories";
+﻿import Link from "next/link"
+import Image from "next/image"
+import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react"
+import Banner from "@/components/Banners/Banner"
 
-function XIcon({ size = 16 }: { size?: number }) {
+type FooterLink = {
+  label: string
+  href: string
+}
+
+function XIcon({ size = 18 }: { size?: number; strokeWidth?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width={size} height={size}>
       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.259 5.686L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
     </svg>
-  );
+  )
 }
 
-function PulseIcon({ className = "" }: { className?: string }) {
+function FooterNav({ title, label, links, className = "" }: {
+  title: string
+  label: string
+  links: FooterLink[]
+  className?: string
+}) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden
-    >
-      <path d="M3 12h3l2-5 3 10 2-6 2 3h6" />
-    </svg>
-  );
+    <nav aria-label={label} className={className}>
+      <h2 className="mb-4 text-base font-bold uppercase tracking-wide text-white">{title}</h2>
+      <ul className="space-y-2.5 text-sm">
+        {links.map((link) => (
+          <li key={`${link.label}-${link.href}`}>
+            <Link href={link.href} className="inline-block text-[#CCCCCC] transition-colors hover:translate-x-1 hover:text-white">
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
 }
 
-function SectionTitle({ children }: { children: ReactNode }) {
-  return (
-    <div className="mb-5">
-      <h5 className="text-white text-[18px] font-bold mb-3">{children}</h5>
-      <span className="block w-10 h-[3px] bg-[#00B5ED] rounded-full" aria-hidden />
-    </div>
-  );
-}
+const TOPIC_LINKS: FooterLink[] = [
+  { label: "Machining", href: "/topics/machining" },
+  { label: "Cutting Tools", href: "/topics/cutting-tools" },
+  { label: "Dies Moulds Tooling", href: "/topics/dies-moulds-tooling" },
+  { label: "Metrology & Quality", href: "/topics/metrology-quality" },
+  { label: "Factory Automation", href: "/topics/factory-automation" },
+  { label: "CAD/CAM/CAE", href: "/topics/cad-cam-cae" },
+  { label: "Manufacturing Technologies", href: "/topics/manufacturing-technologies" },
+  { label: "View All", href: "/topics" },
+]
 
-function CategoryLinks({ items }: { items: { label: string; href: string }[] }) {
-  return (
-    <ul className="space-y-2.5">
-      {items.map((item) => (
-        <li key={item.label}>
-          <Link
-            href={item.href}
-            className="group inline-flex items-center gap-2.5 text-[14px] text-[#CCCCCC] hover:text-[#00B5ED] transition-colors"
-          >
-            <span className="w-[5px] h-[5px] rounded-full bg-[#00B5ED]/70 group-hover:bg-[#0073FF] shrink-0" />
-            {item.label}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function getAuthorName(post: Post) {
-  if (post.author && typeof post.author === "object" && post.author.name) {
-    return post.author.name;
-  }
-  const company = (post as any).Company || (post as any).company;
-  if (company?.name) return company.name;
-  return "rstheme";
-}
-
-function getImageUrl(post: Post) {
-  if (post.imageUrl?.startsWith("http")) return post.imageUrl;
-  if (post.imageUrl) return `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`;
-  return "/placeholder.svg";
-}
-
-async function getRecentPosts(): Promise<Post[]> {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=3`,
-      { next: { revalidate: 60 } }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    const posts: Post[] = data.data || data;
-    if (!Array.isArray(posts)) return [];
-    return posts
-      .sort((a, b) => {
-        const aTime = new Date(a.publishedAt || a.createdAt || 0).getTime();
-        const bTime = new Date(b.publishedAt || b.createdAt || 0).getTime();
-        return bTime - aTime;
-      })
-      .slice(0, 3);
-  } catch {
-    return [];
-  }
-}
-
-async function getFooterCategories() {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/categories?parentsOnly=true`,
-      { next: { revalidate: 300 } }
-    );
-    if (!res.ok) return { top: [], more: [] };
-    const data = await res.json();
-    const parents = Array.isArray(data) ? data : [];
-    return buildFooterCategoryColumns(
-      parents.map((c: { name: string; slug: string }) => ({
-        name: c.name,
-        slug: c.slug,
-      }))
-    );
-  } catch {
-    return { top: [], more: [] };
-  }
-}
-
-const RESOURCE_LINKS = [
-  { label: "Newsletter", href: "/news" },
-  { label: "Webinar", href: "/Webinar" },
+const RESOURCE_LINKS: FooterLink[] = [
+  { label: "Industry Talks", href: "/industry-talks" },
+  { label: "Videos", href: "/videos" },
+  { label: "News Letter", href: "/news" },
+  { label: "Products", href: "/products" },
+  { label: "Webinars", href: "/webinars" },
+  { label: "Packages & Pricing", href: "/packages" },
   { label: "Contact Us", href: "/contact" },
-];
+  { label: "Find a Supplier", href: "/suppliers" },
+]
 
-export default async function Footer() {
-  const [recentPosts, { top: TOP_CATEGORIES, more: MORE_CATEGORIES }] =
-    await Promise.all([getRecentPosts(), getFooterCategories()]);
+const MAGAZINE_LINKS: FooterLink[] = [
+  { label: "Latest Issue", href: "/magazines#latest-issue" },
+  { label: "Archives", href: "/articles/issues" },
+  { label: "Subscribe", href: "/subscribe" },
+  { label: "Blogs", href: "/blog" },
+]
 
-  const socialLinks = [
-    { label: "Facebook", href: "#", Icon: Facebook },
-    { label: "Instagram", href: "#", Icon: Instagram },
-    { label: "LinkedIn", href: "#", Icon: Linkedin },
-    { label: "X", href: "#", Icon: XIcon },
-  ];
+const LEGAL_LINKS: FooterLink[] = [
+  { label: "Terms & Conditions", href: "/terms" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Disclaimer", href: "/disclaimer" },
+  { label: "Cookie Policy", href: "/cookie-policy" },
+  { label: "Advertising Policy", href: "/advertising-policy" },
+  { label: "DPDP Act Compliance", href: "/dpdp-compliance-notice" },
+  { label: "Copyright & IP Policy", href: "/copyright-ip-policy" },
+  { label: "Refund & Cancellation", href: "/refund-cancellation-policy" },
+]
 
+const SOCIAL_LINKS = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/", Icon: Linkedin, className: "bg-[#0A66C2] hover:bg-[#084d94]" },
+  { label: "Facebook", href: "https://www.facebook.com/", Icon: Facebook, className: "bg-[#1877F2] hover:bg-[#145dbf]" },
+  { label: "YouTube", href: "https://www.youtube.com/", Icon: Youtube, className: "bg-[#FF0000] hover:bg-[#cc0000]" },
+  { label: "X", href: "https://x.com/", Icon: XIcon, className: "bg-black hover:bg-gray-800" },
+  { label: "Instagram", href: "https://www.instagram.com/", Icon: Instagram, className: "bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 hover:opacity-90" },
+]
+
+export default function Footer() {
   return (
-    <footer className="relative bg-[#171A1E] text-[#CCCCCC] border-t border-[#292C30]">
-      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-14 md:pt-16 pb-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.3fr_1fr_1fr_0.85fr_1.5fr] xl:grid-cols-[320px_1fr_1fr_180px_1.4fr] gap-8 lg:gap-6 xl:gap-8">
-
-          {/* ================= COL 1: BRAND ================= */}
-          <div>
-            <Link href="/" className="inline-block mb-4">
-              <Image
-                src="/images/logo5.png"
-                alt="Tooling Trends"
-                width={300}
-                height={66}
-                className="h-24 w-auto object-contain"
-              />
-            </Link>
-
-            <p className="text-[14px] leading-relaxed text-[#CCCCCC] mb-5 max-w-[280px]">
-              Tooling Technology covers the full life cycle of mold design, build,
-              and maintenance—solutions for professionals shaping modern manufacturing.
-            </p>
-
-            <div className="flex items-center gap-2.5 mb-5">
-              {socialLinks.map(({ label, href, Icon }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className="w-9 h-9 flex items-center justify-center rounded-[6px] bg-[#1D2125] border border-[#292C30] text-white hover:bg-[#0073FF] hover:border-[#0073FF] transition-colors"
-                >
-                  <Icon size={15} />
+    <>
+      <Banner placement="FOOTER" />
+      <footer className="relative overflow-hidden bg-[#171A1E] text-white">
+        <div className="relative z-10 py-12 sm:py-14 lg:py-16">
+          <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 sm:gap-x-8 lg:grid-cols-12 lg:gap-x-8 xl:gap-x-10">
+              <div className="col-span-2 sm:col-span-3 lg:col-span-3">
+                <Link href="/" className="mb-4 inline-block">
+                  <Image
+                    src="/images/logo5.png"
+                    alt="Metrology"
+                    width={300}
+                    height={100}
+                    className="h-[58px] w-auto max-w-full object-contain object-left sm:h-[66px]"
+                  />
                 </Link>
-              ))}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2.5">
-              <Link
-                href="/coming-soon"
-                className="inline-block opacity-90 hover:opacity-100 transition-opacity"
-                aria-label="Get it on Google Play"
-              >
-                <Image
-                  src="/images/google-play.png"
-                  alt="Get it on Google Play"
-                  width={135}
-                  height={40}
-                  className="h-[40px] w-auto object-contain"
-                />
-              </Link>
-
-              <Link
-                href="/coming-soon"
-                className="inline-block opacity-90 hover:opacity-100 transition-opacity"
-                aria-label="Download on the App Store"
-              >
-                <Image
-                  src="/images/apple-store.png"
-                  alt="Download on the App Store"
-                  width={135}
-                  height={40}
-                  className="h-[40px] w-auto object-contain"
-                />
-              </Link>
-            </div>
-          </div>
-
-          {/* ================= COL 2: TOP CATEGORIES ================= */}
-          <div>
-            <SectionTitle>Top Categories</SectionTitle>
-            <CategoryLinks items={TOP_CATEGORIES} />
-          </div>
-
-          {/* ================= COL 3: MORE CATEGORIES ================= */}
-          <div>
-            <SectionTitle>More Categories</SectionTitle>
-            <CategoryLinks items={MORE_CATEGORIES} />
-          </div>
-
-          {/* ================= COL 4: RESOURCES ================= */}
-          <div>
-            <SectionTitle>Resources</SectionTitle>
-            <CategoryLinks items={RESOURCE_LINKS} />
-          </div>
-
-          {/* ================= COL 5: RECENT POSTS ================= */}
-          <div>
-            <SectionTitle>Recent Post</SectionTitle>
-            <div>
-              {recentPosts.length > 0 ? (
-                recentPosts.map((post, i) => (
-                  <Link
-                    key={post.id}
-                    href={`/post/${post.slug}`}
-                    className={`group flex items-start gap-3 ${
-                      i < recentPosts.length - 1 ? "pb-4 mb-4 border-b border-[#292C30]" : ""
-                    }`}
-                  >
-                    <div className="relative w-[64px] h-[64px] rounded-[6px] overflow-hidden shrink-0 bg-[#1D2125]">
-                      <Image
-                        src={getImageUrl(post)}
-                        alt={post.title}
-                        fill
-                        sizes="64px"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h6 className="text-[14px] font-semibold text-white leading-snug mb-1.5 line-clamp-2 group-hover:text-[#00B5ED] transition-colors">
-                        {post.title}
-                      </h6>
-                      <ul className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-[#B8B8B8]">
-                        <li>By {getAuthorName(post)}</li>
-                        {typeof post.views === "number" && (
-                          <li className="inline-flex items-center gap-1">
-                            <PulseIcon className="w-3 h-3 text-[#0073FF]" />
-                            {post.views.toLocaleString()} Views
-                          </li>
-                        )}
-                      </ul>
-                    </div>
+                <p className="mb-5 max-w-md text-sm leading-relaxed">
+                  Metrology delivers news, insights, and practical resources on precision measurement, inspection, calibration, and quality across the manufacturing lifecycle.
+                </p>
+                <div className="mb-6 flex flex-wrap items-center gap-3" aria-label="Metrology on social media">
+                  {SOCIAL_LINKS.map(({ label, href, Icon, className }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`flex h-10 w-10 items-center justify-center rounded-md text-white transition-all duration-300 hover:scale-110 ${className}`}
+                      aria-label={label}
+                    >
+                      <Icon size={18} strokeWidth={2} />
+                    </a>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <Link href="/coming-soon" aria-label="Get it on Google Play" className="inline-block transition-opacity hover:opacity-80">
+                    <Image src="/images/google-play.png" alt="Get it on Google Play" width={135} height={40} className="h-10 w-auto object-contain" />
                   </Link>
-                ))
-              ) : (
-                <p className="text-[13px] text-[#B8B8B8]">No recent posts yet.</p>
-              )}
+                  <Link href="/coming-soon" aria-label="Download on the App Store" className="inline-block transition-opacity hover:opacity-80">
+                    <Image src="/images/apple-store.png" alt="Download on the App Store" width={135} height={40} className="h-10 w-auto object-contain" />
+                  </Link>
+                </div>
+              </div>
+
+              <FooterNav title="Topics" label="Topics" links={TOPIC_LINKS} className="lg:col-span-2" />
+              <FooterNav title="Resources" label="Resources" links={RESOURCE_LINKS} className="lg:col-span-2" />
+              <FooterNav title="Magazine" label="Magazine" links={MAGAZINE_LINKS} className="lg:col-span-2" />
+              <FooterNav title="Legal & Policies" label="Legal and policies" links={LEGAL_LINKS} className="col-span-2 sm:col-span-1 lg:col-span-3" />
             </div>
           </div>
         </div>
-      </div>
 
-      {/* ================= BOTTOM BAR ================= */}
-      <div className="border-t border-[#292C30] bg-[#1D2125]">
-        <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[13px]">
-          <p className="text-[#B8B8B8] text-center sm:text-left">
-            © {new Date().getFullYear()} Metrology. All rights reserved.
-          </p>
-          <div className="flex items-center gap-5">
-            <Link href="/privacy-policy" className="text-[#B8B8B8] hover:text-[#00B5ED] transition-colors">
-              Privacy policy
-            </Link>
-            <Link href="/terms" className="text-[#B8B8B8] hover:text-[#00B5ED] transition-colors">
-              Terms &amp; Agreements
-            </Link>
+        <div className="border-t border-white/15 bg-[#1D2125] text-white">
+          <div className="mx-auto max-w-[1320px] px-4 py-5 text-center text-xs sm:px-6 sm:py-6 sm:text-sm lg:px-8">
+            Copyright &copy; {new Date().getFullYear()} <span className="font-semibold">Metrology</span>. All rights reserved.
           </div>
         </div>
-      </div>
-
-      <BackToTop />
-    </footer>
-  );
+      </footer>
+    </>
+  )
 }

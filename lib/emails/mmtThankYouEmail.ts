@@ -23,7 +23,7 @@ export const MMTThankYouEmail = ({
           <tr>
             <td style="background:#004d73;padding:20px;text-align:center;">
               <h1 style="color:#ffffff;margin:0;font-size:26px;font-weight:700;">
-                Tooling Technology
+                Metrology
               </h1>
             </td>
           </tr>
@@ -36,7 +36,7 @@ export const MMTThankYouEmail = ({
               </p>
 
               <p style="font-size:16px;color:#333;line-height:1.6;">
-                Thank you for subscribing to <strong>Tooling Technology</strong>.
+                Thank you for subscribing to <strong>Metrology</strong>.
                 You're now part of a community committed to innovation in Toolingdesign,
                 machining, and tooling excellence.
               </p>
@@ -70,7 +70,7 @@ export const MMTThankYouEmail = ({
           <tr>
             <td style="background:#00344f;padding:20px;text-align:center;">
               <p style="color:white;margin:0;font-size:12px;">
-                © 2025 Tooling Technology. All rights reserved.
+                © 2025 Metrology. All rights reserved.
               </p>
             </td>
           </tr>

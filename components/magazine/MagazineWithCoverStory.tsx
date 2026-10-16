@@ -80,7 +80,7 @@ export default function MagazineWithCoverStory() {
   }
 
   return (
-    <section className="bg-[#f3f6f8] px-5 py-10 sm:px-8 sm:py-16">
+    <section id="latest-issue" className="bg-[#f3f6f8] px-5 py-10 sm:px-8 sm:py-16">
       <div className="mx-auto grid max-w-7xl overflow-hidden rounded-3xl bg-white shadow-xl ring-1 ring-[#dce4ea] lg:grid-cols-[350px_minmax(0,1fr)]">
         <div className="flex flex-col items-center bg-[#003049] px-7 py-9 text-center text-white sm:px-10 lg:items-start lg:text-left">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#77c7ff]">Latest issue</p>
