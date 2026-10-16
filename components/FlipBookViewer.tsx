@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import Image from "next/image"
 import dynamic from "next/dynamic"
 import { useEffect, useRef, useState } from "react"
@@ -46,28 +46,7 @@ export default function FlipBookViewer({ pages }: Props) {
     window.addEventListener("resize", updateSize)
     return () => window.removeEventListener("resize", updateSize)
   }, [isFullscreen])
-
-  /* ================= AUTO FLIP ================= */
-
-  useEffect(() => {
-    if (!bookRef.current) return
-
-    const interval = setInterval(() => {
-      const api = bookRef.current.pageFlip()
-      const current = api.getCurrentPageIndex()
-      const total = api.getPageCount()
-
-      if (current < total - 1) {
-        api.flipNext()
-      } else {
-        api.flip(0)
-      }
-    }, 4000)
-
-    return () => clearInterval(interval)
-  }, [])
-
-  if (!pages?.length) {
+if (!pages?.length) {
     return (
       <div className="text-center text-gray-500 py-10">
         No flipbook pages available.
@@ -142,8 +121,8 @@ export default function FlipBookViewer({ pages }: Props) {
 
       <HTMLFlipBook
         ref={bookRef}
-        width={(window.innerHeight - 80) * 0.85}   // 👈 WIDTH based on height
-        height={window.innerHeight - 80}           // 👈 FULL HEIGHT
+        width={(window.innerHeight - 80) * 0.85}   // ðŸ‘ˆ WIDTH based on height
+        height={window.innerHeight - 80}           // ðŸ‘ˆ FULL HEIGHT
         size="fixed"
         minWidth={300}
         maxWidth={4000}

@@ -1,4 +1,4 @@
-// import MagazineGrid from "@/components/magazine/MagazineGrid"
+﻿// import MagazineGrid from "@/components/magazine/MagazineGrid"
 
 // export default function MagazinesPage() {
 //   return (
@@ -35,7 +35,7 @@ export default async function MagazinesPage() {
   })
 
   return (
-    <div className="space-y-16 ">
+    <main className="min-h-screen bg-white">
       {/* Top Section */}
       <MagazineWithCoverStory />
 
@@ -44,6 +44,6 @@ export default async function MagazinesPage() {
 
       {/* Archive Section */}
       <MagazineArchive />
-    </div>
+    </main>
   )
 }

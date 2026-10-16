@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { Calendar, Eye, ChevronRight, ChevronLeft, Facebook, Instagram, Linkedin, Mail, FileText, MessageSquare, ArrowUp, Home } from "lucide-react"
+import { Calendar, Eye, ChevronRight, ChevronLeft, Facebook, Twitter, Instagram, Linkedin, Mail, FileText, MessageSquare, ArrowUp, Home } from "lucide-react"
 
 import RelatedPostsCarousel from "@/components/related-posts-carousel"
 // import ContentGateModal from "@/components/content-gate-modal"
