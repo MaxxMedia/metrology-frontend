@@ -380,7 +380,6 @@ export default function Header() {
                   { href: "#", label: "Facebook", Icon: Facebook },
                   { href: "#", label: "Instagram", Icon: Instagram },
                   { href: "#", label: "LinkedIn", Icon: Linkedin },
-                  { href: "#", label: "Pinterest", Icon: PinterestIcon },
                 ].map(({ href, label, Icon }) => (
                   <Link key={label} href={href} aria-label={label} className="hover:text-[#0073ff] transition-colors shrink-0">
                     <Icon size={14} />

@@ -1,4 +1,4 @@
-import Link from "next/link"
+﻿import Link from "next/link"
 
 type Props = {
   slug: string
@@ -22,7 +22,7 @@ export default function CompanyTabs({ slug, active }: Props) {
           className={
             active === tab.key
               ? "text-blue-600 border-b-2 border-blue-600 pb-2"
-              : "text-gray-600 hover:text-blue-600"
+              : "text-black hover:text-blue-600"
           }
         >
           {tab.label}
@@ -31,3 +31,4 @@ export default function CompanyTabs({ slug, active }: Props) {
     </div>
   )
 }
+
