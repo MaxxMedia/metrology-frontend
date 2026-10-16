@@ -19,11 +19,11 @@ export default function MMTThankYouPage() {
         </h2>
 
         <p className="text-lg text-gray-800 font-semibold mb-4">
-          Welcome to the Tooling Technology Community
+          Welcome to the Metrology Community
         </p>
 
         <p className="text-gray-600 leading-relaxed mb-8">
-          Thank you for subscribing to Tooling. You’ll now receive industry insights,  
+          Thank you for subscribing to Metrology. You’ll now receive industry insights,  
           tooling design news, machining techniques, and much more — straight to your inbox.
         </p>
 
@@ -32,7 +32,7 @@ export default function MMTThankYouPage() {
 
         <p className="text-gray-500 text-sm mb-10">
           Stay updated with the latest in Toolmaking, manufacturing,  
-          and advanced tooling technology.
+          and advanced metrology.
         </p>
 
         {/* BUTTONS */}
