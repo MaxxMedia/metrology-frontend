@@ -1,15 +1,9 @@
-"use client"
+﻿"use client"
 
-import dynamic from "next/dynamic"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import type { ContentLimitEligibility } from "@/lib/packageLimits"
 import { countFilledProducts } from "@/lib/productListings"
-
-const PackageLimitModal = dynamic(
-  () => import("@/components/recruiter/PackageLimitModal"),
-  { ssr: false }
-)
 
 type Directory = {
   id: number
@@ -28,7 +22,7 @@ type Directory = {
   productGallery?: unknown
   companyGallery?: unknown
   factoryGallery?: unknown
-  productCatalogues?: unknown  // ✅ This is correct
+  productCatalogues?: unknown  // âœ… This is correct
 
   companyBrochure?: unknown
   certifications?: unknown
@@ -48,8 +42,7 @@ export default function RecruiterDirectoriesPage() {
   const [directories, setDirectories] = useState<Directory[]>([])
   const [listingEligibility, setListingEligibility] =
     useState<ContentLimitEligibility | null>(null)
-  const [showLimitModal, setShowLimitModal] = useState(false)
-  const [loading, setLoading] = useState(true)
+const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
   useEffect(() => {
@@ -128,39 +121,27 @@ export default function RecruiterDirectoriesPage() {
       <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] flex items-center justify-center">
         <div className="text-center">
           <div className="w-10 h-10 border-[3px] border-[#00B5ED] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-sm text-[#CCCCCC]">Loading directories…</p>
+          <p className="text-sm text-[#CCCCCC]">Loading directoriesâ€¦</p>
         </div>
       </div>
     )
   }
-
-  const canCreateDirectory = directories.length === 0
-
-  return (
+return (
     <div className="min-h-screen bg-[#171A1E] text-[#CCCCCC] p-6 md:p-10">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl font-bold text-[#FFFFFF]">My Directories</h1>
 
-          {canCreateDirectory && (
-            <Link
-              href="/recruiter/directory/new"
-              onClick={(e) => {
-                if (listingEligibility && !listingEligibility.canAdd) {
-                  e.preventDefault()
-                  setShowLimitModal(true)
-                }
-              }}
-              className="bg-[#0073FF] hover:bg-[#0060D0] text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors"
-            >
-              + Add Directory
-            </Link>
-          )}
+          <Link
+            href="/recruiter/directory/new"
+            className="bg-[#0073FF] hover:bg-[#0060D0] text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors"
+          >
+            + Add Directory
+          </Link>
         </div>
 
         <p className="text-sm text-[#B8B8B8] mb-6">
           {directories.length} supplier {directories.length === 1 ? "directory" : "directories"}
-          {directories.length > 0 && " · One directory allowed per account"}
           {listingEligibility && !listingEligibility.isUnlimited && (
             <>
               {" · "}
@@ -171,7 +152,7 @@ export default function RecruiterDirectoriesPage() {
               {listingEligibility.planLabel ?? "plan"}
             </>
           )}
-          {listingEligibility?.isUnlimited && " · Unlimited supplier directories on your plan"}
+          {listingEligibility?.isUnlimited && " Â· Unlimited supplier directories on your plan"}
         </p>
 
         {error && (
@@ -188,7 +169,7 @@ export default function RecruiterDirectoriesPage() {
                 href="/recruiter/directory/new"
                 className="mt-3 inline-block text-[#00B5ED] hover:underline font-medium"
               >
-                Create your supplier directory →
+                Create your supplier directory â†’
               </Link>
             </div>
           )}
@@ -229,9 +210,9 @@ export default function RecruiterDirectoriesPage() {
                       >
                         {dir.status}
                       </span>
-                      {" · "}
+                      {" Â· "}
                       {productCount} product{productCount === 1 ? "" : "s"} listed
-                      {" · "}
+                      {" Â· "}
                       Public page available after approval
                     </p>
                   </div>
@@ -268,15 +249,7 @@ export default function RecruiterDirectoriesPage() {
           })}
         </div>
 
-        <PackageLimitModal
-          open={showLimitModal}
-          onClose={() => setShowLimitModal(false)}
-          title="Directory slot limit reached"
-          eligibility={listingEligibility}
-          usedLabel="Directories"
-          usedValue={listingEligibility?.activeListings}
-          limitValue={listingEligibility?.effectiveLimit}
-        />
+
       </div>
     </div>
   )
