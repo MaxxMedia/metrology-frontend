@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
@@ -14,7 +14,7 @@ import {
   XCircle,
   Clock,
   Users,
-  LogIn
+  LogIn,
 } from "lucide-react"
 import AdminPagination, { ADMIN_PAGE_SIZE } from "@/components/admin/AdminPagination"
 
@@ -52,6 +52,7 @@ export default function AdminDirectoriesPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [filterStatus, setFilterStatus] = useState<string>("all")
   const [sendingId, setSendingId] = useState<number | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
   const token =
@@ -79,7 +80,7 @@ export default function AdminDirectoriesPage() {
       const suppliersData = await suppliersRes.json()
       const usersData = await usersRes.json()
 
-      // ✅ Create a map of user status by user ID from the users API
+      // âœ… Create a map of user status by user ID from the users API
       const userStatusMap: Record<number, any> = {}
       if (Array.isArray(usersData)) {
         usersData.forEach((user: any) => {
@@ -97,7 +98,7 @@ export default function AdminDirectoriesPage() {
             const rawUser = d.User_SupplierDirectory_submittedByIdToUser || d.submittedBy || {}
             const status = rawUser.id ? userStatusMap[rawUser.id] : null
             
-            // ✅ Merge user data with status from the users API
+            // âœ… Merge user data with status from the users API
             const mergedUser = {
               ...rawUser,
               lastLoginAt: status?.lastLoginAt ?? rawUser.lastLoginAt ?? null,
@@ -105,7 +106,7 @@ export default function AdminDirectoriesPage() {
               emailSentForBulkImport: status?.emailSentForBulkImport ?? rawUser.emailSentForBulkImport ?? false,
             }
             
-            console.log(`👤 User: ${mergedUser.email || 'No email'}`, {
+            console.log(`ðŸ‘¤ User: ${mergedUser.email || 'No email'}`, {
               lastLoginAt: mergedUser.lastLoginAt,
               emailSentForBulkImport: mergedUser.emailSentForBulkImport,
               isOnboarded: mergedUser.isOnboarded
@@ -132,7 +133,7 @@ export default function AdminDirectoriesPage() {
 
     setDirectories(rows);
     } catch (err) {
-      console.error("❌ Fetch error:", err)
+      console.error("âŒ Fetch error:", err)
     } finally {
       setLoading(false)
     }
@@ -167,7 +168,7 @@ export default function AdminDirectoriesPage() {
 
       setMessage({
         type: 'success',
-        text: `✅ Email sent to ${data.email}`,
+        text: `âœ… Email sent to ${data.email}`,
       })
 
       setTimeout(() => {
@@ -175,16 +176,36 @@ export default function AdminDirectoriesPage() {
       }, 1500)
 
     } catch (error: any) {
-      console.error("❌ Send email error:", error)
+      console.error("âŒ Send email error:", error)
       setMessage({
         type: 'error',
-        text: `❌ ${error.message}`,
+        text: `âŒ ${error.message}`,
       })
     } finally {
       setSendingId(null)
     }
   }
 
+
+  const deleteDirectory = async (directory: Directory) => {
+    if (!window.confirm(`Delete "${directory.name}" permanently?`)) return
+    setDeletingId(directory.id)
+    setMessage(null)
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/directories/${directory.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to delete directory")
+      setDirectories((current) => current.filter((item) => item.id !== directory.id))
+      setMessage({ type: "success", text: "Directory deleted successfully." })
+    } catch (error: any) {
+      setMessage({ type: "error", text: error.message || "Failed to delete directory" })
+    } finally {
+      setDeletingId(null)
+    }
+  }
   /* ================= FILTERED DIRECTORIES ================= */
 
   const filteredDirectories = useMemo(() => {
@@ -192,10 +213,10 @@ export default function AdminDirectoriesPage() {
 
     // Filter by Login Status
     if (filterStatus === "logged-in") {
-      // ✅ Users who have logged in (lastLoginAt exists)
+      // âœ… Users who have logged in (lastLoginAt exists)
       result = result.filter(d => d.submittedBy?.lastLoginAt)
     } else if (filterStatus === "pending-login") {
-      // ✅ Users who have received email but NOT logged in
+      // âœ… Users who have received email but NOT logged in
       result = result.filter(d => 
         d.submittedBy && 
         !d.submittedBy.lastLoginAt && 
@@ -246,34 +267,34 @@ export default function AdminDirectoriesPage() {
         text: "No User",
         icon: <XCircle className="w-4 h-4" />,
         className: "text-gray-500",
-        buttonText: "—",
+        buttonText: "â€”",
         disabled: true
       }
     }
 
-    // ✅ If lastLoginAt exists, user has logged in
+    // âœ… If lastLoginAt exists, user has logged in
     if (user?.lastLoginAt) {
       return {
         text: "Logged In",
         icon: <LogIn className="w-4 h-4" />,
         className: "text-green-600",
-        buttonText: "🔒 Logged In",
+        buttonText: "Logged In",
         disabled: true
       }
     }
     
-    // ✅ If email was sent but user hasn't logged in
+    // âœ… If email was sent but user hasn't logged in
     if (user?.emailSentForBulkImport) {
       return {
         text: "Email Sent",
         icon: <CheckCircle className="w-4 h-4" />,
         className: "text-blue-600",
-        buttonText: "✅ Sent",
+        buttonText: "âœ… Sent",
         disabled: true
       }
     }
     
-    // ✅ User hasn't received email yet
+    // âœ… User hasn't received email yet
     return {
       text: "Pending",
       icon: <XCircle className="w-4 h-4" />,
@@ -285,10 +306,10 @@ export default function AdminDirectoriesPage() {
 
   /* ================= STATS COUNTS ================= */
 
-  // ✅ Count users who have logged in (lastLoginAt exists)
+  // âœ… Count users who have logged in (lastLoginAt exists)
   const loggedInCount = directories.filter(d => d.submittedBy?.lastLoginAt).length
   
-  // ✅ Count users who have received email but NOT logged in
+  // âœ… Count users who have received email but NOT logged in
   const pendingLoginCount = directories.filter(d => 
     d.submittedBy && 
     !d.submittedBy.lastLoginAt && 
@@ -497,7 +518,7 @@ export default function AdminDirectoriesPage() {
                               : "bg-gray-100 text-gray-600"
                           }`}
                         >
-                          {dir.isVerified ? "✅ Verified" : "❌ Unverified"}
+                          {dir.isVerified ? "âœ… Verified" : "âŒ Unverified"}
                         </span>
                       </td> */}
 
@@ -509,11 +530,11 @@ export default function AdminDirectoriesPage() {
                               : "bg-red-100 text-red-700"
                           }`}
                         >
-                          {dir.isActive ? "🟢 Active" : "🔴 Inactive"}
+                          {dir.isActive ? "Active" : "Inactive"}
                         </span>
                       </td>
 
-                      <td>{dir.company?.name || "—"}</td>
+                      <td>{dir.company?.name || "â€”"}</td>
 
                       <td>
                         {dir.submittedBy ? (
@@ -526,7 +547,7 @@ export default function AdminDirectoriesPage() {
                             )}
                           </>
                         ) : (
-                          <span className="text-gray-400">—</span>
+                          <span className="text-gray-400">â€”</span>
                         )}
                       </td>
 
@@ -555,7 +576,7 @@ export default function AdminDirectoriesPage() {
                             disabled
                             className="px-3 py-1 bg-gray-200 text-gray-500 rounded cursor-not-allowed"
                           >
-                            {dir.submittedBy?.lastLoginAt ? "🔒 Logged In" : "✅ Sent"}
+                            {dir.submittedBy?.lastLoginAt ? "Logged In" : "âœ… Sent"}
                           </button>
                         ) : (
                           <span className="text-gray-400 text-xs">No user</span>
@@ -563,12 +584,15 @@ export default function AdminDirectoriesPage() {
                       </td>
 
                       <td className="text-right">
-                        <Link
-                          href={`/admin/directories/${dir.id}`}
-                          className="text-blue-600 hover:underline text-sm"
-                        >
-                          Review
-                        </Link>
+                        <div className="flex items-center justify-end gap-3">
+                          <Link href={`/admin/directories/${dir.id}`} className="text-blue-600 hover:underline text-sm">Review</Link>
+                          <Link href={`/admin/directories/${dir.id}/edit`} className="inline-flex items-center gap-1 text-indigo-600 hover:underline text-sm">
+                            Edit
+                          </Link>
+                          <button onClick={() => deleteDirectory(dir)} disabled={deletingId === dir.id} className="inline-flex items-center gap-1 text-red-600 hover:underline text-sm disabled:opacity-50">
+                            {deletingId === dir.id ? "Deleting..." : "Delete"}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -619,3 +643,9 @@ function StatCard({
     </div>
   )
 }
+
+
+
+
+
+

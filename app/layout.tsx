@@ -1,5 +1,4 @@
-import type { Metadata, Viewport } from "next"
-import { Inter_Tight } from "next/font/google"
+﻿import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import "remixicon/fonts/remixicon.css"
 
@@ -7,13 +6,6 @@ import "./globals.css"
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-
-const interTight = Inter_Tight({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-inter-tight",
-  display: "swap",
-})
 
 // Enhanced metadata for better SEO
 export const metadata: Metadata = {
@@ -167,7 +159,7 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en" className={`${interTight.variable} h-full`}>
+    <html lang="en" className="h-full">
       <head>
         {/* JSON-LD Structured Data */}
         <script
@@ -197,7 +189,7 @@ export default function RootLayout({
       </head>
 
       <body
-        className={`${interTight.className} antialiased bg-[#1D2125] text-white`}
+        className="antialiased bg-[#1D2125] text-white"
         suppressHydrationWarning
       >
 
@@ -214,3 +206,4 @@ export default function RootLayout({
     </html>
   )
 }
+

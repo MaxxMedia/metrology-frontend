@@ -1,13 +1,12 @@
-// app/post/[slug]/page.tsx
+﻿// app/post/[slug]/page.tsx
 "use client"
 
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { Calendar, Eye, ChevronRight, ChevronLeft, Facebook, Twitter, Instagram, Linkedin, Mail, FileText, MessageSquare, ArrowUp, Home } from "lucide-react"
+import { Calendar, Eye, ChevronRight, ChevronLeft, Facebook, Instagram, Linkedin, Mail, FileText, MessageSquare, ArrowUp, Home } from "lucide-react"
 
-import ShareSection from "@/components/share-section"
 import RelatedPostsCarousel from "@/components/related-posts-carousel"
 // import ContentGateModal from "@/components/content-gate-modal"
 import PostViewCounter from "@/components/PostViewCounter"
@@ -143,7 +142,6 @@ export default function PostDetailsPage() {
   const [comments, setComments] = useState<Comment[]>([])
   const [nextPost, setNextPost] = useState<Post | null>(null)
   const [prevPost, setPrevPost] = useState<Post | null>(null)
-  const [categories, setCategories] = useState<{ id: number; name: string; slug: string; parentId?: number | null; imageUrl?: string; _count?: { posts?: number } }[]>([])
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [isScrolledDown, setIsScrolledDown] = useState(false)
   const [lastY, setLastY] = useState(0)
@@ -314,7 +312,7 @@ export default function PostDetailsPage() {
 
       animateTo(target, 700, () => {
         if (scrollContainer.scrollLeft >= halfWidth - 1) {
-          // Duplicated content lines up exactly here — instant wrap is invisible
+          // Duplicated content lines up exactly here â€” instant wrap is invisible
           scrollContainer.scrollLeft -= halfWidth
         }
       })
@@ -366,23 +364,6 @@ export default function PostDetailsPage() {
     fetchComments()
   }, [post])
 
-  /* ================= FETCH CATEGORIES ================= */
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`)
-        if (!res.ok) return
-        const data = await res.json()
-        const list = Array.isArray(data) ? data : (data as any).categories || (data as any).data || []
-        const mainOnly = list.filter((c: any) => c.parentId === null || c.parentId === undefined)
-        setCategories(mainOnly)
-      } catch (err) {
-        console.error("Failed to load categories:", err)
-      }
-    }
-    fetchCategories()
-  }, [])
-
   /* ================= CONTENT GATE ================= */
   useEffect(() => {
     if (hasPremiumAccess || !post || loading) return
@@ -420,7 +401,7 @@ export default function PostDetailsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0a0d14] px-4">
         <div className="text-center max-w-md">
-          <div className="text-6xl mb-6">📄</div>
+          <div className="text-6xl mb-6">ðŸ“„</div>
           <h2 className="text-2xl font-bold text-white mb-3">Post Not Found</h2>
           <p className="text-gray-400 mb-6">
             {error || "The post you're looking for doesn't exist or has been removed."}
@@ -478,11 +459,11 @@ export default function PostDetailsPage() {
               <Home size={14} className="text-gray-300" />
               <span>Home</span>
             </Link>
-            <span className="text-gray-400 font-sans text-sm">→</span>
+            <span className="text-gray-400 font-sans text-sm">â†’</span>
             <Link href="/blog" className="text-gray-200 hover:text-white font-medium transition-colors">
               Blog
             </Link>
-            <span className="text-gray-400 font-sans text-sm">→</span>
+            <span className="text-gray-400 font-sans text-sm">â†’</span>
             <span className="text-gray-300 font-normal truncate max-w-xs sm:max-w-md md:max-w-xl">
               {post.title}
             </span>
@@ -531,7 +512,7 @@ export default function PostDetailsPage() {
                   {author?.name || DEFAULT_AUTHOR_NAME}
                 </Link>
 
-                <span className="text-gray-500">•</span>
+                <span className="text-gray-500">â€¢</span>
 
                 <span className="flex items-center gap-1">
                   <Calendar size={14} className="text-gray-500" />
@@ -540,7 +521,7 @@ export default function PostDetailsPage() {
 
                 {post.category?.name && (
                   <>
-                    <span className="text-gray-500">•</span>
+                    <span className="text-gray-500">â€¢</span>
                     <span className="flex items-center gap-1">
                       <FileText size={14} className="text-gray-500" />
                       {post.category.name}
@@ -548,7 +529,7 @@ export default function PostDetailsPage() {
                   </>
                 )}
 
-                <span className="text-gray-500">•</span>
+                <span className="text-gray-500">â€¢</span>
 
                 <span className="flex items-center gap-1">
                   <MessageSquare size={14} className="text-gray-500" />
@@ -658,15 +639,13 @@ export default function PostDetailsPage() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 bg-red-600 px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors"
                       >
-                        Open YouTube →
+                        Open YouTube â†’
                       </a>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* SHARE SECTION */}
-              <ShareSection post={post} />
 
               {/* AUTHOR BIO */}
               {author && (
@@ -945,104 +924,9 @@ export default function PostDetailsPage() {
 
                 {/* Banner - directly after the 4-article tabbed list */}
                 <SupplierAds />
+                
 
-                {/* Explore Categories - only top 6 shown */}
-                {categories.length > 0 && (
-                  <div>
-                    <h3 className="flex items-center gap-2 text-base font-bold text-white mb-4">
-                      Explore Categories
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                    </h3>
-                    <div className="space-y-3">
-                      {categories.slice(0, 6).map((cat) => {
-                        const catImgSrc = cat.imageUrl?.startsWith("http")
-                          ? cat.imageUrl
-                          : cat.imageUrl
-                            ? `${process.env.NEXT_PUBLIC_API_URL}${cat.imageUrl}`
-                            : null
-
-                        return (
-                          <Link
-                            key={cat.id}
-                            href={`/category/${cat.slug || cat.name.toLowerCase()}`}
-                            className="relative flex items-center justify-between h-14 rounded-lg overflow-hidden group bg-gray-800"
-                          >
-                            {catImgSrc && (
-                              <Image
-                                src={catImgSrc}
-                                alt={cat.name}
-                                fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                sizes="320px"
-                                onError={(e) => {
-                                  ;(e.currentTarget as HTMLImageElement).style.display = "none"
-                                }}
-                              />
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
-                            <span className="relative pl-4 text-sm font-semibold text-white">
-                              {cat.name} {typeof cat._count?.posts === "number" && `(${cat._count.posts})`}
-                            </span>
-                            <span className="relative mr-4 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 text-white group-hover:bg-blue-600 transition-colors">
-                              <ChevronRight size={14} />
-                            </span>
-                          </Link>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Follow Us - after Explore Categories */}
-                <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-sm">
-                  <h3 className="text-base font-bold text-white mb-4">Follow Us</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <a href="#" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 transition-colors rounded-lg p-3">
-                      <Facebook size={18} className="text-white flex-shrink-0" />
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-white">Facebook</span>
-                        <span className="block text-xs text-white/80">88.2k Followers</span>
-                      </span>
-                    </a>
-                    <a href="#" className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 transition-colors rounded-lg p-3">
-                      <Twitter size={18} className="text-white flex-shrink-0" />
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-white">Twitter - X</span>
-                        <span className="block text-xs text-gray-300">48.6k Followers</span>
-                      </span>
-                    </a>
-                    <a href="#" className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 transition-colors rounded-lg p-3">
-                      <span className="text-white flex-shrink-0">●</span>
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-white">Dribbble</span>
-                        <span className="block text-xs text-white/80">39.5k Followers</span>
-                      </span>
-                    </a>
-                    <a href="#" className="flex items-center gap-2 bg-red-600 hover:bg-red-700 transition-colors rounded-lg p-3">
-                      <span className="text-white flex-shrink-0">P</span>
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-white">Pinterest</span>
-                        <span className="block text-xs text-white/80">28.2k Followers</span>
-                      </span>
-                    </a>
-                    <a href="#" className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 transition-colors rounded-lg p-3">
-                      <Linkedin size={18} className="text-white flex-shrink-0" />
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-white">Linkedin</span>
-                        <span className="block text-xs text-white/80">30.3k Followers</span>
-                      </span>
-                    </a>
-                    <a href="#" className="flex items-center gap-2 bg-fuchsia-600 hover:bg-fuchsia-700 transition-colors rounded-lg p-3">
-                      <Instagram size={18} className="text-white flex-shrink-0" />
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-white">Instagram</span>
-                        <span className="block text-xs text-white/80">24.5k Followers</span>
-                      </span>
-                    </a>
-                  </div>
-                </div>
-
-                {/* Tags (sidebar) - heading style matches Explore Categories */}
+                {/* Tags sidebar section */}
                 {post.tags && post.tags.length > 0 && (
                   <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-sm">
                     <h3 className="flex items-center gap-2 text-base font-bold text-white mb-4">
@@ -1126,3 +1010,8 @@ export default function PostDetailsPage() {
     </>
   )
 }
+
+
+
+
+

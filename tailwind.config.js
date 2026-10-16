@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+﻿/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx}",
@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter-tight)", "sans-serif"],
+        sans: ["Arial", "Helvetica", "sans-serif"],
       },
       fontSize: {
         xs: ["12px", { lineHeight: "1.4" }],
@@ -35,3 +35,4 @@ module.exports = {
     require("@tailwindcss/typography"),
   ],
 }
+

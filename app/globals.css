@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @import "tw-animate-css";
 /* @import 'swiper/css';
 @import 'swiper/css/navigation';
@@ -44,9 +44,9 @@
 
 
   /* ================= FONT SYSTEM ================= */
-  --font-primary: var(--font-inter-tight), "Inter Tight", sans-serif;
+  --font-primary: Arial, Helvetica, sans-serif;
 
-  /* ── Font sizes ── */
+  /* â”€â”€ Font sizes â”€â”€ */
   --fs-h1:     32px;
   --fs-h2:     32px;
   --fs-h3:     22px;
@@ -80,7 +80,7 @@
   --fs-28: 28px;
   --fs-32: 32px;
 
-  /* ── Line heights ── */
+  /* â”€â”€ Line heights â”€â”€ */
   --lh-h1:     1.2;
   --lh-h2:     1.25;
   --lh-h3:     1.3;
@@ -98,7 +98,7 @@
   --lh-title:   1.35;
   --lh-hero:    1.2;
 
-  /* ── Font weights ── */
+  /* â”€â”€ Font weights â”€â”€ */
   --fw-regular:  400;
   --fw-medium:   500;
   --fw-semibold: 600;
@@ -156,14 +156,14 @@
     font-family: var(--font-primary) !important;
   }
 
-  /* ── Headings ── */
+  /* â”€â”€ Headings â”€â”€ */
   h1 {
     font-size: var(--fs-h1);
     line-height: var(--lh-h1);
     font-weight: var(--fw-bold);
   }
 
-  /* Home hero title — must beat the global h1 clamp */
+  /* Home hero title â€” must beat the global h1 clamp */
   h1.hero-main-title {
     font-size: clamp(30px, 3.6vw, 58px) !important;
     line-height: 1.18 !important;
@@ -211,14 +211,14 @@
     font-weight: var(--fw-semibold);
   }
 
-  /* ── Body text ── */
+  /* â”€â”€ Body text â”€â”€ */
   p, li, dd, td {
     font-size: var(--fs-body);
     line-height: var(--lh-body);
     font-weight: var(--fw-regular);
   }
 
-  /* ── Buttons ── */
+  /* â”€â”€ Buttons â”€â”€ */
   button {
     font: inherit;
     font-size: var(--fs-button);
@@ -226,7 +226,7 @@
     line-height: var(--lh-button);
   }
 
-  /* ── Inputs ── */
+  /* â”€â”€ Inputs â”€â”€ */
   input, textarea, select {
     font: inherit;
     font-size: var(--fs-body);
@@ -234,7 +234,7 @@
     line-height: var(--lh-body);
   }
 
-  /* ── Labels ── */
+  /* â”€â”€ Labels â”€â”€ */
   label, th {
     font-size: var(--fs-label);
     font-weight: var(--fw-semibold);
@@ -778,7 +778,7 @@ body {
 }
 
 /* ======================================================
-   ADMIN CMS — readable light canvas + form controls
+   ADMIN CMS â€” readable light canvas + form controls
 ====================================================== */
 .admin-cms {
   color: #0f172a;
@@ -829,7 +829,7 @@ body {
 }
 
 /* ======================================================
-   CANDIDATE PROFILE — dark metrology theme
+   CANDIDATE PROFILE â€” dark metrology theme
 ====================================================== */
 .candidate-profile-page {
   background-color: #0a0d14;
@@ -1044,6 +1044,7 @@ h4.top-card-title-22 a,
   font-size: 22px !important;
   line-height: 1.3 !important;
 }
+
 
 
 
