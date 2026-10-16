@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -122,11 +122,11 @@ export default function AboutPage() {
     }
   }
 
-  if (loading) return <div className="p-10">Loading...</div>;
-  if (!company) return <div className="p-10">Company not found.</div>;
+  if (loading) return <div className="p-10 text-black">Loading...</div>;
+  if (!company) return <div className="p-10 text-black">Company not found.</div>;
 
   return (
-    <div className="bg-[#f3f2ef] min-h-screen">
+    <div className="bg-[#f3f2ef] min-h-screen text-black">
       <div className="max-w-[1128px] mx-auto px-4 py-6 space-y-6">
         
         <CompanyHeader 
@@ -140,7 +140,7 @@ export default function AboutPage() {
         <div className="space-y-6">
           <section className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-2xl font-bold mb-4">About</h2>
-            <p className="text-gray-700 leading-8 whitespace-pre-line">
+            <p className="text-black leading-8 whitespace-pre-line">
               {company.description || "No company description available."}
             </p>
           </section>

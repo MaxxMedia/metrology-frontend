@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import Image from "next/image"
 import Link from "next/link"
@@ -114,13 +114,13 @@ export default function CompanyJobsPage() {
     }
   }
 
-  if (loading) return <div className="p-10">Loading…</div>
-  if (!company) return <div className="p-10 text-center">Company not found</div>
+  if (loading) return <div className="p-10 text-black">Loadingâ€¦</div>
+  if (!company) return <div className="p-10 text-center text-black">Company not found</div>
 
   const jobs = company.jobs ?? []
 
   return (
-    <div className="bg-[#f3f2ef] min-h-screen">
+    <div className="bg-[#f3f2ef] min-h-screen text-black">
       <div className="max-w-[1128px] mx-auto px-4 py-6 space-y-6">
         <CompanyHeader 
           company={company}
@@ -134,7 +134,7 @@ export default function CompanyJobsPage() {
           <h2 className="font-semibold mb-4">Open Jobs ({jobs.length})</h2>
 
           {jobs.length === 0 ? (
-            <p className="text-sm text-gray-500">No active jobs at the moment.</p>
+            <p className="text-sm text-black">No active jobs at the moment.</p>
           ) : (
             <div className="space-y-4">
               {jobs.map((job) => (
@@ -144,10 +144,10 @@ export default function CompanyJobsPage() {
                   className="block border rounded-lg p-4 hover:bg-gray-50 transition-colors"
                 >
                   <p className="font-medium">{job.title}</p>
-                  <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                  <p className="text-sm text-black mt-1 flex items-center gap-2">
                     <MapPin size={14} />
-                    {job.location} · {job.employmentType}
-                    {job.isRemote && " · Remote"}
+                    {job.location} Â· {job.employmentType}
+                    {job.isRemote && " Â· Remote"}
                   </p>
                   <span className="text-sm text-blue-600 mt-2 inline-flex items-center gap-1">
                     <Briefcase size={14} />

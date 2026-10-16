@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import Image from "next/image"
 import Link from "next/link"
@@ -59,11 +59,11 @@ function FollowerCard({ person }: { person: Person }) {
             {person.fullName || person.username}
           </h3>
 
-          <p className="text-gray-700">
+          <p className="text-black">
             {person.headline}
           </p>
 
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-black mt-1">
            {person.location}
           </p>
         </div>
@@ -71,7 +71,7 @@ function FollowerCard({ person }: { person: Person }) {
 
       <div className="flex items-center gap-8">
         {person.followingSince && (
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-black">
             <p>Following since</p>
             <p>
               {new Date(person.followingSince).toLocaleDateString("en-US", {
@@ -186,8 +186,8 @@ export default function CompanyPeoplePage() {
     }
   }
 
-  if (loading) return <div className="p-10">Loading…</div>
-  if (!company) return <div className="p-10 text-center">Company not found</div>
+  if (loading) return <div className="p-10 text-black">Loadingâ€¦</div>
+  if (!company) return <div className="p-10 text-center text-black">Company not found</div>
 
   const followers = people.filter(
     (p) => p.relation === "follower"
@@ -198,7 +198,7 @@ export default function CompanyPeoplePage() {
     : followers.slice(0, 5)
 
   return (
-    <div className="bg-[#f3f2ef] min-h-screen">
+    <div className="bg-[#f3f2ef] min-h-screen text-black">
       <div className="max-w-[1128px] mx-auto px-4 py-6 space-y-6">
         <CompanyHeader 
           company={company}
@@ -211,7 +211,7 @@ export default function CompanyPeoplePage() {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="mb-6">
             <h2 className="text-3xl font-bold">People</h2>
-            <p className="text-gray-500 mt-1">
+            <p className="text-black mt-1">
               People who follow {company.name}
             </p>
             <p className="font-semibold mt-3">
@@ -225,7 +225,7 @@ export default function CompanyPeoplePage() {
                 <FollowerCard key={person.id} person={person} />
               ))
             ) : (
-              <p className="text-center text-gray-500 py-8">
+              <p className="text-center text-black py-8">
                 No followers yet
               </p>
             )}
@@ -239,7 +239,7 @@ export default function CompanyPeoplePage() {
               >
                 {showAllFollowers
                   ? "Show less"
-                  : `Show all ${followers.length} followers →`}
+                  : `Show all ${followers.length} followers â†’`}
               </button>
             </div>
           )}

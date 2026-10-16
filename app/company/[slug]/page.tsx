@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import Image from "next/image"
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
@@ -123,11 +123,11 @@ export default function CompanyProfilePage(props: {
     }
   }
 
-  if (loading) return <div className="p-10">Loading…</div>
+  if (loading) return <div className="p-10">Loadingâ€¦</div>
   if (!company) return <div className="p-10 text-center">Company not found</div>
 
   return (
-    <div className="bg-[#f3f2ef] min-h-screen">
+    <div className="bg-[#f3f2ef] min-h-screen text-black">
       <div className="max-w-[1128px] mx-auto px-4 py-6 space-y-6">
 
         {/* ================= HEADER ================= */}
@@ -144,7 +144,7 @@ export default function CompanyProfilePage(props: {
           <h2 className="font-semibold mb-4">Jobs</h2>
 
           {(company.jobs ?? []).length === 0 ? (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-black">
               No active jobs at the moment.
             </p>
           ) : (
@@ -156,8 +156,8 @@ export default function CompanyProfilePage(props: {
                   className="block border rounded-lg p-4 hover:bg-gray-50"
                 >
                   <p className="font-medium">{job.title}</p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {job.location} · {job.employmentType}
+                  <p className="text-sm text-black mt-1">
+                    {job.location} Â· {job.employmentType}
                   </p>
 
                   <span className="text-sm text-blue-600 mt-2 inline-flex items-center gap-1">

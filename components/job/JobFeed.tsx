@@ -252,7 +252,7 @@ export default function JobFeed({
 
   function formatSalary(min?: number, max?: number) {
     if (!min && !max) return null
-    const fmt = (n: number) => `$${n.toLocaleString()}`
+    const fmt = (n: number) => `\u20B9${n.toLocaleString("en-IN")}`
     if (min && max) return `${fmt(min)} - ${fmt(max)}`
     if (min) return `${fmt(min)}+`
     if (max) return `Up to ${fmt(max)}`

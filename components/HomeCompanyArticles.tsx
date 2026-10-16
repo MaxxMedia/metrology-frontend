@@ -5,9 +5,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Post } from "../types/Post";
 import {
-  Facebook,
-  Instagram,
-  Linkedin,
   ArrowRight,
   RefreshCw,
 } from "lucide-react";
@@ -133,39 +130,6 @@ function DiamondDot() {
     <span className="w-[7px] h-[7px] bg-[#0073ff] rotate-45 shrink-0" aria-hidden />
   );
 }
-
-function XIcon({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.259 5.686L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
-    </svg>
-  );
-}
-
-function PinterestIcon({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 384 512" fill="currentColor" aria-hidden>
-      <path d="M204 6.5C101.4 6.5 0 74.9 0 185.6 0 256 39.6 296 63.6 296c9.9 0 15.6-27.6 15.6-35.4 0-9.3-23.7-29.1-23.7-67.8 0-80.4 61.2-137.4 140.4-137.4 68.1 0 118.5 38.7 118.5 109.8 0 53.1-21.3 152.7-90.3 152.7-24.9 0-46.2-18-46.2-43.8 0-37.8 26.4-74.4 26.4-113.4 0-66.2-93.9-54.2-93.9 25.8 0 16.8 2.1 35.4 9.6 50.7-13.8 59.4-42 147.9-42 209.1 0 18.9 2.7 37.5 4.5 56.4 3.4 3.8 1.7 3.4 6.9 1.5 50.4-69 48.6-82.5 71.4-172.8 12.3 23.4 44.1 36 69.3 36 106.2 0 153.9-103.5 153.9-196.8C384 71.3 298.2 6.5 204 6.5z" />
-    </svg>
-  );
-}
-
-function DribbbleIcon({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 512 512" fill="currentColor" aria-hidden>
-      <path d="M256 8C119.252 8 8 119.252 8 256s111.252 248 248 248 248-111.252 248-248S392.748 8 256 8zm163.97 114.366c29.503 36.046 47.369 81.957 47.835 131.955-6.984-1.477-77.018-15.682-147.502-6.818-5.752-14.041-11.181-26.393-18.617-41.614 78.321-31.977 113.818-77.482 118.284-83.523zM396.421 97.87c-3.81 5.427-35.697 48.286-111.021 76.519-34.712-63.776-73.185-116.168-79.04-124.008 67.176-16.193 137.966 1.27 190.061 47.489zm-230.48-33.25c5.585 7.659 43.438 60.116 78.537 122.509-99.087 26.313-186.36 25.934-195.834 25.809C62.38 147.205 106.678 92.573 165.941 64.62zM44.17 256.323c0-2.166.043-4.322.108-6.473 9.268.19 111.92 1.513 217.706-30.146 6.064 11.868 11.857 23.915 17.174 35.949-76.599 21.575-146.194 83.527-180.531 142.306C64.794 360.405 44.17 310.73 44.17 256.323zm81.807 167.113c22.127-45.233 82.178-103.622 167.579-132.756 29.74 77.283 42.039 142.053 45.189 160.638-68.112 29.013-150.015 21.053-212.768-27.882zm248.38 8.489c-2.171-12.886-13.446-74.897-41.152-151.033 66.38-10.626 124.7 6.768 131.947 9.055-9.442 58.941-43.273 109.844-90.795 141.978z" />
-    </svg>
-  );
-}
-
-const SOCIALS = [
-  { name: "Facebook", followers: "88.2k Followers", href: "#", bg: "bg-[#1877F2]", Icon: Facebook },
-  { name: "Twitter - X", followers: "48.6k Followers", href: "#", bg: "bg-[#111111]", Icon: XIcon },
-  { name: "Dribbble", followers: "39.5k Followers", href: "#", bg: "bg-[#EA4C89]", Icon: DribbbleIcon },
-  { name: "Pinterest", followers: "28.2k Followers", href: "#", bg: "bg-[#E60023]", Icon: PinterestIcon },
-  { name: "Linkedin", followers: "30.3k Followers", href: "#", bg: "bg-[#0A66C2]", Icon: Linkedin },
-  { name: "Instagram", followers: "24.5k Followers", href: "#", bg: "bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af]", Icon: Instagram },
-];
 
 export default function HomeCompanyArticles({ posts }: Props) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
@@ -457,26 +421,6 @@ export default function HomeCompanyArticles({ posts }: Props) {
                           </li>
                         </ul>
                       </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              {/* Follow Us — normal flow */}
-              <div className="rounded-[4px] border border-white/10 bg-[#1D2125] w-full lg:w-[400px] pt-[20px] pr-[30px] pb-[30px] pl-[30px]">
-                <h4 className="text-[17px] font-bold text-white mb-[12px]">
-                  Follow Us
-                </h4>
-                <div className="flex flex-col gap-[8px] w-full">
-                  {SOCIALS.map(({ name, followers, href, bg, Icon }) => (
-                    <Link
-                      key={name}
-                      href={href}
-                      className={`flex items-center gap-[10px] h-[50px] px-[12px] rounded-[4px] text-white ${bg} hover:opacity-90 transition-opacity`}
-                    >
-                      <Icon size={16} />
-                      <span className="flex-1 text-[16px] font-bold truncate">{name}</span>
-                      <span className="text-[16px] text-white/90 shrink-0">{followers}</span>
                     </Link>
                   ))}
                 </div>
