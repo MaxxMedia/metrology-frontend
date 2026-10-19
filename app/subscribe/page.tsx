@@ -66,6 +66,8 @@ function FormField({
         id={name}
         name={name}
         type={type}
+        required
+        aria-required="true"
         autoComplete={autoComplete}
         className={inputClassName}
       />
@@ -153,7 +155,7 @@ export default function SubscribePage() {
           }}
         >
           {({ isSubmitting, status }) => (
-            <Form className="overflow-hidden rounded-2xl border border-[#d9e4eb] bg-white shadow-[0_12px_40px_rgba(10,46,69,0.08)]">
+            <Form noValidate className="overflow-hidden rounded-2xl border border-[#d9e4eb] bg-white shadow-[0_12px_40px_rgba(10,46,69,0.08)]">
               <div className="border-b border-[#e5edf2] px-6 py-6 sm:px-10">
                 <label className="flex cursor-pointer items-start gap-3">
                   <Field
@@ -200,7 +202,7 @@ export default function SubscribePage() {
                       <label htmlFor="country" className="text-sm font-semibold text-[#19384d]">
                         Country <span className="text-[#c63838">*</span>
                       </label>
-                      <Field as="select" id="country" name="country" autoComplete="country-name" className={inputClassName}>
+                      <Field as="select" id="country" name="country" autoComplete="country-name" required aria-required="true" className={inputClassName}>
                         <option value="">Select your country</option>
                         {countries.map((country) => (
                           <option key={country} value={country}>{country}</option>

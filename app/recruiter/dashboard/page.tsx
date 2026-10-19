@@ -181,78 +181,102 @@ export default function RecruiterDashboard() {
 
   const [recruiter, setRecruiter] = useState<Recruiter | null>(null)
   const [loading, setLoading] = useState(true)
+  const [dashboardDetailsLoading, setDashboardDetailsLoading] = useState(true)
 
   useEffect(() => {
     if (!allowed) return
 
     async function loadAll() {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        setDashboardDetailsLoading(false)
+        setLoading(false)
+        return
+      }
+
+      const headers = { Authorization: `Bearer ${token}` }
+
       try {
-        const token = localStorage.getItem("token")
-
-        /* DASHBOARD */
-        const dashboardRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/recruiters/dashboard`,   // ✅ singular, matches backend mount
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Cache-Control": "no-cache",
-            },
+        const [summaryRes, profileRes] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/recruiter/dashboard`, {
+            headers,
             cache: "no-store",
-          }
-        )
+          }),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/recruiters/me`, {
+            headers,
+            cache: "no-store",
+          }),
+        ])
 
-        if (!dashboardRes.ok) {
-          const errData = await dashboardRes.json().catch(() => ({}))
+        if (!summaryRes.ok) {
+          const errData = await summaryRes.json().catch(() => ({}))
           throw new Error(errData.error || "Failed to load dashboard")
         }
 
-        const dashboardData = await dashboardRes.json()
+        const summary = await summaryRes.json()
+        setDashboard((previous) => ({
+          ...previous,
+          jobsCount: summary.jobsCount ?? 0,
+          applicationsCount: summary.applicationsCount ?? 0,
+          shortlistedCount: summary.shortlistedCount ?? 0,
+          recentJobs: summary.recentJobs ?? [],
+          directories: summary.directories ?? [],
+          articles: summary.articles ?? [],
+        }))
 
-        setDashboard({
-          jobsCount: dashboardData.jobsCount ?? 0,
-          applicationsCount: dashboardData.applicationsCount ?? 0,
-          shortlistedCount: dashboardData.shortlistedCount ?? 0,
-          recentJobs: dashboardData.recentJobs ?? [],
-          directories: dashboardData.directories ?? [],
-          articles: dashboardData.articles ?? [],
-          recentActivity: dashboardData.recentActivity ?? [],
-          subscription: dashboardData.subscription ?? undefined,
-          recentPurchases: dashboardData.recentPurchases ?? [],
-          jobPosting: dashboardData.jobPosting ?? undefined,
-          articlePosting: dashboardData.articlePosting ?? undefined,
-          productListings: dashboardData.productListings ?? undefined,
-analytics: dashboardData.analytics ?? undefined,
-        })
+        if (profileRes.ok) {
+          const recruiterData = await profileRes.json()
+          setRecruiter(recruiterData)
 
-        /* PROFILE */
-        const profileRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/recruiters/me`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
+          const stored = localStorage.getItem("user")
+          if (stored) {
+            const existing = JSON.parse(stored)
+            localStorage.setItem(
+              "user",
+              JSON.stringify({ ...existing, avatarUrl: recruiterData.avatarUrl })
+            )
+            window.dispatchEvent(new Event("userChanged"))
           }
-        )
-
-        const recruiterData = await profileRes.json()
-        setRecruiter(recruiterData)
-
-        const stored = localStorage.getItem("user")
-
-        if (stored) {
-          const existing = JSON.parse(stored)
-
-          localStorage.setItem(
-            "user",
-            JSON.stringify({
-              ...existing,
-              avatarUrl: recruiterData.avatarUrl,
-            })
-          )
-
-          window.dispatchEvent(new Event("userChanged"))
         }
 
+        // The detailed endpoint also builds analytics and subscription data,
+        // which can take several seconds. Hydrate those sections after the
+        // immediately available recruiter overview has rendered.
+        setDashboardDetailsLoading(true)
+        void fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/recruiters/dashboard`, {
+          headers: { ...headers, "Cache-Control": "no-cache" },
+          cache: "no-store",
+        })
+          .then(async (response) => {
+            if (!response.ok) throw new Error("Failed to load dashboard details")
+            return response.json()
+          })
+          .then((details) => {
+            setDashboardDetailsLoading(false)
+            setDashboard((previous) => ({
+              ...previous,
+              jobsCount: details.jobsCount ?? previous.jobsCount,
+              applicationsCount: details.applicationsCount ?? previous.applicationsCount,
+              shortlistedCount: details.shortlistedCount ?? previous.shortlistedCount,
+              recentJobs: details.recentJobs ?? previous.recentJobs,
+              directories: details.directories ?? previous.directories,
+              articles: details.articles ?? previous.articles,
+              recentActivity: details.recentActivity ?? previous.recentActivity,
+              subscription: details.subscription ?? previous.subscription,
+              recentPurchases: details.recentPurchases ?? previous.recentPurchases,
+              jobPosting: details.jobPosting ?? previous.jobPosting,
+              articlePosting: details.articlePosting ?? previous.articlePosting,
+              productListings: details.productListings ?? previous.productListings,
+              analytics: details.analytics ?? previous.analytics,
+            }))
+          })
+          .catch((err) => {
+            console.error("Dashboard details load error:", err)
+            setDashboardDetailsLoading(false)
+          })
       } catch (err) {
         console.error("Dashboard load error:", err)
+        setDashboardDetailsLoading(false)
       } finally {
         setLoading(false)
       }
@@ -283,8 +307,11 @@ analytics: dashboardData.analytics ?? undefined,
     )
   }
 
-  const planLabel = dashboard.subscription?.displayPlanLabel ?? dashboard.subscription?.planLabel ?? "Free"
-  const isFreePlan = !dashboard.subscription || dashboard.subscription.plan === "free"
+  const planLabel = dashboard.subscription?.displayPlanLabel
+    ?? dashboard.subscription?.planLabel
+    ?? (dashboardDetailsLoading ? "Loading?" : "Free")
+  const isFreePlan = !dashboardDetailsLoading
+    && (!dashboard.subscription || dashboard.subscription.plan === "free")
 /* ================= UI ================= */
 
   return (
@@ -326,6 +353,8 @@ analytics: dashboardData.analytics ?? undefined,
                     ? `Recruitment expires ${new Date(dashboard.subscription.recruitmentExpiresAt).toLocaleDateString()} · Base: ${dashboard.subscription.basePlanLabel ?? "Free"}`
                     : dashboard.subscription?.expiresAt
                       ? `Expires ${new Date(dashboard.subscription.expiresAt).toLocaleDateString()}`
+                      : dashboardDetailsLoading
+                      ? "Loading plan details"
                       : isFreePlan
                         ? "Free tier"
                         : "Active"}
@@ -346,13 +375,19 @@ analytics: dashboardData.analytics ?? undefined,
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             <KpiCard
               title="Job Slots Left"
-              value={dashboard.jobPosting?.isUnlimited ? "Unlimited" : dashboard.jobPosting?.remaining ?? 0}
+              value={dashboardDetailsLoading && !dashboard.jobPosting
+                ? "?"
+                : dashboard.jobPosting?.isUnlimited
+                  ? "Unlimited"
+                  : dashboard.jobPosting?.remaining ?? 0}
               icon={<CreditCard className="w-4 h-4 text-white" />}
               accent="bg-[#0073FF]"
               subtitle={
-                dashboard.jobPosting?.isUnlimited
-                  ? "Unlimited postings"
-                  : `${dashboard.jobPosting?.activeJobs ?? 0} of ${dashboard.jobPosting?.effectiveLimit ?? 0} used`
+                dashboardDetailsLoading && !dashboard.jobPosting
+                  ? "Loading plan limits"
+                  : dashboard.jobPosting?.isUnlimited
+                    ? "Unlimited postings"
+                    : `${dashboard.jobPosting?.activeJobs ?? 0} of ${dashboard.jobPosting?.effectiveLimit ?? 0} used`
               }
             />
             <KpiCard
