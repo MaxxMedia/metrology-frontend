@@ -338,13 +338,12 @@ export default function PostDetailsPage() {
 
       const gap = Number.parseFloat(getComputedStyle(scrollContainer).columnGap || "0")
       const cardWidth = firstCard.offsetWidth + gap
-      const halfWidth = scrollContainer.scrollWidth / 2
-      const target = scrollContainer.scrollLeft + cardWidth
+      const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth
+      const target = Math.min(scrollContainer.scrollLeft + cardWidth, maxScroll)
 
       animateTo(target, 700, () => {
-        if (scrollContainer.scrollLeft >= halfWidth - 1) {
-          // Duplicated content lines up exactly here â€” instant wrap is invisible
-          scrollContainer.scrollLeft -= halfWidth
+        if (scrollContainer.scrollLeft >= maxScroll - 1) {
+          scrollContainer.scrollTo({ left: 0, behavior: "smooth" })
         }
       })
     }
@@ -369,7 +368,7 @@ export default function PostDetailsPage() {
     }
   }, [relatedPosts.length])
 
-  const carouselPosts = relatedPosts.length > 0 ? [...relatedPosts, ...relatedPosts] : relatedPosts
+  const carouselPosts = relatedPosts
 
   /* ================= FETCH COMMENTS ================= */
   useEffect(() => {
@@ -852,7 +851,7 @@ export default function PostDetailsPage() {
                   <div
                     id="related-post-scroll"
                     ref={relatedScrollRef}
-                    className="hidden lg:flex fpg-post-slider gap-5 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                    className="hidden lg:flex fpg-post-slider gap-5 overflow-x-auto scroll-smooth pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                   >
                     {carouselPosts.map((p, index) => (
                       <Link
@@ -860,10 +859,10 @@ export default function PostDetailsPage() {
                         href={`/post/${p.slug}`}
                         className="fpg-card-style style-one group flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-600 transition-colors"
                         style={{
-                          width: "calc((100% - 2.5rem) / 3)",
-                          height: "331.94px",
+                          width: "min(340px, calc((100vw - 3rem) / 1.15))",
+                          minHeight: "320px",
                           margin: "0px 0px 10px",
-                          padding: "12px 12px 25px",
+                          padding: "12px",
                         }}
                       >
                         <div className="relative w-full h-[141.09px] bg-gray-800 rounded-[10px] overflow-hidden">

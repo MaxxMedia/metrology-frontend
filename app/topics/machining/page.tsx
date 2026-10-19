@@ -2,30 +2,22 @@ import Link from "next/link"
 import EngineerListing from "@/components/topics/EngineerListing"
 import type { Post } from "@/types/Post"
 import TopicListing from "@/components/topics/TopicListing"
+import { resolveCategorySlug } from "@/lib/topic"
 
 export default async function MachiningPage() {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(resolveCategorySlug("machining"))}&limit=50`,
     { cache: "no-store" }
   )
 
   const data = await res.json()
   const posts: Post[] = data.data || data
 
-  const slugOf = (post: Post) =>
-    typeof post.category === "object"
-      ? post.category?.slug?.toLowerCase()
-      : String(post.category || "").toLowerCase()
-
-  // ================= WHAT'S NEW POSTS =================
-  const whatsNewPosts = posts
-    .filter((p) => slugOf(p).includes("whatsnew"))
-    .slice(0, 5)
+// ================= WHAT'S NEW POSTS =================
+  const whatsNewPosts = posts.slice(0, 5)
 
   // ================= ENGINEER POSTS =================
-  const engineerPosts = posts.filter(
-    (p) => slugOf(p) === "machine"
-  )
+  const engineerPosts = posts
 
   return (
     <main className="bg-white">

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import TopicListing from "@/components/topics/TopicListing";
 import type { Post } from "@/types/Post";
-import { MASTER_CATEGORIES } from "@/lib/topic";
+import { MASTER_CATEGORIES, resolveCategorySlugs } from "@/lib/topic";
 import { notFound } from "next/navigation";
 
 type Category = {
@@ -20,31 +20,42 @@ const METROLOGY_SLUGS = new Set(MASTER_CATEGORIES.map((c) => c.slug));
 
 export default async function TopicCategoryPage({ params }: Props) {
   const { category: categorySlug } = await params;
+  const databaseCategorySlugs = resolveCategorySlugs(categorySlug);
 
-  const [postsRes, categoriesRes] = await Promise.all([
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(categorySlug)}&limit=50`,
-      { cache: "no-store" }
-    ),
+  const [postsResponses, categoriesRes] = await Promise.all([
+    Promise.all(databaseCategorySlugs.map((slug) =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(slug)}&limit=50`,
+        { cache: "no-store" }
+      )
+    )),
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
       cache: "no-store",
     }),
   ]);
 
-  const postsData = await postsRes.json();
-  const posts: Post[] = Array.isArray(postsData?.data)
-    ? postsData.data
-    : Array.isArray(postsData)
-    ? postsData
-    : [];
+  const postResults = await Promise.all(postsResponses.map(async (response) => {
+    if (!response.ok) return [];
+    const data = await response.json();
+    return Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
+  }));
+  const posts: Post[] = Array.from(
+    new Map(
+      postResults.flat().map((post: Post) => [post.slug || String(post.id), post] as const)
+    ).values()
+  ).sort((a, b) => {
+    const dateA = new Date(a.publishedAt || a.createdAt || 0).getTime();
+    const dateB = new Date(b.publishedAt || b.createdAt || 0).getTime();
+    return dateB - dateA;
+  });
 
   const categoriesData = await categoriesRes.json();
   const allCategories: Category[] = Array.isArray(categoriesData) ? categoriesData : [];
   const allParents = allCategories.filter((c) => c.parentId == null);
 
-  const category = allCategories.find((c) => c.slug === categorySlug);
+  const category = allCategories.find((c) => c.slug === databaseCategorySlugs[0]);
 
-  if (!category && posts.length === 0 && !METROLOGY_SLUGS.has(categorySlug)) {
+  if (!category && posts.length === 0 && !METROLOGY_SLUGS.has(categorySlug) && databaseCategorySlugs[0] === categorySlug) {
     notFound();
   }
 
@@ -57,26 +68,26 @@ export default async function TopicCategoryPage({ params }: Props) {
     };
   });
 
-  const title = category?.name || categorySlug.replace(/-/g, " ");
+  const isMetrologyQuality = ["metrology-quality", "metrologyandquality"].includes(categorySlug.toLowerCase());
+  const title = isMetrologyQuality
+    ? "Metrology & Quality"
+    : category?.name || categorySlug.replace(/-/g, " ");
   const parentCategory =
     category?.parentId != null
       ? allCategories.find((c) => c.id === category.parentId)
       : category;
   const childCount = parentCategory?.children?.length ?? 0;
 
-  const description =
-    category?.parentId != null
+  const description = isMetrologyQuality
+    ? "Measurement systems, quality inspection, CMMs, testing equipment, calibration, and quality assurance."
+    : category?.parentId != null
       ? `Latest articles for ${title}.`
       : childCount > 0
       ? `Articles and insights across ${title} and its ${childCount} subcategories — including measurement systems, tools, and industry applications.`
       : `Latest articles and insights for ${title}.`;
 
-  // Recent posts for top strip
-  const recentRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=5`, {
-    cache: "no-store",
-  });
-  const recentData = await recentRes.json();
-  const recentPosts: Post[] = recentData.data || recentData;
+  // Keep the top strip scoped to the already-filtered active category.
+  const recentPosts = posts.slice(0, 5);
 
   return (
     <main className="bg-[#0a0d14]">

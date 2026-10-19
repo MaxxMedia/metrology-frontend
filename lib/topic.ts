@@ -310,14 +310,8 @@ export const MASTER_CATEGORIES: MasterCategory[] = [
 // pulled directly from MASTER_CATEGORIES above (so labels/slugs stay in
 // sync with the master list rather than being duplicated).
 //
-// NOTE: these slugs ("dimensional-metrology", "precision-measuring-instruments",
-// "coordinate-3d-metrology") do not exist among the categories the backend
-// currently returns from /api/posts (existing categories are things like
-// "machine", "cuttingtools", "metrologyandquality", etc). Until the backend
-// creates matching post categories with these exact slugs, fetchPostsForSlug()
-// will return an empty array for all three, and the mega-menu will correctly
-// render "No articles found" rather than break. See the implementation notes
-// returned alongside this file for details.
+// These are canonical topic slugs used by navigation. resolveCategorySlug()
+// maps legacy names to the database's current category slugs before fetching.
 // ---------------------------------------------------------------------------
 const ACTIVE_TOPIC_SLUGS = [
     "dimensional-metrology",
@@ -354,3 +348,90 @@ export const RESOURCE_TOPICS: ArticleTopic[] = [
 ]
 
 export const ARTICLE_TOPIC_SLUGS = ARTICLE_TOPICS.map((t) => t.slug)
+// Legacy frontend routes are retained as aliases, but API filters always use
+// the current database category slug.
+const LEGACY_CATEGORY_SLUGS: Record<string, string> = {
+    "coordinate-3d-metrology": "coordinate-and-3d-metrology",
+    "factory-automation": "automation-and-robotics",
+    "manufacturing-technologies": "manufacturing-metrology",
+    "dies-moulds-tooling": "industry-specific-metrology-die-and-mould",
+    "dies-moulds-and-tooling": "industry-specific-metrology-die-and-mould",
+    "metrology-quality": "dimensional-metrology",
+    "metrologyandquality": "dimensional-metrology",
+    "cad-cam-cae": "metrology-software",
+    "machining": "industry-specific-metrology-machine-tools",
+    "cutting-tools": "industry-specific-metrology-machine-tools",
+    "cuttingtools": "industry-specific-metrology-machine-tools",
+    "surface-engineering": "surface-and-form-metrology",
+    "surfaceengineering": "surface-and-form-metrology",
+    "smart-manufacturing": "manufacturing-metrology",
+    "smartmanufacturing": "manufacturing-metrology",
+    "advanced-manufacturing": "manufacturing-metrology",
+    "advancedmanufacturing": "manufacturing-metrology",
+    "maintainanceandoperations": "manufacturing-metrology",
+    "maintenanceandoperations": "manufacturing-metrology",
+}
+
+const LEGACY_CATEGORY_GROUPS: Record<string, string[]> = {
+    "metrology-quality": [
+        "dimensional-metrology",
+        "precision-measuring-instruments",
+        "coordinate-and-3d-metrology",
+    ],
+    "metrologyandquality": [
+        "dimensional-metrology",
+        "precision-measuring-instruments",
+        "coordinate-and-3d-metrology",
+    ],
+}
+
+function normalizeCategorySlug(slug: string): string {
+    return slug.trim().toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+}
+
+export function resolveCategorySlug(slug: string): string {
+    const normalized = normalizeCategorySlug(slug)
+    return LEGACY_CATEGORY_SLUGS[normalized] ?? normalized
+}
+
+export function resolveCategorySlugs(slug: string): string[] {
+    const normalized = normalizeCategorySlug(slug)
+    return LEGACY_CATEGORY_GROUPS[normalized] ?? [resolveCategorySlug(normalized)]
+}
+
+export function postBelongsToCategory(
+    post: { category?: unknown; subCategory?: unknown },
+    categorySlug: string
+): boolean {
+    const expectedSlug = resolveCategorySlug(categorySlug)
+    const getSlug = (category: unknown) => {
+        if (typeof category === "string") return category
+        if (category && typeof category === "object" && "slug" in category) {
+            const slug = (category as { slug?: unknown }).slug
+            return typeof slug === "string" ? slug : ""
+        }
+        return ""
+    }
+
+    const postCategorySlug = resolveCategorySlug(getSlug(post.category))
+    const subCategorySlug = resolveCategorySlug(getSlug(post.subCategory))
+    if (postCategorySlug === expectedSlug || postCategorySlug.startsWith(`${expectedSlug}-`)) {
+        return true
+    }
+
+    // A post assigned directly to a child category can still belong to the
+    // requested parent, but a conflicting top-level category must win.
+    return Boolean(
+        subCategorySlug &&
+        (subCategorySlug === expectedSlug || subCategorySlug.startsWith(`${expectedSlug}-`)) &&
+        (!postCategorySlug || expectedSlug.startsWith(`${postCategorySlug}-`))
+    )
+}
+
+export function getCategoryUrl(slug: string): string {
+    const normalized = normalizeCategorySlug(slug)
+    const routeSlug = LEGACY_CATEGORY_GROUPS[normalized]
+        ? normalized
+        : resolveCategorySlug(normalized)
+    return `/topics/${encodeURIComponent(routeSlug)}`
+}

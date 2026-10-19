@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import type { Post } from "@/types/Post"
+import { getCategoryUrl } from "@/lib/topic"
 
 interface LatestIssuesProps {
   posts?: Post[]
@@ -129,7 +130,7 @@ export default function LatestIssues({
                   <div className="flex flex-col gap-2 min-w-0">
                     {tagText && (
                       <Link
-                        href={`/category/${slug}`}
+                        href={getCategoryUrl(slug)}
                         className={`${tagClass} text-white px-3 py-[3px] rounded-full rounded-tl-none w-fit text-[14px] font-medium`}
                       >
                         {tagText}

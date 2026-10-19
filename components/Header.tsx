@@ -16,9 +16,9 @@ import {
   Linkedin,
   Activity,
 } from "lucide-react"
-import { useState, useEffect, type FormEvent } from "react"
+import { useState, useEffect, useCallback, useRef, type FormEvent } from "react"
 import type { Post } from "@/types/Post"
-import { ARTICLE_TOPICS as TOPICS, RESOURCE_TOPICS as RESOURCES } from "@/lib/topic"
+import { ARTICLE_TOPICS as TOPICS, getCategoryUrl, postBelongsToCategory, RESOURCE_TOPICS as RESOURCES, resolveCategorySlug } from "@/lib/topic"
 import ScrollProgressBar from "@/components/ScrollProgressBar"
 
 type MegaType = "topics" | "resources" | "pages" | null
@@ -72,7 +72,9 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("")
 
   const [postsCache, setPostsCache] = useState<Record<string, Post[]>>({})
-  const [postsLoading, setPostsLoading] = useState(false)
+  const postsCacheRef = useRef<Record<string, Post[]>>({})
+  const [loadingSlugs, setLoadingSlugs] = useState<Record<string, boolean>>({})
+  const inFlightSlugs = useRef(new Set<string>())
   const [activeSlug, setActiveSlug] = useState(TOPICS[0]?.slug ?? "")
 
   const [tickerPosts, setTickerPosts] = useState<Post[]>([])
@@ -163,28 +165,50 @@ export default function Header() {
     return () => clearInterval(t)
   }, [tickerPosts.length])
 
-  // Resources currently has a single "Articles" category with no matching
-  // backend category slug (see lib/topic.ts for details). For that slug we
-  // fetch the latest posts with no `category` filter; every other slug (the
-  // 3 Topics categories) is filtered by category exactly as before.
-  async function fetchPostsForSlug(slug: string) {
-    if (postsCache[slug]) return
-    setPostsLoading(true)
+  // Fetch once per slug and cache the result so topic tabs do not block each other.
+  const fetchPostsForSlug = useCallback(async (slug: string) => {
+    if (Object.prototype.hasOwnProperty.call(postsCacheRef.current, slug) || inFlightSlugs.current.has(slug)) return
+
+    inFlightSlugs.current.add(slug)
+    setLoadingSlugs((current) => ({ ...current, [slug]: true }))
     try {
       const url =
         slug === "articles"
           ? `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=8`
-          : `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(slug)}&limit=6`
+          : `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(resolveCategorySlug(slug))}&limit=6`
       const res = await fetch(url)
+      if (!res.ok) throw new Error(`Failed to load menu posts for ${slug}`)
       const data = await res.json()
-      const posts: Post[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []
-      setPostsCache((prev) => ({ ...prev, [slug]: posts }))
+      const fetchedPosts: Post[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []
+      const posts = slug === "articles"
+        ? fetchedPosts
+        : fetchedPosts.filter((post) => postBelongsToCategory(post, slug))
+      postsCacheRef.current[slug] = posts
+      setPostsCache((current) => ({ ...current, [slug]: posts }))
     } catch {
-      setPostsCache((prev) => ({ ...prev, [slug]: [] }))
+      postsCacheRef.current[slug] = []
+      setPostsCache((current) => ({ ...current, [slug]: [] }))
     } finally {
-      setPostsLoading(false)
+      inFlightSlugs.current.delete(slug)
+      setLoadingSlugs((current) => ({ ...current, [slug]: false }))
     }
+  }, [])
+
+  function selectTopic(slug: string) {
+    setActiveSlug(slug)
+    void fetchPostsForSlug(slug)
   }
+
+  function openTopicsMenu() {
+    setOpenMega("topics")
+    TOPICS.forEach(({ slug }) => void fetchPostsForSlug(slug))
+    if (TOPICS[0]) setActiveSlug(TOPICS[0].slug)
+  }
+
+  // Warm every menu panel in the background so switching tabs is immediate.
+  useEffect(() => {
+    ;[...TOPICS, ...RESOURCES].forEach(({ slug }) => void fetchPostsForSlug(slug))
+  }, [fetchPostsForSlug])
 
   // Lock body scroll while the panel is open OR mid-close-animation, so the
   // page doesn't jump/scroll underneath while the wipe-out plays.
@@ -208,6 +232,7 @@ export default function Header() {
   }
 
   const activePosts = postsCache[activeSlug] ?? []
+  const isActivePostsLoading = loadingSlugs[activeSlug] === true
   const activeTicker = tickerPosts[tickerIndex]
   const activeLabel =
     (openMega === "topics" ? TOPICS : openMega === "resources" ? RESOURCES : []).find(
@@ -394,7 +419,7 @@ export default function Header() {
       {/* ================= MAIN NAV ================= */}
       <div className="bg-[#121213]">
         <div className={`${container} h-[72px] flex items-center justify-between gap-4`}>
-          <Link href="/" className="shrink-0 flex items-center">
+          <Link href="/" onMouseEnter={() => setOpenMega(null)} className="shrink-0 flex items-center">
             <Image
               src="/images/logo5.png"
               alt="Tooling Trends"
@@ -405,26 +430,27 @@ export default function Header() {
             />
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-7 shrink-0">
-            <Link href="/" className={`${navLinkClass} text-[#0073ff]`}>
+          <nav
+            onMouseOver={(event) => {
+              const target = event.target as HTMLElement
+              if (!target.closest("[data-mega-trigger]")) setOpenMega(null)
+            }}
+            className="hidden lg:flex items-center gap-6 xl:gap-7 shrink-0"
+          >
+            <Link href="/" onMouseEnter={() => setOpenMega(null)} className={`${navLinkClass} text-[#0073ff]`}>
               Home
             </Link>
 
             <button
-              onMouseEnter={() => {
-                setOpenMega("topics")
-                const first = TOPICS[0]?.slug
-                if (first) {
-                  setActiveSlug(first)
-                  fetchPostsForSlug(first)
-                }
-              }}
+              onMouseEnter={openTopicsMenu}
+              data-mega-trigger
               className={navLinkClass}
             >
               Topics <ChevronDown size={14} className="shrink-0" />
             </button>
 
             <button
+              data-mega-trigger
               onMouseEnter={() => {
                 setOpenMega("resources")
                 const first = RESOURCES[0]?.slug
@@ -438,19 +464,19 @@ export default function Header() {
               Resources <ChevronDown size={14} className="shrink-0" />
             </button>
 
-            <Link href="/suppliers" className={navLinkClass}>
+            <Link href="/suppliers" onMouseEnter={() => setOpenMega(null)} className={navLinkClass}>
               Directory
             </Link>
 
-            <Link href="/events" className={navLinkClass}>
+            <Link href="/events" onMouseEnter={() => setOpenMega(null)} className={navLinkClass}>
               Events
             </Link>
 
-            <Link href="/feed" className={navLinkClass}>
+            <Link href="/feed" onMouseEnter={() => setOpenMega(null)} className={navLinkClass}>
               Jobs
             </Link>
 
-            <Link href="/contact" className={navLinkClass}>
+            <Link href="/contact" onMouseEnter={() => setOpenMega(null)} className={navLinkClass}>
               Contact
             </Link>
           </nav>
@@ -553,6 +579,15 @@ export default function Header() {
         </div>
       </div>
 
+      {(openMega === "topics" || openMega === "resources") && (
+        <div
+          className="fixed inset-x-0 top-[114px] bottom-0 z-10"
+          aria-hidden="true"
+          onMouseEnter={() => setOpenMega(null)}
+          onClick={() => setOpenMega(null)}
+        />
+      )}
+
       {/* ================= TOPICS / RESOURCES MEGA ================= */}
       {(openMega === "topics" || openMega === "resources") && (
         <div
@@ -575,7 +610,7 @@ export default function Header() {
                     </Link>
                   </div>
 
-                  {postsLoading ? (
+                  {isActivePostsLoading ? (
                     <div className="w-full h-[140px] flex items-center justify-center">
                       <div className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     </div>
@@ -619,9 +654,9 @@ export default function Header() {
                     {TOPICS.map((item) => (
                       <button
                         key={item.slug}
+                        onClick={() => selectTopic(item.slug)}
                         onMouseEnter={() => {
-                          setActiveSlug(item.slug)
-                          fetchPostsForSlug(item.slug)
+                          selectTopic(item.slug)
                         }}
                         className={`w-full px-5 py-3 text-left text-[12.5px] font-semibold leading-tight whitespace-normal break-words transition-colors ${activeSlug === item.slug
                           ? "bg-[#0073ff] text-white"
@@ -637,7 +672,7 @@ export default function Header() {
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-white text-[15px] font-bold">{activeLabel}</h3>
                       <Link
-                        href={`/topics/${activeSlug}`}
+                        href={getCategoryUrl(activeSlug)}
                         onClick={() => setOpenMega(null)}
                         className="flex items-center gap-1 text-[17px] font-semibold text-white/70 hover:text-[#0073ff] transition-colors shrink-0"
                       >
@@ -645,7 +680,7 @@ export default function Header() {
                       </Link>
                     </div>
 
-                    {postsLoading ? (
+                    {isActivePostsLoading ? (
                       <div className="w-full h-[140px] flex items-center justify-center">
                         <div className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       </div>

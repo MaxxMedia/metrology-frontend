@@ -1,7 +1,8 @@
-﻿import Link from "next/link"
+import Link from "next/link"
 import Image from "next/image"
 import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react"
 import Banner from "@/components/Banners/Banner"
+import { getCategoryUrl } from "@/lib/topic"
 
 type FooterLink = {
   label: string
@@ -39,13 +40,13 @@ function FooterNav({ title, label, links, className = "" }: {
 }
 
 const TOPIC_LINKS: FooterLink[] = [
-  { label: "Machining", href: "/topics/machining" },
-  { label: "Cutting Tools", href: "/topics/cutting-tools" },
-  { label: "Dies Moulds Tooling", href: "/topics/dies-moulds-tooling" },
-  { label: "Metrology & Quality", href: "/topics/metrology-quality" },
-  { label: "Factory Automation", href: "/topics/factory-automation" },
-  { label: "CAD/CAM/CAE", href: "/topics/cad-cam-cae" },
-  { label: "Manufacturing Technologies", href: "/topics/manufacturing-technologies" },
+  { label: "Machining", href: getCategoryUrl("machining") },
+  { label: "Cutting Tools", href: getCategoryUrl("cutting-tools") },
+  { label: "Dies Moulds Tooling", href: getCategoryUrl("dies-moulds-tooling") },
+  { label: "Metrology & Quality", href: getCategoryUrl("metrology-quality") },
+  { label: "Factory Automation", href: getCategoryUrl("factory-automation") },
+  { label: "CAD/CAM/CAE", href: getCategoryUrl("cad-cam-cae") },
+  { label: "Manufacturing Technologies", href: getCategoryUrl("manufacturing-technologies") },
   { label: "View All", href: "/topics" },
 ]
 

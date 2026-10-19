@@ -263,6 +263,8 @@ export default function PublicFeedPage() {
         </div>
       </section>
 
+ 
+
       {/* ================= JOB LIST ================= */}
       <section
         id="job-results"
