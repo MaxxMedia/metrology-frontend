@@ -1,7 +1,5 @@
-export default function PodcastPage() {
-    return (
-        <main className="min-h-screen p-10">
-            <h1 className="text-3xl font-bold">Podcast</h1>
-        </main>
-    );
+import WebinarListingPage from "../Webinar/page";
+
+export default function WebinarsPage() {
+  return <WebinarListingPage />;
 }

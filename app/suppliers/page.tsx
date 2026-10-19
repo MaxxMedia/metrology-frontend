@@ -24,6 +24,7 @@ type FilterState = {
   category: string
   featuredOnly: boolean
   industryId: number | null
+  ranking: "all" | "basic" | "professional" | "enterprise"
 }
 
 const PER_PAGE = 15
@@ -45,6 +46,7 @@ function SuppliersPageContent() {
     category: "",
     featuredOnly: false,
     industryId: null,
+    ranking: "all",
   })
 
   // ✅ Fetch suppliers from backend with filter params
@@ -58,6 +60,7 @@ function SuppliersPageContent() {
       if (filters.category)    params.set("category", filters.category)
       if (filters.featuredOnly) params.set("featured", "true")
       if (filters.industryId)  params.set("industryId", String(filters.industryId))
+      if (filters.ranking !== "all") params.set("ranking", filters.ranking)
 
       params.set("page", String(page))
       params.set("limit", String(PER_PAGE))

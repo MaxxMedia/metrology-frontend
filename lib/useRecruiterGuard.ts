@@ -1,83 +1,82 @@
-// "use client"
-
-// import { useEffect, useState } from "react"
-// import { useRouter } from "next/navigation"
-
-// export function useRecruiterGuard(): boolean {
-//   const router = useRouter()
-//   const [checking, setChecking] = useState(true)
-// const [allowed, setAllowed] = useState(false)
-
-// useEffect(() => {
-//   const token = localStorage.getItem("token")
-//   const userRaw = localStorage.getItem("user")
-
-//   if (!token || !userRaw) {
-//     router.replace("/login")
-//     return
-//   }
-
-//   const user = JSON.parse(userRaw)
-
-//   if (user.role !== "recruiter") {
-//     router.replace("/")
-//     return
-//   }
-
-//   setAllowed(true)
-//   setChecking(false)
-// }, [])
-
-// if (checking) return false
-// return allowed
-
-// }
-
-
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 export function useRecruiterGuard(): boolean {
   const router = useRouter()
+  const pathname = usePathname()
   const [allowed, setAllowed] = useState(false)
   const [checking, setChecking] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    const userRaw = localStorage.getItem("user")
+    let cancelled = false
 
-    if (!token || !userRaw) {
-      router.replace("/login")
-      setChecking(false)
-      return
-    }
-
-    let user = null
-
-    try {
-      user = JSON.parse(userRaw)
-    } catch {
-      console.error("Corrupted user JSON. Clearing storage.")
-      localStorage.removeItem("user")
+    const redirectToLogin = () => {
       localStorage.removeItem("token")
-      router.replace("/login")
-      setChecking(false)
-      return
+      localStorage.removeItem("user")
+      localStorage.removeItem("permissions")
+      document.cookie = "token=; path=/; max-age=0; SameSite=Lax"
+      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`)
     }
 
-    if (user?.role !== "recruiter") {
-      router.replace("/")
-      setChecking(false)
-      return
+    async function checkRecruiter() {
+      const token = localStorage.getItem("token")
+      const userRaw = localStorage.getItem("user")
+
+      if (!token || !userRaw) {
+        redirectToLogin()
+        if (!cancelled) setChecking(false)
+        return
+      }
+
+      let user: { role?: string }
+      try {
+        user = JSON.parse(userRaw)
+      } catch {
+        redirectToLogin()
+        if (!cancelled) setChecking(false)
+        return
+      }
+
+      if (user.role !== "recruiter") {
+        router.replace("/")
+        if (!cancelled) setChecking(false)
+        return
+      }
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
+          { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
+        )
+
+        if (response.status === 401) {
+          redirectToLogin()
+          if (!cancelled) setChecking(false)
+          return
+        }
+
+        if (response.ok) {
+          const freshUser = await response.json()
+          localStorage.setItem("user", JSON.stringify({ ...user, ...freshUser }))
+        }
+      } catch {
+        // Keep the cached identity if the API is temporarily unreachable.
+      }
+
+      if (!cancelled) {
+        setAllowed(true)
+        setChecking(false)
+      }
     }
 
-    setAllowed(true)
-    setChecking(false)
-  }, [router])
+    checkRecruiter()
+    return () => {
+      cancelled = true
+    }
+  }, [pathname, router])
 
   if (checking) return false
   return allowed
 }
-
