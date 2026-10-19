@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
+import Banner from "@/components/Banners/Banner"
 import {
   Pagination,
   PaginationContent,
@@ -289,12 +290,12 @@ export default function JobFeed({
   return (
     <>
       <main className="space-y-4">
-        {pagedJobs.map(job => {
+        {pagedJobs.map((job, index) => {
           const salary = formatSalary(job.salaryMin, job.salaryMax)
 
           return (
+            <div key={job.id}>
             <div
-              key={job.id}
               onClick={() => router.push(`/jobs/${job.slug}`)}
               className="bg-[#1D2125] hover:bg-[#292C30]/40 border border-[#292C30] hover:border-[#0073FF] rounded-xl px-6 py-5 transition-all duration-200 cursor-pointer shadow-sm text-white"
             >
@@ -347,6 +348,10 @@ export default function JobFeed({
                   </p>
                 </div>
               </div>
+            </div>
+            {index === 4 && pagedJobs.length > 5 && (
+              <Banner placement="JOB_RIGHT" variant="feed" slotIndex={1} sticky={false} />
+            )}
             </div>
           )
         })}

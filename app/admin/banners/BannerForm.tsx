@@ -10,6 +10,15 @@ type BannerFormProps = {
   onSubmit: (data: any) => Promise<void>;
 };
 
+const DEFAULT_BANNER_PLACEMENT = BANNER_PLACEMENTS[0].value as BannerPlacement;
+
+function resolveBannerPlacement(value?: string): BannerPlacement {
+  return (
+    BANNER_PLACEMENTS.find((placement) => placement.value === value)?.value ??
+    DEFAULT_BANNER_PLACEMENT
+  );
+}
+
 export default function BannerForm({
   initialData,
   onSubmit,
@@ -18,10 +27,11 @@ export default function BannerForm({
   const [targetUrl, setTargetUrl] = useState("");
 
   const [placement, setPlacement] = useState<BannerPlacement>(
-    BANNER_PLACEMENTS[0].value as BannerPlacement
+    DEFAULT_BANNER_PLACEMENT
   );
 
-  const selectedPlacement = BANNER_PLACEMENTS.find((p) => p.value === placement)!;
+  const selectedPlacement =
+    BANNER_PLACEMENTS.find((p) => p.value === placement) ?? BANNER_PLACEMENTS[0];
 
   const [status, setStatus] = useState("ACTIVE");
   const [imageUrl, setImageUrl] = useState("");
@@ -34,10 +44,7 @@ export default function BannerForm({
 
     setTitle(initialData.title ?? "");
     setTargetUrl(initialData.targetUrl ?? "");
-    setPlacement(
-      (initialData.placement ??
-        BANNER_PLACEMENTS[0].value) as BannerPlacement
-    );
+    setPlacement(resolveBannerPlacement(initialData.placement));
     setStatus(initialData.status ?? "ACTIVE");
     setImageUrl(initialData.imageUrl ?? "");
   }, [initialData]);

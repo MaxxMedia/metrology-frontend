@@ -33,6 +33,10 @@ type BannerData = {
 
 type BannerProps = {
     placement: BannerPlacement;
+    /** Render an inline feed ad using the selected placement's inventory. */
+    variant?: "standard" | "feed";
+    /** Select a different ad for each inline feed slot. */
+    slotIndex?: number;
     /** How many ads to show for square/right-rail placements. Default 3. */
     limit?: number;
     /** Whether right-rail ads stick on scroll. Default true. */
@@ -66,7 +70,7 @@ const RIGHT_RAIL_PLACEMENTS: BannerPlacement[] = [
 
 // ---------- main component ----------
 
-export default function Banner({ placement, limit, sticky = true }: BannerProps) {
+export default function Banner({ placement, variant = "standard", slotIndex = 0, limit, sticky = true }: BannerProps) {
     const [banners, setBanners] = useState<BannerData[]>([]);
     const [loaded, setLoaded] = useState(false);
 
@@ -103,6 +107,24 @@ export default function Banner({ placement, limit, sticky = true }: BannerProps)
     }, [placement]);
 
     if (!loaded || !banners.length) return null;
+
+    if (variant === "feed") {
+        const banner = banners[slotIndex % banners.length];
+        return (
+            <section aria-label="Sponsored job listing" className="my-6 rounded-xl border border-[#292C30] bg-[#1D2125] p-3 sm:p-4">
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-[#858585]">Sponsored</p>
+                <Link
+                    href={banner.targetUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative mx-auto block w-full max-w-[970px] overflow-hidden rounded-lg"
+                    style={{ aspectRatio: "970 / 250" }}
+                >
+                    <Image src={banner.imageUrl} alt={banner.title} fill sizes="(max-width: 970px) 100vw, 970px" className="object-contain" />
+                </Link>
+            </section>
+        );
+    }
 
     // --- Right-rail / square slots: can render multiple stacked ads ---
     if (RIGHT_RAIL_PLACEMENTS.includes(placement)) {

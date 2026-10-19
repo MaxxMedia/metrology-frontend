@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Post } from "../types/Post";
+import { getCategoryUrl } from "@/lib/topic";
 import {
   ArrowRight,
   RefreshCw,
@@ -364,7 +365,7 @@ export default function HomeCompanyArticles({ posts }: Props) {
                   {categories.map((cat) => (
                     <Link
                       key={cat.slug}
-                      href={`/topics/${cat.slug}`}
+                      href={getCategoryUrl(cat.slug)}
                       className="group relative flex items-center min-h-[54px] py-[10px] pl-[12px] pr-[44px] rounded-[4px] overflow-hidden"
                     >
                       <Image

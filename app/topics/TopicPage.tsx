@@ -1,6 +1,7 @@
 import Link from "next/link";
 import TopicListing from "@/components/topics/TopicListing";
 import type { Post } from "@/types/Post";
+import { postBelongsToCategory, resolveCategorySlug } from "@/lib/topic";
 
 interface TopicPageProps {
   categorySlug: string;
@@ -16,27 +17,20 @@ export default async function TopicPage({
   sectionTitle,
 }: TopicPageProps) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(resolveCategorySlug(categorySlug))}&limit=50`,
     {
       cache: "no-store",
     }
   );
 
-  const data = await res.json();
-  const posts: Post[] = data.data || data;
+  const data = res.ok ? await res.json() : [];
+  const fetchedPosts: Post[] = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
+  const posts = fetchedPosts.filter((post) => postBelongsToCategory(post, categorySlug));
 
-  const slugOf = (post: Post) =>
-    typeof post.category === "object"
-      ? post.category?.slug?.toLowerCase()
-      : String(post.category || "").toLowerCase();
+  // The query and this guard both scope the top strip to the requested topic.
+  const whatsNewPosts = posts.slice(0, 5);
 
-  const whatsNewPosts = posts
-    .filter((p) => slugOf(p).includes("whatsnew"))
-    .slice(0, 5);
-
-  const categoryPosts = posts.filter(
-    (p) => slugOf(p) === categorySlug
-  );
+  const categoryPosts = posts;
 
   return (
     <main className="bg-white">

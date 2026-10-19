@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Post } from "@/types/Post";
 import SupplierAds from "@/components/SupplierAds";
+import { getCategoryUrl } from "@/lib/topic";
 
 type SidebarCategory = {
   label: string;
@@ -68,7 +69,7 @@ export default function TopicListing({
                 {sidebarCategories.map((cat) => (
                   <li key={cat.slug}>
                     <Link
-                      href={`/topics/${cat.slug}`}
+                      href={getCategoryUrl(cat.slug)}
                       className={`flex items-center justify-between gap-2 px-4 py-3 text-sm transition ${
                         activeSlug === cat.slug
                           ? "bg-[#0073FF] text-white font-semibold"

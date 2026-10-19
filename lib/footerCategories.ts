@@ -1,4 +1,6 @@
 /** Parent category slugs from seedMetrologyCategories.js — used for footer ordering. */
+import { getCategoryUrl } from "@/lib/topic";
+
 export const METROLOGY_PARENT_SLUGS = [
   "dimensional-metrology",
   "precision-measuring-instruments",
@@ -33,7 +35,7 @@ export function buildFooterCategoryColumns(
 
   const links: FooterCategoryLink[] = ordered.map((c) => ({
     label: c.name,
-    href: `/topics/${c.slug}`,
+    href: getCategoryUrl(c.slug),
   }));
 
   return {

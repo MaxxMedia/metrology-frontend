@@ -1,30 +1,22 @@
 import Link from "next/link"
 import type { Post } from "@/types/Post"
 import TopicListing from "@/components/topics/TopicListing"
+import { resolveCategorySlug } from "@/lib/topic"
 
 export default async function MaintainanceOperationsPage() {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(resolveCategorySlug("maintainance&operations"))}&limit=50`,
     { cache: "no-store" }
   )
 
   const data = await res.json()
   const posts: Post[] = data.data || data
 
-  const slugOf = (post: Post) =>
-    typeof post.category === "object"
-      ? post.category?.slug?.toLowerCase()
-      : String(post.category || "").toLowerCase()
-
-  // ================= WHAT'S NEW POSTS =================
-  const whatsNewPosts = posts
-    .filter((p) => slugOf(p).includes("whatsnew"))
-    .slice(0, 5)
+// ================= WHAT'S NEW POSTS =================
+  const whatsNewPosts = posts.slice(0, 5)
 
   // ================= BUILD POSTS =================
-  const buildPosts = posts.filter(
-    (p) => slugOf(p) === "maintenance&operations"
-  )
+  const buildPosts = posts
 
   return (
     <main className="bg-white">

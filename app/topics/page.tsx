@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Post } from "@/types/Post";
-import { MASTER_CATEGORIES } from "@/lib/topic";
+import { getCategoryUrl, MASTER_CATEGORIES, resolveCategorySlug } from "@/lib/topic";
 
 type Category = {
   id: number;
@@ -11,15 +11,22 @@ type Category = {
 };
 
 const METROLOGY_SLUGS = MASTER_CATEGORIES.map((c) => c.slug);
+const DATABASE_TOPIC_SLUGS = new Set(
+  MASTER_CATEGORIES.map((category) => resolveCategorySlug(category.slug))
+);
 
 function orderMetrologyCategories(categories: Category[]) {
   const bySlug = new Map(categories.map((c) => [c.slug, c]));
-  return METROLOGY_SLUGS.map((slug) => bySlug.get(slug)).filter(Boolean) as Category[];
+  return MASTER_CATEGORIES
+    .map((category) =>
+      bySlug.get(resolveCategorySlug(category.slug)) ?? bySlug.get(category.slug)
+    )
+    .filter(Boolean) as Category[];
 }
 
 export default async function TopicsPage() {
   const [postsRes, categoriesRes] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=5`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=100`, {
       cache: "no-store",
     }),
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories?parentsOnly=true`, {
@@ -27,13 +34,27 @@ export default async function TopicsPage() {
     }),
   ]);
 
-  const postsData = await postsRes.json();
-  const posts: Post[] = postsData.data || postsData;
+  const postsData = postsRes.ok ? await postsRes.json() : [];
+  const allPosts: Post[] = Array.isArray(postsData?.data)
+    ? postsData.data
+    : Array.isArray(postsData)
+    ? postsData
+    : [];
+  const posts = allPosts
+    .filter((post) => {
+      const categorySlug =
+        typeof post.category === "object" ? post.category?.slug : undefined;
+      return categorySlug && DATABASE_TOPIC_SLUGS.has(resolveCategorySlug(categorySlug));
+    })
+    .slice(0, 5);
 
   const categoriesData = await categoriesRes.json();
   const allParents: Category[] = Array.isArray(categoriesData) ? categoriesData : [];
   const categories = orderMetrologyCategories(
-    allParents.filter((c) => METROLOGY_SLUGS.includes(c.slug))
+    allParents.filter((category) =>
+      METROLOGY_SLUGS.includes(category.slug) ||
+      DATABASE_TOPIC_SLUGS.has(resolveCategorySlug(category.slug))
+    )
   );
 
   const midpoint = Math.ceil(categories.length / 2);
@@ -90,7 +111,7 @@ export default async function TopicsPage() {
               {column.map((cat) => (
                 <li key={cat.id}>
                   <Link
-                    href={`/topics/${cat.slug}`}
+                    href={getCategoryUrl(cat.slug)}
                     className="text-[15px] text-[#121213] hover:text-[#0073ff] hover:underline transition-colors"
                   >
                     {cat.name}
