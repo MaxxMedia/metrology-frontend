@@ -6,6 +6,7 @@ import { fetchMyCandidateProfile } from "@/lib/candidateProfile";
 
 export default function CandidateFeedPage() {
   const [username, setUsername] = useState<string | null>(null);
+  const [profileUnavailable, setProfileUnavailable] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -21,9 +22,24 @@ export default function CandidateFeedPage() {
       }
     }
     fetchMyCandidateProfile()
-      .then((me) => setUsername(me.username || "gopinath2322002"))
-      .catch(() => setUsername("gopinath2322002"));
+      .then((me) => {
+        if (me.username) setUsername(me.username);
+        else setProfileUnavailable(true);
+      })
+      .catch(() => setProfileUnavailable(true));
   }, []);
+
+  if (profileUnavailable) {
+    return (
+      <div className="bg-[#f3f2ef] min-h-screen flex items-center justify-center px-4">
+        <div className="max-w-md rounded-lg bg-white p-6 text-center shadow-sm">
+          <h1 className="text-lg font-semibold text-gray-900">Your candidate profile could not be loaded</h1>
+          <p className="mt-2 text-sm text-gray-600">Please sign in again and retry.</p>
+          <a href="/login?redirect=%2Fcandidate%2Ffeed" className="mt-4 inline-block text-blue-700 underline">Sign in</a>
+        </div>
+      </div>
+    );
+  }
 
   if (!username) {
     return (
