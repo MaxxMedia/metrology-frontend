@@ -51,11 +51,11 @@ export default async function SingleMagazinePage({ params }: Props) {
       <section className="border-b border-[#dce4ea] bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-8 sm:px-8 sm:py-10 md:flex-row md:items-end md:justify-between">
           <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#0073ff]">Digital magazine</p>
-            <h1 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-[#003049] sm:text-4xl">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-black">Digital magazine</p>
+            <h1 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-black sm:text-4xl">
               {magazine.title}
             </h1>
-            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[#647481]">
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-black">
               {issueDate && <span>{issueDate}</span>}
               {issueDate && authorName && <span aria-hidden="true">·</span>}
               {authorName && <span>By {authorName}</span>}
@@ -77,9 +77,9 @@ export default async function SingleMagazinePage({ params }: Props) {
         </div>
         {magazine.description && (
           <div className="mx-auto mt-10 max-w-4xl rounded-2xl bg-white p-6 shadow-sm ring-1 ring-[#dce4ea] sm:p-9">
-            <h2 className="text-xl font-bold text-[#003049]">About this issue</h2>
+            <h2 className="text-xl font-bold text-black">About this issue</h2>
             <div
-              className="prose mt-4 max-w-none prose-headings:text-[#003049] prose-a:text-[#0073ff]"
+              className="prose mt-4 max-w-none text-black prose-headings:text-black prose-p:text-black prose-li:text-black prose-strong:text-black prose-a:text-black"
               dangerouslySetInnerHTML={{ __html: magazine.description }}
             />
           </div>

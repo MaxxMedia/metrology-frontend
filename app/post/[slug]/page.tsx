@@ -197,32 +197,63 @@ export default function PostDetailsPage() {
       setError(null)
 
       try {
+        const getPost = (payload: any): Post | null => {
+          const candidate = payload?.data?.post ?? payload?.post ?? payload?.data ?? payload
+          return candidate && typeof candidate === "object" && !Array.isArray(candidate) &&
+            "id" in candidate && "slug" in candidate
+            ? candidate as Post
+            : null
+        }
+
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/posts/slug/${encodeURIComponent(slugValue)}`,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
+          { headers: { "Content-Type": "application/json" } }
         )
 
         if (res.ok) {
-          const data = await res.json()
-          if (data && typeof data === "object" && data !== null && "id" in data) {
-            setPost(data as Post)
+          const post = getPost(await res.json())
+          if (post) {
+            setPost(post)
             return
           }
         }
 
         const idRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${encodeURIComponent(slugValue)}`,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
+          { headers: { "Content-Type": "application/json" } }
         )
 
         if (idRes.ok) {
-          const data = await idRes.json()
-          if (data && typeof data === "object" && data !== null && "id" in data) {
-            setPost(data as Post)
+          const post = getPost(await idRes.json())
+          if (post) {
+            setPost(post)
+            return
+          }
+        }
+
+        // The header and article lists link from /api/posts. Fall back to
+        // that same published-post list if a detail endpoint is stale or
+        // returns a wrapped response, then match the requested slug exactly.
+        const listRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=100`,
+          { headers: { "Content-Type": "application/json" } }
+        )
+
+        if (listRes.ok) {
+          const payload = await listRes.json()
+          const posts = Array.isArray(payload?.data)
+            ? payload.data
+            : Array.isArray(payload?.posts)
+              ? payload.posts
+              : Array.isArray(payload)
+                ? payload
+                : []
+          const matchingPost = posts
+            .map(getPost)
+            .find((post: Post | null) => post?.slug === slugValue)
+
+          if (matchingPost) {
+            setPost(matchingPost)
             return
           }
         }
@@ -459,11 +490,11 @@ export default function PostDetailsPage() {
               <Home size={14} className="text-gray-300" />
               <span>Home</span>
             </Link>
-            <span className="text-gray-400 font-sans text-sm">â†’</span>
+           
             <Link href="/blog" className="text-gray-200 hover:text-white font-medium transition-colors">
               Blog
             </Link>
-            <span className="text-gray-400 font-sans text-sm">â†’</span>
+           
             <span className="text-gray-300 font-normal truncate max-w-xs sm:max-w-md md:max-w-xl">
               {post.title}
             </span>
@@ -512,8 +543,6 @@ export default function PostDetailsPage() {
                   {author?.name || DEFAULT_AUTHOR_NAME}
                 </Link>
 
-                <span className="text-gray-500">â€¢</span>
-
                 <span className="flex items-center gap-1">
                   <Calendar size={14} className="text-gray-500" />
                   {date}
@@ -521,15 +550,13 @@ export default function PostDetailsPage() {
 
                 {post.category?.name && (
                   <>
-                    <span className="text-gray-500">â€¢</span>
+
                     <span className="flex items-center gap-1">
                       <FileText size={14} className="text-gray-500" />
                       {post.category.name}
                     </span>
                   </>
                 )}
-
-                <span className="text-gray-500">â€¢</span>
 
                 <span className="flex items-center gap-1">
                   <MessageSquare size={14} className="text-gray-500" />

@@ -61,7 +61,7 @@ if (!pages?.length) {
         <div className="relative flex justify-center py-10">
           <button
             onClick={() => setIsFullscreen(true)}
-            className="absolute top-2 right-6 bg-white shadow-md px-4 py-2 rounded-md text-sm flex items-center gap-2 hover:bg-gray-100"
+            className="absolute top-2 right-6 bg-white text-black shadow-md px-4 py-2 rounded-md text-sm flex items-center gap-2 hover:bg-gray-100"
           >
             <Maximize2 size={16} />
             Fullscreen
