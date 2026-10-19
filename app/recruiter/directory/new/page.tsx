@@ -629,7 +629,7 @@ export default function AddDirectoryPage() {
           const atDescriptionLimit = wordLimit !== null && wordCount >= wordLimit;
 
           return (
-            <Form className="space-y-6 bg-[#1D2125] border border-[#292C30] p-6 md:p-8 rounded-xl shadow-lg text-[#CCCCCC]">
+            <Form noValidate className="space-y-6 bg-[#1D2125] border border-[#292C30] p-6 md:p-8 rounded-xl shadow-lg text-[#CCCCCC]">
               {status && (
                 <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 px-4 py-3 rounded-xl">
                   <p>{status}</p>
@@ -642,6 +642,8 @@ export default function AddDirectoryPage() {
                   <label className="label">Company Name</label>
                   <Field
                     name="name"
+                    required
+                    aria-required="true"
                     className="input"
                     onChange={(e: any) => {
                       const val = e.target.value;
@@ -653,7 +655,7 @@ export default function AddDirectoryPage() {
                 </div>
                 <div>
                   <label className="label">Slug</label>
-                  <Field name="slug" className="input" />
+                  <Field name="slug" required aria-required="true" className="input" />
                   <ErrorMessage name="slug" component="p" className="error" />
                 </div>
               </div>
@@ -662,12 +664,12 @@ export default function AddDirectoryPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="label">Phone Number</label>
-                  <Field name="phoneNumber" className="input" />
+                  <Field name="phoneNumber" required aria-required="true" className="input" />
                   <ErrorMessage name="phoneNumber" component="p" className="error" />
                 </div>
                 <div>
                   <label className="label">Email</label>
-                  <Field name="email" className="input" />
+                  <Field type="email" name="email" required aria-required="true" className="input" />
                   <ErrorMessage name="email" component="p" className="error" />
                 </div>
               </div>
@@ -679,6 +681,8 @@ export default function AddDirectoryPage() {
                   <Field
                     as="select"
                     name="country"
+                    required
+                    aria-required="true"
                     className="input"
                     onChange={(e: any) => {
                       setFieldValue("country", e.target.value);
@@ -700,6 +704,8 @@ export default function AddDirectoryPage() {
                   <Field
                     as="select"
                     name="state"
+                    required
+                    aria-required="true"
                     className="input"
                     onChange={(e: any) => {
                       setFieldValue("state", e.target.value);
@@ -721,7 +727,7 @@ export default function AddDirectoryPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="label">City</label>
-                  <Field as="select" name="city" className="input">
+                  <Field as="select" name="city" required aria-required="true" className="input">
                     <option value="" className="bg-[#171A1E] text-[#FFFFFF]">Select City</option>
                     {cities.map((c) => (
                       <option key={c.name} value={c.name} className="bg-[#171A1E] text-[#FFFFFF]">
@@ -733,7 +739,7 @@ export default function AddDirectoryPage() {
                 </div>
                 <div>
                   <label className="label">Full Address</label>
-                  <Field name="address" className="input" />
+                  <Field name="address" required aria-required="true" className="input" />
                   <ErrorMessage name="address" component="p" className="error" />
                 </div>
               </div>
@@ -762,6 +768,8 @@ export default function AddDirectoryPage() {
                     <select
                       key={levelIndex}
                       className="input mb-2"
+                      required={levelIndex === industryLevels.length - 1}
+                      aria-required={levelIndex === industryLevels.length - 1}
                       value={industrySelected[levelIndex] ?? ""}
                       onChange={(e) =>
                         handleIndustrySelect(levelIndex, Number(e.target.value), setFieldValue)
@@ -807,6 +815,8 @@ export default function AddDirectoryPage() {
                     ? "border-rose-500 focus:ring-rose-500"
                     : "border-[#292C30] focus:ring-[#00B5ED]"
                     }`}
+                  required
+                  aria-required="true"
                   placeholder="Enter your description..."
                 />
                 <div className="flex items-center justify-between mt-1">
@@ -1610,7 +1620,7 @@ export default function AddDirectoryPage() {
               <Section title="Business Listing Guidelines">
                 <BusinessListingGuidelinesSummary />
                 <label className="flex items-start gap-2 mt-3">
-                  <Field type="checkbox" name="acceptedGuidelines" className="mt-1" />
+                  <Field type="checkbox" name="acceptedGuidelines" required aria-required="true" className="mt-1" />
                   <span className="text-sm">
                     I have read and agree to the Business Listing Guidelines.
                   </span>

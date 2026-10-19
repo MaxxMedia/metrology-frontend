@@ -330,7 +330,7 @@ export default function CreateJobPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start">
             <div className="space-y-6">
 
@@ -868,6 +868,8 @@ function Input({
         type={type}
         name={name}
         value={value}
+        required={required}
+        aria-required={required || undefined}
         placeholder={placeholder}
         onChange={e => onChange(e.target.value)}
         className={`w-full border rounded-xl p-2.5 text-sm bg-[#171A1E] text-[#FFFFFF] placeholder:text-[#858585] focus:outline-none focus:ring-2 ${
@@ -910,6 +912,8 @@ function Textarea({
       <textarea
         name={name}
         value={value}
+        required={required}
+        aria-required={required || undefined}
         placeholder={placeholder}
         onChange={e => onChange(e.target.value)}
         rows={rows}
@@ -963,6 +967,8 @@ function Select({
       <select
         name={name}
         value={value}
+        required={required}
+        aria-required={required || undefined}
         onChange={e => onChange(e.target.value)}
         className={`w-full border rounded-xl p-2.5 text-sm bg-[#171A1E] text-[#FFFFFF] focus:outline-none focus:ring-2 ${
           error
