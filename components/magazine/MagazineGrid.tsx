@@ -49,7 +49,7 @@ export default function MagazineGrid({
 
     return (
       <div className="p-10 flex flex-col justify-center">
-        <h2 className="text-[28px] font-bold text-[#003B5C] mb-8">
+        <h2 className="text-[28px] font-bold text-black mb-8">
           Latest Issue
         </h2>
 
@@ -66,7 +66,7 @@ export default function MagazineGrid({
   </div>
 </Link>
 
-        <p className="text-[#003B5C] font-semibold mb-2">
+        <p className="text-black font-semibold mb-2">
           {mag.createdAt
             ? new Date(mag.createdAt).toLocaleDateString("en-US", {
                 month: "long",

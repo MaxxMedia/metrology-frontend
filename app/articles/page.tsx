@@ -1,294 +1,198 @@
 import Image from "next/image"
-import SupplierAds from "@/components/SupplierAds"
-import PopularNewsSidebar from "@/components/PopularNewsSidebar"
-import MagazineGrid from "@/components/magazine/MagazineGrid"
-import type { Post } from "@/types/Post"
 import Link from "next/link"
-import Banner from "@/components/Banners/Banner";
+import Banner from "@/components/Banners/Banner"
+import MagazineGrid from "@/components/magazine/MagazineGrid"
+import SupplierAds from "@/components/SupplierAds"
+import type { Post } from "@/types/Post"
 
-export default async function ArticlesPage() {
+type Magazine = {
+  id?: number | string
+  title: string
+  slug: string
+  description?: string | null
+  coverImageUrl?: string | null
+}
 
-  /* ================= FETCH POSTS ================= */
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`,
-    { cache: "no-store" }
-  )
+function getCategorySlug(post: Post) {
+  if (typeof post.category === "object") {
+    return post.category?.slug?.toLowerCase() ?? ""
+  }
+  return String(post.category ?? "").toLowerCase()
+}
 
-  const data = await res.json()
-  const posts: Post[] = data.data || data
+function getCategoryName(post: Post) {
+  if (typeof post.category === "object") {
+    return post.category?.name ?? "Article"
+  }
+  return String(post.category || "Article")
+}
 
-  /* ================= FETCH MAGAZINES. ================= */
-  const magRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/magazines`,
-    { cache: "no-store" }
-  )
-
-  const magazines = await magRes.json()
-  const latestMagazine = magazines?.[0]
-
-  /* ================= HELPERS ================= */
-  const slugOf = (post: Post) =>
-    typeof post.category === "object"
-      ? post.category?.slug?.toLowerCase()
-      : String(post.category || "").toLowerCase()
-
-  const getImageUrl = (url?: string | null) => {
-    if (!url) return "/placeholder.svg"
-    if (url.startsWith("http")) return url
-
-    const base = process.env.NEXT_PUBLIC_API_URL || ""
-    return `${base.replace(/\/$/, "")}/${url.replace(/^\//, "")}`
+function getSummary(post: Post) {
+  if (post.excerpt?.trim()) return post.excerpt.trim()
+  if (post.content?.trim()) {
+    return post.content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180)
   }
 
-  /* ================= FILTER POSTS ================= */
-  const archivePosts = posts.filter(p => slugOf(p).includes("archive"))
-  const inThisIssuePosts = posts.filter(p =>
-    slugOf(p).includes("inthisissue")
-  )
-  const departmentPosts = posts.filter(p =>
-    slugOf(p).includes("department")
-  )
-  const productPosts = posts.filter(p =>
-    slugOf(p).includes("product")
-  )
+  const blocks = (post as Post & { contentBlocks?: Array<Record<string, unknown>> }).contentBlocks
+  const text = blocks?.map((block) => {
+    const value = block.content ?? block.text ?? block.quote
+    return typeof value === "string" ? value.replace(/<[^>]+>/g, " ") : ""
+  }).filter(Boolean).join(" ").replace(/\s+/g, " ").trim()
 
-  const rawColumnPosts = posts.filter(p =>
-    slugOf(p).includes("column")
-  )
-  // Fallback: show 4 latest posts when no column-category posts exist
-  const columnsFallback = rawColumnPosts.length === 0
-  const columnPosts = columnsFallback ? posts.slice(0, 4) : rawColumnPosts
+  return text ? `${text.slice(0, 180)}${text.length > 180 ? "…" : ""}` : "Read the full article for details."
+}
 
-  const whatsNewPosts = posts
-    .filter(p => !slugOf(p).includes("whatsnew"))
-    .slice(0, 5)
+function getImageUrl(url?: string | null) {
+  if (!url) return "/placeholder.svg"
+  if (/^https?:\/\//i.test(url)) return url
+  const base = process.env.NEXT_PUBLIC_API_URL || ""
+  return `${base.replace(/\/$/, "")}/${url.replace(/^\//, "")}`
+}
 
-  const remainingIssues = inThisIssuePosts.slice(1)
+function formatDate(date?: string | null) {
+  if (!date) return ""
+  const parsed = new Date(date)
+  return Number.isNaN(parsed.getTime()) ? "" : parsed.toLocaleDateString("en-US", {
+    day: "2-digit", month: "short", year: "numeric",
+  })
+}
+
+export default async function ArticlesPage() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  let posts: Post[] = []
+  let magazines: Magazine[] = []
+
+  try {
+    const [postsResponse, magazinesResponse] = await Promise.all([
+      fetch(`${apiUrl}/api/posts?limit=50`, { cache: "no-store" }),
+      fetch(`${apiUrl}/api/magazines`, { cache: "no-store" }),
+    ])
+
+    if (postsResponse.ok) {
+      const payload = await postsResponse.json()
+      posts = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
+    }
+    if (magazinesResponse.ok) {
+      const payload = await magazinesResponse.json()
+      magazines = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
+    }
+  } catch (error) {
+    console.error("Failed to load articles page data:", error)
+  }
+
+  const latestMagazine = magazines[0]
+  const issuePosts = posts.filter((post) => getCategorySlug(post).includes("inthisissue"))
+  const columnPosts = posts.filter((post) => getCategorySlug(post).includes("column"))
+  const whatsNewPosts = posts.slice(0, 5)
+  const featurePosts = issuePosts.length ? issuePosts : posts.slice(5, 11)
+  const displayColumnPosts = columnPosts.length ? columnPosts : posts.slice(11, 15)
 
   return (
-    <main className="bg-white">
-
-      {/* ================= ARTICLE TOP BANNER ================= */}
+    <main className="bg-white text-black">
       <Banner placement="ARTICLE_TOP" />
 
-      {/* ================= WHATS NEW ================= */}
-      <section className="border-b border-gray-200 bg-white">
-        <div className="max-w-[1320px] mx-auto px-6 py-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {whatsNewPosts.map((post) => (
-              <Link key={post.id} href={`/post/${post.slug}`} className="group">
-                <div className="flex items-center gap-3 mb-1">
-                  <span className="bg-[#0072BC] text-white text-[10px] font-bold px-2 py-[2px] uppercase">
-                    {typeof post.category === "object"
-                      ? post.category?.name
-                      : post.category}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {post.publishedAt
-                      ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      : ""}
-                  </span>
-                </div>
-
-                <p className="text-sm font-semibold text-gray-900 leading-snug group-hover:text-[#C70000]">
-                  {post.title}
-                </p>
-              </Link>
-            ))}
-          </div>
+      <section className="border-b border-gray-200 bg-white" aria-label="Latest articles">
+        <div className="mx-auto max-w-[1320px] px-6 py-4">
+          {whatsNewPosts.length ? (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
+              {whatsNewPosts.map((post) => (
+                <Link key={post.id} href={`/post/${post.slug}`} className="group">
+                  <div className="mb-1 flex items-center gap-3">
+                    <span className="bg-[#0072BC] px-2 py-[2px] text-[10px] font-bold uppercase text-white">
+                      {getCategoryName(post)}
+                    </span>
+                    <span className="text-xs text-black">{formatDate(post.publishedAt)}</span>
+                  </div>
+                  <p className="text-sm font-semibold leading-snug text-black group-hover:text-[#C70000]">
+                    {post.title}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          ) : <p className="py-4 text-black">No articles are available yet.</p>}
         </div>
       </section>
 
-      {/* ================= TOP SPLIT SECTION ================= */}
       <section className="bg-[#E9ECEF]">
-        <div className="max-w-[1320px] mx-auto grid grid-cols-1 lg:grid-cols-[420px_1fr]">
-
-          {/* LEFT – LATEST ISSUE */}
-          <MagazineGrid
-            magazines={magazines}
-            variant="featured"
-            limit={1}
-          />
-
-          {/* RIGHT – LATEST MAGAZINE HERO */}
+        <div className="mx-auto grid max-w-[1320px] grid-cols-1 lg:grid-cols-[420px_1fr]">
+          <MagazineGrid magazines={magazines} variant="featured" limit={1} />
           {latestMagazine && (
-            <div className="relative h-[520px]">
-              <Image
-                src={latestMagazine.coverImageUrl}
-                alt={latestMagazine.title}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width:1024px) 100vw, 60vw"
-              />
-
+            <div className="relative min-h-[360px] bg-gray-200 sm:h-[520px]">
+              {latestMagazine.coverImageUrl && (
+                <Image src={getImageUrl(latestMagazine.coverImageUrl)} alt={latestMagazine.title} fill className="object-cover" priority sizes="(max-width:1024px) 100vw, 60vw" />
+              )}
               <div className="absolute inset-0 bg-black/50" />
-
-              <div className="absolute bottom-0 left-0 p-10 max-w-3xl text-white">
-                <span className="inline-block bg-[#0072BC] text-xs font-bold px-3 py-1 mb-4">
-                  COVER STORY
-                </span>
-
-                <h1 className="text-[28px] font-bold leading-snug mb-3">
-                  {latestMagazine.title}
-                </h1>
-
-                <p className="text-sm text-gray-200 mb-4">
-                  {latestMagazine.description
-                    ?.replace(/<[^>]+>/g, "")
-                    .slice(0, 160)}...
-                </p>
-
-                <Link
-                  href={`/magazines/${latestMagazine.slug}`}
-                  //  href={`/post/${post.slug}`}
-                  className="text-[#C70000] font-bold uppercase text-sm"
-                >
-                  Read Issue →
-                </Link>
+              <div className="absolute bottom-0 left-0 max-w-3xl p-6 text-white sm:p-10">
+                <span className="mb-4 inline-block bg-[#0072BC] px-3 py-1 text-xs font-bold text-white">COVER STORY</span>
+                <h1 className="mb-3 text-[28px] font-bold leading-snug text-white">{latestMagazine.title}</h1>
+                {latestMagazine.description && <p className="mb-4 text-sm text-white">{latestMagazine.description.replace(/<[^>]+>/g, "").slice(0, 160)}</p>}
+                <Link href={`/magazines/${latestMagazine.slug}`} className="text-sm font-bold uppercase text-white underline">Read Issue →</Link>
               </div>
             </div>
           )}
         </div>
-
-        {/* BOTTOM NAV */}
-        <div className="bg-[#0F5B78]">
-          <div className="max-w-[1320px] mx-auto flex gap-10 px-10 py-4 text-white text-sm font-semibold">
-            <Link href="#features">FEATURES</Link>
-            <Link href="#columns">COLUMNS</Link>
-            <Link href="#archive">ARCHIVE</Link>
+        <nav aria-label="Article sections" className="bg-[#0F5B78]">
+          <div className="mx-auto flex max-w-[1320px] flex-wrap gap-6 px-6 py-4 text-sm font-semibold text-white sm:gap-10 sm:px-10">
+            <Link href="#features" className="text-white">FEATURES</Link>
+            <Link href="#columns" className="text-white">COLUMNS</Link>
+            <Link href="#archive" className="text-white">ARCHIVE</Link>
           </div>
-        </div>
+        </nav>
       </section>
-      {/* ================= ARTICLE MIDDLE BANNER ================= */}
+
       <Banner placement="ARTICLE_MIDDLE" />
 
-
-      {/* ================= IN THIS ISSUE ================= */}
-      <section
-        id="features"
-        className="max-w-[1320px] mx-auto px-6 py-14 scroll-mt-24"
-      >
-        <h2 className="text-[32px] font-bold text-[#003B5C] mb-10">
-          In this Issue
-        </h2>
-
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12">
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-14">
-            {remainingIssues.map((post) => (
+      <section id="features" className="mx-auto max-w-[1320px] scroll-mt-24 px-6 py-14">
+        <h2 className="mb-10 text-[32px] font-bold text-black">In this Issue</h2>
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_300px]">
+          <div className="grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2">
+            {featurePosts.map((post) => (
               <article key={post.id}>
-                <div className="relative w-full aspect-[16/9] mb-4">
-                  <Image
-                    src={getImageUrl(post.imageUrl)}
-                    alt={post.title}
-                    fill
-                    className="object-cover rounded"
-                    sizes="(max-width:768px) 100vw, 50vw"
-                  />
-                </div>
-
-                <div className="flex items-center gap-4 mb-3">
-                  <span className="bg-[#0072BC] text-white text-xs font-bold px-3 py-1 uppercase">
-                    {typeof post.category === "object"
-                      ? post.category?.name
-                      : post.category}
-                  </span>
-                </div>
-
-                <h3 className="text-[20px] font-bold leading-snug mb-2">
-                  {post.title}
-                </h3>
-
-                <p className="text-gray-600 text-[15px] leading-relaxed mb-3">
-                  {post.excerpt ||
-                    post.content
-                      ?.replace(/<[^>]+>/g, "")
-                      .slice(0, 140) + "..."}
-                </p>
-
-                <Link
-                  href={`/post/${post.slug}`}
-                  className="text-[#C70000] font-bold text-sm uppercase"
-                >
-                  Read More →
+                <Link href={`/post/${post.slug}`} aria-label={`Read ${post.title}`}>
+                  <div className="relative mb-4 aspect-[16/9] w-full bg-gray-100">
+                    <Image src={getImageUrl(post.imageUrl)} alt={post.title} fill className="rounded object-cover" sizes="(max-width:768px) 100vw, 50vw" />
+                  </div>
                 </Link>
+                <div className="mb-3 flex items-center gap-4">
+                  <span className="bg-[#0072BC] px-3 py-1 text-xs font-bold uppercase text-white">{getCategoryName(post)}</span>
+                  <span className="text-xs text-black">{formatDate(post.publishedAt)}</span>
+                </div>
+                <h3 className="mb-2 text-[20px] font-bold leading-snug text-black"><Link href={`/post/${post.slug}`} className="hover:text-[#C70000]">{post.title}</Link></h3>
+                <p className="mb-3 text-[15px] leading-relaxed text-black">{getSummary(post)}</p>
+                {post.author?.name && <p className="mb-3 text-sm text-black">By {post.author.name}</p>}
+                <Link href={`/post/${post.slug}`} className="text-sm font-bold uppercase text-black underline">Read More →</Link>
               </article>
             ))}
+            {!featurePosts.length && <p className="text-black">No articles are available in this issue yet.</p>}
           </div>
-
-          <aside className="space-y-6">
-            <SupplierAds />
-          </aside>
-
+          <aside className="space-y-6"><SupplierAds /></aside>
         </div>
       </section>
 
-      {/* ================= COLUMNS ================= */}
-      <section
-        id="columns"
-        className="max-w-[1320px] mx-auto px-6 py-14 scroll-mt-24"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b-2 border-[#003B5C] pb-3 mb-0">
-          <h2 className="text-[28px] font-bold text-[#003B5C] uppercase tracking-wide">
-            {columnsFallback ? "  " : "Columns"}
-          </h2>
+      <section id="columns" className="mx-auto max-w-[1320px] scroll-mt-24 px-6 py-14">
+        <div className="mb-0 flex items-center justify-between border-b-2 border-black pb-3">
+          <h2 className="text-[28px] font-bold uppercase tracking-wide text-black">Columns</h2>
         </div>
-
-        {/* List rows */}
         <div>
-          {columnPosts.map((post) => {
-            const catName =
-              typeof post.category === "object"
-                ? post.category?.name ?? ""
-                : String(post.category ?? "")
-            return (
-              <Link
-                key={post.id}
-                href={`/post/${post.slug}`}
-                className="group flex items-center justify-between gap-6 border-b border-gray-200 py-5 hover:bg-gray-50 transition-colors px-1"
-              >
-                {/* Left: badge + title */}
-                <div>
-                  {catName && (
-                    <span className="inline-block bg-[#3a3a3a] text-white text-[10px] font-bold uppercase px-2 py-[3px] mb-2 tracking-wider">
-                      {catName}
-                    </span>
-                  )}
-                  <h3 className="text-[22px] font-bold text-[#0f1318] leading-snug group-hover:text-[#C70000] transition-colors">
-                    {post.title}
-                  </h3>
-                </div>
-
-                {/* Right: READ MORE */}
-                <span className="flex-shrink-0 text-[#C70000] text-xs font-bold uppercase tracking-widest whitespace-nowrap">
-                  READ MORE &rsaquo;
-                </span>
-              </Link>
-            )
-          })}
+          {displayColumnPosts.map((post) => (
+            <Link key={post.id} href={`/post/${post.slug}`} className="group flex items-center justify-between gap-6 border-b border-gray-200 px-1 py-5 hover:bg-gray-50">
+              <div>
+                <span className="mb-2 inline-block bg-gray-800 px-2 py-[3px] text-[10px] font-bold uppercase tracking-wider text-white">{getCategoryName(post)}</span>
+                <h3 className="text-[22px] font-bold leading-snug text-black group-hover:text-[#C70000]">{post.title}</h3>
+                <p className="mt-2 text-sm text-black">{getSummary(post)}</p>
+              </div>
+              <span className="flex-shrink-0 whitespace-nowrap text-xs font-bold uppercase tracking-widest text-black">READ MORE ›</span>
+            </Link>
+          ))}
+          {!displayColumnPosts.length && <p className="py-5 text-black">No columns are available yet.</p>}
         </div>
       </section>
 
-      {/* ================= ARCHIVE GRID ================= */}
-      <section
-        id="archive"
-        className="max-w-7xl mx-auto px-6 py-10 scroll-mt-24"
-      >
-        <h2 className="text-2xl font-bold text-[#003B5C] mb-8">
-          Archive
-        </h2>
-
-        <MagazineGrid magazines={magazines} />
+      <section id="archive" className="mx-auto max-w-7xl scroll-mt-24 px-6 py-10">
+        <h2 className="mb-8 text-2xl font-bold text-black">Archive</h2>
+        {magazines.length ? <MagazineGrid magazines={magazines} /> : <p className="text-black">No magazine issues are available yet.</p>}
       </section>
-      {/* ================= ARTICLE BOTTOM BANNER ================= */}
       <Banner placement="ARTICLE_BOTTOM" />
-
     </main>
   )
 }
