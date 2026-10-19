@@ -58,7 +58,7 @@ export default function BasicInfoForm({
           <div className="flex items-center gap-5 p-4 bg-gray-50 rounded-xl border border-gray-100">
             <div className="relative shrink-0">
               <img
-                src={preview || "/images/default-avatar.png"}
+                src={preview || "/placeholder-user.jpg"}
                 alt="Profile photo"
                 className="w-20 h-20 rounded-full object-cover border-2 border-white shadow-sm"
               />

@@ -31,6 +31,7 @@ export default function RecruiterLayout({
 
         if (!token || !userStr) {
           router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+          setIsLoading(false);
           return;
         }
 
@@ -53,6 +54,7 @@ export default function RecruiterLayout({
             localStorage.removeItem("permissions");
             document.cookie = "token=; path=/; max-age=0; SameSite=Lax";
             router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+            setIsLoading(false);
             return;
           }
 
@@ -67,7 +69,8 @@ export default function RecruiterLayout({
         }
 
         if (user.role !== "recruiter") {
-          router.push("/");
+          router.replace("/");
+          setIsLoading(false);
           return;
         }
 

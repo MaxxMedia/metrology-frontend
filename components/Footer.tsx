@@ -52,9 +52,7 @@ const TOPIC_LINKS: FooterLink[] = [
 
 const RESOURCE_LINKS: FooterLink[] = [
   { label: "Industry Talks", href: "/industry-talks" },
-  { label: "Videos", href: "/videos" },
   { label: "News Letter", href: "/news" },
-  { label: "Products", href: "/products" },
   { label: "Webinars", href: "/webinars" },
   { label: "Packages & Pricing", href: "/packages" },
   { label: "Contact Us", href: "/contact" },
