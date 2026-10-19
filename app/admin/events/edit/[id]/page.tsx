@@ -175,41 +175,6 @@ export default function EditEventPage() {
   // ============================================================
   // EXACT SAME UPLOAD LOGIC AS CREATE PAGE
   // ============================================================
-  const uploadFile = async (
-    file: File,
-    setFieldValue: any,
-    fieldName: string,
-    fileType: "image" | "document" = "image"
-  ) => {
-    const formData = new FormData()
-    const endpoint =
-      fileType === "document"
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/upload/document`
-        : `${process.env.NEXT_PUBLIC_API_URL}/api/upload`
-    formData.append(fileType === "document" ? "document" : "image", file)
-
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: formData,
-    })
-
-    if (!res.ok) {
-      const text = await res.text()
-      console.error("Upload failed:", text)
-      alert("Upload failed. Please check the file type/size and try again.")
-      return
-    }
-
-    const data = await res.json()
-    setFieldValue(fieldName, fileType === "document" ? data.documentUrl : data.imageUrl)
-  }
-
-  // ============================================================
-  // EXACT SAME SUBMIT LOGIC AS CREATE PAGE
-  // ============================================================
   const handleSubmit = async (values: typeof initialValues) => {
     const token = localStorage.getItem("token")
 
@@ -397,7 +362,7 @@ export default function EditEventPage() {
                   <UploadBox
                     label="PNG, JPG, WEBP (Max. 2MB)"
                     value={values.logoUrl}
-                    onUpload={file => uploadFile(file, setFieldValue, "logoUrl", "image")}
+                    onUpload={(_, url) => setFieldValue("logoUrl", url ?? "")}
                   />
                 </div>
               </div>
@@ -410,7 +375,7 @@ export default function EditEventPage() {
                 <UploadBox
                   label="PNG, JPG, WEBP (Max. 2MB, wide image recommended)"
                   value={values.bannerUrl}
-                  onUpload={file => uploadFile(file, setFieldValue, "bannerUrl", "image")}
+                  onUpload={(_, url) => setFieldValue("bannerUrl", url ?? "")}
                 />
               </div>
 
@@ -592,7 +557,7 @@ export default function EditEventPage() {
                 <UploadBox
                   label="PDF (Max. 5MB)"
                   value={values.brochureUrl}
-                  onUpload={file => uploadFile(file, setFieldValue, "brochureUrl", "document")}
+                  onUpload={(_, url) => setFieldValue("brochureUrl", url ?? "")}
                   uploadType="document"
                   accept=".pdf,.doc,.docx"
                 />

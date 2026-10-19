@@ -30,7 +30,7 @@ export default function RecruiterLayout({
         const userStr = localStorage.getItem("user");
 
         if (!token || !userStr) {
-          router.push("/login");
+          router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
           return;
         }
 
@@ -47,6 +47,15 @@ export default function RecruiterLayout({
             `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
+          if (res.status === 401) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            localStorage.removeItem("permissions");
+            document.cookie = "token=; path=/; max-age=0; SameSite=Lax";
+            router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+            return;
+          }
+
           if (res.ok) {
             const freshUser: FreshUser = await res.json();
             user = { ...user, ...freshUser };

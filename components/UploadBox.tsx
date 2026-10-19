@@ -7,7 +7,7 @@ import { Upload, X } from "lucide-react"
 interface UploadBoxProps {
   label: string
   value?: string
-  onUpload: (file: File) => Promise<void>
+  onUpload: (file: File, uploadedUrl?: string) => Promise<void>
   onClear?: () => void
   accept?: string
   className?: string
@@ -101,7 +101,7 @@ export default function UploadBox({
       }
 
       // Call the parent's onUpload with the file
-      await onUpload(file)
+      await onUpload(file, url)
     } catch (error: any) {
       console.error("Upload error:", error)
       const errorMessage = error.message || "Failed to upload file"
