@@ -1,17 +1,12 @@
+export const dynamic = "force-dynamic";
+
 import Image from "next/image"
 import Link from "next/link"
 import Banner from "@/components/Banners/Banner"
-import MagazineGrid from "@/components/magazine/MagazineGrid"
+import MagazineGrid, { type Magazine } from "@/components/magazine/MagazineGrid"
 import SupplierAds from "@/components/SupplierAds"
 import type { Post } from "@/types/Post"
 
-type Magazine = {
-  id?: number | string
-  title: string
-  slug: string
-  description?: string | null
-  coverImageUrl?: string | null
-}
 
 function getCategorySlug(post: Post) {
   if (typeof post.category === "object") {

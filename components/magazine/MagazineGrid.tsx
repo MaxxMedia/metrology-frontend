@@ -3,12 +3,13 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
-type Magazine = {
-  id: number
+export type Magazine = {
+  id?: number | string
   title: string
   slug: string
-  coverImageUrl?: string
-  createdAt?: string
+  description?: string | null
+  coverImageUrl?: string | null
+  createdAt?: string | null
 }
 
 type Props = {
@@ -91,7 +92,7 @@ export default function MagazineGrid({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {displayMagazines.map((mag) => (
-          <Link key={mag.id} href={`/magazines/${mag.slug}`}>
+          <Link key={mag.slug} href={`/magazines/${mag.slug}`}>
             <div className=" overflow-hidden shadow hover:shadow-lg transition cursor-pointer">
               {mag.coverImageUrl && (
   <div className="relative w-full h-64">

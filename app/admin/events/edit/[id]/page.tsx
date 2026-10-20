@@ -362,7 +362,7 @@ export default function EditEventPage() {
                   <UploadBox
                     label="PNG, JPG, WEBP (Max. 2MB)"
                     value={values.logoUrl}
-                    onUpload={(_, url) => setFieldValue("logoUrl", url ?? "")}
+                    onUpload={async (_, url) => { await setFieldValue("logoUrl", url ?? ""); }}
                   />
                 </div>
               </div>
@@ -375,7 +375,7 @@ export default function EditEventPage() {
                 <UploadBox
                   label="PNG, JPG, WEBP (Max. 2MB, wide image recommended)"
                   value={values.bannerUrl}
-                  onUpload={(_, url) => setFieldValue("bannerUrl", url ?? "")}
+                  onUpload={async (_, url) => { await setFieldValue("bannerUrl", url ?? ""); }}
                 />
               </div>
 
@@ -557,7 +557,7 @@ export default function EditEventPage() {
                 <UploadBox
                   label="PDF (Max. 5MB)"
                   value={values.brochureUrl}
-                  onUpload={(_, url) => setFieldValue("brochureUrl", url ?? "")}
+                  onUpload={async (_, url) => { await setFieldValue("brochureUrl", url ?? ""); }}
                   uploadType="document"
                   accept=".pdf,.doc,.docx"
                 />

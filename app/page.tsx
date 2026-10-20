@@ -1,4 +1,6 @@
 
+export const dynamic = "force-dynamic";
+
 import Header from "../components/Header"
 import AdBanner from "../components/AdBanner"
 import PassionOnWheels from "../components/PassionOnWheels"
@@ -24,23 +26,29 @@ import HomeContentGate from "@/components/HomeContentGate";
 export default async function Home() {
   /* ================= FETCH POSTS ================= */
 
-  const postsRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`,
-    { cache: "no-store" }
-  );
+  let posts: Post[] = [];
 
-  if (!postsRes.ok) {
-    throw new Error(`Posts API error: ${postsRes.status}`);
+  try {
+    const postsRes = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + "/api/posts?limit=50",
+      { cache: "no-store", signal: AbortSignal.timeout(10000) }
+    );
+
+    if (!postsRes.ok) {
+      console.error("Posts API error:", postsRes.status);
+    } else {
+      const postsData = await postsRes.json();
+      const result = postsData?.data ?? postsData;
+
+      if (Array.isArray(result)) {
+        posts = result;
+      } else {
+        console.error("Posts API returned an unexpected response shape.");
+      }
+    }
+  } catch (error) {
+    console.error("Failed to load homepage posts:", error);
   }
-
-  const postsData = await postsRes.json();
-
-  const posts: Post[] = postsData.data || postsData
-
-  if (!Array.isArray(posts) || posts.length === 0) {
-    return <div className="text-center p-10 text-[16px]">No posts available</div>
-  }
-
   /* ================= CATEGORY HELPER ================= */
 
   const getCategorySlug = (post: Post) =>
@@ -79,6 +87,14 @@ export default async function Home() {
 
       {/* ================= HOME TOP BANNER ================= */}
       <Banner placement="HOME_TOP" />
+      {posts.length === 0 && (
+        <div
+          role="status"
+          className="mx-auto w-full max-w-7xl px-4 py-5 text-center text-sm text-white/75"
+        >
+          News articles are temporarily unavailable. Please try again shortly.
+        </div>
+      )}
 
       {/* 📰 Latest Hero — shows the most recent post + next 3, all categories */}
       {latestPost && <LatestHero post={latestPost} posts={posts} />}

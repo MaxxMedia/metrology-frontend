@@ -476,6 +476,10 @@ export default function Header() {
               Jobs
             </Link>
 
+            <Link href="/blog" onMouseEnter={() => setOpenMega(null)} className={navLinkClass}>
+              Blog
+            </Link>
+
             <Link href="/contact" onMouseEnter={() => setOpenMega(null)} className={navLinkClass}>
               Contact
             </Link>
@@ -850,6 +854,13 @@ export default function Header() {
                   className="px-3 py-3 rounded text-[16px] font-medium text-white hover:bg-white/5 transition-colors border-b border-white/5"
                 >
                   Jobs
+                </Link>
+                <Link
+                  href="/blog"
+                  onClick={closeMobileMenu}
+                  className="px-3 py-3 rounded text-[16px] font-medium text-white hover:bg-white/5 transition-colors border-b border-white/5"
+                >
+                  Blog
                 </Link>
                 <Link
                   href="/contact"
