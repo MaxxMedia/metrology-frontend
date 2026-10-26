@@ -1,4 +1,6 @@
 "use client"
+/** Implements the recruiter subscription terms component and its related interface behavior. */
+
 
 import { useMemo, useState } from "react"
 
@@ -117,6 +119,7 @@ const TERMS_SECTIONS: TermsSection[] = [
   },
 ]
 
+/** Renders the recruiter subscription terms interface. */
 export default function RecruiterSubscriptionTerms({
   checked,
   onCheckedChange,
@@ -131,6 +134,7 @@ export default function RecruiterSubscriptionTerms({
     return "Scroll through the terms to unlock the agreement checkbox."
   }, [hasReachedEnd])
 
+  /** Handles the scroll interaction and its related state changes. */
   function handleScroll(event: React.UIEvent<HTMLDivElement>) {
     if (hasReachedEnd) return
 

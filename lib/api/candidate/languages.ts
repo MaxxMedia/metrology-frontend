@@ -1,5 +1,7 @@
+/** Provides candidate languages API helpers for reading and updating candidate data. */
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
+/** Builds request headers with the current bearer token and JSON content type. */
 function authHeaders() {
   const token = localStorage.getItem("token");
   return {
@@ -8,6 +10,7 @@ function authHeaders() {
   };
 }
 
+/** Loads or retrieves languages data for this workflow. */
 export async function getLanguages() {
   try {
     const res = await fetch(`${API}/api/candidate-languages`, {
@@ -29,6 +32,7 @@ export async function getLanguages() {
   }
 }
 
+/** Creates language through the configured API. */
 export async function createLanguage(data: {
   language: string;
   proficiency?: string;
@@ -43,6 +47,7 @@ export async function createLanguage(data: {
   return res.json();
 }
 
+/** Updates language through the configured API. */
 export async function updateLanguage(
   id: number,
   data: {
@@ -60,6 +65,7 @@ export async function updateLanguage(
   return res.json();
 }
 
+/** Removes language through the configured API. */
 export async function deleteLanguage(id: number) {
   const res = await fetch(`${API}/api/candidate-languages/${id}`, {
     method: "DELETE",

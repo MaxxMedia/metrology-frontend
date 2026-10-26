@@ -1,3 +1,4 @@
+/** Implements the topics page and its route-specific behavior. */
 import Link from "next/link";
 import type { Post } from "@/types/Post";
 import { getCategoryUrl, MASTER_CATEGORIES, resolveCategorySlug } from "@/lib/topic";
@@ -15,6 +16,7 @@ const DATABASE_TOPIC_SLUGS = new Set(
   MASTER_CATEGORIES.map((category) => resolveCategorySlug(category.slug))
 );
 
+/** Orders the metrology categories items for display. */
 function orderMetrologyCategories(categories: Category[]) {
   const bySlug = new Map(categories.map((c) => [c.slug, c]));
   return MASTER_CATEGORIES
@@ -24,6 +26,7 @@ function orderMetrologyCategories(categories: Category[]) {
     .filter(Boolean) as Category[];
 }
 
+/** Renders the topics page interface. */
 export default async function TopicsPage() {
   const [postsRes, categoriesRes] = await Promise.all([
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=100`, {

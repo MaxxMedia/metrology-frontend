@@ -1,4 +1,6 @@
 "use client"
+/** Implements the recruiter leads page and its route-specific behavior. */
+
 
 import { useEffect, useState, useCallback } from "react"
 import { Inbox } from "lucide-react"
@@ -37,6 +39,7 @@ type LeadsResponse = {
   eligibility?: LeadsEligibility
 }
 
+/** Renders the recruiter leads page interface. */
 export default function RecruiterLeadsPage() {
   const allowed = useRecruiterGuard()
 
@@ -93,6 +96,7 @@ export default function RecruiterLeadsPage() {
     fetchLeads(page)
   }, [allowed, page, fetchLeads])
 
+  /** Handles the download interaction and its related state changes. */
   const handleDownload = async () => {
     setDownloading(true)
     try {

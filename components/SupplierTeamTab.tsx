@@ -1,5 +1,7 @@
 // components/SupplierTeamTab.tsx
 "use client"
+/** Implements the supplier team tab component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react"
 import { Users, Loader2, Mail, MapPin, Briefcase, User } from "lucide-react"
@@ -25,6 +27,7 @@ type SupplierTeamTabProps = {
     companySlug?: string
 }
 
+/** Renders the supplier team tab interface. */
 export default function SupplierTeamTab({ companySlug }: SupplierTeamTabProps) {
     const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
     const [loading, setLoading] = useState(true)
@@ -37,6 +40,7 @@ export default function SupplierTeamTab({ companySlug }: SupplierTeamTabProps) {
             return
         }
 
+        /** Loads team members for the current workflow. */
         const fetchTeamMembers = async () => {
             try {
                 setLoading(true)

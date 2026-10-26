@@ -1,12 +1,16 @@
 "use client";
+/** Implements the back to top component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react";
 
+/** Renders the back to top interface. */
 export default function BackToTop() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    /** Handles the scroll interaction and its related state changes. */
     const handleScroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;

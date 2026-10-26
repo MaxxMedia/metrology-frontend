@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile certifications section component and its related interface behavior. */
+
 
 import { Award, ExternalLink, Pencil, Calendar } from "lucide-react";
 
@@ -24,11 +26,13 @@ interface Props {
   onEditClick?: () => void;
 }
 
+/** Renders the certifications section interface. */
 export default function CertificationsSection({
   editable = false,
   certifications = [],
   onEditClick,
 }: Props) {
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return "";
     try {

@@ -1,7 +1,9 @@
+/** Implements the login page and its route-specific behavior. */
 import AuthHero from "@/components/AuthHero";
 import LoginForm from "@/components/LoginForm";
 import Image from "next/image";
 
+/** Renders the login page interface. */
 export default async function LoginPage({
   searchParams,
 }: {

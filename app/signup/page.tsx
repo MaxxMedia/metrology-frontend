@@ -1,8 +1,10 @@
+/** Implements the signup page and its route-specific behavior. */
 import AuthHero from "@/components/AuthHero"
 import SignupForm from "@/components/SignupForm"
 import Image from "next/image"
 import { Suspense } from "react"
 
+/** Renders the signup page interface. */
 export default function SignupPage() {
   return (
     <div className="bg-[#141719]">

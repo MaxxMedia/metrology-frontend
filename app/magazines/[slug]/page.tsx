@@ -1,3 +1,4 @@
+/** Implements the magazines slug page and its route-specific behavior. */
 ﻿import FlipBookViewer from "@/components/FlipBookViewer"
 import DownloadSection from "@/components/magazine/DownloadSection"
 
@@ -19,6 +20,7 @@ type Magazine = {
   MagazineAuthor?: { name?: string | null } | null
 }
 
+/** Returns the derived magazine value used by this workflow. */
 async function getMagazine(slug: string): Promise<Magazine> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/magazines/${slug}`,
@@ -29,11 +31,13 @@ async function getMagazine(slug: string): Promise<Magazine> {
   return res.json()
 }
 
+/** Returns the derived pages value used by this workflow. */
 function getPages(value: unknown): string[] {
   if (!Array.isArray(value)) return []
   return value.filter((page): page is string => typeof page === "string" && page.length > 0)
 }
 
+/** Renders the single magazine page interface. */
 export default async function SingleMagazinePage({ params }: Props) {
   const { slug } = await params
   const magazine = await getMagazine(slug)

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the content submission policy component and its related interface behavior. */
+
 import { CheckCircle2, FileText, ExternalLink } from "lucide-react";
 import React from "react";
 
@@ -7,6 +9,7 @@ type Props = {
   onChange: (checked: boolean) => void;
 };
 
+/** Renders the policy item interface. */
 function PolicyItem({ text }: { text: string }) {
   return (
     <div className="flex gap-4">
@@ -21,6 +24,7 @@ function PolicyItem({ text }: { text: string }) {
   );
 }
 
+/** Renders the content submission policy interface. */
 export default function ContentSubmissionPolicy({
   checked,
   onChange,

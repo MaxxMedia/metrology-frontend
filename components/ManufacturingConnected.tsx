@@ -1,5 +1,7 @@
 
 "use client";
+/** Implements the manufacturing connected component and its related interface behavior. */
+
 
 import Link from "next/link";
 import Image from "next/image";
@@ -39,7 +41,9 @@ function ExploreCategories() {
   );
 }
 
+/** Renders the popular news sidebar interface. */
 function PopularNewsSidebar({ posts }: { posts: Post[] }) {
+  /** Coordinates the image url behavior for this component. */
   const imageUrl = (post: Post) =>
     post.imageUrl?.startsWith("http")
       ? post.imageUrl
@@ -87,6 +91,7 @@ function PopularNewsSidebar({ posts }: { posts: Post[] }) {
   );
 }
 
+/** Renders the tags widget interface. */
 function TagsWidget() {
   const tags = [
     "Gaming","Travel","Food","Sports","Social","Marketing","Trip","Makeup",
@@ -118,6 +123,7 @@ type FeaturedPostsSectionProps = {
   posts: Post[];
 };
 
+/** Renders the featured posts section interface. */
 export default function FeaturedPostsSection({ posts }: FeaturedPostsSectionProps) {
   if (!posts || posts.length < 2) return null;
 
@@ -126,6 +132,7 @@ export default function FeaturedPostsSection({ posts }: FeaturedPostsSectionProp
     rows.push(posts.slice(i, i + 2));
   }
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (date?: string | null) =>
     date
       ? new Date(date).toLocaleDateString("en-US", {

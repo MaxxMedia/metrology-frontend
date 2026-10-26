@@ -1,4 +1,6 @@
 "use client"
+/** Implements the recruiter dashboard page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -123,6 +125,7 @@ const STATUS_BADGE: Record<string, string> = {
   REJECTED: "bg-rose-500/10 text-rose-400 ring-1 ring-rose-500/30",
 }
 
+/** Normalizes the article quick desc value for consistent display or use. */
 function formatArticleQuickDesc(eligibility?: ContentLimitEligibility | null) {
   if (!eligibility) return "Manage content"
   if (eligibility.isUnlimited) return "Unlimited this year"
@@ -132,12 +135,14 @@ function formatArticleQuickDesc(eligibility?: ContentLimitEligibility | null) {
   return `${eligibility.remaining ?? 0} left this year`
 }
 
+/** Normalizes the product quick desc value for consistent display or use. */
 function formatProductQuickDesc(eligibility?: ContentLimitEligibility | null) {
   if (!eligibility) return "Manage directories"
   if (eligibility.isUnlimited) return "Unlimited directories"
   return `${eligibility.remaining ?? 0} directory slots left`
 }
 
+/** Normalizes the limit value value for consistent display or use. */
 function formatLimitValue(
   eligibility: ContentLimitEligibility | null | undefined,
   remainingKey: "remaining" = "remaining"
@@ -186,6 +191,7 @@ export default function RecruiterDashboard() {
   useEffect(() => {
     if (!allowed) return
 
+    /** Loads all for the current workflow. */
     async function loadAll() {
       const token = localStorage.getItem("token")
       if (!token) {
@@ -284,6 +290,7 @@ export default function RecruiterDashboard() {
 
     loadAll()
 
+    /** Handles the focus interaction and its related state changes. */
     const handleFocus = () => loadAll()
     window.addEventListener("focus", handleFocus)
 
@@ -787,6 +794,7 @@ function KpiCard({
   )
 }
 
+/** Renders the action card interface. */
 function ActionCard({
   icon,
   title,
@@ -809,6 +817,7 @@ function ActionCard({
   )
 }
 
+/** Renders the panel interface. */
 function Panel({
   title,
   subtitle,
@@ -842,6 +851,7 @@ function Panel({
   )
 }
 
+/** Renders the empty state interface. */
 function EmptyState({
   icon,
   message,
@@ -860,6 +870,7 @@ function EmptyState({
   )
 }
 
+/** Renders the status badge interface. */
 function StatusBadge({ status }: { status: string }) {
   const style = STATUS_BADGE[status] ?? "bg-[#171A1E] text-[#CCCCCC] ring-1 ring-[#292C30]"
   return (
@@ -869,6 +880,7 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
+/** Renders the table interface. */
 function Table({
   head,
   rows,

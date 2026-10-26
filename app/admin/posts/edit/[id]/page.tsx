@@ -1,5 +1,7 @@
 // app/admin/posts/edit/[id]/page.tsx
 "use client";
+/** Implements the admin posts edit id page and its route-specific behavior. */
+
 
 import Image from "next/image";
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
@@ -8,6 +10,7 @@ import UploadBox from "@/components/UploadBox";
 import PostBuilder from "@/app/admin/components/PostBuilder";
 import { ContentBlock } from "@/app/admin/components/types";
 
+/** Renders the edit post interface. */
 export default function EditPost() {
   const router = useRouter();
   const { id } = useParams();
@@ -62,6 +65,7 @@ export default function EditPost() {
 
   /* ================= LOAD DATA ================= */
   useEffect(() => {
+    /** Coordinates the load behavior for this workflow. */
     async function load() {
       try {
         const [postRes, authorRes, categoryRes] = await Promise.all([
@@ -124,6 +128,7 @@ export default function EditPost() {
     setForm((prev) => ({ ...prev, title, slug }));
   }
 
+  /** Handles the badge change interaction and its related state changes. */
   function handleBadgeChange(e: ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     if (/^[A-Za-z]{0,10}$/.test(value)) {
@@ -131,6 +136,7 @@ export default function EditPost() {
     }
   }
 
+  /** Handles the change interaction and its related state changes. */
   function handleChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {

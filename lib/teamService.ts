@@ -1,3 +1,4 @@
+/** Provides API operations for company membership requests, approvals, and team data. */
 // lib/teamService.ts
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
@@ -44,6 +45,7 @@ export interface TeamRequest {
     startDate?: string;
 }
 
+/** Sends a to join company request to the configured API. */
 export async function requestToJoinCompany(data: TeamRequest) {
     const token = localStorage.getItem('token');
 
@@ -64,6 +66,7 @@ export async function requestToJoinCompany(data: TeamRequest) {
     return res.json();
 }
 
+/** Loads or retrieves my team status data for this workflow. */
 export async function getMyTeamStatus(companyId?: number) {
     const token = localStorage.getItem('token');
     const url = companyId
@@ -89,6 +92,7 @@ export async function getMyTeamStatus(companyId?: number) {
     return result.data || result;
 }
 
+/** Loads or retrieves pending requests data for this workflow. */
 export async function getPendingRequests(companyId?: number) {
     const token = localStorage.getItem('token');
     const url = companyId
@@ -118,6 +122,7 @@ export async function getPendingRequests(companyId?: number) {
     return [];
 }
 
+/** Loads or retrieves team members data for this workflow. */
 export async function getTeamMembers(companyId?: number) {
     const token = localStorage.getItem('token');
     const url = companyId
@@ -145,6 +150,7 @@ export async function getTeamMembers(companyId?: number) {
     return [];
 }
 
+/** Approves the team member request through the configured API. */
 export async function approveTeamMember(teamId: number) {
     const token = localStorage.getItem('token');
 
@@ -163,6 +169,7 @@ export async function approveTeamMember(teamId: number) {
     return res.json();
 }
 
+/** Rejects the team member request through the configured API. */
 export async function rejectTeamMember(teamId: number, rejectionReason: string) {
     const token = localStorage.getItem('token');
 
@@ -183,6 +190,7 @@ export async function rejectTeamMember(teamId: number, rejectionReason: string) 
     return res.json();
 }
 
+/** Loads or retrieves company team data for this workflow. */
 export async function getCompanyTeam(slug: string) {
     const res = await fetch(`${API_BASE}/api/companies/${slug}/team`);
 
@@ -201,6 +209,7 @@ export async function getCompanyTeam(slug: string) {
     return [];
 }
 
+/** Loads or retrieves companies data for this workflow. */
 export async function searchCompanies(query: string) {
     const res = await fetch(
         `${API_BASE}/api/companies/search?q=${encodeURIComponent(query)}`

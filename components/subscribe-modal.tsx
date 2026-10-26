@@ -1,4 +1,6 @@
 'use client';
+/** Implements the subscribe modal component and its related interface behavior. */
+
 
 import { useState } from 'react';
 import { X } from 'lucide-react';
@@ -8,12 +10,14 @@ interface SubscribeModalProps {
   onClose: () => void;
 }
 
+/** Renders the subscribe modal interface. */
 export default function SubscribeModal({ isOpen, onClose }: SubscribeModalProps) {
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);

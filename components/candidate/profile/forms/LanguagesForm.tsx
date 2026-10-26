@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile forms languages form component and its related interface behavior. */
+
 
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -25,6 +27,7 @@ const validationSchema = Yup.object({
   ),
 });
 
+/** Renders the languages form interface. */
 export default function LanguagesForm({
   initialValues,
   onSubmit,

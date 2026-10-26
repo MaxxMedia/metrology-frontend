@@ -1,4 +1,6 @@
 "use client"
+/** Implements the industry talk listing component and its related interface behavior. */
+
 
 import { useState } from "react"
 import Link from "next/link"
@@ -66,6 +68,7 @@ function isNew(publishedAt?: string | null) {
   return days <= 14
 }
 
+/** Normalizes the duration value for consistent display or use. */
 function formatDuration(seconds?: number | null) {
   if (!seconds && seconds !== 0) return ""
   const m = Math.floor(seconds / 60)
@@ -73,6 +76,7 @@ function formatDuration(seconds?: number | null) {
   return `${m}:${s.toString().padStart(2, "0")}`
 }
 
+/** Returns the derived page list value used by this workflow. */
 function getPageList(current: number, total: number): (number | "...")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
 
@@ -132,6 +136,7 @@ export default function IndustryTalkListing({ post: allPosts }: { post: Industry
   const hasPrev = currentPage > 1
   const hasNext = currentPage < totalPages
 
+  /** Handles the category click interaction and its related state changes. */
   function handleCategoryClick(name: string) {
     setSelectedCategory(name)
     setCurrentPage(1)

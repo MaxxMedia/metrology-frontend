@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile forms certifications form component and its related interface behavior. */
+
 
 import { Formik, Form, FieldArray, useField } from "formik";
 import * as Yup from "yup";
@@ -31,6 +33,7 @@ const validationSchema = Yup.object({
   ),
 });
 
+/** Renders the certifications form interface. */
 export default function CertificationsForm({
   initialValues,
   onSubmit,
@@ -158,6 +161,7 @@ export default function CertificationsForm({
   );
 }
 
+/** Renders the input interface. */
 function Input({
   label,
   name,

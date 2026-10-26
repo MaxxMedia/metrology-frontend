@@ -1,3 +1,4 @@
+/** Implements the recruiter username page and its route-specific behavior. */
 
 import Image from "next/image"
 import { MapPin, Link2, CheckCircle } from "lucide-react"
@@ -14,6 +15,7 @@ type Recruiter = {
   websiteUrl?: string
 }
 
+/** Renders the recruiter profile page interface. */
 export default async function RecruiterProfilePage(props: {
   params: Promise<{ username: string }>
 }) {

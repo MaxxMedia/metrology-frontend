@@ -1,5 +1,7 @@
 // app/admin/components/PostBuilder.tsx
 "use client";
+/** Implements the admin components post builder interface and its related behavior. */
+
 
 import { useEffect, useState } from "react";
 import AddBlock from "./AddBlock";
@@ -22,6 +24,7 @@ interface Props {
   onChange: (blocks: ContentBlock[]) => void;
 }
 
+/** Renders the post builder interface. */
 export default function PostBuilder({ value, onChange }: Props) {
   const [blocks, setBlocks] = useState<ContentBlock[]>(value || []);
 
@@ -29,25 +32,30 @@ export default function PostBuilder({ value, onChange }: Props) {
     setBlocks(value || []);
   }, [value]);
 
+  /** Updates the blocks record or interface state. */
   function updateBlocks(updated: ContentBlock[]) {
     setBlocks(updated);
     onChange(updated);
   }
 
+  /** Creates the block record or interface element. */
   function addBlock(block: ContentBlock) {
     updateBlocks([...blocks, block]);
   }
 
+  /** Updates the block record or interface state. */
   function updateBlock(id: string, updatedBlock: ContentBlock) {
     updateBlocks(
       blocks.map((block) => (block.id === id ? updatedBlock : block))
     );
   }
 
+  /** Removes the block record or interface element. */
   function deleteBlock(id: string) {
     updateBlocks(blocks.filter((block) => block.id !== id));
   }
 
+  /** Coordinates the move up behavior for this workflow. */
   function moveUp(index: number) {
     if (index === 0) return;
     const updated = [...blocks];
@@ -58,6 +66,7 @@ export default function PostBuilder({ value, onChange }: Props) {
     updateBlocks(updated);
   }
 
+  /** Coordinates the move down behavior for this workflow. */
   function moveDown(index: number) {
     if (index === blocks.length - 1) return;
     const updated = [...blocks];

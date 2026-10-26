@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable toast UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as ToastPrimitives from '@radix-ui/react-toast'

@@ -1,9 +1,12 @@
 "use client";
+/** Implements the admin banners reorder page and its route-specific behavior. */
+
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { BANNER_PLACEMENTS } from "@/lib/bannerPlacements";
 
+/** Renders the banner reorder page interface. */
 export default function BannerReorderPage() {
   const [placement, setPlacement] = useState("HOME_MIDDLE");
   const [banners, setBanners] = useState<any[]>([]);

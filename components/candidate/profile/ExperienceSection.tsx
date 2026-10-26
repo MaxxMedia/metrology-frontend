@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile experience section component and its related interface behavior. */
+
 
 import { Pencil, Building2 } from "lucide-react";
 
@@ -22,10 +24,12 @@ interface Props {
   onEditClick?: () => void;
 }
 
+/** Returns the derived exp title value used by this workflow. */
 function getExpTitle(exp: Experience): string {
   return exp.title || exp.designation || "Position";
 }
 
+/** Returns the derived exp company name value used by this workflow. */
 function getExpCompanyName(exp: Experience): string {
   if (typeof exp.companyName === "string" && exp.companyName.trim()) return exp.companyName;
   if (typeof exp.company === "string" && exp.company.trim()) return exp.company;
@@ -33,6 +37,7 @@ function getExpCompanyName(exp: Experience): string {
   return "";
 }
 
+/** Normalizes the duration value for consistent display or use. */
 function formatDuration(startDateStr: string, endDateStr?: string | null, currentlyWorking?: boolean): string {
   if (!startDateStr) return "";
   const start = new Date(startDateStr);
@@ -53,6 +58,7 @@ function formatDuration(startDateStr: string, endDateStr?: string | null, curren
   return parts.join(" ");
 }
 
+/** Normalizes the date range value for consistent display or use. */
 function formatDateRange(startDateStr: string, endDateStr?: string | null, currentlyWorking?: boolean): string {
   if (!startDateStr) return "";
   const start = new Date(startDateStr);
@@ -74,6 +80,7 @@ function formatDateRange(startDateStr: string, endDateStr?: string | null, curre
   return `${startFormatted} - ${endFormatted}`;
 }
 
+/** Renders the experience section interface. */
 export default function ExperienceSection({
   editable = false,
   experiences,

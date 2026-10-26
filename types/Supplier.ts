@@ -1,3 +1,5 @@
+/** Supplier and company data contract used by supplier directory and profile views. */
+/** Represents a supplier listing, its contact and media fields, social links, and optional company details. */
 export type Supplier = {
   id: number
   companyId: number

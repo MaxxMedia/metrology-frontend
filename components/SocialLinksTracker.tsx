@@ -1,5 +1,8 @@
 "use client"
+/** Implements the social links tracker component and its related interface behavior. */
 
+
+/** Renders the social links tracker interface. */
 export default function SocialLinksTracker({
   supplierId,
   children,
@@ -7,6 +10,7 @@ export default function SocialLinksTracker({
   supplierId: number
   children: React.ReactNode
 }) {
+  /** Coordinates the track behavior for this component. */
   const track = async () => {
     try {
       await fetch(

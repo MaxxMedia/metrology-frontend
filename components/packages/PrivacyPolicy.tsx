@@ -1,3 +1,4 @@
+/** Implements the packages privacy policy component and its related interface behavior. */
 import Link from "next/link";
 import PackagesHero from "./PackagesHero";
 
@@ -251,6 +252,7 @@ const INFO_CATEGORIES: { heading: string; items: string[] }[] = [
   },
 ];
 
+/** Coordinates the render block behavior for this component. */
 function renderBlock(block: string | string[], key: number) {
   if (Array.isArray(block)) {
     return (
@@ -275,6 +277,7 @@ function renderBlock(block: string | string[], key: number) {
   );
 }
 
+/** Renders the privacy policy page client interface. */
 export default function PrivacyPolicyPageClient() {
   return (
     <main className="w-full bg-white">

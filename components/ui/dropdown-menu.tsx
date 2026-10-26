@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable dropdown menu UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
@@ -6,12 +8,14 @@ import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the dropdown menu interface. */
 function DropdownMenu({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
   return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />
 }
 
+/** Renders the dropdown menu portal interface. */
 function DropdownMenuPortal({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>) {
@@ -20,6 +24,7 @@ function DropdownMenuPortal({
   )
 }
 
+/** Renders the dropdown menu trigger interface. */
 function DropdownMenuTrigger({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
@@ -31,6 +36,7 @@ function DropdownMenuTrigger({
   )
 }
 
+/** Renders the dropdown menu content interface. */
 function DropdownMenuContent({
   className,
   sideOffset = 4,
@@ -51,6 +57,7 @@ function DropdownMenuContent({
   )
 }
 
+/** Renders the dropdown menu group interface. */
 function DropdownMenuGroup({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Group>) {
@@ -59,6 +66,7 @@ function DropdownMenuGroup({
   )
 }
 
+/** Renders the dropdown menu item interface. */
 function DropdownMenuItem({
   className,
   inset,
@@ -82,6 +90,7 @@ function DropdownMenuItem({
   )
 }
 
+/** Renders the dropdown menu checkbox item interface. */
 function DropdownMenuCheckboxItem({
   className,
   children,
@@ -108,6 +117,7 @@ function DropdownMenuCheckboxItem({
   )
 }
 
+/** Renders the dropdown menu radio group interface. */
 function DropdownMenuRadioGroup({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>) {
@@ -119,6 +129,7 @@ function DropdownMenuRadioGroup({
   )
 }
 
+/** Renders the dropdown menu radio item interface. */
 function DropdownMenuRadioItem({
   className,
   children,
@@ -143,6 +154,7 @@ function DropdownMenuRadioItem({
   )
 }
 
+/** Renders the dropdown menu label interface. */
 function DropdownMenuLabel({
   className,
   inset,
@@ -163,6 +175,7 @@ function DropdownMenuLabel({
   )
 }
 
+/** Renders the dropdown menu separator interface. */
 function DropdownMenuSeparator({
   className,
   ...props
@@ -176,6 +189,7 @@ function DropdownMenuSeparator({
   )
 }
 
+/** Renders the dropdown menu shortcut interface. */
 function DropdownMenuShortcut({
   className,
   ...props
@@ -192,12 +206,14 @@ function DropdownMenuShortcut({
   )
 }
 
+/** Renders the dropdown menu sub interface. */
 function DropdownMenuSub({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Sub>) {
   return <DropdownMenuPrimitive.Sub data-slot="dropdown-menu-sub" {...props} />
 }
 
+/** Renders the dropdown menu sub trigger interface. */
 function DropdownMenuSubTrigger({
   className,
   inset,
@@ -222,6 +238,7 @@ function DropdownMenuSubTrigger({
   )
 }
 
+/** Renders the dropdown menu sub content interface. */
 function DropdownMenuSubContent({
   className,
   ...props

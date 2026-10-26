@@ -1,5 +1,7 @@
 // app/admin/components/blocks/GalleryBlock.tsx
 "use client";
+/** Implements the admin components blocks gallery block interface and its related behavior. */
+
 
 import UploadBox from "@/components/UploadBox";
 import { GalleryBlock } from "../types";
@@ -9,7 +11,9 @@ interface Props {
   onChange: (block: GalleryBlock) => void;
 }
 
+/** Renders the gallery block editor interface. */
 export default function GalleryBlockEditor({ block, onChange }: Props) {
+  /** Uploads the image asset and returns its result to the form. */
   async function uploadImage(file: File) {
     const formData = new FormData();
     formData.append("image", file);
@@ -34,6 +38,7 @@ export default function GalleryBlockEditor({ block, onChange }: Props) {
     }
   }
 
+  /** Removes the image record or interface element. */
   function removeImage(index: number) {
     onChange({
       ...block,

@@ -1,5 +1,7 @@
+/** Implements the topics dies moulds tooling page and its route-specific behavior. */
 import TopicPage from "../TopicPage";
 
+/** Renders the dies moulds tooling page interface. */
 export default function DiesMouldsToolingPage() {
   return (
     <TopicPage

@@ -1,4 +1,6 @@
 "use client"
+/** Implements the events events content interface and its related behavior. */
+
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
@@ -45,6 +47,7 @@ function SubscribeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -147,6 +150,7 @@ function SubscribeForm() {
   )
 }
 
+/** Renders the events content interface. */
 export default function EventsContent() {
   const searchParams = useSearchParams()
   const dateParam = searchParams.get("date")
@@ -172,6 +176,7 @@ export default function EventsContent() {
     setCurrentPage(1)
   }, [dateParam, searchQuery, selectedIndustry])
 
+  /** Loads industries for the current workflow. */
   const fetchIndustries = async () => {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
@@ -188,6 +193,7 @@ export default function EventsContent() {
     }
   }
 
+  /** Loads events for the current workflow. */
   const fetchEvents = async (search?: string, industryId?: string) => {
     setLoading(true)
     try {
@@ -216,16 +222,19 @@ export default function EventsContent() {
     }
   }
 
+  /** Handles the search interaction and its related state changes. */
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     fetchEvents(searchQuery, selectedIndustry)
   }
 
+  /** Handles the industry change interaction and its related state changes. */
   const handleIndustryChange = (industryId: string) => {
     setSelectedIndustry(industryId)
     fetchEvents(searchQuery, industryId)
   }
 
+  /** Handles the clear filters interaction and its related state changes. */
   const handleClearFilters = () => {
     setSearchQuery("")
     setSelectedIndustry("")
@@ -244,6 +253,7 @@ export default function EventsContent() {
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent)
 
+  /** Coordinates the go to page behavior for this workflow. */
   const goToPage = (pageNumber: number) => {
     setCurrentPage(pageNumber)
     const element = document.getElementById("events-list")
@@ -545,6 +555,7 @@ export default function EventsContent() {
   )
 }
 
+/** Renders the stat block interface. */
 function StatBlock({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
     <div className="flex flex-col items-center text-center">
@@ -555,12 +566,14 @@ function StatBlock({ icon, value, label }: { icon: React.ReactNode; value: strin
   )
 }
 
+/** Normalizes the date range value for consistent display or use. */
 function formatDateRange(start: string, end: string) {
   const s = new Date(start).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })
   const e = new Date(end).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })
   return `${s} – ${e}`
 }
 
+/** Normalizes the date value for consistent display or use. */
 function normalizeDate(date: string | Date) {
   if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
     const [y, m, d] = date.split("-").map(Number)
@@ -570,6 +583,7 @@ function normalizeDate(date: string | Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
 }
 
+/** Coordinates the is on date behavior for this workflow. */
 function isOnDate(event: Event, dateStr: string) {
   const selected = normalizeDate(dateStr)
   const start = normalizeDate(event.startDate)

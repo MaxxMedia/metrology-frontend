@@ -1,6 +1,8 @@
+/** Implements the podcast page and its route-specific behavior. */
 import PodcastListing from "@/components/PodcastListing"
 import type { Post } from "@/types/Post"
 
+/** Renders the podcast page interface. */
 export default async function PodcastPage() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`,

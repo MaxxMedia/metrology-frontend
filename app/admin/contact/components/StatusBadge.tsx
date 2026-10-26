@@ -1,4 +1,6 @@
 'use client';
+/** Implements the admin contact components status badge interface and its related behavior. */
+
 
 import { ContactMessage } from '@/lib/api/contact';
 
@@ -6,6 +8,7 @@ interface ContactStatsProps {
   contacts: ContactMessage[];
 }
 
+/** Renders the contact stats interface. */
 export default function ContactStats({ contacts }: ContactStatsProps) {
   const counts = {
     total: contacts.length,

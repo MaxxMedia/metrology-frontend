@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin newsletter campaigns id page and its route-specific behavior. */
+
 
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,6 +13,7 @@ interface Template {
   content: string;
 }
 
+/** Renders the edit campaign page interface. */
 export default function EditCampaignPage() {
   const router = useRouter();
   const { id } = useParams();
@@ -46,6 +49,7 @@ export default function EditCampaignPage() {
     }
   }, [id]);
 
+  /** Loads templates for the current workflow. */
   async function fetchTemplates() {
     try {
       setLoadingTemplates(true);
@@ -79,6 +83,7 @@ export default function EditCampaignPage() {
     }
   }
 
+  /** Loads campaign for the current workflow. */
   async function loadCampaign() {
     try {
       setError(null);
@@ -139,6 +144,7 @@ export default function EditCampaignPage() {
     }
   }
 
+  /** Handles the input interaction and its related state changes. */
   function handleInput(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
@@ -148,6 +154,7 @@ export default function EditCampaignPage() {
     });
   }
 
+  /** Handles the channel interaction and its related state changes. */
   function handleChannel(name: string) {
     setForm({
       ...form,
@@ -158,6 +165,7 @@ export default function EditCampaignPage() {
     });
   }
 
+  /** Handles the template select interaction and its related state changes. */
   function handleTemplateSelect(e: React.ChangeEvent<HTMLSelectElement>) {
     const templateId = e.target.value ? parseInt(e.target.value) : null;
     setSelectedTemplate(templateId);
@@ -175,15 +183,18 @@ export default function EditCampaignPage() {
     }
   }
 
+  /** Coordinates the is dynamic template behavior for this workflow. */
   function isDynamicTemplate(content: string): boolean {
     return content.includes('{{posts}}') || content.includes('{posts}');
   }
 
+  /** Returns the derived post count value used by this workflow. */
   function getPostCount(content: string): number {
     const matches = content.match(/<div class="post"/g);
     return matches ? matches.length : 0;
   }
 
+  /** Saves the campaign data for this workflow. */
   async function saveCampaign(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -243,6 +254,7 @@ export default function EditCampaignPage() {
     }
   }
 
+  /** Coordinates the send campaign behavior for this workflow. */
   async function sendCampaign() {
     if (!confirm("Send this campaign now?")) return;
 
@@ -277,6 +289,7 @@ export default function EditCampaignPage() {
     }
   }
 
+  /** Removes the campaign record or interface element. */
   async function deleteCampaign() {
     if (!confirm("Are you sure you want to delete this campaign?")) return;
 

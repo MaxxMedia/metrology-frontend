@@ -1,3 +1,4 @@
+/** Resolves the request location from its IP address and returns the current local weather. */
 import { NextRequest, NextResponse } from "next/server";
 
 type GeoPayload = {
@@ -10,6 +11,7 @@ type GeoPayload = {
   message?: string;
 };
 
+/** Selects the first available client IP from the forwarded, real-IP, and Cloudflare headers. */
 function getClientIp(req: NextRequest): string | null {
   const forwarded = req.headers.get("x-forwarded-for");
   if (forwarded) {
@@ -26,6 +28,7 @@ function getClientIp(req: NextRequest): string | null {
   return null;
 }
 
+/** Identifies local, private, and link-local IPs that should not be sent to an external geolocation lookup. */
 function isPrivateIp(ip: string): boolean {
   return (
     ip === "::1" ||
@@ -39,6 +42,7 @@ function isPrivateIp(ip: string): boolean {
   );
 }
 
+/** Looks up geolocation by IP, using the provider default when no public client IP is available. */
 async function lookupGeo(ip: string | null): Promise<GeoPayload | null> {
   const url =
     ip && !isPrivateIp(ip) ? `https://ipwho.is/${encodeURIComponent(ip)}` : "https://ipwho.is/";
@@ -54,6 +58,7 @@ async function lookupGeo(ip: string | null): Promise<GeoPayload | null> {
   return data;
 }
 
+/** Fetches the current temperature in Celsius for the supplied coordinates. */
 async function lookupTemp(lat: number, lon: number): Promise<number | null> {
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   url.searchParams.set("latitude", String(lat));
@@ -72,6 +77,7 @@ async function lookupTemp(lat: number, lon: number): Promise<number | null> {
   return typeof temp === "number" ? temp : null;
 }
 
+/** Returns the resolved location and temperature, or a clear upstream error response. */
 export async function GET(req: NextRequest) {
   try {
     const ip = getClientIp(req);

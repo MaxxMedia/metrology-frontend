@@ -1,3 +1,5 @@
+/** Implements the shop talk ad component and its related interface behavior. */
+/** Renders the shop talk ad interface. */
 export default function ShopTalkAd() {
   return (
     <div className="w-full bg-gradient-to-r from-teal-900 to-slate-900 text-white py-8 px-4 my-8">

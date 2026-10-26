@@ -1,5 +1,7 @@
+/** Provides the reusable kbd UI primitive and its interaction behavior. */
 import { cn } from '@/lib/utils'
 
+/** Renders the kbd interface. */
 function Kbd({ className, ...props }: React.ComponentProps<'kbd'>) {
   return (
     <kbd
@@ -15,6 +17,7 @@ function Kbd({ className, ...props }: React.ComponentProps<'kbd'>) {
   )
 }
 
+/** Renders the kbd group interface. */
 function KbdGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <kbd

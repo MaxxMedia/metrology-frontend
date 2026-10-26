@@ -1,4 +1,6 @@
 "use client"
+/** Implements the candidate applications page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -21,6 +23,7 @@ type Application = {
   }
 }
 
+/** Renders the my applications page interface. */
 export default function MyApplicationsPage() {
   useCandidateGuard()
 
@@ -28,6 +31,7 @@ export default function MyApplicationsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    /** Loads applications for the current workflow. */
     async function loadApplications() {
       try {
         const token = localStorage.getItem("token")

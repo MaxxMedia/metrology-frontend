@@ -1,3 +1,4 @@
+/** Implements the company company tabs component and its related interface behavior. */
 ﻿import Link from "next/link"
 
 type Props = {
@@ -12,6 +13,7 @@ const tabs = [
   { key: "people" as const, label: "People", href: (slug: string) => `/company/${slug}/people` },
 ]
 
+/** Renders the company tabs interface. */
 export default function CompanyTabs({ slug, active }: Props) {
   return (
     <div className="bg-white rounded-lg shadow-sm px-6 py-3 flex gap-6 text-sm font-medium">

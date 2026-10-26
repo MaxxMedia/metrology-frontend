@@ -1,5 +1,7 @@
 // components/recruiter/SearchCandidates.tsx
 'use client';
+/** Implements the recruiter search candidates component and its related interface behavior. */
+
 
 import { useState, useCallback, useEffect } from 'react';
 import { Search, UserPlus, Loader2, X, CheckCircle } from 'lucide-react';
@@ -23,6 +25,7 @@ interface SearchCandidatesProps {
     addedUserId?: number | null; // Track which user was just added
 }
 
+/** Renders the search candidates interface. */
 export default function SearchCandidates({ onSelect, onClose, loading, addedUserId }: SearchCandidatesProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -76,6 +79,7 @@ export default function SearchCandidates({ onSelect, onClose, loading, addedUser
         []
     );
 
+    /** Handles the search interaction and its related state changes. */
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setSearchTerm(value);
@@ -86,12 +90,14 @@ export default function SearchCandidates({ onSelect, onClose, loading, addedUser
         }
     };
 
+    /** Loads more for the current workflow. */
     const loadMore = () => {
         if (hasMore && !isLoading) {
             searchCandidates(searchTerm, (page) * 20);
         }
     };
 
+    /** Handles the add interaction and its related state changes. */
     const handleAdd = async (candidate: Candidate) => {
         setAddingId(candidate.id);
         await onSelect(candidate);

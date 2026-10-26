@@ -1,10 +1,13 @@
 'use client'
+/** Provides the reusable scroll area UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the scroll area interface. */
 function ScrollArea({
   className,
   children,
@@ -28,6 +31,7 @@ function ScrollArea({
   )
 }
 
+/** Renders the scroll bar interface. */
 function ScrollBar({
   className,
   orientation = 'vertical',

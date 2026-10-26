@@ -1,4 +1,6 @@
 "use client"
+/** Implements the suppliers supplier filters interface and its related behavior. */
+
 
 import { useEffect, useState, useCallback } from "react"
 import { ChevronDown, Search, MapPin, Tag, X, Loader2 } from "lucide-react"
@@ -23,6 +25,7 @@ type Props = {
   initialIndustryName?: string | null
 }
 
+/** Renders the supplier filters interface. */
 export default function SupplierFilters({ onFilterChange, initialIndustryName }: Props) {
   const [industries, setIndustries] = useState<Industry[]>([])
   const [loadingIndustries, setLoadingIndustries] = useState(true)
@@ -54,12 +57,14 @@ export default function SupplierFilters({ onFilterChange, initialIndustryName }:
     setDebounceTimer(timer)
   }, [debounceTimer, onFilterChange])
 
+  /** Updates the filter record or interface state. */
   const updateFilter = (key: keyof FilterState, value: any) => {
     const updated = { ...filters, [key]: value }
     setFilters(updated)
     emitFilters(updated)
   }
 
+  /** Clears the filters values and resets the related state. */
   const clearFilters = () => {
     const cleared: FilterState = {
       name: "",
@@ -157,6 +162,7 @@ export default function SupplierFilters({ onFilterChange, initialIndustryName }:
     setOpenSections(newOpen)
   }
 
+  /** Coordinates the select industry behavior for this workflow. */
   const selectIndustry = (id: number) => {
     const newId = filters.industryId === id ? null : id
     updateFilter("industryId", newId)

@@ -1,13 +1,17 @@
 "use client";
+/** Implements the candidate profile sidebar my applications card component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react";
 import { FileText } from "lucide-react";
 
+/** Renders the my applications card interface. */
 export default function MyApplicationsCard() {
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    /** Loads applications for the current workflow. */
     async function loadApplications() {
       const token = localStorage.getItem("token");
       if (!token) {

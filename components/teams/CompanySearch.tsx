@@ -1,6 +1,8 @@
 // components/team/CompanySearch.tsx
 
 'use client';
+/** Implements the teams company search component and its related interface behavior. */
+
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -12,6 +14,7 @@ interface Props {
     onSelect: (company: CompanySearchResult) => void;
 }
 
+/** Renders the company search interface. */
 export default function CompanySearch({ onSelect }: Props) {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<CompanySearchResult[]>([]);
@@ -44,6 +47,7 @@ export default function CompanySearch({ onSelect }: Props) {
         return () => clearTimeout(delayDebounce);
     }, [query]);
 
+    /** Handles the select interaction and its related state changes. */
     const handleSelect = (company: CompanySearchResult) => {
         onSelect(company);
         setShowResults(false);

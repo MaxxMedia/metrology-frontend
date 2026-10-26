@@ -1,8 +1,11 @@
 "use client"
+/** Implements the articles latest issue component and its related interface behavior. */
+
 import Image from "next/image"
 import Link from "next/link"
 import { Post } from "@/types/Post"
 
+/** Renders the articles latest issue interface. */
 export default function ArticlesLatestIssue({ post }: { post: Post }) {
   const imageUrl = post.imageUrl?.startsWith("http")
     ? post.imageUrl

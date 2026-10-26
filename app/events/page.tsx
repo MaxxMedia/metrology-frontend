@@ -1,6 +1,8 @@
+/** Implements the events page and its route-specific behavior. */
 import { Suspense } from "react"
 import EventsContent from "./EventsContent"
 
+/** Renders the events page interface. */
 export default function EventsPage() {
   return (
     <Suspense fallback={

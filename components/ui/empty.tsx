@@ -1,7 +1,9 @@
+/** Provides the reusable empty UI primitive and its interaction behavior. */
 import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the empty interface. */
 function Empty({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -15,6 +17,7 @@ function Empty({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the empty header interface. */
 function EmptyHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -43,6 +46,7 @@ const emptyMediaVariants = cva(
   },
 )
 
+/** Renders the empty media interface. */
 function EmptyMedia({
   className,
   variant = 'default',
@@ -58,6 +62,7 @@ function EmptyMedia({
   )
 }
 
+/** Renders the empty title interface. */
 function EmptyTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -68,6 +73,7 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the empty description interface. */
 function EmptyDescription({ className, ...props }: React.ComponentProps<'p'>) {
   return (
     <div
@@ -81,6 +87,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<'p'>) {
   )
 }
 
+/** Renders the empty content interface. */
 function EmptyContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div

@@ -1,9 +1,12 @@
 "use client";
+/** Implements the admin banners edit id page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import BannerForm from "../../BannerForm";
 
+/** Renders the edit banner page interface. */
 export default function EditBannerPage() {
   const { id } = useParams(); // ✅ FIX
   const router = useRouter();
@@ -14,6 +17,7 @@ export default function EditBannerPage() {
   useEffect(() => {
     if (!id) return;
 
+    /** Loads banner for the current workflow. */
     const fetchBanner = async () => {
       try {
         const res = await fetch(
@@ -40,6 +44,7 @@ export default function EditBannerPage() {
     fetchBanner();
   }, [id]);
 
+  /** Updates the banner record or interface state. */
   const updateBanner = async (updatedData: any) => {
     try {
       const res = await fetch(

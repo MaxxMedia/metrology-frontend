@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable form UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as LabelPrimitive from '@radix-ui/react-label'
@@ -29,6 +31,7 @@ const FormFieldContext = React.createContext<FormFieldContextValue>(
   {} as FormFieldContextValue,
 )
 
+/** Renders the form field interface. */
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -42,6 +45,7 @@ const FormField = <
   )
 }
 
+/** Provides the form field hook for this component workflow. */
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext)
   const itemContext = React.useContext(FormItemContext)
@@ -73,6 +77,7 @@ const FormItemContext = React.createContext<FormItemContextValue>(
   {} as FormItemContextValue,
 )
 
+/** Renders the form item interface. */
 function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
   const id = React.useId()
 
@@ -87,6 +92,7 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the form label interface. */
 function FormLabel({
   className,
   ...props
@@ -104,6 +110,7 @@ function FormLabel({
   )
 }
 
+/** Renders the form control interface. */
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
 
@@ -122,6 +129,7 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
   )
 }
 
+/** Renders the form description interface. */
 function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
   const { formDescriptionId } = useFormField()
 
@@ -135,6 +143,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
   )
 }
 
+/** Renders the form message interface. */
 function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   const { error, formMessageId } = useFormField()
   const body = error ? String(error?.message ?? '') : props.children

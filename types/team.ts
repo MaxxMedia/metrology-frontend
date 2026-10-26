@@ -1,5 +1,7 @@
+/** Data contracts for company team membership and company-search results. */
 // types/team.ts
 
+/** Represents a user's company membership, its approval lifecycle, employment details, and related user/company records. */
 export interface TeamMember {
     id: number;
     companyId: number;
@@ -37,6 +39,7 @@ export interface TeamMember {
     };
 }
 
+/** Company data returned by team-management search, with optional industry and branding details. */
 export interface CompanySearchResult {
     id: number;
     name: string;

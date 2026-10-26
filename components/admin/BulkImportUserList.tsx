@@ -1,6 +1,8 @@
 // components/admin/BulkImportUserList.tsx
 
 "use client"
+/** Implements the admin bulk import user list component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react"
 import { Mail, CheckCircle, XCircle, Clock, RefreshCw } from "lucide-react"
@@ -16,6 +18,7 @@ interface BulkUser {
   lastLoginAt: string | null
 }
 
+/** Renders the bulk import user list interface. */
 export default function BulkImportUserList() {
   const [users, setUsers] = useState<BulkUser[]>([])
   const [loading, setLoading] = useState(true)
@@ -29,6 +32,7 @@ export default function BulkImportUserList() {
     fetchUsers()
   }, [token])
 
+  /** Loads users for the current workflow. */
   const fetchUsers = async () => {
     try {
       setLoading(true)
@@ -60,6 +64,7 @@ export default function BulkImportUserList() {
     }
   }
 
+  /** Sends the email through the configured service. */
   const sendEmail = async (userId: number) => {
     setSendingId(userId)
     setMessage(null)
@@ -103,6 +108,7 @@ export default function BulkImportUserList() {
     }
   }
 
+  /** Returns the derived status display value used by this workflow. */
   const getStatusDisplay = (user: BulkUser) => {
     // These users should all have emailSentForBulkImport: true, isOnboarded: false
     return {
@@ -113,6 +119,7 @@ export default function BulkImportUserList() {
     }
   }
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',

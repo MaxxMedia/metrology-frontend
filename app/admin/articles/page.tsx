@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin articles page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useState } from "react"
 import { FileText, Eye, Share2, Check, X } from "lucide-react"

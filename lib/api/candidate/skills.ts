@@ -1,5 +1,7 @@
+/** Provides candidate skills API helpers for reading and updating candidate data. */
 const API = process.env.NEXT_PUBLIC_API_URL;
 
+/** Builds request headers with the current bearer token and JSON content type. */
 function authHeaders() {
   const token = localStorage.getItem("token");
 
@@ -9,6 +11,7 @@ function authHeaders() {
   };
 }
 
+/** Loads or retrieves skills data for this workflow. */
 export async function getSkills() {
   const res = await fetch(`${API}/api/candidate-skills`, {
     headers: authHeaders(),
@@ -19,6 +22,7 @@ export async function getSkills() {
   return res.json();
 }
 
+/** Creates skill through the configured API. */
 export async function createSkill(data: {
   name: string;
   level?: string;
@@ -34,6 +38,7 @@ export async function createSkill(data: {
   return res.json();
 }
 
+/** Updates skill through the configured API. */
 export async function updateSkill(
   id: number,
   data: {
@@ -52,6 +57,7 @@ export async function updateSkill(
   return res.json();
 }
 
+/** Removes skill through the configured API. */
 export async function deleteSkill(id: number) {
   const res = await fetch(`${API}/api/candidate-skills/${id}`, {
     method: "DELETE",

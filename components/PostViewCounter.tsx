@@ -1,5 +1,7 @@
 // components/PostViewCounter.tsx
 "use client"
+/** Implements the post view counter component and its related interface behavior. */
+
 
 import { useEffect } from "react"
 import { usePathname } from "next/navigation"
@@ -9,6 +11,7 @@ interface PostViewCounterProps {
   type?: "post" | "industry-talk"
 }
 
+/** Renders the post view counter interface. */
 export default function PostViewCounter({ slug, type = "post" }: PostViewCounterProps) {
   const pathname = usePathname()
 

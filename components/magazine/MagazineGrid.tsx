@@ -1,4 +1,6 @@
 "use client"
+/** Implements the magazine magazine grid component and its related interface behavior. */
+
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -19,6 +21,7 @@ type Props = {
   variant?: "grid" | "featured"
 }
 
+/** Renders the magazine grid interface. */
 export default function MagazineGrid({
   magazines: initialMagazines,
   limit,

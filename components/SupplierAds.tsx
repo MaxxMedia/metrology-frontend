@@ -1,5 +1,7 @@
 // SupplierAds.tsx
 "use client"
+/** Implements the supplier ads component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
@@ -13,10 +15,12 @@ type Banner = {
   placement: string
 }
 
+/** Renders the supplier ads interface. */
 export default function SupplierAds() {
   const [banners, setBanners] = useState<Banner[]>([])
 
   useEffect(() => {
+    /** Loads sidebar ads for the current workflow. */
     const fetchSidebarAds = async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/banners?placement=SIDEBAR`

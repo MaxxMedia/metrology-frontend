@@ -1,3 +1,4 @@
+/** Provides the reusable alert UI primitive and its interaction behavior. */
 import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 
@@ -19,6 +20,7 @@ const alertVariants = cva(
   },
 )
 
+/** Renders the alert interface. */
 function Alert({
   className,
   variant,
@@ -34,6 +36,7 @@ function Alert({
   )
 }
 
+/** Renders the alert title interface. */
 function AlertTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -47,6 +50,7 @@ function AlertTitle({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the alert description interface. */
 function AlertDescription({
   className,
   ...props

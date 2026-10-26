@@ -1,11 +1,15 @@
 "use client"
+/** Implements the scroll highlight component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react"
 
+/** Renders the scroll highlight interface. */
 export default function ScrollHighlight() {
   const [visible, setVisible] = useState(true)
 
   useEffect(() => {
+    /** Handles the scroll interaction and its related state changes. */
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setVisible(false)

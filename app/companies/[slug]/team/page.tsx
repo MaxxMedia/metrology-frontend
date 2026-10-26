@@ -1,6 +1,8 @@
 // app/companies/[slug]/team/page.tsx
 
 'use client';
+/** Implements the companies slug team page and its route-specific behavior. */
+
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
@@ -9,6 +11,7 @@ import { getCompanyTeam } from '@/lib/teamService';
 import { TeamMember } from '@/types/team';
 import { Users, Calendar, Briefcase, Building2, Mail } from 'lucide-react';
 
+/** Renders the company team page interface. */
 export default function CompanyTeamPage() {
     const { slug } = useParams();
     const [members, setMembers] = useState<TeamMember[]>([]);
@@ -20,6 +23,7 @@ export default function CompanyTeamPage() {
         loadTeam();
     }, [slug]);
 
+    /** Loads team for the current workflow. */
     async function loadTeam() {
         try {
             setLoading(true);

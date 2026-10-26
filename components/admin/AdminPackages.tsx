@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin admin packages component and its related interface behavior. */
+
 
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, Save, ToggleLeft, ToggleRight, X, RotateCcw } from "lucide-react";
@@ -112,6 +114,7 @@ const STATIC_FEATURES: { name: string; free: FeatureValue; basic: FeatureValue; 
     { name: "Dedicated Account Manager", free: false, basic: false, professional: false, enterprise: true },
 ];
 
+/** Normalizes the inr value for consistent display or use. */
 const formatInr = (amount: number) =>
     new Intl.NumberFormat("en-IN", {
         style: "currency",
@@ -119,6 +122,7 @@ const formatInr = (amount: number) =>
         maximumFractionDigits: 0,
     }).format(amount || 0);
 
+/** Creates editable draft state from the supplied package data. */
 function draftFromPackage(pkg: Package): Draft {
     return {
         name: pkg.name,
@@ -136,11 +140,13 @@ function draftFromPackage(pkg: Package): Draft {
     };
 }
 
+/** Checks whether the editable form differs from its original values. */
 function isDirty(pkg: Package, draft: Draft): boolean {
     const original = draftFromPackage(pkg);
     return JSON.stringify(original) !== JSON.stringify(draft);
 }
 
+/** Sends an API request and returns the parsed response for the calling workflow. */
 async function apiFetch(path: string, options: RequestInit = {}) {
     const token = typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
 
@@ -166,6 +172,7 @@ async function apiFetch(path: string, options: RequestInit = {}) {
     return { res, data };
 }
 
+/** Coordinates the draft to metadata behavior for this component. */
 function draftToMetadata(type: Package["type"], draft: Draft) {
     if (type === "BANNER") {
         return {
@@ -190,6 +197,7 @@ function draftToMetadata(type: Package["type"], draft: Draft) {
     return null;
 }
 
+/** Renders the admin packages interface. */
 export default function AdminPackages() {
     const [packages, setPackages] = useState<Package[]>([]);
     const [drafts, setDrafts] = useState<Record<string, Draft>>({});
@@ -208,6 +216,7 @@ export default function AdminPackages() {
         fetchPackages();
     }, []);
 
+    /** Loads packages for the current workflow. */
     const fetchPackages = async () => {
         try {
             setLoading(true);
@@ -242,14 +251,17 @@ export default function AdminPackages() {
         };
     }, [packages]);
 
+    /** Updates the draft field record or interface state. */
     const setDraftField = (id: string, field: keyof Draft, value: string | boolean) => {
         setDrafts((prev) => ({ ...prev, [id]: { ...prev[id], [field]: value } as Draft }));
     };
 
+    /** Clears the draft values and resets the related state. */
     const resetDraft = (pkg: Package) => {
         setDrafts((prev) => ({ ...prev, [pkg.id]: draftFromPackage(pkg) }));
     };
 
+    /** Builds the payload value used by the surrounding workflow. */
     const buildPayload = (pkg: Package, draft: Draft, overrides: Record<string, any> = {}) => ({
         id: pkg.id,
         name: draft.name.trim(),
@@ -265,6 +277,7 @@ export default function AdminPackages() {
         ...overrides,
     });
 
+    /** Handles the save interaction and its related state changes. */
     const handleSave = async (pkg: Package) => {
         const draft = drafts[pkg.id];
         if (!draft) return;
@@ -289,6 +302,7 @@ export default function AdminPackages() {
         }
     };
 
+    /** Handles the toggle interaction and its related state changes. */
     const handleToggle = async (pkg: Package) => {
         const draft = drafts[pkg.id] || draftFromPackage(pkg);
         setSavingId(pkg.id);
@@ -312,6 +326,7 @@ export default function AdminPackages() {
         }
     };
 
+    /** Handles the delete interaction and its related state changes. */
     const handleDelete = async (pkg: Package) => {
         if (!confirm(`Delete "${pkg.name}"? This can't be undone.`)) return;
         setSavingId(pkg.id);
@@ -341,6 +356,7 @@ export default function AdminPackages() {
         }
     };
 
+    /** Handles the add new interaction and its related state changes. */
     const handleAddNew = async () => {
         if (!addingType || !newName.trim()) return;
         const id = newName.trim().toLowerCase().replace(/\s+/g, "-");
@@ -701,6 +717,7 @@ export default function AdminPackages() {
     );
 }
 
+/** Renders the section header interface. */
 function SectionHeader({ title, subtitle, onAdd }: { title: string; subtitle: string; onAdd: () => void }) {
     return (
         <div className="flex justify-between items-end mb-4">
@@ -715,6 +732,7 @@ function SectionHeader({ title, subtitle, onAdd }: { title: string; subtitle: st
     );
 }
 
+/** Renders the editable row interface. */
 function EditableRow({
     label, packages, drafts, render,
 }: {
@@ -739,6 +757,7 @@ function EditableRow({
     );
 }
 
+/** Renders the action row interface. */
 function ActionRow({
     packages, drafts, savingId, onSave, onToggle, onDelete, onReset,
 }: {
@@ -769,6 +788,7 @@ function ActionRow({
     );
 }
 
+/** Renders the row actions interface. */
 function RowActions({
     pkg, dirty, saving, onSave, onToggle, onDelete, onReset,
 }: {

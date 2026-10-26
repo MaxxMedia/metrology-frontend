@@ -1,7 +1,10 @@
 "use client"
+/** Implements the admin recruiters create page and its route-specific behavior. */
+
 
 import { useState } from "react"
 
+/** Renders the create recruiter interface. */
 export default function CreateRecruiter() {
   const [form, setForm] = useState({
     email: "",
@@ -10,6 +13,7 @@ export default function CreateRecruiter() {
     companyId: "",
   })
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 

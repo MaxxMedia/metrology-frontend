@@ -1,4 +1,6 @@
 "use client"
+/** Implements the claim company banner component and its related interface behavior. */
+
 
 import Link from "next/link"
 import { ShieldCheck } from "lucide-react"
@@ -36,6 +38,7 @@ const BADGE_STYLES: Record<string, { bg: string; text: string; ring: string; ico
   },
 }
 
+/** Renders the claim company banner interface. */
 export default function ClaimCompanyBanner({ plan = "free" }: ClaimCompanyBannerProps) {
   const badgeLabel = VERIFIED_BADGE_LABEL[plan]
 

@@ -1,4 +1,6 @@
 "use client"
+/** Implements the latest issues component and its related interface behavior. */
+
 
 import Image from "next/image"
 import Link from "next/link"
@@ -26,6 +28,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   "latest-issue": "bg-[#F69C00]",
 }
 
+/** Renders the latest issues interface. */
 export default function LatestIssues({
   posts: initialPosts = [],
 }: LatestIssuesProps) {

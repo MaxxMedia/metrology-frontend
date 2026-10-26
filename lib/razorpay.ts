@@ -1,4 +1,6 @@
 "use client";
+/** Loads Razorpay checkout, verifies completed payments, and activates recruiter subscription plans. */
+
 
 type RazorpayHandlerResponse = {
   razorpay_payment_id: string;
@@ -33,6 +35,7 @@ declare global {
   }
 }
 
+/** Loads the Razorpay checkout script once it is not already present. */
 export function loadRazorpayScript(): Promise<boolean> {
   if (typeof window === "undefined") return Promise.resolve(false);
   if (window.Razorpay) return Promise.resolve(true);
@@ -60,6 +63,7 @@ function updateUserPackageStatus() {
   }
 }
 
+/** Starts Razorpay checkout and verifies the payment with the backend before activation. */
 export async function startPackagePayment({
   packageType,
   packageId,
@@ -153,6 +157,7 @@ export async function startPackagePayment({
   }
 }
 
+/** Requests free-plan activation and redirects the recruiter after success. */
 export async function activateFreePlan({
   onSuccess,
   onError,
@@ -319,6 +324,7 @@ export const RECRUITMENT_PACKAGES = [
   { id: "single-job", name: "Single Job (Monthly · 30 Days)", price: 2000, durationDays: 30 },
 ] as const;
 
+/** Formats a numeric amount as Indian rupees without fractional digits. */
 export function formatInr(amount: number): string {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",

@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin events page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"

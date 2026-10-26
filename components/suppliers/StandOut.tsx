@@ -1,5 +1,7 @@
+/** Implements the suppliers stand out component and its related interface behavior. */
 import Link from "next/link";
 
+/** Renders the stand out interface. */
 export default function StandOut() {
   return (
     <section className="bg-[#1D247B] border-t border-[#292C30] py-12 px-6 sm:px-12 my-8 rounded-xl max-w-[1520px] mx-auto">

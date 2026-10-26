@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile forms achievements form component and its related interface behavior. */
+
 
 import { Formik, Form, Field, FieldArray, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
@@ -29,6 +31,7 @@ const validationSchema = Yup.object({
   ),
 });
 
+/** Renders the achievements form interface. */
 export default function AchievementsForm({
   initialValues,
   onSubmit,
@@ -159,6 +162,7 @@ export default function AchievementsForm({
   );
 }
 
+/** Renders the input interface. */
 function Input({
   label,
   name,

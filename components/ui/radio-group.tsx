@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable radio group UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group'
@@ -6,6 +8,7 @@ import { CircleIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the radio group interface. */
 function RadioGroup({
   className,
   ...props
@@ -19,6 +22,7 @@ function RadioGroup({
   )
 }
 
+/** Renders the radio group item interface. */
 function RadioGroupItem({
   className,
   ...props

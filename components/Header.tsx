@@ -1,4 +1,6 @@
 "use client"
+/** Implements the header component and its related interface behavior. */
+
 
 import Link from "next/link"
 import Image from "next/image"
@@ -32,6 +34,7 @@ type User = {
   username?: string
 }
 
+/** Renders the pinterest icon interface. */
 function PinterestIcon({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 384 512" fill="currentColor" aria-hidden>
@@ -40,6 +43,7 @@ function PinterestIcon({ size = 14 }: { size?: number }) {
   )
 }
 
+/** Renders the cloud sun icon interface. */
 function CloudSunIcon({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 640 512" fill="currentColor" className={className} aria-hidden>
@@ -62,6 +66,7 @@ const PAGES_LINKS: { label: string; href: string; children?: { label: string; hr
 // Keep this in sync with the CSS animation durations below.
 const MOBILE_MENU_ANIM_MS = 900
 
+/** Renders the header interface. */
 export default function Header() {
   const [openMega, setOpenMega] = useState<MegaType>(null)
   const [openPagesChild, setOpenPagesChild] = useState<string | null>(null)
@@ -90,6 +95,7 @@ export default function Header() {
   })
 
   useEffect(() => {
+    /** Loads user for the current workflow. */
     const loadUser = () => {
       const stored = localStorage.getItem("user")
       setUser(stored ? JSON.parse(stored) : null)
@@ -194,11 +200,13 @@ export default function Header() {
     }
   }, [])
 
+  /** Updates the current selection for topic. */
   function selectTopic(slug: string) {
     setActiveSlug(slug)
     void fetchPostsForSlug(slug)
   }
 
+  /** Coordinates the open topics menu behavior for this component. */
   function openTopicsMenu() {
     setOpenMega("topics")
     TOPICS.forEach(({ slug }) => void fetchPostsForSlug(slug))
@@ -226,6 +234,7 @@ export default function Header() {
     }, MOBILE_MENU_ANIM_MS)
   }
 
+  /** Coordinates the open mobile menu behavior for this component. */
   function openMobileMenu() {
     setIsMenuClosing(false)
     setIsMenuOpen(true)
@@ -245,6 +254,7 @@ export default function Header() {
   // sidebar + featured-post layout (reference "Features" mega menu).
   const isResourcesMega = openMega === "resources"
 
+  /** Handles the logout interaction and its related state changes. */
   function handleLogout() {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
@@ -252,6 +262,7 @@ export default function Header() {
     window.location.href = "/login"
   }
 
+  /** Handles the search interaction and its related state changes. */
   function handleSearch(e: FormEvent) {
     e.preventDefault()
     const q = searchQuery.trim()
@@ -263,6 +274,7 @@ export default function Header() {
   const [lastScrollY, setLastScrollY] = useState(0)
 
   useEffect(() => {
+    /** Handles the scroll interaction and its related state changes. */
     const handleScroll = () => {
       const currentScrollY = window.scrollY || document.documentElement.scrollTop
 

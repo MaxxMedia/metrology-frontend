@@ -1,4 +1,6 @@
 'use client';
+/** Implements the admin contact components delete confirm dialog interface and its related behavior. */
+
 
 interface DeleteConfirmDialogProps {
   isOpen: boolean;
@@ -8,6 +10,7 @@ interface DeleteConfirmDialogProps {
   loading?: boolean;
 }
 
+/** Renders the delete confirm dialog interface. */
 export default function DeleteConfirmDialog({
   isOpen,
   onClose,

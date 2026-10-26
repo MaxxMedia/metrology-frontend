@@ -1,3 +1,4 @@
+/** Implements the packages packages hero component and its related interface behavior. */
 import Image from "next/image";
 import Link from "next/link";
 
@@ -7,6 +8,7 @@ type PackagesHeroProps = {
   breadcrumbLabel?: string;
 };
 
+/** Renders the packages hero interface. */
 export default function PackagesHero({
   title,
   description,

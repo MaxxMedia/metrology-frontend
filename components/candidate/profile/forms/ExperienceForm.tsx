@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile forms experience form component and its related interface behavior. */
+
 
 import { Formik, Form, Field, FieldArray, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
@@ -40,6 +42,7 @@ const validationSchema = Yup.object({
   ),
 });
 
+/** Renders the experience form interface. */
 export default function ExperienceForm({
   initialValues,
   onSubmit,
@@ -223,6 +226,7 @@ export default function ExperienceForm({
   );
 }
 
+/** Renders the input interface. */
 function Input({
   label,
   name,
@@ -260,6 +264,7 @@ function Input({
   );
 }
 
+/** Renders the select interface. */
 function Select({
   label,
   name,

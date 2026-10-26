@@ -1,4 +1,6 @@
 "use client"
+/** Implements the recruiter jobs page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { MapPin, Users, Eye, Pencil } from "lucide-react"
@@ -22,6 +24,7 @@ type Job = {
   }
 }
 
+/** Renders the my jobs page interface. */
 export default function MyJobsPage() {
   const allowed = useRecruiterGuard()
 
@@ -32,6 +35,7 @@ export default function MyJobsPage() {
   useEffect(() => {
     if (!allowed) return
 
+    /** Loads jobs for the current workflow. */
     async function loadJobs() {
       try {
         const token = localStorage.getItem("token")
@@ -72,6 +76,7 @@ export default function MyJobsPage() {
     loadJobs()
   }, [allowed])
 
+  /** Returns the derived posted text value used by this workflow. */
   function getPostedText(createdAt: string) {
     const created = new Date(createdAt)
     const now = new Date()

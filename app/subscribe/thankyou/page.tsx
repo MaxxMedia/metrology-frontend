@@ -1,7 +1,10 @@
 "use client";
+/** Implements the subscribe thankyou page and its route-specific behavior. */
+
 
 import Link from "next/link";
 
+/** Renders the mmtthank you page interface. */
 export default function MMTThankYouPage() {
   return (
     <div className="min-h-[70vh] w-full bg-white flex flex-col items-center py-20 px-6">

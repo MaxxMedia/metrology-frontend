@@ -1,4 +1,6 @@
 "use client";
+/** Implements the home company articles component and its related interface behavior. */
+
 
 import Image from "next/image";
 import Link from "next/link";
@@ -46,6 +48,7 @@ type Props = {
   posts: Post[];
 };
 
+/** Returns the derived author name value used by this workflow. */
 function getAuthorName(post: Post): string {
   if (post.author && typeof post.author === "object" && post.author.name) {
     return post.author.name;
@@ -55,24 +58,28 @@ function getAuthorName(post: Post): string {
   return "rstheme";
 }
 
+/** Returns the derived category slug value used by this workflow. */
 function getCategorySlug(post: Post): string {
   return typeof post.category === "object"
     ? post.category?.slug?.toLowerCase() || ""
     : String(post.category || "").toLowerCase();
 }
 
+/** Returns the derived category name value used by this workflow. */
 function getCategoryName(post: Post): string {
   return typeof post.category === "object"
     ? post.category?.name || ""
     : String(post.category || "");
 }
 
+/** Returns the derived image url value used by this workflow. */
 function getImageUrl(post: Post): string {
   if (post.imageUrl?.startsWith("http")) return post.imageUrl;
   if (post.imageUrl) return `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`;
   return "/placeholder.jpg";
 }
 
+/** Normalizes the date value for consistent display or use. */
 function formatDate(post: Post) {
   const raw = post.publishedAt || post.createdAt;
   if (!raw) return "";
@@ -83,6 +90,7 @@ function formatDate(post: Post) {
   });
 }
 
+/** Coordinates the excerpt of behavior for this component. */
 function excerptOf(post: Post, words = 18) {
   const text = (post.excerpt || "").replace(/\s+/g, " ").trim();
   if (!text) {
@@ -93,6 +101,7 @@ function excerptOf(post: Post, words = 18) {
   return `${parts.slice(0, words).join(" ")}...`;
 }
 
+/** Renders the pulse icon interface. */
 function PulseIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -110,6 +119,7 @@ function PulseIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the calendar icon interface. */
 function CalendarIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -126,12 +136,14 @@ function CalendarIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the diamond dot interface. */
 function DiamondDot() {
   return (
     <span className="w-[7px] h-[7px] bg-[#0073ff] rotate-45 shrink-0" aria-hidden />
   );
 }
 
+/** Renders the home company articles interface. */
 export default function HomeCompanyArticles({ posts }: Props) {
   const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
 
@@ -203,6 +215,7 @@ export default function HomeCompanyArticles({ posts }: Props) {
 
   if (!allPosts.length) return null;
 
+  /** Returns the derived tag value used by this workflow. */
   function getTag(post: Post) {
     const badge = typeof post.badge === "string" ? post.badge.trim() : "";
     const categoryName =

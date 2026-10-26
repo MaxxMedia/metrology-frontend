@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin directories id page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
@@ -17,6 +19,7 @@ type Directory = {
   }
 }
 
+/** Renders the review directory page interface. */
 export default function ReviewDirectoryPage() {
   const { id } = useParams()
   const router = useRouter()
@@ -25,6 +28,7 @@ export default function ReviewDirectoryPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    /** Coordinates the load behavior for this workflow. */
     async function load() {
       const token = localStorage.getItem("token")
 
@@ -48,6 +52,7 @@ export default function ReviewDirectoryPage() {
     load()
   }, [id])
 
+  /** Coordinates the approve behavior for this workflow. */
   async function approve() {
     const token = localStorage.getItem("token")
 
@@ -63,6 +68,7 @@ export default function ReviewDirectoryPage() {
     router.push("/admin/directories")
   }
 
+  /** Coordinates the reject behavior for this workflow. */
   async function reject() {
     const token = localStorage.getItem("token")
 

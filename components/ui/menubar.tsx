@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable menubar UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as MenubarPrimitive from '@radix-ui/react-menubar'
@@ -6,6 +8,7 @@ import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the menubar interface. */
 function Menubar({
   className,
   ...props
@@ -22,24 +25,28 @@ function Menubar({
   )
 }
 
+/** Renders the menubar menu interface. */
 function MenubarMenu({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Menu>) {
   return <MenubarPrimitive.Menu data-slot="menubar-menu" {...props} />
 }
 
+/** Renders the menubar group interface. */
 function MenubarGroup({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Group>) {
   return <MenubarPrimitive.Group data-slot="menubar-group" {...props} />
 }
 
+/** Renders the menubar portal interface. */
 function MenubarPortal({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Portal>) {
   return <MenubarPrimitive.Portal data-slot="menubar-portal" {...props} />
 }
 
+/** Renders the menubar radio group interface. */
 function MenubarRadioGroup({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.RadioGroup>) {
@@ -48,6 +55,7 @@ function MenubarRadioGroup({
   )
 }
 
+/** Renders the menubar trigger interface. */
 function MenubarTrigger({
   className,
   ...props
@@ -64,6 +72,7 @@ function MenubarTrigger({
   )
 }
 
+/** Renders the menubar content interface. */
 function MenubarContent({
   className,
   align = 'start',
@@ -88,6 +97,7 @@ function MenubarContent({
   )
 }
 
+/** Renders the menubar item interface. */
 function MenubarItem({
   className,
   inset,
@@ -111,6 +121,7 @@ function MenubarItem({
   )
 }
 
+/** Renders the menubar checkbox item interface. */
 function MenubarCheckboxItem({
   className,
   children,
@@ -137,6 +148,7 @@ function MenubarCheckboxItem({
   )
 }
 
+/** Renders the menubar radio item interface. */
 function MenubarRadioItem({
   className,
   children,
@@ -161,6 +173,7 @@ function MenubarRadioItem({
   )
 }
 
+/** Renders the menubar label interface. */
 function MenubarLabel({
   className,
   inset,
@@ -181,6 +194,7 @@ function MenubarLabel({
   )
 }
 
+/** Renders the menubar separator interface. */
 function MenubarSeparator({
   className,
   ...props
@@ -194,6 +208,7 @@ function MenubarSeparator({
   )
 }
 
+/** Renders the menubar shortcut interface. */
 function MenubarShortcut({
   className,
   ...props
@@ -210,12 +225,14 @@ function MenubarShortcut({
   )
 }
 
+/** Renders the menubar sub interface. */
 function MenubarSub({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Sub>) {
   return <MenubarPrimitive.Sub data-slot="menubar-sub" {...props} />
 }
 
+/** Renders the menubar sub trigger interface. */
 function MenubarSubTrigger({
   className,
   inset,
@@ -240,6 +257,7 @@ function MenubarSubTrigger({
   )
 }
 
+/** Renders the menubar sub content interface. */
 function MenubarSubContent({
   className,
   ...props

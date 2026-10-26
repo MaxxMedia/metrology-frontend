@@ -1,5 +1,7 @@
 // app/admin/layout.tsx
 "use client"
+/** Defines the shared layout and access structure for admin. */
+
 
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -21,11 +23,13 @@ import {
 const SUPER_ROLES = ["super_admin", "admin"]
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
+/** Coordinates the has permission behavior for this workflow. */
 function hasPermission(role: string | undefined, permissions: string[], key: string) {
   if (role && SUPER_ROLES.includes(role)) return true
   return permissions.includes(key)
 }
 
+/** Renders the admin layout interface. */
 export default function AdminLayout({
   children,
 }: {
@@ -58,6 +62,7 @@ export default function AdminLayout({
       return
     }
 
+    /** Loads fresh session for the current workflow. */
     async function loadFreshSession() {
       const token = localStorage.getItem("token")
 
@@ -116,6 +121,7 @@ export default function AdminLayout({
 
   if (!allowed) return null
 
+  /** Coordinates the can behavior for this workflow. */
   const can = (key: string) => hasPermission(role, permissions, key)
   const isSuperAdmin = role ? SUPER_ROLES.includes(role) : false
 
@@ -411,6 +417,7 @@ export default function AdminLayout({
   )
 }
 
+/** Renders the sidebar link interface. */
 function SidebarLink({
   href,
   label,

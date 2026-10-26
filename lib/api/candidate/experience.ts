@@ -1,5 +1,7 @@
+/** Provides candidate experience API helpers for reading and updating candidate data. */
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+/** Builds request headers with the current bearer token and JSON content type. */
 function authHeaders() {
   const token = localStorage.getItem("token");
   return {
@@ -8,6 +10,7 @@ function authHeaders() {
   };
 }
 
+/** Loads or retrieves experiences data for this workflow. */
 export async function getExperiences() {
   try {
     const res = await fetch(`${API}/api/candidate-experience`, {
@@ -29,6 +32,7 @@ export async function getExperiences() {
   }
 }
 
+/** Creates experience through the configured API. */
 export async function createExperience(data: any) {
   try {
     // Transform the data to match backend expectations
@@ -63,6 +67,7 @@ export async function createExperience(data: any) {
   }
 }
 
+/** Updates experience through the configured API. */
 export async function updateExperience(id: number, data: any) {
   try {
     // Transform the data to match backend expectations
@@ -97,6 +102,7 @@ export async function updateExperience(id: number, data: any) {
   }
 }
 
+/** Removes experience through the configured API. */
 export async function deleteExperience(id: number) {
   try {
     const res = await fetch(`${API}/api/candidate-experience/${id}`, {

@@ -1,8 +1,10 @@
+/** Implements the topics cutting tools page and its route-specific behavior. */
 import Link from "next/link"
 import type { Post } from "@/types/Post"
 import TopicListing from "@/components/topics/TopicListing"
 import { resolveCategorySlug } from "@/lib/topic"
 
+/** Renders the cutting tools page interface. */
 export default async function CuttingToolsPage() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(resolveCategorySlug("cuttingtools"))}&limit=50`,

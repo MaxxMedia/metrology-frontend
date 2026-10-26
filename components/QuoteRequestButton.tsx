@@ -1,4 +1,6 @@
 "use client"
+/** Implements the quote request button component and its related interface behavior. */
+
 
 import { useState } from "react"
 import { X, Send, CheckCircle2 } from "lucide-react"
@@ -25,6 +27,7 @@ const initialForm: FormState = {
     message: "",
 }
 
+/** Renders the quote request button interface. */
 export default function QuoteRequestButton({
     supplierSlug,
     supplierName,
@@ -36,10 +39,12 @@ export default function QuoteRequestButton({
     const [error, setError] = useState("")
     const [success, setSuccess] = useState(false)
 
+    /** Updates the field record or interface state. */
     function updateField(field: keyof FormState, value: string) {
         setForm((prev) => ({ ...prev, [field]: value }))
     }
 
+    /** Coordinates the close modal behavior for this component. */
     function closeModal() {
         setOpen(false)
         setError("")
@@ -49,6 +54,7 @@ export default function QuoteRequestButton({
         }
     }
 
+    /** Handles the submit interaction and its related state changes. */
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
         setError("")

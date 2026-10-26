@@ -1,4 +1,6 @@
 "use client"
+/** Implements the topics listing component and its related interface behavior. */
+
 
 import Link from "next/link"
 import Image from "next/image"
@@ -16,6 +18,7 @@ const TOPICS = [
   { label: "Manage", slug: "manage" },
 ]
 
+/** Renders the topics listing interface. */
 export default function TopicsListing({
   posts,
   activeCategory,

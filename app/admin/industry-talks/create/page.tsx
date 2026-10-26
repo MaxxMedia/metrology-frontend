@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin industry talks create page and its route-specific behavior. */
+
 
 import dynamic from "next/dynamic"
 import { useEffect, useState, FormEvent, ChangeEvent } from "react"
@@ -101,6 +103,7 @@ const emptyForm: FormState = {
   introduction: "",
 }
 
+/** Coordinates the new qa behavior for this workflow. */
 function newQA(order: number): QA {
   return {
     id: crypto.randomUUID(),
@@ -141,6 +144,7 @@ function SectionCard({
   )
 }
 
+/** Renders the field interface. */
 function Field({
   label,
   required,
@@ -163,6 +167,7 @@ function Field({
 const inputClass =
   "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F5B78]/40 focus:border-[#0F5B78]"
 
+/** Renders the toggle interface. */
 function Toggle({
   checked,
   onChange,
@@ -192,6 +197,7 @@ function Toggle({
     </div>
   )
 }
+/** Renders the chip input interface. */
 function ChipInput({
   label,
   values,
@@ -205,6 +211,7 @@ function ChipInput({
 }) {
   const [draft, setDraft] = useState("")
 
+  /** Creates the value record or interface element. */
   function addValue() {
     const v = draft.trim()
     if (v && !values.includes(v)) onChange([...values, v])
@@ -264,6 +271,7 @@ export default function CreateIndustryTalkPage() {
   const [initializing, setInitializing] = useState(true)
 
   useEffect(() => {
+   /** Loads data for the current workflow. */
    async function loadData() {
   try {
     const [indRes, supRes] = await Promise.all([
@@ -293,6 +301,7 @@ export default function CreateIndustryTalkPage() {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
+  /** Handles the title change interaction and its related state changes. */
   function handleTitleChange(e: ChangeEvent<HTMLInputElement>) {
     const title = e.target.value
     const slug = title
@@ -302,6 +311,7 @@ export default function CreateIndustryTalkPage() {
     setForm((prev) => ({ ...prev, title, slug }))
   }
 
+  /** Handles the change interaction and its related state changes. */
   function handleChange(
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
   ) {
@@ -309,6 +319,7 @@ export default function CreateIndustryTalkPage() {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
+  /** Uploads the file asset and returns its result to the form. */
   async function uploadFile(file: File, onDone: (url: string) => void) {
     setUploading(true)
     setMessage("Uploading...")
@@ -333,6 +344,7 @@ export default function CreateIndustryTalkPage() {
     }
   }
 
+  /** Coordinates the toggle industry behavior for this workflow. */
   function toggleIndustry(id: number) {
     setForm((prev) => ({
       ...prev,
@@ -348,6 +360,7 @@ export default function CreateIndustryTalkPage() {
     setQAs((prev) => [...prev, newQA(prev.length + 1)])
   }
 
+  /** Removes the qa record or interface element. */
   function removeQA(id: string) {
     setQAs((prev) =>
       prev
@@ -356,10 +369,12 @@ export default function CreateIndustryTalkPage() {
     )
   }
 
+  /** Updates the qa record or interface state. */
   function updateQA(id: string, patch: Partial<QA>) {
     setQAs((prev) => prev.map((q) => (q.id === id ? { ...q, ...patch } : q)))
   }
 
+  /** Coordinates the move qa behavior for this workflow. */
   function moveQA(id: string, direction: -1 | 1) {
     setQAs((prev) => {
       const idx = prev.findIndex((q) => q.id === id)
@@ -482,6 +497,7 @@ export default function CreateIndustryTalkPage() {
     }
   }
 
+  /** Handles the submit interaction and its related state changes. */
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     submit("PUBLISHED")

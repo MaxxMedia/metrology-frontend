@@ -1,6 +1,8 @@
 // components/teams/TeamStatusBadge.tsx
 
 'use client';
+/** Implements the teams team status badge component and its related interface behavior. */
+
 
 interface Props {
     status: string;
@@ -30,6 +32,7 @@ const statusConfig: Record<string, { label: string; className: string; icon: str
     },
 };
 
+/** Renders the team status badge interface. */
 export default function TeamStatusBadge({ status, className = '' }: Props) {
     const normalizedStatus = status?.toUpperCase() || 'PENDING';
     const config = statusConfig[normalizedStatus] || statusConfig.PENDING;

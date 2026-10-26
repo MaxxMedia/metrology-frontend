@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile sidebar candidate sidebar component and its related interface behavior. */
+
 
 import TrendingArticlesCard from "./TrendingArticlesCard";
 import HomeFeedCard from "./HomeFeedCard";
@@ -14,6 +16,7 @@ interface CandidateSidebarProps {
   onEditSocialsClick?: () => void;
 }
 
+/** Renders the candidate sidebar interface. */
 export default function CandidateSidebar({
   candidate,
   username,

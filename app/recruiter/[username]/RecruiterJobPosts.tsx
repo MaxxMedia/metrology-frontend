@@ -1,9 +1,12 @@
 "use client"
+/** Implements the recruiter username recruiter job posts interface and its related behavior. */
+
 
 import { useEffect, useState } from "react"
 import { MapPin, Briefcase, Clock } from "lucide-react"
 import Link from "next/link"
 
+/** Renders the recruiter job posts interface. */
 export default function RecruiterJobPosts({
   username,
 }: {

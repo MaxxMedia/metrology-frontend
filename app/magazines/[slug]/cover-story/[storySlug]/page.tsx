@@ -1,3 +1,4 @@
+/** Implements the magazines slug cover story story slug page and its route-specific behavior. */
 ﻿import Image from "next/image"
 
 type Props = {
@@ -16,6 +17,7 @@ type CoverStory = {
   keyCategories?: unknown
 }
 
+/** Returns the derived story value used by this workflow. */
 async function getStory(storySlug: string): Promise<CoverStory> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/magazines/cover-stories/${storySlug}`,
@@ -27,6 +29,7 @@ async function getStory(storySlug: string): Promise<CoverStory> {
   return res.json()
 }
 
+/** Returns the derived categories value used by this workflow. */
 function getCategories(value: unknown): string[] {
   if (Array.isArray(value)) {
     return value
@@ -57,6 +60,7 @@ function getCategories(value: unknown): string[] {
   return text.split(",").map((category) => category.trim()).filter(Boolean)
 }
 
+/** Renders the cover story page interface. */
 export default async function CoverStoryPage({ params }: Props) {
   const { storySlug } = await params
   const story = await getStory(storySlug)

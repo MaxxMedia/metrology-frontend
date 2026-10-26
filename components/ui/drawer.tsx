@@ -1,34 +1,41 @@
 'use client'
+/** Provides the reusable drawer UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import { Drawer as DrawerPrimitive } from 'vaul'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the drawer interface. */
 function Drawer({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) {
   return <DrawerPrimitive.Root data-slot="drawer" {...props} />
 }
 
+/** Renders the drawer trigger interface. */
 function DrawerTrigger({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
 }
 
+/** Renders the drawer portal interface. */
 function DrawerPortal({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
 }
 
+/** Renders the drawer close interface. */
 function DrawerClose({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Close>) {
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
 }
 
+/** Renders the drawer overlay interface. */
 function DrawerOverlay({
   className,
   ...props
@@ -45,6 +52,7 @@ function DrawerOverlay({
   )
 }
 
+/** Renders the drawer content interface. */
 function DrawerContent({
   className,
   children,
@@ -72,6 +80,7 @@ function DrawerContent({
   )
 }
 
+/** Renders the drawer header interface. */
 function DrawerHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -85,6 +94,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the drawer footer interface. */
 function DrawerFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -95,6 +105,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the drawer title interface. */
 function DrawerTitle({
   className,
   ...props
@@ -108,6 +119,7 @@ function DrawerTitle({
   )
 }
 
+/** Renders the drawer description interface. */
 function DrawerDescription({
   className,
   ...props

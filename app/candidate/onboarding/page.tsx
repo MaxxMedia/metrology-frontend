@@ -1,4 +1,6 @@
 "use client"
+/** Implements the candidate onboarding page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -11,6 +13,7 @@ const EXPERIENCE_LEVELS = [
   { value: "10+", label: "10+ years" },
 ]
 
+/** Renders the candidate onboarding page interface. */
 export default function CandidateOnboardingPage() {
   const router = useRouter()
 
@@ -35,6 +38,7 @@ export default function CandidateOnboardingPage() {
     }
   }, [router])
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)

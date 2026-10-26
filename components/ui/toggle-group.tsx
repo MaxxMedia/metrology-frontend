@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable toggle group UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group'
@@ -14,6 +16,7 @@ const ToggleGroupContext = React.createContext<
   variant: 'default',
 })
 
+/** Renders the toggle group interface. */
 function ToggleGroup({
   className,
   variant,
@@ -40,6 +43,7 @@ function ToggleGroup({
   )
 }
 
+/** Renders the toggle group item interface. */
 function ToggleGroupItem({
   className,
   children,

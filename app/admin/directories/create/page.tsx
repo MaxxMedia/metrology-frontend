@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin directories create page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -16,6 +18,7 @@ interface Recruiter {
   companyId: number
 }
 
+/** Coordinates the generate slug behavior for this workflow. */
 function generateSlug(text: string) {
   return text
     .toLowerCase()
@@ -24,6 +27,7 @@ function generateSlug(text: string) {
     .replace(/\s+/g, "-")
 }
 
+/** Renders the admin create directory page interface. */
 export default function AdminCreateDirectoryPage() {
   const router = useRouter()
 
@@ -47,6 +51,7 @@ export default function AdminCreateDirectoryPage() {
   /* ================= FETCH COMPANIES ================= */
 
   useEffect(() => {
+    /** Loads companies for the current workflow. */
     async function fetchCompanies() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/companies`
@@ -63,6 +68,7 @@ export default function AdminCreateDirectoryPage() {
   useEffect(() => {
     if (!form.companyId) return
 
+    /** Loads recruiters for the current workflow. */
     async function fetchRecruiters() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/recruiters?companyId=${form.companyId}`,

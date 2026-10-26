@@ -1,5 +1,7 @@
 // components/comments-section.tsx
 "use client"
+/** Implements the comments section component and its related interface behavior. */
+
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -27,6 +29,7 @@ interface CommentsSectionProps {
   onCommentAdded?: (newComment: Comment) => void
 }
 
+/** Coordinates the time ago behavior for this component. */
 function timeAgo(date: string) {
   const seconds = Math.floor(
     (Date.now() - new Date(date).getTime()) / 1000
@@ -49,6 +52,7 @@ function timeAgo(date: string) {
   return new Date(date).toLocaleDateString()
 }
 
+/** Renders the comments section interface. */
 export function CommentsSection({
   postId,
   initialComments,
@@ -66,6 +70,7 @@ export function CommentsSection({
   const [postingComment, setPostingComment] = useState(false)
   const [commentError, setCommentError] = useState<string | null>(null)
 
+  /** Submits the comment data to its destination. */
   const submitComment = async () => {
     if (!comment.trim()) {
       setCommentError("Please enter a comment")

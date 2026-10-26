@@ -1,5 +1,7 @@
+/** Implements the supplier extra details component and its related interface behavior. */
 import { DocumentViewer } from "./GalleryTabs"
 
+/** Renders the tag list interface. */
 function TagList({ items }: { items?: string[] }) {
     const filtered = (items || []).filter(Boolean)
     if (filtered.length === 0) return null
@@ -17,6 +19,7 @@ function TagList({ items }: { items?: string[] }) {
     )
 }
 
+/** Renders the brands and industries interface. */
 export function BrandsAndIndustries({
     brandsRepresented,
     industriesServed,
@@ -56,6 +59,7 @@ export function BrandsAndIndustries({
     )
 }
 
+/** Renders the product supplies section interface. */
 export function ProductSuppliesSection({ productSupplies }: { productSupplies?: string[] }) {
     const filtered = (productSupplies || []).filter(Boolean)
     if (filtered.length === 0) return null
@@ -68,6 +72,7 @@ export function ProductSuppliesSection({ productSupplies }: { productSupplies?: 
     )
 }
 
+/** Renders the certifications section interface. */
 export function CertificationsSection({ certifications }: { certifications?: string[] }) {
     const filtered = (certifications || []).filter(Boolean)
     if (filtered.length === 0) return null

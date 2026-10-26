@@ -1,4 +1,6 @@
 "use client"
+/** Implements the job job feed component and its related interface behavior. */
+
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -49,6 +51,7 @@ function normalize(value?: string) {
   return (value || "").toLowerCase().replace(/[\s_-]+/g, "")
 }
 
+/** Renders the job feed interface. */
 export default function JobFeed({
   isPublic = false,
   filters,
@@ -74,6 +77,7 @@ export default function JobFeed({
   // Fetch the full job list once. We filter/paginate client-side below so
   // filtering works reliably regardless of what the API supports server-side.
   useEffect(() => {
+    /** Loads all jobs for the current workflow. */
     async function loadAllJobs() {
       setLoading(true)
 
@@ -140,6 +144,7 @@ export default function JobFeed({
 
     let cancelled = false
 
+    /** Builds the locations value used by the surrounding workflow. */
     async function resolveLocations() {
       for (const loc of toResolve) {
         if (cancelled) break
@@ -251,8 +256,10 @@ export default function JobFeed({
     return `${diffDays}d`
   }
 
+  /** Normalizes the salary value for consistent display or use. */
   function formatSalary(min?: number, max?: number) {
     if (!min && !max) return null
+    /** Coordinates the fmt behavior for this component. */
     const fmt = (n: number) => `\u20B9${n.toLocaleString("en-IN")}`
     if (min && max) return `${fmt(min)} - ${fmt(max)}`
     if (min) return `${fmt(min)}+`

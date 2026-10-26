@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile profile header component and its related interface behavior. */
+
 
 import { Pencil, Camera, CheckCircle, MapPin, UserPlus, FileUp, Download, Loader2 } from "lucide-react";
 import CandidateAvatar from "@/components/candidate/CandidateAvatar";
@@ -19,6 +21,7 @@ interface ProfileHeaderProps {
   resumeUploading?: boolean;
 }
 
+/** Renders the profile header interface. */
 export default function ProfileHeader({
   displayName,
   displayHeadline,

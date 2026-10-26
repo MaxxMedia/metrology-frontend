@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin jobs page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useState } from "react"
 import {
@@ -135,6 +137,7 @@ export default function AdminJobsPage() {
     return types[type] || "bg-gray-100 text-gray-700 border-gray-200"
   }
 
+  /** Normalizes the employment type value for consistent display or use. */
   const formatEmploymentType = (type: string) =>
     type
       .replace(/_/g, " ")
@@ -312,6 +315,7 @@ export default function AdminJobsPage() {
   )
 }
 
+/** Renders the stat card interface. */
 function StatCard({
   label,
   value,

@@ -53,15 +53,18 @@ function getSlug(p: Post) {
     : String(p.category || "").toLowerCase()
 }
 
+/** Returns the derived recency value used by this workflow. */
 function getRecency(p: Post) {
   const raw = (p as any).publishedAt || (p as any).createdAt
   return raw ? new Date(raw).getTime() : 0
 }
 
+/** Orders the by recency items for display. */
 function sortByRecency(a: Post, b: Post) {
   return getRecency(b) - getRecency(a)
 }
 
+/** Returns the derived author name value used by this workflow. */
 function getAuthorName(p: Post): string {
   if (p.author && typeof p.author === "object" && p.author.name) {
     return p.author.name
@@ -71,12 +74,14 @@ function getAuthorName(p: Post): string {
   return "rstheme"
 }
 
+/** Returns the derived image url value used by this workflow. */
 function getImageUrl(p: Post): string {
   if (p.imageUrl?.startsWith("http")) return p.imageUrl
   if (p.imageUrl) return `${process.env.NEXT_PUBLIC_API_URL}${p.imageUrl}`
   return "/placeholder.svg"
 }
 
+/** Normalizes the date value for consistent display or use. */
 function formatDate(p: Post, opts?: Intl.DateTimeFormatOptions) {
   if (!p.publishedAt) return ""
   return new Date(p.publishedAt).toLocaleDateString("en-US", opts || {
@@ -86,20 +91,24 @@ function formatDate(p: Post, opts?: Intl.DateTimeFormatOptions) {
   })
 }
 
+/** Coordinates the truncate title behavior for this component. */
 function truncateTitle(title: string, max = 56) {
   if (title.length <= max) return title
   return `${title.slice(0, max).trimEnd()}…`
 }
 
+/** Determines whether the current state satisfies the video condition. */
 function hasVideo(p: Post) {
   return Boolean(p.youtubeUrl)
 }
 
+/** Builds the pool value used by the surrounding workflow. */
 function buildPool(posts: Post[]): Post[] {
   if (!Array.isArray(posts) || posts.length === 0) return []
   return [...posts].sort(sortByRecency)
 }
 
+/** Renders the pulse icon interface. */
 function PulseIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -117,6 +126,7 @@ function PulseIcon({ className = "" }: { className?: string }) {
   )
 }
 
+/** Renders the calendar icon interface. */
 function CalendarIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -133,6 +143,7 @@ function CalendarIcon({ className = "" }: { className?: string }) {
   )
 }
 
+/** Renders the arrow icon interface. */
 function ArrowIcon({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 18 12" className={className} aria-hidden fill="currentColor">
@@ -145,6 +156,7 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   )
 }
 
+/** Renders the diamond dot interface. */
 function DiamondDot({ className = "" }: { className?: string }) {
   return (
     <span
@@ -154,6 +166,7 @@ function DiamondDot({ className = "" }: { className?: string }) {
   )
 }
 
+/** Renders the play icon interface. */
 function PlayIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 ml-0.5" aria-hidden>
@@ -162,10 +175,12 @@ function PlayIcon() {
   )
 }
 
+/** Renders the latest hero interface. */
 export default function LatestHero({ post, posts }: LatestHeroProps) {
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
+    /** Coordinates the update behavior for this component. */
     const update = () => setIsMobile(window.innerWidth < 1024)
     update()
     window.addEventListener("resize", update)

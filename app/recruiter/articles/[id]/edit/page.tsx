@@ -1,10 +1,13 @@
 "use client"
+/** Implements the recruiter articles id edit page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import UploadBox from "@/components/UploadBox"
 import { ARTICLE_TOPICS } from "@/lib/topic"
 
+/** Renders the edit recruiter article page interface. */
 export default function EditRecruiterArticlePage() {
   const { id } = useParams()
   const router = useRouter()
@@ -26,6 +29,7 @@ export default function EditRecruiterArticlePage() {
     fetchArticle()
   }, [])
 
+  /** Loads article for the current workflow. */
   async function fetchArticle() {
     try {
       const token = localStorage.getItem("token")

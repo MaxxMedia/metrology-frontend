@@ -1,4 +1,6 @@
 ﻿"use client"
+/** Implements the magazine magazine archive component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
@@ -13,6 +15,7 @@ type Magazine = {
   createdAt?: string
 }
 
+/** Renders the magazine archive interface. */
 export default function MagazineArchive() {
   const [magazines, setMagazines] = useState<Magazine[]>([])
   const [loading, setLoading] = useState(true)

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the paid packages page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { Check, Loader2, X } from "lucide-react";
@@ -18,6 +20,7 @@ import {
 const PAID_PLANS = SUBSCRIPTION_PLANS.filter((plan) => plan.id !== "free");
 const PAID_PLAN_KEYS = PAID_PLANS.map((plan) => plan.id) as Exclude<PlanTier, "free">[];
 
+/** Renders the feature cell interface. */
 function FeatureCell({ value }: { value: FeatureValue }) {
   if (value === true) {
     return (
@@ -38,6 +41,7 @@ function FeatureCell({ value }: { value: FeatureValue }) {
   return <span className="text-sm text-[#2a3d47]">{value}</span>;
 }
 
+/** Renders the section heading interface. */
 function SectionHeading({
   title,
   subtitle,
@@ -56,6 +60,7 @@ function SectionHeading({
   );
 }
 
+/** Renders the pay button interface. */
 function PayButton({
   label,
   packageType,
@@ -82,6 +87,7 @@ function PayButton({
       ? "bg-[#D71920] hover:bg-red-700 text-white"
       : "bg-[#2a3d47] hover:bg-[#1f2d34] text-white";
 
+  /** Handles the click interaction and its related state changes. */
   const handleClick = async () => {
     if (isCurrentPlan) return;
 
@@ -126,10 +132,12 @@ function PayButton({
   );
 }
 
+/** Renders the paid package interface. */
 export default function PaidPackage() {
   const [currentPlan, setCurrentPlan] = useState<string | null>(null);
 
   useEffect(() => {
+    /** Loads current plan for the current workflow. */
     async function loadCurrentPlan() {
       const token = localStorage.getItem("token");
       if (!token) return;

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin admin pagination component and its related interface behavior. */
+
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -12,6 +14,7 @@ type AdminPaginationProps = {
   className?: string;
 };
 
+/** Renders the admin pagination interface. */
 export default function AdminPagination({
   currentPage,
   totalPages,

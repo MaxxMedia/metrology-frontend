@@ -1,3 +1,4 @@
+/** Defines supported banner placements and their display dimensions for admin and publishing flows. */
 ﻿export const BANNER_PLACEMENTS = [
   { value: "HOME_TOP", label: "Home – Top", format: "Top Leaderboard", aspectRatio: "728 : 90 (~8.1:1)", standardSize: "728 × 90 px", retinaSize: "1456 × 180 px" },
   { value: "ARTICLE_TOP", label: "Article – Top", format: "Top Leaderboard", aspectRatio: "728 : 90 (~8.1:1)", standardSize: "728 × 90 px", retinaSize: "1456 × 180 px" },

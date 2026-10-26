@@ -1,3 +1,4 @@
+/** Provides API helpers for newsletter requests. */
 import axios from "axios"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
@@ -19,6 +20,7 @@ export interface NewsletterSubscribeResponse {
   subscriber?: any
 }
 
+/** Submits an email address to the newsletter subscription endpoint. */
 export const subscribeNewsletter = async (
   data: NewsletterSubscribeData
 ): Promise<NewsletterSubscribeResponse> => {

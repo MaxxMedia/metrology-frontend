@@ -1,3 +1,4 @@
+/** Implements the packages dpdp compliance component and its related interface behavior. */
 import Link from "next/link";
 import PackagesHero from "./PackagesHero";
 
@@ -277,6 +278,7 @@ const DATA_CATEGORIES: { heading: string; items: string[] }[] = [
   },
 ];
 
+/** Coordinates the render block behavior for this component. */
 function renderBlock(block: string | string[], key: number) {
   if (Array.isArray(block)) {
     return (
@@ -301,6 +303,7 @@ function renderBlock(block: string | string[], key: number) {
   );
 }
 
+/** Renders the dpdp compliance page client interface. */
 export default function DpdpCompliancePageClient() {
   return (
     <main className="w-full bg-white">

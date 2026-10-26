@@ -1,3 +1,4 @@
+/** Implements the recruiter job posting policy summary component and its related interface behavior. */
 import Link from "next/link"
 import {
   CheckCircle2,
@@ -17,6 +18,7 @@ const rightItems = [
   "Follow Job Posting Policy.",
 ]
 
+/** Renders the job posting policy summary interface. */
 export default function JobPostingPolicySummary() {
   return (
     <div className="rounded-xl border border-blue-200 bg-white p-6">

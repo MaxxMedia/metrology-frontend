@@ -1,9 +1,12 @@
 "use client"
+/** Implements the admin magazines create page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import UploadBox from "@/components/UploadBox"
 
+/** Coordinates the generate slug behavior for this workflow. */
 function generateSlug(text: string) {
   return text
     .toLowerCase()
@@ -12,6 +15,7 @@ function generateSlug(text: string) {
     .replace(/\s+/g, "-")
 }
 
+/** Renders the create magazine page interface. */
 export default function CreateMagazinePage() {
   const router = useRouter()
 
@@ -37,6 +41,7 @@ export default function CreateMagazinePage() {
   useEffect(() => {
   const token = localStorage.getItem("token")
 
+  /** Loads data for the current workflow. */
   async function loadData() {
     const [authorsRes, coverRes] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/magazines/authors`),
@@ -113,6 +118,7 @@ export default function CreateMagazinePage() {
     }))
   }
 
+  /** Removes the page record or interface element. */
   function removePage(index: number) {
     setForm((prev: any) => ({
       ...prev,

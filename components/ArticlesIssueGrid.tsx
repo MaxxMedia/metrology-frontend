@@ -1,8 +1,11 @@
 "use client"
+/** Implements the articles issue grid component and its related interface behavior. */
+
 import Image from "next/image"
 import Link from "next/link"
 import { Post } from "@/types/Post"
 
+/** Renders the articles issue grid interface. */
 export default function ArticlesIssueGrid({ posts }: { posts: Post[] }) {
   return (
     <section className="max-w-7xl mx-auto px-6 py-16">

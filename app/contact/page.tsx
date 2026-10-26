@@ -1,10 +1,13 @@
 "use client";
+/** Implements the contact page and its route-specific behavior. */
+
 
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { sendContactMessage, ContactFormData } from "@/lib/api/contact";
 
+/** Renders the contact page interface. */
 export default function ContactPage() {
   const [formData, setFormData] = useState<ContactFormData>({
     fullName: "",
@@ -18,6 +21,7 @@ export default function ContactPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  /** Handles the change interaction and its related state changes. */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -28,6 +32,7 @@ export default function ContactPage() {
     }));
   };
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);

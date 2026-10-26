@@ -1,5 +1,7 @@
+/** Provides candidate candidate api API helpers for reading and updating candidate data. */
 const API = process.env.NEXT_PUBLIC_API_URL;
 
+/** Builds request headers with the current bearer token and JSON content type. */
 function authHeaders() {
   const token = localStorage.getItem("token");
 
@@ -9,6 +11,7 @@ function authHeaders() {
   };
 }
 
+/** Loads or retrieves my profile data for this workflow. */
 export async function getMyProfile() {
   const res = await fetch(`${API}/api/candidates/me`, {
     headers: authHeaders(),
@@ -21,6 +24,7 @@ export async function getMyProfile() {
   return res.json();
 }
 
+/** Updates my profile through the configured API. */
 export async function updateMyProfile(data: {
   fullName: string;
   headline?: string;

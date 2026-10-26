@@ -1,4 +1,6 @@
 ﻿"use client"
+/** Implements the admin directories id edit page and its route-specific behavior. */
+
 
 import { FormEvent, useEffect, useState } from "react"
 import Link from "next/link"
@@ -19,6 +21,7 @@ const emptyForm: DirectoryForm = {
   name: "", slug: "", description: "", logoUrl: "", phoneNumber: "", email: "", website: "", googleMapUrl: "",
 }
 
+/** Renders the edit directory page interface. */
 export default function EditDirectoryPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
@@ -29,6 +32,7 @@ export default function EditDirectoryPage() {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
 
   useEffect(() => {
+    /** Loads directory for the current workflow. */
     const loadDirectory = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/directories/${id}`, {
@@ -50,8 +54,10 @@ export default function EditDirectoryPage() {
     if (id) loadDirectory()
   }, [id, token])
 
+  /** Updates the field record or interface state. */
   const updateField = (field: keyof DirectoryForm, value: string) => setForm((current) => ({ ...current, [field]: value }))
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     setSaving(true)

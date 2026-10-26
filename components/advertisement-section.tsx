@@ -1,4 +1,6 @@
 "use client"
+/** Implements the advertisement section component and its related interface behavior. */
+
 
 import Image from "next/image"
 
@@ -13,6 +15,7 @@ interface AdvertisementSectionProps {
   ads?: Advertisement[]
 }
 
+/** Renders the advertisement section interface. */
 export default function AdvertisementSection({
   ads = [
     {

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the job locationautocomplete component and its related interface behavior. */
+
 
 import { useEffect, useRef, useState } from "react";
 
@@ -12,6 +14,7 @@ type NominatimResult = {
   display_name: string;
 };
 
+/** Renders the location autocomplete interface. */
 export default function LocationAutocomplete({
   value,
   onChange,
@@ -34,6 +37,7 @@ export default function LocationAutocomplete({
 
   // Close dropdown when clicking outside
   useEffect(() => {
+    /** Handles the click outside interaction and its related state changes. */
     function handleClickOutside(e: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setShowDropdown(false);
@@ -85,12 +89,14 @@ export default function LocationAutocomplete({
     return () => clearTimeout(handle);
   }, [inputValue]);
 
+  /** Handles the select interaction and its related state changes. */
   function handleSelect(label: string) {
     setInputValue(label);
     onChange(label);
     setShowDropdown(false);
   }
 
+  /** Handles the clear interaction and its related state changes. */
   function handleClear() {
     setInputValue("");
     onChange("");

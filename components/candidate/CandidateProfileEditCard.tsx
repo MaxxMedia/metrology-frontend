@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate candidate profile edit card component and its related interface behavior. */
+
 
 import { useEffect, useState, useRef } from "react";
 import {
@@ -125,6 +127,7 @@ const sidebarSections = [
     { id: "socials", label: "Social Links", icon: Share2 },
 ];
 
+/** Renders the toast interface. */
 function Toast({
     message,
     type,
@@ -166,6 +169,7 @@ interface CandidateProfileEditCardProps {
     onProfileUpdated?: () => void;
 }
 
+/** Renders the candidate profile edit card interface. */
 export default function CandidateProfileEditCard({ onProfileUpdated }: CandidateProfileEditCardProps) {
     const [profile, setProfile] = useState<CandidateProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -192,6 +196,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
     const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
     useEffect(() => {
+        /** Loads all for the current workflow. */
         async function loadAll() {
             try {
                 const [
@@ -252,10 +257,12 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         loadAll();
     }, []);
 
+    /** Coordinates the show toast behavior for this component. */
     function showToast(message: string, type: "success" | "error") {
         setToast({ message, type });
     }
 
+    /** Coordinates the scroll to section behavior for this component. */
     function scrollToSection(id: string) {
         setActiveSection(id);
         sectionRefs.current[id]?.scrollIntoView({
@@ -264,10 +271,12 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         });
     }
 
+    /** Updates the section load record or interface state. */
     function setSectionLoad(id: string, val: boolean) {
         setSectionLoading((prev) => ({ ...prev, [id]: val }));
     }
 
+    /** Handles the basic info submit interaction and its related state changes. */
     async function handleBasicInfoSubmit(values: BasicInfoValues) {
         if (!profile) return;
         setSectionLoad("basic-info", true);
@@ -296,6 +305,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         }
     }
 
+    /** Handles the experience submit interaction and its related state changes. */
     async function handleExperienceSubmit(values: Experience[]) {
         setSectionLoad("experience", true);
         try {
@@ -334,6 +344,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         }
     }
 
+    /** Handles the education submit interaction and its related state changes. */
     async function handleEducationSubmit(values: Education[]) {
         setSectionLoad("education", true);
         try {
@@ -360,6 +371,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         }
     }
 
+    /** Handles the skills submit interaction and its related state changes. */
     async function handleSkillsSubmit(values: Skill[]) {
         setSectionLoad("skills", true);
         try {
@@ -386,6 +398,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         }
     }
 
+    /** Handles the achievements submit interaction and its related state changes. */
     async function handleAchievementsSubmit(values: Achievement[]) {
         setSectionLoad("achievements", true);
         try {
@@ -412,6 +425,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         }
     }
 
+    /** Handles the certifications submit interaction and its related state changes. */
     async function handleCertificationsSubmit(values: Certification[]) {
         setSectionLoad("certifications", true);
         try {
@@ -438,6 +452,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         }
     }
 
+    /** Handles the projects submit interaction and its related state changes. */
     async function handleProjectsSubmit(values: Project[]) {
         setSectionLoad("projects", true);
         try {
@@ -464,6 +479,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         }
     }
 
+    /** Handles the languages submit interaction and its related state changes. */
     async function handleLanguagesSubmit(values: Language[]) {
         setSectionLoad("languages", true);
         try {
@@ -496,6 +512,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         }
     }
 
+    /** Handles the interests submit interaction and its related state changes. */
     async function handleInterestsSubmit(values: Interest[]) {
         setSectionLoad("interests", true);
         try {
@@ -528,6 +545,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         }
     }
 
+    /** Handles the socials submit interaction and its related state changes. */
     async function handleSocialsSubmit(values: SocialLink[]) {
         setSectionLoad("socials", true);
         try {
@@ -563,6 +581,7 @@ export default function CandidateProfileEditCard({ onProfileUpdated }: Candidate
         );
     }
 
+/** Returns the derived role and organization value used by this workflow. */
 function getRoleAndOrganization(candidate: any) {
   const exps = candidate?.experiences || candidate?.experiencesList || [];
   const edus = candidate?.education || candidate?.educationList || [];
@@ -829,6 +848,7 @@ function getRoleAndOrganization(candidate: any) {
     );
 }
 
+/** Renders the section card interface. */
 function SectionCard({
     title,
     icon: Icon,

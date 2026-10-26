@@ -1,3 +1,4 @@
+/** Provides the reusable pagination UI primitive and its interaction behavior. */
 import * as React from 'react'
 import {
   ChevronLeftIcon,
@@ -8,6 +9,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '@/components/ui/button'
 
+/** Renders the pagination interface. */
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
   return (
     <nav
@@ -20,6 +22,7 @@ function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
   )
 }
 
+/** Renders the pagination content interface. */
 function PaginationContent({
   className,
   ...props
@@ -33,6 +36,7 @@ function PaginationContent({
   )
 }
 
+/** Renders the pagination item interface. */
 function PaginationItem({ ...props }: React.ComponentProps<'li'>) {
   return <li data-slot="pagination-item" {...props} />
 }
@@ -42,6 +46,7 @@ type PaginationLinkProps = {
 } & Pick<React.ComponentProps<typeof Button>, 'size'> &
   React.ComponentProps<'a'>
 
+/** Renders the pagination link interface. */
 function PaginationLink({
   className,
   isActive,
@@ -65,6 +70,7 @@ function PaginationLink({
   )
 }
 
+/** Renders the pagination previous interface. */
 function PaginationPrevious({
   className,
   ...props
@@ -82,6 +88,7 @@ function PaginationPrevious({
   )
 }
 
+/** Renders the pagination next interface. */
 function PaginationNext({
   className,
   ...props
@@ -99,6 +106,7 @@ function PaginationNext({
   )
 }
 
+/** Renders the pagination ellipsis interface. */
 function PaginationEllipsis({
   className,
   ...props

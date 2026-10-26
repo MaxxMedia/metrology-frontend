@@ -1,4 +1,6 @@
 "use client";
+/** Implements the right sidebar component and its related interface behavior. */
+
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -46,6 +48,7 @@ function PopularNewsSidebar() {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
+    /** Loads posts for the current workflow. */
     async function fetchPosts() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=4`
@@ -56,6 +59,7 @@ function PopularNewsSidebar() {
     fetchPosts();
   }, []);
 
+  /** Coordinates the image url behavior for this component. */
   const imageUrl = (post: Post) =>
     post.imageUrl?.startsWith("http")
       ? post.imageUrl

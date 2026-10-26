@@ -1,7 +1,9 @@
+/** Implements the industry talks page and its route-specific behavior. */
 import IndustryTalkListing from "@/components/IndustryTalkListing"
 
 export const dynamic = "force-dynamic"
 
+/** Renders the industry talks page interface. */
 export default async function IndustryTalksPage() {
   let talks: any[] = []
 

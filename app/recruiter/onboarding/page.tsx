@@ -1,8 +1,11 @@
 "use client"
+/** Implements the recruiter onboarding page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
+/** Renders the recruiter onboarding page interface. */
 export default function RecruiterOnboardingPage() {
   const router = useRouter()
 
@@ -27,6 +30,7 @@ export default function RecruiterOnboardingPage() {
     }
   }, [router])
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")

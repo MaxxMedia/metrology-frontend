@@ -1,10 +1,14 @@
+/** Creates jobs through the backend API and applies plan-based featured-job eligibility. */
 import { NextResponse } from "next/server"
 
+/** Reads the subscriber plan from the eligibility result or its related job record. */
 function getPlanFromEligibility(eligibility: any) {
   return String(eligibility?.plan ?? eligibility?.job?.plan ?? "").toLowerCase()
 }
 
+/** Maps each paid plan to its featured-job permission and feature duration. */
 function getFeaturedJobRules(plan: string) {
+  // Professional and enterprise plans receive different featured durations; other plans cannot feature jobs.
   if (plan === "professional") {
     return { canFeature: true, durationDays: 10 }
   }
@@ -16,6 +20,7 @@ function getFeaturedJobRules(plan: string) {
   return { canFeature: false, durationDays: null }
 }
 
+/** Handles job creation requests and applies the plan-derived featured-job settings. */
 export async function POST(req: Request) {
   try {
     const authorization = req.headers.get("authorization")

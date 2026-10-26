@@ -1,5 +1,7 @@
+/** Implements the article hero page component and its related interface behavior. */
 import LatestHero from "@/components/LatestHero"
 
+/** Renders the article hero page interface. */
 export default function ArticleHeroPage() {
   return (
     <main className="min-h-screen bg-white">

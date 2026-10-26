@@ -1,8 +1,11 @@
 "use client"
+/** Implements the admin companies create page and its route-specific behavior. */
+
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
+/** Renders the create company interface. */
 export default function CreateCompany() {
   const router = useRouter()
 
@@ -13,6 +16,7 @@ export default function CreateCompany() {
     location: "",
   })
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 

@@ -1,4 +1,6 @@
 ﻿"use client"
+/** Implements the flip book viewer component and its related interface behavior. */
+
 import Image from "next/image"
 import dynamic from "next/dynamic"
 import { useEffect, useRef, useState } from "react"
@@ -13,6 +15,7 @@ type Props = {
   pages: string[]
 }
 
+/** Renders the flip book viewer interface. */
 export default function FlipBookViewer({ pages }: Props) {
   const bookRef = useRef<any>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -25,6 +28,7 @@ export default function FlipBookViewer({ pages }: Props) {
   /* ================= RESPONSIVE SIZING ================= */
 
   useEffect(() => {
+    /** Updates the size record or interface state. */
     const updateSize = () => {
       if (isFullscreen) {
         const headerHeight = 56

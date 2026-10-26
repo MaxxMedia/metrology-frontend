@@ -1,9 +1,11 @@
+/** Implements the auth hero component and its related interface behavior. */
 import Link from "next/link"
 
 type AuthHeroProps = {
   title: string
 }
 
+/** Renders the arrow icon interface. */
 function ArrowIcon({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 18 12" className={className} aria-hidden fill="currentColor">
@@ -16,6 +18,7 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   )
 }
 
+/** Renders the auth hero interface. */
 export default function AuthHero({ title }: AuthHeroProps) {
   return (
     <section className="relative bg-[#141719] border-b border-white/5 overflow-hidden">

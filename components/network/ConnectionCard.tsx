@@ -1,4 +1,6 @@
 "use client";
+/** Implements the network connection card component and its related interface behavior. */
+
 
 import Image from "next/image";
 import { removeConnection } from "@/services/connection.service";
@@ -14,10 +16,12 @@ interface ConnectionCardProps {
   onRemove?: () => void;
 }
 
+/** Renders the connection card interface. */
 export default function ConnectionCard({
   user,
   onRemove,
 }: ConnectionCardProps) {
+  /** Handles the remove interaction and its related state changes. */
   const handleRemove = async () => {
     const confirmed = window.confirm(
       `Remove ${user.fullName} from your connections?`

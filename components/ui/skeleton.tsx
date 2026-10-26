@@ -1,5 +1,7 @@
+/** Provides the reusable skeleton UI primitive and its interaction behavior. */
 import { cn } from '@/lib/utils'
 
+/** Renders the skeleton interface. */
 function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div

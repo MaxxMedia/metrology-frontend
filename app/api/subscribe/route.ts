@@ -1,7 +1,9 @@
+/** Handles newsletter subscription requests and their email notifications. */
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { MMTThankYouEmail } from "@/lib/emails/mmtThankYouEmail";
 
+/** Sends the new-subscriber notice to the admin and a confirmation email to the subscriber. */
 export async function POST(req: Request) {
   try {
     const data = await req.json();

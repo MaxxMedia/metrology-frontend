@@ -1,12 +1,15 @@
+/** Provides the reusable use mobile UI primitive and its interaction behavior. */
 import * as React from 'react'
 
 const MOBILE_BREAKPOINT = 768
 
+/** Provides the is mobile hook for this component workflow. */
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
   React.useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+    /** Handles the change interaction and its related state changes. */
     const onChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }

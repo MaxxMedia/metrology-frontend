@@ -1,4 +1,6 @@
 ﻿"use client";
+/** Implements the company slug about page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -37,6 +39,7 @@ type Company = {
   specialties?: string[];
 };
 
+/** Renders the about page interface. */
 export default function AboutPage() {
   const params = useParams();
   const slug = params.slug as string;
@@ -46,6 +49,7 @@ export default function AboutPage() {
   const [following, setFollowing] = useState(false);
 
   useEffect(() => {
+    /** Loads company for the current workflow. */
     async function loadCompany() {
       try {
         const res = await fetch(
@@ -80,6 +84,7 @@ export default function AboutPage() {
     loadCompany();
   }, [slug]);
 
+  /** Coordinates the toggle follow behavior for this workflow. */
   async function toggleFollow() {
     if (!company) return;
 

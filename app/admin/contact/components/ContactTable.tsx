@@ -1,4 +1,6 @@
 'use client';
+/** Implements the admin contact components contact table interface and its related behavior. */
+
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -11,6 +13,7 @@ interface ContactTableProps {
   loading?: boolean;
 }
 
+/** Renders the contact table interface. */
 export default function ContactTable({ 
   contacts, 
   onDelete,
@@ -21,12 +24,14 @@ export default function ContactTable({
   const [selectedName, setSelectedName] = useState<string>('');
   const [isDeleting, setIsDeleting] = useState(false);
 
+  /** Handles the delete click interaction and its related state changes. */
   const handleDeleteClick = (id: number, name: string) => {
     setSelectedId(id);
     setSelectedName(name);
     setShowDeleteDialog(true);
   };
 
+  /** Coordinates the confirm delete behavior for this workflow. */
   const confirmDelete = async () => {
     if (selectedId) {
       setIsDeleting(true);
@@ -38,12 +43,14 @@ export default function ContactTable({
     }
   };
 
+  /** Cancels the delete operation and restores the appropriate interface state. */
   const cancelDelete = () => {
     setShowDeleteDialog(false);
     setSelectedId(null);
     setSelectedName('');
   };
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
@@ -55,6 +62,7 @@ export default function ContactTable({
     }).format(date);
   };
 
+  /** Coordinates the truncate text behavior for this workflow. */
   const truncateText = (text: string, maxLength: number = 60) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';

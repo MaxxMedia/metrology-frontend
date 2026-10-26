@@ -1,3 +1,4 @@
+/** Provides candidate resume API helpers for reading and updating candidate data. */
 // lib/api/candidate/resume.ts
 // Thin client for the existing /api/candidate-resume endpoints.
 // Mirrors the fetch pattern already used by getMyProfile / getExperiences.
@@ -15,6 +16,7 @@ export interface CandidateResume {
     updatedAt: string
 }
 
+/** Builds request headers with the current bearer token and JSON content type. */
 function authHeaders(): HeadersInit {
     if (typeof window === "undefined") return {}
     const token = localStorage.getItem("token")

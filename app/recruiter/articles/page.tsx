@@ -1,4 +1,6 @@
 "use client";
+/** Implements the recruiter articles page and its route-specific behavior. */
+
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -26,6 +28,7 @@ const STATUS_STYLES: Record<string, string> = {
   REJECTED: "bg-rose-500/15 text-rose-400 ring-1 ring-rose-500/30",
 };
 
+/** Renders the recruiter articles page interface. */
 export default function RecruiterArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [eligibility, setEligibility] = useState<ContentLimitEligibility | null>(null);
@@ -36,6 +39,7 @@ export default function RecruiterArticlesPage() {
     loadEligibility();
   }, []);
 
+  /** Loads eligibility for the current workflow. */
   async function loadEligibility() {
     try {
       const token = localStorage.getItem("token");
@@ -51,6 +55,7 @@ export default function RecruiterArticlesPage() {
     }
   }
 
+  /** Loads articles for the current workflow. */
   async function fetchArticles() {
     try {
       const token = localStorage.getItem("token");
@@ -82,6 +87,7 @@ export default function RecruiterArticlesPage() {
     }
   }
 
+  /** Handles the delete interaction and its related state changes. */
   async function handleDelete(id: number) {
     const ok = confirm("Are you sure you want to delete this article?");
     if (!ok) return;

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate candidate profile panel component and its related interface behavior. */
+
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -42,6 +44,7 @@ function getCompanyFromProfile(profile: CandidateProfile | null): Company | null
   return profile.Company || profile.company || null;
 }
 
+/** Renders the candidate profile panel interface. */
 export default function CandidateProfilePanel({
   onProfileUpdated,
 }: CandidateProfilePanelProps) {
@@ -91,6 +94,7 @@ export default function CandidateProfilePanel({
     loadTeamStatus(company?.id);
   }, [profile]);
 
+  /** Loads team status for the current workflow. */
   async function loadTeamStatus(companyId?: number) {
     setLoadingTeam(true);
     try {
@@ -119,6 +123,7 @@ export default function CandidateProfilePanel({
     }
   }
 
+  /** Handles the avatar upload interaction and its related state changes. */
   async function handleAvatarUpload(file: File) {
     if (!profile) return;
 
@@ -142,6 +147,7 @@ export default function CandidateProfilePanel({
     }
   }
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!profile) return;
@@ -161,6 +167,7 @@ export default function CandidateProfilePanel({
     }
   }
 
+  /** Coordinates the search companies behavior for this component. */
   async function searchCompanies(query: string) {
     if (query.length < 2) {
       setSearchResults([]);
@@ -181,6 +188,7 @@ export default function CandidateProfilePanel({
     }
   }
 
+  /** Handles the company submit interaction and its related state changes. */
   async function handleCompanySubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedCompany || !profile) return;
@@ -697,6 +705,7 @@ export default function CandidateProfilePanel({
   );
 }
 
+/** Renders the field interface. */
 function Field({
   label,
   value,

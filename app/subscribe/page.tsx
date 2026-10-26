@@ -1,4 +1,6 @@
 ﻿"use client"
+/** Implements the subscribe page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { Formik, Form, Field, ErrorMessage } from "formik"
@@ -46,6 +48,7 @@ const SubscribeSchema = Yup.object({
 const inputClassName =
   "mt-2 w-full rounded-lg border border-[#9bb6c8] bg-white px-4 py-3 text-[15px] text-[#152b3a] outline-none transition placeholder:text-[#7a8b96] focus:border-[#0073ff] focus:ring-2 focus:ring-[#0073ff]/15"
 
+/** Renders the form field interface. */
 function FormField({
   name,
   label,
@@ -76,6 +79,7 @@ function FormField({
   )
 }
 
+/** Renders the subscribe page interface. */
 export default function SubscribePage() {
   const [countries, setCountries] = useState<string[]>(["India", "United States", "United Kingdom", "Canada", "Australia", "Germany", "Japan"])
 

@@ -37,10 +37,13 @@
 
 
 "use client"
+/** Protects candidate-only flows by checking the current candidate session and redirecting when needed. */
+
 
 import { useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 
+/** Provides the candidate guard hook and its shared access behavior. */
 export function useCandidateGuard() {
   const router = useRouter()
   const pathname = usePathname()

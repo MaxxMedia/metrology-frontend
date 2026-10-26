@@ -1,3 +1,4 @@
+/** Implements the packages cookie policy component and its related interface behavior. */
 import Link from "next/link";
 import PackagesHero from "./PackagesHero";
 
@@ -187,6 +188,7 @@ const COOKIE_DURATIONS: { heading: string; text: string }[] = [
   },
 ];
 
+/** Coordinates the render block behavior for this component. */
 function renderBlock(block: string | string[], key: number) {
   if (Array.isArray(block)) {
     return (
@@ -211,6 +213,7 @@ function renderBlock(block: string | string[], key: number) {
   );
 }
 
+/** Renders the cookie policy page client interface. */
 export default function CookiePolicyPageClient() {
   return (
     <main className="w-full bg-white">

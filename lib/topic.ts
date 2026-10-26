@@ -1,3 +1,4 @@
+/** Defines the metrology topic taxonomy and maps legacy category slugs to database slugs and canonical URLs. */
 // ---------------------------------------------------------------------------
 // Category configuration for the Header mega-menu (Topics + Resources).
 //
@@ -385,25 +386,30 @@ const LEGACY_CATEGORY_GROUPS: Record<string, string[]> = {
     ],
 }
 
+/** Normalizes category text into a lowercase, URL-safe slug. */
 function normalizeCategorySlug(slug: string): string {
     return slug.trim().toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
 }
 
+/** Maps a legacy frontend category slug to the current database category slug. */
 export function resolveCategorySlug(slug: string): string {
     const normalized = normalizeCategorySlug(slug)
     return LEGACY_CATEGORY_SLUGS[normalized] ?? normalized
 }
 
+/** Returns every database category slug represented by a legacy category alias. */
 export function resolveCategorySlugs(slug: string): string[] {
     const normalized = normalizeCategorySlug(slug)
     return LEGACY_CATEGORY_GROUPS[normalized] ?? [resolveCategorySlug(normalized)]
 }
 
+/** Checks a post?s category and subcategory against the requested canonical category. */
 export function postBelongsToCategory(
     post: { category?: unknown; subCategory?: unknown },
     categorySlug: string
 ): boolean {
     const expectedSlug = resolveCategorySlug(categorySlug)
+    /** Extracts a normalized category slug from the supplied category value. */
     const getSlug = (category: unknown) => {
         if (typeof category === "string") return category
         if (category && typeof category === "object" && "slug" in category) {
@@ -428,6 +434,7 @@ export function postBelongsToCategory(
     )
 }
 
+/** Builds the canonical topic URL after resolving legacy category slugs. */
 export function getCategoryUrl(slug: string): string {
     const normalized = normalizeCategorySlug(slug)
     const routeSlug = LEGACY_CATEGORY_GROUPS[normalized]

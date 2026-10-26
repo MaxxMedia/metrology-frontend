@@ -1,4 +1,6 @@
 ﻿"use client"
+/** Implements the company slug people page and its route-specific behavior. */
+
 
 import Image from "next/image"
 import Link from "next/link"
@@ -30,12 +32,14 @@ type Company = {
   followers: number
 }
 
+/** Coordinates the profile href behavior for this workflow. */
 function profileHref(person: Person) {
   if (person.role === "candidate") return `/candidate/${person.username}`
   if (person.role === "recruiter") return `/recruiter/${person.username}`
   return `/candidate/${person.username}`
 }
 
+/** Renders the follower card interface. */
 function FollowerCard({ person }: { person: Person }) {
   return (
     <div className="flex items-center justify-between border rounded-xl p-5 hover:bg-gray-50">
@@ -93,6 +97,7 @@ function FollowerCard({ person }: { person: Person }) {
   )
 }
 
+/** Renders the company people page interface. */
 export default function CompanyPeoplePage() {
   const { slug } = useParams<{ slug: string }>()
   const [company, setCompany] = useState<Company | null>(null)
@@ -102,6 +107,7 @@ export default function CompanyPeoplePage() {
   const [showAllFollowers, setShowAllFollowers] = useState(false)
 
   useEffect(() => {
+    /** Coordinates the load behavior for this workflow. */
     async function load() {
       try {
         const [companyRes, peopleRes] = await Promise.all([
@@ -144,6 +150,7 @@ export default function CompanyPeoplePage() {
     if (slug) load()
   }, [slug])
 
+  /** Coordinates the toggle follow behavior for this workflow. */
   async function toggleFollow() {
     if (!company) return;
 

@@ -1,5 +1,7 @@
 // app/blog/page.tsx
 "use client";
+/** Implements the blog page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -42,6 +44,7 @@ interface PaginationMeta {
   pages: number;
 }
 
+/** Renders the blog page interface. */
 export default function BlogPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -60,6 +63,7 @@ export default function BlogPage() {
   }, [selectedCategory]);
 
   useEffect(() => {
+    /** Loads posts for the current workflow. */
     async function fetchPosts() {
       setLoading(true);
       try {
@@ -97,6 +101,7 @@ export default function BlogPage() {
   }, [selectedCategory, page]);
 
   useEffect(() => {
+    /** Loads categories for the current workflow. */
     async function fetchCategories() {
       try {
         const catRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`);
@@ -112,6 +117,7 @@ export default function BlogPage() {
     fetchCategories();
   }, []);
 
+  /** Returns the derived image url value used by this workflow. */
   const getImageUrl = (post: Post) => {
     if (!post.imageUrl) return "/placeholder.svg";
     return post.imageUrl.startsWith("http")
@@ -119,6 +125,7 @@ export default function BlogPage() {
       : `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`;
   };
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString("en-US", {
       month: "long",

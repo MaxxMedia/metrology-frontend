@@ -1,9 +1,12 @@
 "use client";
+/** Implements the candidate profile sidebar public url card component and its related interface behavior. */
+
 
 interface PublicUrlCardProps {
   username?: string;
 }
 
+/** Renders the public url card interface. */
 export default function PublicUrlCard({ username }: PublicUrlCardProps) {
   return (
     <div className="bg-white rounded-xl border border-[#e0e0e0] p-5 shadow-sm">

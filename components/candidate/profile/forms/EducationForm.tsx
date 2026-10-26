@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile forms education form component and its related interface behavior. */
+
 
 import { Formik, Form, Field, FieldArray, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
@@ -35,6 +37,7 @@ const validationSchema = Yup.object({
   ),
 });
 
+/** Renders the education form interface. */
 export default function EducationForm({
   initialValues,
   onSubmit,
@@ -190,6 +193,7 @@ export default function EducationForm({
   );
 }
 
+/** Renders the input interface. */
 function Input({
   label,
   name,

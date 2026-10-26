@@ -1,7 +1,9 @@
+/** Provides the reusable input UI primitive and its interaction behavior. */
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the input interface. */
 function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   return (
     <input

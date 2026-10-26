@@ -1,11 +1,15 @@
 "use client";
+/** Implements the admin banners new page and its route-specific behavior. */
+
 
 import { useRouter } from "next/navigation";
 import BannerForm from "../BannerForm";
 
+/** Renders the new banner page interface. */
 export default function NewBannerPage() {
   const router = useRouter();
 
+  /** Creates the banner record or interface element. */
   const createBanner = async (data: any) => {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banners`, {

@@ -1,5 +1,7 @@
 
 "use client";
+/** Implements the trending ad component and its related interface behavior. */
+
 
 import Image from "next/image";
 
@@ -14,6 +16,7 @@ type Props = {
   banner: Banner | null;
 };
 
+/** Renders the trending ad interface. */
 export default function TrendingAd({ banner }: Props) {
   if (!banner) return null;
 

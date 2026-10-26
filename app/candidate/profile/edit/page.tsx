@@ -1,9 +1,12 @@
 "use client";
+/** Implements the candidate profile edit page and its route-specific behavior. */
+
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { fetchMyCandidateProfile } from "@/lib/candidateProfile";
 
+/** Renders the edit candidate profile page interface. */
 export default function EditCandidateProfilePage() {
   const router = useRouter();
 

@@ -1,5 +1,7 @@
+/** Provides candidate achievements API helpers for reading and updating candidate data. */
 const API = process.env.NEXT_PUBLIC_API_URL;
 
+/** Builds request headers with the current bearer token and JSON content type. */
 function authHeaders() {
   const token = localStorage.getItem("token");
 
@@ -9,6 +11,7 @@ function authHeaders() {
   };
 }
 
+/** Loads or retrieves achievements data for this workflow. */
 export async function getAchievements() {
   const res = await fetch(`${API}/api/candidate-achievements`, {
     headers: authHeaders(),
@@ -19,6 +22,7 @@ export async function getAchievements() {
   return res.json();
 }
 
+/** Creates achievement through the configured API. */
 export async function createAchievement(data: any) {
   const res = await fetch(`${API}/api/candidate-achievements`, {
     method: "POST",
@@ -31,6 +35,7 @@ export async function createAchievement(data: any) {
   return res.json();
 }
 
+/** Updates achievement through the configured API. */
 export async function updateAchievement(id: number, data: any) {
   const res = await fetch(`${API}/api/candidate-achievements/${id}`, {
     method: "PUT",
@@ -43,6 +48,7 @@ export async function updateAchievement(id: number, data: any) {
   return res.json();
 }
 
+/** Removes achievement through the configured API. */
 export async function deleteAchievement(id: number) {
   const res = await fetch(`${API}/api/candidate-achievements/${id}`, {
     method: "DELETE",

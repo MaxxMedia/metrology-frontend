@@ -1,4 +1,6 @@
 "use client"
+/** Implements the rich text field component and its related interface behavior. */
+
 
 import { useEffect } from "react"
 import { useEditor, EditorContent } from "@tiptap/react"
@@ -11,6 +13,7 @@ type Props = {
   onChange?: (val: string) => void
 }
 
+/** Renders the rich text editor interface. */
 export default function RichTextEditor({
   name,
   value,

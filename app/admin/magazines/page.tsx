@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin magazines page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -17,6 +19,7 @@ export default function AdminMagazinesPage() {
 useEffect(() => {
   const token = localStorage.getItem("token")
 
+  /** Loads data for the current workflow. */
   async function fetchData() {
     try {
       const [magRes, authRes, coverRes] = await Promise.all([
@@ -97,6 +100,7 @@ if (!coverRes.ok) {
   fetchData()
 }, [])
 
+  /** Removes the magazine record or interface element. */
   async function deleteMagazine(id: number) {
     const token = localStorage.getItem("token")
 

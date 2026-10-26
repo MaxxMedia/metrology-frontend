@@ -1,10 +1,13 @@
 'use client'
+/** Provides the reusable separator UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as SeparatorPrimitive from '@radix-ui/react-separator'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the separator interface. */
 function Separator({
   className,
   orientation = 'horizontal',

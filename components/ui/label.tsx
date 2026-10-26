@@ -1,10 +1,13 @@
 'use client'
+/** Provides the reusable label UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as LabelPrimitive from '@radix-ui/react-label'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the label interface. */
 function Label({
   className,
   ...props

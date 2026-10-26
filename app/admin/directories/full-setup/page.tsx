@@ -1,10 +1,13 @@
 "use client"
+/** Implements the admin directories full setup page and its route-specific behavior. */
+
 
 import { Country, State, City } from "country-state-city"
 import { useEffect, useState } from "react"
 import UploadBox from "@/components/UploadBox"
 
 
+/** Renders the full supplier setup interface. */
 export default function FullSupplierSetup() {
   const token =
     typeof window !== "undefined"
@@ -48,12 +51,14 @@ export default function FullSupplierSetup() {
   const [industryLevels, setIndustryLevels] = useState<any[][]>([])
   const [industrySelected, setIndustrySelected] = useState<number[]>([])
 
+  /** Handles the change interaction and its related state changes. */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
+  /** Handles the social change interaction and its related state changes. */
   const handleSocialChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -66,16 +71,19 @@ export default function FullSupplierSetup() {
     })
   }
 
+  /** Handles the video change interaction and its related state changes. */
   const handleVideoChange = (index: number, value: string) => {
     const updated = [...form.videoGallery]
     updated[index] = value
     setForm({ ...form, videoGallery: updated })
   }
 
+  /** Creates the video field record or interface element. */
   const addVideoField = () => {
     setForm({ ...form, videoGallery: [...form.videoGallery, ""] })
   }
 
+  /** Handles the logo upload interaction and its related state changes. */
   const handleLogoUpload = async (file: File) => {
     try {
       setUploading(true)
@@ -137,6 +145,7 @@ export default function FullSupplierSetup() {
     }
   }
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault()
   setLoading(true)
@@ -493,6 +502,7 @@ const cities = form.state
   )
 }
 
+/** Renders the input interface. */
 function Input({ label, ...props }: any) {
   return (
     <div className="space-y-1">
@@ -502,6 +512,7 @@ function Input({ label, ...props }: any) {
   )
 }
 
+/** Renders the textarea interface. */
 function Textarea({ label, ...props }: any) {
   return (
     <div className="space-y-1">

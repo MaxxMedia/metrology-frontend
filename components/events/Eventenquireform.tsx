@@ -1,18 +1,23 @@
 // app/components/events/EventEnquireForm.tsx
 "use client"
+/** Implements the events eventenquireform component and its related interface behavior. */
+
 
 import { useState } from "react"
 
+/** Renders the event enquire form interface. */
 export default function EventEnquireForm({ slug }: { slug: string }) {
   const [values, setValues] = useState({ name: "", email: "", mobile: "", message: "" })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  /** Coordinates the update behavior for this component. */
   const update = (key: keyof typeof values, value: string) => {
     setValues(prev => ({ ...prev, [key]: value }))
   }
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)

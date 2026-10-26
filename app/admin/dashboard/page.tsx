@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin dashboard page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -114,20 +116,24 @@ const paymentChartConfig = {
   failed: { label: "Failed", color: "#f43f5e" },
 } satisfies ChartConfig;
 
+/** Normalizes the currency value for consistent display or use. */
 function formatCurrency(amount: number) {
   return `₹${amount.toLocaleString("en-IN")}`;
 }
 
+/** Coordinates the pie total behavior for this workflow. */
 function pieTotal(data: Slice[]) {
   return data.reduce((sum, row) => sum + row.value, 0);
 }
 
+/** Renders the dashboard page interface. */
 export default function DashboardPage() {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    /** Coordinates the load behavior for this workflow. */
     async function load() {
       try {
         const token = localStorage.getItem("token");
@@ -358,6 +364,7 @@ export default function DashboardPage() {
   );
 }
 
+/** Renders the kpi card interface. */
 function KpiCard({
   icon,
   label,
@@ -392,6 +399,7 @@ function KpiCard({
   );
 }
 
+/** Renders the chart card interface. */
 function ChartCard({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm min-w-0 overflow-hidden">
@@ -404,6 +412,7 @@ function ChartCard({ title, subtitle, children }: { title: string; subtitle?: st
   );
 }
 
+/** Renders the pie legend interface. */
 function PieLegend({ data }: { data: Slice[] }) {
   const total = pieTotal(data);
   if (total === 0) return <p className="text-center text-sm text-slate-400">No data yet</p>;
@@ -423,6 +432,7 @@ function PieLegend({ data }: { data: Slice[] }) {
   );
 }
 
+/** Renders the status badge interface. */
 function StatusBadge({ status }: { status: string }) {
   const styles =
     status === "PAID"

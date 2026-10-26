@@ -1,6 +1,8 @@
 // app/recruiter/dashboard/team/page.tsx
 
 'use client';
+/** Implements the recruiter dashboard team page and its route-specific behavior. */
+
 
 import { useState, useEffect } from 'react';
 import { getPendingRequests, getTeamMembers, approveTeamMember, rejectTeamMember } from '@/lib/teamService';
@@ -8,6 +10,7 @@ import { TeamMember } from '@/types/team';
 import PendingRequestCard from '@/components/teams/PendingRequestCard';
 import TeamMemberCard from '@/components/teams/TeamMemberCard';
 
+/** Renders the recruiter team page interface. */
 export default function RecruiterTeamPage() {
     const [activeTab, setActiveTab] = useState<'pending' | 'members'>('pending');
     const [pendingRequests, setPendingRequests] = useState<TeamMember[]>([]);
@@ -20,6 +23,7 @@ export default function RecruiterTeamPage() {
         loadData();
     }, []);
 
+    /** Loads data for the current workflow. */
     async function loadData() {
         try {
             setLoading(true);
@@ -65,6 +69,7 @@ export default function RecruiterTeamPage() {
         }
     }
 
+    /** Handles the approve interaction and its related state changes. */
     const handleApprove = async (id: number) => {
         try {
             await approveTeamMember(id);
@@ -74,6 +79,7 @@ export default function RecruiterTeamPage() {
         }
     };
 
+    /** Handles the reject interaction and its related state changes. */
     const handleReject = async (id: number, reason: string) => {
         try {
             await rejectTeamMember(id, reason);

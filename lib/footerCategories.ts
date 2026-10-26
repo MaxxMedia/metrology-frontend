@@ -26,6 +26,7 @@ export type FooterCategoryLink = {
   href: string;
 };
 
+/** Groups the topic taxonomy into the columns used by the site footer. */
 export function buildFooterCategoryColumns(
   categories: { name: string; slug: string }[]
 ): { top: FooterCategoryLink[]; more: FooterCategoryLink[] } {

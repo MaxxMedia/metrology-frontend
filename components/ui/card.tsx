@@ -1,7 +1,9 @@
+/** Provides the reusable card UI primitive and its interaction behavior. */
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the card interface. */
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -15,6 +17,7 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the card header interface. */
 function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -28,6 +31,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the card title interface. */
 function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -38,6 +42,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the card description interface. */
 function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -48,6 +53,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the card action interface. */
 function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -61,6 +67,7 @@ function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the card content interface. */
 function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -71,6 +78,7 @@ function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the card footer interface. */
 function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div

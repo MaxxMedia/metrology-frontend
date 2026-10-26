@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate connections tab component and its related interface behavior. */
+
 
 import { useEffect, useState, useCallback } from "react";
 import {
@@ -92,6 +94,7 @@ function Avatar({ name, src, size = 48 }: { name?: string; src?: string; size?: 
     );
 }
 
+/** Renders the skeleton card interface. */
 function SkeletonCard() {
     return (
         <div className="bg-white rounded-xl border border-[#e0e0e0] p-4 flex items-center gap-3 animate-pulse">
@@ -104,6 +107,7 @@ function SkeletonCard() {
     );
 }
 
+/** Renders the skeleton grid interface. */
 function SkeletonGrid({ count = 3 }: { count?: number }) {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -114,6 +118,7 @@ function SkeletonGrid({ count = 3 }: { count?: number }) {
     );
 }
 
+/** Renders the empty state interface. */
 function EmptyState({ icon, text }: { icon: React.ReactNode; text: string }) {
     return (
         <div className="bg-white rounded-xl border border-dashed border-[#e0e0e0] py-10 text-center">
@@ -125,6 +130,7 @@ function EmptyState({ icon, text }: { icon: React.ReactNode; text: string }) {
     );
 }
 
+/** Renders the section header interface. */
 function SectionHeader({
     icon,
     title,
@@ -187,6 +193,7 @@ export default function ConnectionsTab() {
         fetchAll();
     }, [fetchAll]);
 
+    /** Coordinates the run action behavior for this component. */
     const runAction = async (key: ActionKey, fn: () => Promise<any>) => {
         setActionLoading(key);
         setActionError(null);
@@ -203,18 +210,23 @@ export default function ConnectionsTab() {
         }
     };
 
+    /** Handles the accept interaction and its related state changes. */
     const handleAccept = (requestId: number) =>
         runAction(`accept-${requestId}`, () => acceptRequest(requestId));
 
+    /** Handles the reject interaction and its related state changes. */
     const handleReject = (requestId: number) =>
         runAction(`reject-${requestId}`, () => rejectRequest(requestId));
 
+    /** Handles the cancel interaction and its related state changes. */
     const handleCancel = (requestId: number) =>
         runAction(`cancel-${requestId}`, () => cancelRequest(requestId));
 
+    /** Handles the remove interaction and its related state changes. */
     const handleRemove = (userId: number) =>
         runAction(`remove-${userId}`, () => removeConnection(userId));
 
+    /** Handles the connect interaction and its related state changes. */
     const handleConnect = (userId: number) =>
         runAction(`connect-${userId}`, () => sendRequest(userId));
 

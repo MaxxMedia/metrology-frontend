@@ -1,4 +1,6 @@
 "use client"
+/** Implements the candidate job alerts id page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -16,6 +18,7 @@ type Job = {
   companyName?: string
 }
 
+/** Renders the alert matches page interface. */
 export default function AlertMatchesPage() {
   useCandidateGuard()
 
@@ -24,6 +27,7 @@ export default function AlertMatchesPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    /** Loads matches for the current workflow. */
     async function loadMatches() {
       try {
         const token = localStorage.getItem("token")

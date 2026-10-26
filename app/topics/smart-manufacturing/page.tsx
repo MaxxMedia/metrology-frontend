@@ -1,8 +1,10 @@
+/** Implements the topics smart manufacturing page and its route-specific behavior. */
 import Link from "next/link"
 import type { Post } from "@/types/Post"
 import TopicListing from "@/components/topics/TopicListing"
 import { resolveCategorySlug } from "@/lib/topic"
 
+/** Renders the smart manufacturing page interface. */
 export default async function SmartManufacturingPage() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(resolveCategorySlug("smart-manufacturing"))}&limit=50`,

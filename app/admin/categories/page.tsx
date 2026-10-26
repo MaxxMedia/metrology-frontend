@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin categories page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -33,6 +35,7 @@ type FlatRow = Category & {
   childrenCount: number;
 };
 
+/** Returns the derived post count value used by this workflow. */
 function getPostCount(cat: Category) {
   // Parent categories: posts via categoryId
   // Subcategories: posts via subCategoryId
@@ -42,6 +45,7 @@ function getPostCount(cat: Category) {
   return cat._count?.posts ?? 0;
 }
 
+/** Coordinates the slugify behavior for this workflow. */
 function slugify(name: string, parentSlug?: string | null) {
   const base =
     name
@@ -54,6 +58,7 @@ function slugify(name: string, parentSlug?: string | null) {
   return parentSlug ? `${parentSlug}-${base}` : base;
 }
 
+/** Builds the nested rows value used by the surrounding workflow. */
 function buildNestedRows(categories: Category[]): FlatRow[] {
   const parentMap = new Map<number, Category>();
   for (const c of categories) {
@@ -113,6 +118,7 @@ function buildNestedRows(categories: Category[]): FlatRow[] {
   return rows;
 }
 
+/** Renders the category management interface. */
 export default function CategoryManagement() {
   const router = useRouter();
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -136,6 +142,7 @@ export default function CategoryManagement() {
     setPage(1);
   }, [selectedParentFilter, typeFilter, searchQuery]);
 
+  /** Loads categories for the current workflow. */
   const fetchCategories = async () => {
     try {
       setLoading(true);
@@ -199,6 +206,7 @@ export default function CategoryManagement() {
     selectedParentFilter || typeFilter !== "all" || searchQuery.trim()
   );
 
+  /** Clears the filters values and resets the related state. */
   const clearFilters = () => {
     setSelectedParentFilter("");
     setTypeFilter("all");
@@ -211,6 +219,7 @@ export default function CategoryManagement() {
     page * ADMIN_PAGE_SIZE
   );
 
+  /** Starts the edit workflow. */
   const startEdit = (cat: Category) => {
     setEditingCategory(cat);
     setForm({
@@ -226,6 +235,7 @@ export default function CategoryManagement() {
     }
   };
 
+  /** Handles the add subcategory interaction and its related state changes. */
   const handleAddSubcategory = (parentCat: Category) => {
     setEditingCategory(null);
     setForm({
@@ -241,12 +251,14 @@ export default function CategoryManagement() {
     }
   };
 
+  /** Cancels the edit operation and restores the appropriate interface state. */
   const cancelEdit = () => {
     setEditingCategory(null);
     setForm({ name: "", parentId: "" });
     setMessage("");
   };
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
@@ -298,6 +310,7 @@ export default function CategoryManagement() {
     }
   };
 
+  /** Handles the delete interaction and its related state changes. */
   const handleDelete = async (id: number, name: string) => {
     if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
 

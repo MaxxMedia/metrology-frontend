@@ -1,4 +1,6 @@
 "use client";
+/** Implements the feed page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -7,6 +9,7 @@ import LocationAutocomplete from "@/components/job/Locationautocomplete";
 import Link from "next/link";
 import Banner from "@/components/Banners/Banner";
 
+/** Renders the public feed page interface. */
 export default function PublicFeedPage() {
   const [role, setRole] = useState<string | null>(null);
   const [loadingRole, setLoadingRole] = useState(true);
@@ -18,6 +21,7 @@ export default function PublicFeedPage() {
     location: "",
   });
 
+  /** Handles the filter change interaction and its related state changes. */
   const handleFilterChange = (
     field: string,
     value: string | boolean
@@ -25,6 +29,7 @@ export default function PublicFeedPage() {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
+  /** Handles the search interaction and its related state changes. */
   const handleSearch = () => {
     (document.activeElement as HTMLElement | null)?.blur();
     document

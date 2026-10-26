@@ -1,3 +1,5 @@
+/** Provides shared emails mmt thank you email utilities for the frontend. */
+/** Coordinates the mmtthank you email behavior used by this module. */
 export const MMTThankYouEmail = ({
   firstName,
 }: {

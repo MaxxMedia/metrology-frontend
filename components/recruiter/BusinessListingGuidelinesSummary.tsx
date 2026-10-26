@@ -1,3 +1,4 @@
+/** Implements the recruiter business listing guidelines summary component and its related interface behavior. */
 import Link from "next/link"
 import {
   CheckCircle2,
@@ -17,6 +18,7 @@ const rightItems = [
   "Follow Business Listing Guidelines.",
 ]
 
+/** Renders the business listing guidelines summary interface. */
 export default function BusinessListingGuidelinesSummary() {
   return (
     <div className="rounded-xl border border-[#292C30] bg-[#1D2125] p-6 text-[#CCCCCC]">

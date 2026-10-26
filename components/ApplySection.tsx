@@ -1,4 +1,6 @@
 "use client"
+/** Implements the apply section component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -7,6 +9,7 @@ import { getMyProfile } from "@/lib/api/candidate/profile"
 import { getExperiences } from "@/lib/api/candidate/experience"
 import { getEducation } from "@/lib/api/candidate/education"
 
+/** Renders the apply section interface. */
 export function ApplySection({ jobId }: { jobId: number }) {
   const router = useRouter()
   const [coverNote, setCoverNote] = useState("")
@@ -22,6 +25,7 @@ export function ApplySection({ jobId }: { jobId: number }) {
 
   // ✅ Load candidate profile for auto-fill, LinkedIn-style, when the form opens
   useEffect(() => {
+    /** Loads profile for apply for the current workflow. */
     async function loadProfileForApply() {
       try {
         const [profileData, expData, eduData] = await Promise.all([
@@ -39,6 +43,7 @@ export function ApplySection({ jobId }: { jobId: number }) {
     loadProfileForApply()
   }, [])
 
+  /** Coordinates the apply behavior for this component. */
   async function apply() {
     const user = JSON.parse(localStorage.getItem("user") || "{}")
 

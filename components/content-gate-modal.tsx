@@ -1,4 +1,6 @@
 "use client"
+/** Implements the content gate modal component and its related interface behavior. */
+
 
 import type React from "react"
 import { useState, useEffect } from "react"
@@ -15,6 +17,7 @@ interface ContentGateModalProps {
 const inputClassName =
   "w-full rounded-[10px] border border-[#292C30] bg-[#171A1E] px-3.5 py-2.5 sm:py-3 text-[14px] text-[#FFFFFF] placeholder:text-[#858585] outline-none transition-all duration-200 focus:border-[#0073FF] focus:ring-2 focus:ring-[#0073FF]/25 disabled:cursor-not-allowed disabled:opacity-50 font-normal"
 
+/** Renders the content gate modal interface. */
 export default function ContentGateModal({
   isOpen,
   onClose,
@@ -36,6 +39,7 @@ export default function ContentGateModal({
 
   // Close on Escape key
   useEffect(() => {
+    /** Handles the key down interaction and its related state changes. */
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen && !loading) {
         onClose()
@@ -57,6 +61,7 @@ export default function ContentGateModal({
     }
   }, [isOpen])
 
+  /** Handles the change interaction and its related state changes. */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target as HTMLInputElement
     setFormData((prev) => ({
@@ -65,6 +70,7 @@ export default function ContentGateModal({
     }))
   }
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)

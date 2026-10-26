@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable checkbox UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
@@ -6,6 +8,7 @@ import { CheckIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the checkbox interface. */
 function Checkbox({
   className,
   ...props

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the explore categories component and its related interface behavior. */
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,6 +12,7 @@ const categories = [
   { name: "Travel", count: 16, bg: "/images/cat-travel.jpg" },
 ];
 
+/** Renders the explore categories interface. */
 export default function ExploreCategories() {
   return (
     <div className="bg-white rounded-xl border p-6">

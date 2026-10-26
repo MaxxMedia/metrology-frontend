@@ -1,13 +1,17 @@
 "use client";
+/** Implements the network requests page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { getReceivedRequests } from "@/services/connection.service";
 import RequestCard from "@/components/network/RequestCard";
 
+/** Renders the requests page interface. */
 export default function RequestsPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  /** Loads requests for the current workflow. */
   const fetchRequests = async () => {
     try {
       setLoading(true);

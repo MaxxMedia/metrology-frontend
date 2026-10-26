@@ -1,10 +1,13 @@
 'use client'
+/** Provides the reusable progress UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as ProgressPrimitive from '@radix-ui/react-progress'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the progress interface. */
 function Progress({
   className,
   value,

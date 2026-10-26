@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile projects section component and its related interface behavior. */
+
 
 import { Pencil, ExternalLink, FolderKanban, Calendar } from "lucide-react";
 
@@ -19,11 +21,13 @@ interface Props {
   onEditClick?: () => void;
 }
 
+/** Renders the projects section interface. */
 export default function ProjectsSection({
   editable = false,
   projects,
   onEditClick,
 }: Props) {
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return "";
     try {

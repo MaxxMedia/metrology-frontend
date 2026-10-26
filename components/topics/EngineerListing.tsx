@@ -1,4 +1,6 @@
 "use client"
+/** Implements the topics engineer listing component and its related interface behavior. */
+
 
 import Link from "next/link"
 import Image from "next/image"
@@ -9,12 +11,14 @@ type Props = {
   posts: Post[]
 }
 
+/** Renders the engineer listing interface. */
 export default function EngineerListing({ posts }: Props) {
   if (!posts.length) return null
 
   const [hero, ...rest] = posts
   const gridPosts = rest.slice(0, 6)
 
+  /** Returns the derived image value used by this workflow. */
   const getImage = (post: Post) =>
     post.imageUrl?.startsWith("http")
       ? post.imageUrl
@@ -22,6 +26,7 @@ export default function EngineerListing({ posts }: Props) {
         ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
         : "/placeholder.svg"
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (date?: string) =>
     date
       ? new Date(date).toLocaleDateString("en-US", {

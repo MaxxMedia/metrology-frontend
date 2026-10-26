@@ -1,3 +1,4 @@
+/** Implements the admin components types interface and its related behavior. */
 // app/admin/components/types.ts
 export type BlockType =
   | "paragraph"

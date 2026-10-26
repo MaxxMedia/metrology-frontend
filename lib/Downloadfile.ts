@@ -46,6 +46,7 @@ const SIGNATURES: { check: (bytes: Uint8Array) => boolean; mime: string; ext: st
   },
 ];
 
+/** Identifies a file type from its byte signature rather than trusting the filename. */
 function detectFileType(bytes: Uint8Array): { mime: string; ext: string } | null {
   for (const sig of SIGNATURES) {
     if (sig.check(bytes)) return { mime: sig.mime, ext: sig.ext };
@@ -53,6 +54,7 @@ function detectFileType(bytes: Uint8Array): { mime: string; ext: string } | null
   return null;
 }
 
+/** Detects HTML or JSON error responses that should not be saved as downloaded files. */
 function looksLikeTextError(bytes: Uint8Array): boolean {
   // Decode the first ~200 bytes and check for HTML/JSON error markers.
   // Cloudinary (and most APIs) return HTML or JSON when access is denied
@@ -68,6 +70,7 @@ function looksLikeTextError(bytes: Uint8Array): boolean {
   );
 }
 
+/** Downloads a file, checks the response body, and saves it with an extension inferred from its content. */
 export async function downloadFile(
   url: string,
   preferredFileName?: string

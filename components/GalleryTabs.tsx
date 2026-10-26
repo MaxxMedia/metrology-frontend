@@ -1,5 +1,7 @@
 // components/GalleryTabs.tsx
 "use client"
+/** Implements the gallery tabs component and its related interface behavior. */
+
 
 import { useState } from "react"
 import VideoGallery from "./VideoGallery"
@@ -37,6 +39,7 @@ type GalleryTabsProps = {
 const NO_PLAN_MESSAGE =
   "This supplier hasn't purchased a plan to upload gallery content."
 
+/** Renders the empty state interface. */
 function EmptyState({ message }: { message: string }) {
   return (
     <div className="h-72 rounded-xl border-2 border-dashed border-[#292C30] flex items-center justify-center text-gray-500 text-center px-6">
@@ -45,6 +48,7 @@ function EmptyState({ message }: { message: string }) {
   )
 }
 
+/** Determines whether the current state satisfies the gallery items condition. */
 function hasGalleryItems(gallery: any[] | undefined): boolean {
   if (!gallery || !Array.isArray(gallery)) return false
   return gallery.some(item => {
@@ -53,21 +57,25 @@ function hasGalleryItems(gallery: any[] | undefined): boolean {
   })
 }
 
+/** Returns the derived gallery image value used by this workflow. */
 function getGalleryImage(item: any): string {
   if (typeof item === 'string') return item
   return item?.image || ''
 }
 
+/** Returns the derived gallery name value used by this workflow. */
 function getGalleryName(item: any): string {
   if (typeof item === 'string') return ''
   return item?.name || ''
 }
 
+/** Returns the derived gallery description value used by this workflow. */
 function getGalleryDescription(item: any): string {
   if (typeof item === 'string') return ''
   return item?.description || ''
 }
 
+/** Coordinates the to section items behavior for this component. */
 function toSectionItems(gallery: any[] | undefined): SectionItem[] {
   if (!gallery || !Array.isArray(gallery)) return []
   return gallery
@@ -82,6 +90,7 @@ function toSectionItems(gallery: any[] | undefined): SectionItem[] {
     }))
 }
 
+/** Coordinates the to embed url behavior for this component. */
 function toEmbedUrl(url: string): string {
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/)
   if (yt) return `https://www.youtube.com/embed/${yt[1]}`
@@ -312,8 +321,10 @@ export function DocumentViewer({
 }) {
   const [previewDoc, setPreviewDoc] = useState<string | null>(null)
 
+  /** Returns the derived extension value used by this workflow. */
   const getExtension = (url: string) => url.split('.').pop()?.toLowerCase().split('?')[0] || ''
 
+  /** Returns the derived file type value used by this workflow. */
   const getFileType = (url: string) => {
     const extension = getExtension(url)
     const typeMap: Record<string, string> = {
@@ -328,6 +339,7 @@ export function DocumentViewer({
     return typeMap[extension] || 'Document'
   }
 
+  /** Returns the derived file icon value used by this workflow. */
   const getFileIcon = (url: string) => {
     const extension = getExtension(url)
     const iconMap: Record<string, string> = {
@@ -342,6 +354,7 @@ export function DocumentViewer({
     return iconMap[extension] || '📁'
   }
 
+  /** Returns the derived display name value used by this workflow. */
   const getDisplayName = (url: string) => {
     const raw = url.split('/').pop() || 'Document'
     try {
@@ -351,6 +364,7 @@ export function DocumentViewer({
     }
   }
 
+  /** Returns the derived preview src value used by this workflow. */
   const getPreviewSrc = (url: string) => {
     const extension = getExtension(url)
     if (extension === 'pdf') {
@@ -473,7 +487,9 @@ function ProductShowcase({ items }: { items: SectionItem[] }) {
   const selected = items[selectedIndex]
   const visibleThumbs = items.slice(thumbStart, thumbStart + THUMBS_VISIBLE)
 
+  /** Coordinates the scroll thumbs up behavior for this component. */
   const scrollThumbsUp = () => setThumbStart((s) => Math.max(0, s - 1))
+  /** Coordinates the scroll thumbs down behavior for this component. */
   const scrollThumbsDown = () =>
     setThumbStart((s) => Math.min(Math.max(0, items.length - THUMBS_VISIBLE), s + 1))
 
@@ -563,7 +579,9 @@ function VideoShowcase({ videos, productItems }: { videos: string[]; productItem
 
   const visibleThumbs = filtered.slice(thumbStart, thumbStart + THUMBS_VISIBLE)
 
+  /** Coordinates the scroll thumbs up behavior for this component. */
   const scrollThumbsUp = () => setThumbStart((s) => Math.max(0, s - 1))
+  /** Coordinates the scroll thumbs down behavior for this component. */
   const scrollThumbsDown = () =>
     setThumbStart((s) => Math.min(Math.max(0, filtered.length - THUMBS_VISIBLE), s + 1))
 
@@ -659,7 +677,9 @@ function CatalogueCards({ documents, title = "Product Catalogues" }: { documents
 
   const visibleDocs = showAll ? filtered : filtered.slice(0, VISIBLE)
 
+  /** Returns the derived extension value used by this workflow. */
   const getExtension = (url: string) => url.split('.').pop()?.toLowerCase().split('?')[0] || ''
+  /** Returns the derived display name value used by this workflow. */
   const getDisplayName = (url: string) => {
     const raw = url.split('/').pop() || 'Document'
     try {
@@ -668,11 +688,13 @@ function CatalogueCards({ documents, title = "Product Catalogues" }: { documents
       return raw
     }
   }
+  /** Returns the derived file type value used by this workflow. */
   const getFileType = (url: string) => {
     const ext = getExtension(url)
     const map: Record<string, string> = { pdf: 'PDF', doc: 'Word', docx: 'Word', xls: 'Excel', xlsx: 'Excel', ppt: 'PowerPoint', pptx: 'PowerPoint' }
     return map[ext] || 'Document'
   }
+  /** Returns the derived preview src value used by this workflow. */
   const getPreviewSrc = (url: string) => {
     const ext = getExtension(url)
     if (ext === 'pdf') return `${url}#toolbar=0`

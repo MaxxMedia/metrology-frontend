@@ -1,4 +1,6 @@
 "use client"
+/** Implements the suppliers supplier row card interface and its related behavior. */
+
 
 import Link from "next/link"
 import Image from "next/image"

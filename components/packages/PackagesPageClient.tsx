@@ -1,4 +1,6 @@
 "use client";
+/** Implements the packages packages page client component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -18,6 +20,7 @@ import {
 // Keep the types but fetch data from API
 type PlanTier = string;
 
+/** Coordinates the refresh local user behavior for this component. */
 async function refreshLocalUser() {
   const token = localStorage.getItem("token");
   if (!token) return;
@@ -38,6 +41,7 @@ async function refreshLocalUser() {
   }
 }
 
+/** Renders the feature cell interface. */
 function FeatureCell({ value }: { value: FeatureValue }) {
   if (value === true) {
     return (
@@ -58,6 +62,7 @@ function FeatureCell({ value }: { value: FeatureValue }) {
   return <span className="text-sm text-[#2a3d47]">{value}</span>;
 }
 
+/** Renders the section heading interface. */
 function SectionHeading({
   title,
   subtitle,
@@ -83,6 +88,7 @@ function FreePlanCard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  /** Handles the continue interaction and its related state changes. */
   const handleContinue = async () => {
     setLoading(true);
     setError("");
@@ -157,6 +163,7 @@ type SponsoredPackage = ApiPackage & {
   features?: string[];
 };
 
+/** Renders the pay button interface. */
 function PayButton({
   label,
   packageType,
@@ -191,6 +198,7 @@ function PayButton({
       ? "bg-[#004d73] hover:bg-[#003a59] text-white"
       : "bg-[#2a3d47] hover:bg-[#1f2d34] text-white";
 
+  /** Handles the click interaction and its related state changes. */
   const handleClick = async () => {
     if (isCurrentPlan || isActiveMonthlyPackage) return;
 
@@ -253,6 +261,7 @@ function PayButton({
   );
 }
 
+/** Renders the packages page client interface. */
 export default function PackagesPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -289,6 +298,7 @@ export default function PackagesPageClient() {
 
   // Fetch packages from API
   useEffect(() => {
+    /** Loads packages for the current workflow. */
     async function fetchPackages() {
       try {
         // Public, unauthenticated endpoint — do NOT point this at /api/admin/packages,
@@ -345,6 +355,7 @@ export default function PackagesPageClient() {
   }, []);
 
   useEffect(() => {
+    /** Loads current plan for the current workflow. */
     async function loadCurrentPlan() {
       const token = localStorage.getItem("token");
       if (!token) {

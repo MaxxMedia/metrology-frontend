@@ -1,3 +1,4 @@
+/** Implements the article slug page and its route-specific behavior. */
 import Image from "next/image"
 import { notFound } from "next/navigation"
 
@@ -31,6 +32,7 @@ async function getArticle(slug: string): Promise<Article> {
   return res.json()
 }
 
+/** Renders the article slug page interface. */
 export default async function ArticleSlugPage({
   params,
 }: {

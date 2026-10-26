@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin users sub admin page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -28,6 +30,7 @@ interface SubAdmin {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+/** Coordinates the auth headers behavior for this workflow. */
 function authHeaders() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     return {
@@ -36,6 +39,7 @@ function authHeaders() {
     };
 }
 
+/** Renders the sub admin page interface. */
 export default function SubAdminPage() {
     const router = useRouter();
     const [admins, setAdmins] = useState<SubAdmin[]>([]);
@@ -43,6 +47,7 @@ export default function SubAdminPage() {
     const [error, setError] = useState("");
     const [busyId, setBusyId] = useState<number | null>(null);
 
+    /** Loads sub admins for the current workflow. */
     async function fetchSubAdmins() {
         setLoading(true);
         setError("");
@@ -68,6 +73,7 @@ export default function SubAdminPage() {
         fetchSubAdmins();
     }, []);
 
+    /** Handles the toggle status interaction and its related state changes. */
     async function handleToggleStatus(admin: SubAdmin) {
         setBusyId(admin.id);
         try {
@@ -89,6 +95,7 @@ export default function SubAdminPage() {
         }
     }
 
+    /** Handles the delete interaction and its related state changes. */
     async function handleDelete(admin: SubAdmin) {
         if (!confirm(`Delete sub admin "${admin.email}"? This cannot be undone.`)) return;
         setBusyId(admin.id);

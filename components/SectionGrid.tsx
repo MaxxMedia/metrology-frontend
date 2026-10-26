@@ -1,4 +1,6 @@
 "use client"
+/** Implements the section grid component and its related interface behavior. */
+
 
 import ArticleCard from "./ArticleCard"
 
@@ -7,6 +9,7 @@ type SectionGridProps = {
   posts: any[]
 }
 
+/** Renders the section grid interface. */
 export default function SectionGrid({ title, posts }: SectionGridProps) {
   return (
     <section className="mt-8">

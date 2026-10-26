@@ -1,10 +1,13 @@
 'use client'
+/** Provides the reusable tooltip UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the tooltip provider interface. */
 function TooltipProvider({
   delayDuration = 0,
   ...props
@@ -18,6 +21,7 @@ function TooltipProvider({
   )
 }
 
+/** Renders the tooltip interface. */
 function Tooltip({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Root>) {
@@ -28,12 +32,14 @@ function Tooltip({
   )
 }
 
+/** Renders the tooltip trigger interface. */
 function TooltipTrigger({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
 }
 
+/** Renders the tooltip content interface. */
 function TooltipContent({
   className,
   sideOffset = 0,

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin webinar page and its route-specific behavior. */
+
 
 import { useEffect, useState, useCallback } from "react";
 import {
@@ -22,6 +24,7 @@ import AdminWebinarForm from "@/components/Adminwebinarform";
 
 const DEFAULT_API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
+/** Coordinates the auth headers behavior for this workflow. */
 function authHeaders(extra?: Record<string, string>): Record<string, string> {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     return {
@@ -92,6 +95,7 @@ const STATUS_STYLES: Record<string, string> = {
     ARCHIVED: "bg-slate-100 text-slate-500",
 };
 
+/** Renders the status badge interface. */
 function StatusBadge({ status }: StatusBadgeProps) {
     return (
         <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLES[status] || "bg-slate-100 text-slate-600"}`}>
@@ -100,6 +104,7 @@ function StatusBadge({ status }: StatusBadgeProps) {
     );
 }
 
+/** Renders the icon button interface. */
 function IconButton({ icon: Icon, label, onClick, tone = "default", disabled }: IconButtonProps) {
     const tones: Record<string, string> = {
         default: "text-slate-500 hover:bg-slate-100 hover:text-slate-700",
@@ -122,6 +127,7 @@ function IconButton({ icon: Icon, label, onClick, tone = "default", disabled }: 
     );
 }
 
+/** Renders the admin webinar list page interface. */
 export default function AdminWebinarListPage({
     apiBase = DEFAULT_API_BASE,
 }: AdminWebinarListPageProps) {
@@ -182,6 +188,7 @@ export default function AdminWebinarListPage({
         loadWebinars();
     }, [loadWebinars]);
 
+    /** Coordinates the run action behavior for this workflow. */
     const runAction = async (id: string, path: string, method: string = "PUT", body?: unknown) => {
         setBusyId(id);
         try {
@@ -203,6 +210,7 @@ export default function AdminWebinarListPage({
         }
     };
 
+    /** Handles the delete interaction and its related state changes. */
     const handleDelete = async (id: string, title: string) => {
         if (!window.confirm(`Delete "${title}"? This can't be undone.`)) return;
         setBusyId(id);
@@ -222,21 +230,25 @@ export default function AdminWebinarListPage({
         }
     };
 
+    /** Submits the reject data to its destination. */
     const submitReject = (id: string) => {
         if (!rejectReason.trim()) return;
         runAction(id, "/reject", "PUT", { reason: rejectReason.trim() });
     };
 
+    /** Handles the create new interaction and its related state changes. */
     const handleCreateNew = () => {
         setView("create");
         setEditingId(null);
     };
 
+    /** Handles the edit interaction and its related state changes. */
     const handleEdit = (id: string | number) => {
         setView("edit");
         setEditingId(String(id));
     };
 
+    /** Handles the form saved interaction and its related state changes. */
     const handleFormSaved = () => {
         setView("list");
         setEditingId(null);
@@ -244,6 +256,7 @@ export default function AdminWebinarListPage({
         loadStats();
     };
 
+    /** Handles the cancel interaction and its related state changes. */
     const handleCancel = () => {
         setView("list");
         setEditingId(null);

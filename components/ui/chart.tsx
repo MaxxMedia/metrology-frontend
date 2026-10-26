@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable chart UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as RechartsPrimitive from 'recharts'
@@ -24,6 +26,7 @@ type ChartContextProps = {
 
 const ChartContext = React.createContext<ChartContextProps | null>(null)
 
+/** Provides the chart hook for this component workflow. */
 function useChart() {
   const context = React.useContext(ChartContext)
 
@@ -34,6 +37,7 @@ function useChart() {
   return context
 }
 
+/** Renders the chart container interface. */
 function ChartContainer({
   id,
   className,
@@ -69,6 +73,7 @@ function ChartContainer({
   )
 }
 
+/** Renders the chart style interface. */
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([, config]) => config.theme || config.color,
@@ -104,6 +109,7 @@ ${colorConfig
 
 const ChartTooltip = RechartsPrimitive.Tooltip
 
+/** Renders the chart tooltip content interface. */
 function ChartTooltipContent({
   active,
   payload,
@@ -250,6 +256,7 @@ function ChartTooltipContent({
 
 const ChartLegend = RechartsPrimitive.Legend
 
+/** Renders the chart legend content interface. */
 function ChartLegendContent({
   className,
   hideIcon = false,

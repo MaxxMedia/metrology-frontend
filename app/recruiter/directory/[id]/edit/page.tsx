@@ -1,4 +1,6 @@
 "use client";
+/** Implements the recruiter directory id edit page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -13,6 +15,7 @@ import {
 } from "@/lib/packageLimits";
 import { PlanGatedSection } from "@/components/recruiter/PlanGatedSection";
 
+/** Uploads the file asset and returns its result to the form. */
 async function uploadFile(file: File): Promise<string> {
   const formData = new FormData();
   formData.append("image", file);
@@ -24,6 +27,7 @@ async function uploadFile(file: File): Promise<string> {
   return data.imageUrl;
 }
 
+/** Uploads the document asset and returns its result to the form. */
 async function uploadDocument(file: File): Promise<string> {
   const formData = new FormData();
   formData.append("document", file);
@@ -52,6 +56,7 @@ type GalleryItem = {
   description: string;
 };
 
+/** Renders the edit directory page interface. */
 export default function EditDirectoryPage() {
   const router = useRouter();
   const params = useParams();
@@ -118,6 +123,7 @@ export default function EditDirectoryPage() {
   }, []);
 
   useEffect(() => {
+    /** Loads eligibility for the current workflow. */
     async function loadEligibility() {
       try {
         const token = localStorage.getItem("token");
@@ -132,6 +138,7 @@ export default function EditDirectoryPage() {
   }, []);
 
   useEffect(() => {
+    /** Loads industries for the current workflow. */
     async function fetchIndustries() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/industries`);
       const data = await res.json();
@@ -142,6 +149,7 @@ export default function EditDirectoryPage() {
   }, []);
 
   useEffect(() => {
+    /** Loads directory for the current workflow. */
     async function loadDirectory() {
       try {
         const token = localStorage.getItem("token");
@@ -223,6 +231,7 @@ export default function EditDirectoryPage() {
     loadDirectory();
   }, [id]);
 
+  /** Handles the industry select interaction and its related state changes. */
   const handleIndustrySelect = async (levelIndex: number, id: number) => {
     const newSelected = [...industrySelected.slice(0, levelIndex), id];
     const newLevels = industryLevels.slice(0, levelIndex + 1);
@@ -240,6 +249,7 @@ export default function EditDirectoryPage() {
     }
   };
 
+  /** Updates the array item record or interface state. */
   const updateArrayItem = (field: string, index: number, value: string) => {
     setDirectory((prev: any) => {
       const arr = [...(prev[field] || [])];
@@ -248,6 +258,7 @@ export default function EditDirectoryPage() {
     });
   };
 
+  /** Creates the array item record or interface element. */
   const addArrayItem = (field: string) => {
     setDirectory((prev: any) => ({
       ...prev,
@@ -255,6 +266,7 @@ export default function EditDirectoryPage() {
     }));
   };
 
+  /** Removes the array item record or interface element. */
   const removeArrayItem = (field: string, index: number) => {
     setDirectory((prev: any) => ({
       ...prev,
@@ -262,6 +274,7 @@ export default function EditDirectoryPage() {
     }));
   };
 
+  /** Handles the image upload interaction and its related state changes. */
   const handleImageUpload = async (
     field: string,
     index: number,
@@ -332,6 +345,7 @@ export default function EditDirectoryPage() {
     }));
   };
 
+  /** Handles the catalogue upload interaction and its related state changes. */
   const handleCatalogueUpload = async (field: string, index: number, file: File) => {
     setUploadingCatalogue(true);
     try {
@@ -367,6 +381,7 @@ export default function EditDirectoryPage() {
     setDirectory({ ...directory, machineryImages: arr });
   };
 
+  /** Saves the changes data for this workflow. */
   async function saveChanges() {
     if (!directory?.isLiveEditable) {
       setSaveError("This directory is pending approval and cannot be edited yet.");
@@ -430,6 +445,7 @@ export default function EditDirectoryPage() {
         .filter(Boolean)
         .join(", ");
 
+      /** Coordinates the clean array behavior for this workflow. */
       const cleanArray = (arr: any[]) => arr.filter((item) => item && item.trim().length > 0);
 
       // Clean gallery arrays - remove items without image
@@ -1675,6 +1691,7 @@ function Section({ title, children }: any) {
   );
 }
 
+/** Renders the gallery section interface. */
 function GallerySection({
   field,
   items,

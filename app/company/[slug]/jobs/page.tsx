@@ -1,4 +1,6 @@
 ﻿"use client"
+/** Implements the company slug jobs page and its route-specific behavior. */
+
 
 import Image from "next/image"
 import Link from "next/link"
@@ -29,6 +31,7 @@ type Company = {
   jobs: Job[]
 }
 
+/** Renders the company jobs page interface. */
 export default function CompanyJobsPage() {
   const { slug } = useParams<{ slug: string }>()
   const [company, setCompany] = useState<Company | null>(null)
@@ -36,6 +39,7 @@ export default function CompanyJobsPage() {
   const [following, setFollowing] = useState(false)
 
   useEffect(() => {
+    /** Coordinates the load behavior for this workflow. */
     async function load() {
       try {
         const res = await fetch(
@@ -72,6 +76,7 @@ export default function CompanyJobsPage() {
     if (slug) load()
   }, [slug])
 
+  /** Coordinates the toggle follow behavior for this workflow. */
   async function toggleFollow() {
     if (!company) return;
 

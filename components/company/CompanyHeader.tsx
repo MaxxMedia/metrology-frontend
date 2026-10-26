@@ -1,4 +1,6 @@
 ﻿"use client";
+/** Implements the company company header component and its related interface behavior. */
+
 
 import Image from "next/image";
 import Link from "next/link";
@@ -26,6 +28,7 @@ type CompanyHeaderProps = {
   onFollow?: () => void;
 };
 
+/** Renders the company header interface. */
 export default function CompanyHeader({
   company,
   isFollowing = false,
@@ -65,6 +68,7 @@ export default function CompanyHeader({
     return () => { cancelled = true }
   }, [company.id])
 
+  /** Saves the company name data for this workflow. */
   async function saveCompanyName(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const nextName = nameDraft.trim()

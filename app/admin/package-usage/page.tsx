@@ -1,6 +1,8 @@
 // app/admin/recruiter-usage/page.tsx
 
 "use client";
+/** Implements the admin package usage page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -111,6 +113,7 @@ const TAB_ACTIVE_STYLES: Record<PlanTab, string> = {
     enterprise: "bg-amber-600 text-white",
 };
 
+/** Coordinates the plan style behavior for this workflow. */
 function planStyle(plan: string) {
     return PLAN_STYLES[plan] ?? PLAN_STYLES.free;
 }
@@ -130,6 +133,7 @@ export default function AdminRecruiterUsagePage() {
     useEffect(() => {
         fetchData();
     }, []);
+    /** Loads data for the current workflow. */
     async function fetchData() {
         try {
             const token = localStorage.getItem("token");
@@ -603,6 +607,7 @@ function initials(name: string) {
         .join("");
 }
 
+/** Renders the recruiter card interface. */
 function RecruiterCard({
     recruiter,
     expanded,
@@ -771,6 +776,7 @@ function RecruiterDetails({ recruiter }: { recruiter: RecruiterUsage }) {
     );
 }
 
+/** Renders the row interface. */
 function Row({ label, value, emphasize = false }: { label: string; value: string; emphasize?: boolean }) {
     return (
         <div className="flex items-center justify-between gap-3">
@@ -780,6 +786,7 @@ function Row({ label, value, emphasize = false }: { label: string; value: string
     );
 }
 
+/** Renders the feature interface. */
 function Feature({ ok, label }: { ok: boolean; label: string }) {
     return (
         <div className="flex items-center gap-1.5">

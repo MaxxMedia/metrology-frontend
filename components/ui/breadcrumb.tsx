@@ -1,13 +1,16 @@
+/** Provides the reusable breadcrumb UI primitive and its interaction behavior. */
 import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { ChevronRight, MoreHorizontal } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the breadcrumb interface. */
 function Breadcrumb({ ...props }: React.ComponentProps<'nav'>) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />
 }
 
+/** Renders the breadcrumb list interface. */
 function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
   return (
     <ol
@@ -21,6 +24,7 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
   )
 }
 
+/** Renders the breadcrumb item interface. */
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<'li'>) {
   return (
     <li
@@ -31,6 +35,7 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<'li'>) {
   )
 }
 
+/** Renders the breadcrumb link interface. */
 function BreadcrumbLink({
   asChild,
   className,
@@ -49,6 +54,7 @@ function BreadcrumbLink({
   )
 }
 
+/** Renders the breadcrumb page interface. */
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
   return (
     <span
@@ -62,6 +68,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
   )
 }
 
+/** Renders the breadcrumb separator interface. */
 function BreadcrumbSeparator({
   children,
   className,
@@ -80,6 +87,7 @@ function BreadcrumbSeparator({
   )
 }
 
+/** Renders the breadcrumb ellipsis interface. */
 function BreadcrumbEllipsis({
   className,
   ...props

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the network suggestions page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { getSuggestions } from "@/services/connection.service";
@@ -13,10 +15,12 @@ interface User {
   mutualCount?: number;
 }
 
+/** Renders the suggestions page interface. */
 export default function SuggestionsPage() {
   const [suggestions, setSuggestions] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
+  /** Loads suggestions for the current workflow. */
   const fetchSuggestions = async () => {
     try {
       setLoading(true);

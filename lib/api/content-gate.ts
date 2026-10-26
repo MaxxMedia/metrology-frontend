@@ -1,3 +1,4 @@
+/** Provides API helpers for content gate requests. */
 import axios from 'axios';
 import { ContactFormData, ApiResponse } from './contact';
 

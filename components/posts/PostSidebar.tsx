@@ -1,5 +1,7 @@
 // components/post/PostSidebar.tsx
 "use client";
+/** Implements the posts post sidebar component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -28,6 +30,7 @@ interface Props {
   categorySlug?: string;
 }
 
+/** Renders the post sidebar interface. */
 export default function PostSidebar({ currentPostId, categorySlug }: Props) {
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [popularPosts, setPopularPosts] = useState<Post[]>([]);
@@ -39,6 +42,7 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
 
   // Better error handling and loading states
   useEffect(() => {
+    /** Loads sidebar data for the current workflow. */
     async function fetchSidebarData() {
       setLoading(true);
       try {
@@ -136,6 +140,7 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
     fetchSidebarData();
   }, [currentPostId, categorySlug]);
 
+  /** Returns the derived image url value used by this workflow. */
   const getImageUrl = (post: Post) => {
     if (!post.imageUrl) return "/placeholder.svg";
     return post.imageUrl.startsWith("http")
@@ -143,6 +148,7 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
       : `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`;
   };
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return "";
     return new Date(dateStr).toLocaleDateString("en-US", {
@@ -152,18 +158,21 @@ export default function PostSidebar({ currentPostId, categorySlug }: Props) {
     });
   };
 
+  /** Handles the search submit interaction and its related state changes. */
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
     window.location.href = `/blog?search=${encodeURIComponent(searchTerm.trim())}`;
   };
 
+  /** Filters the by search items using the current selection rules. */
   const filterBySearch = (posts: Post[]) => {
     if (!searchTerm.trim()) return posts;
     const term = searchTerm.toLowerCase();
     return posts.filter((p) => p.title.toLowerCase().includes(term));
   };
 
+  /** Coordinates the render post list behavior for this component. */
   const renderPostList = (posts: Post[]) => {
     if (loading) {
       return (

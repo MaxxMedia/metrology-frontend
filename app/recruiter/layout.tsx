@@ -1,4 +1,6 @@
 "use client";
+/** Defines the shared layout and access structure for recruiter. */
+
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -13,6 +15,7 @@ type FreshUser = {
   [key: string]: any;
 };
 
+/** Renders the recruiter layout interface. */
 export default function RecruiterLayout({
   children,
 }: {
@@ -24,6 +27,7 @@ export default function RecruiterLayout({
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
+    /** Checks the access data against the requirements used by this workflow. */
     const checkAccess = async () => {
       try {
         const token = localStorage.getItem("token");

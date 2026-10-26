@@ -1,3 +1,4 @@
+/** Shared frontend API configuration and request helpers. */
 import axios from "axios";
 
 const api = axios.create({

@@ -1,5 +1,7 @@
 ﻿// app/post/[slug]/page.tsx
 "use client"
+/** Implements the post slug page and its route-specific behavior. */
+
 
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
@@ -112,6 +114,7 @@ function getYoutubeEmbed(url?: string) {
   return null
 }
 
+/** Coordinates the sanitize image url behavior for this workflow. */
 function sanitizeImageUrl(input?: string | null) {
   if (!input) return "/placeholder.svg"
 
@@ -149,6 +152,7 @@ export default function PostDetailsPage() {
 
   /* ================= SCROLL & HEADER AWARENESS ================= */
   useEffect(() => {
+    /** Handles the scroll interaction and its related state changes. */
     const onScroll = () => {
       const currentY = window.scrollY || document.documentElement.scrollTop
       setShowBackToTop(currentY > 400)
@@ -187,6 +191,7 @@ export default function PostDetailsPage() {
 
   /* ================= FETCH POST BY SLUG ================= */
   useEffect(() => {
+    /** Loads post for the current workflow. */
     async function fetchPost() {
       if (!slugValue) {
         setLoading(false)
@@ -197,6 +202,7 @@ export default function PostDetailsPage() {
       setError(null)
 
       try {
+        /** Returns the derived post value used by this workflow. */
         const getPost = (payload: any): Post | null => {
           const candidate = payload?.data?.post ?? payload?.post ?? payload?.data ?? payload
           return candidate && typeof candidate === "object" && !Array.isArray(candidate) &&
@@ -272,6 +278,7 @@ export default function PostDetailsPage() {
 
   /* ================= FETCH RELATED POSTS ================= */
   useEffect(() => {
+    /** Loads related for the current workflow. */
     async function fetchRelated() {
       if (!post) return
       try {
@@ -308,13 +315,16 @@ export default function PostDetailsPage() {
     let paused = false
     let animId: number | null = null
 
+    /** Coordinates the ease in out quad behavior for this workflow. */
     const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
 
+    /** Coordinates the animate to behavior for this workflow. */
     const animateTo = (target: number, duration: number, onDone?: () => void) => {
       const start = scrollContainer.scrollLeft
       const distance = target - start
       const startTime = performance.now()
 
+      /** Coordinates the frame behavior for this workflow. */
       const frame = (now: number) => {
         const elapsed = now - startTime
         const t = Math.min(elapsed / duration, 1)
@@ -330,6 +340,7 @@ export default function PostDetailsPage() {
       animId = requestAnimationFrame(frame)
     }
 
+    /** Coordinates the tick behavior for this workflow. */
     const tick = () => {
       if (paused || !scrollContainer || animId !== null) return
 
@@ -350,7 +361,9 @@ export default function PostDetailsPage() {
 
     const intervalId = window.setInterval(tick, 3500)
 
+    /** Coordinates the pause behavior for this workflow. */
     const pause = () => { paused = true }
+    /** Coordinates the resume behavior for this workflow. */
     const resume = () => { paused = false }
 
     scrollContainer.addEventListener("mouseenter", pause)
@@ -372,6 +385,7 @@ export default function PostDetailsPage() {
 
   /* ================= FETCH COMMENTS ================= */
   useEffect(() => {
+    /** Loads comments for the current workflow. */
     async function fetchComments() {
       if (!post) return
 
@@ -466,6 +480,7 @@ export default function PostDetailsPage() {
 
   const author = post.author
 
+  /** Coordinates the related image url behavior for this workflow. */
   const relatedImageUrl = (p: Post) =>
     sanitizeImageUrl(p.imageUrl)
 

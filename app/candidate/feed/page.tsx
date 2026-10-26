@@ -1,9 +1,12 @@
 "use client";
+/** Implements the candidate feed page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import CandidateLinkedInProfile from "@/components/candidate/CandidateLinkedInProfile";
 import { fetchMyCandidateProfile } from "@/lib/candidateProfile";
 
+/** Renders the candidate feed page interface. */
 export default function CandidateFeedPage() {
   const [username, setUsername] = useState<string | null>(null);
   const [profileUnavailable, setProfileUnavailable] = useState(false);

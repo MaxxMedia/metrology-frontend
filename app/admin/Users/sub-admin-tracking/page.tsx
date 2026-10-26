@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin users sub admin tracking page and its route-specific behavior. */
+
 
 import { useState } from "react";
 import {
@@ -43,18 +45,22 @@ const overview = {
     bulkImports: 0,
 };
 
+/** Normalizes the month label value for consistent display or use. */
 function formatMonthLabel(year: number, month: number) {
     return new Date(year, month, 1).toLocaleString("en-US", { month: "long", year: "numeric" });
 }
 
+/** Coordinates the days in month behavior for this workflow. */
 function daysInMonth(year: number, month: number) {
     return new Date(year, month + 1, 0).getDate();
 }
 
+/** Coordinates the pad behavior for this workflow. */
 function pad(n: number) {
     return n.toString().padStart(2, "0");
 }
 
+/** Renders the sub admin tracking page interface. */
 export default function SubAdminTrackingPage() {
     const today = new Date();
     const [calYear, setCalYear] = useState(today.getFullYear());
@@ -66,6 +72,7 @@ export default function SubAdminTrackingPage() {
         subAdmins[0] ?? null
     );
 
+    /** Coordinates the go to prev month behavior for this workflow. */
     function goToPrevMonth() {
         setCalMonth((m) => {
             if (m === 0) {
@@ -76,6 +83,7 @@ export default function SubAdminTrackingPage() {
         });
     }
 
+    /** Coordinates the go to next month behavior for this workflow. */
     function goToNextMonth() {
         setCalMonth((m) => {
             if (m === 11) {
@@ -364,6 +372,7 @@ function SummaryCard({ label, value, icon }: { label: string; value: number | st
     );
 }
 
+/** Renders the stat card interface. */
 function StatCard({ label, value }: { label: string; value: number | string }) {
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -373,6 +382,7 @@ function StatCard({ label, value }: { label: string; value: number | string }) {
     );
 }
 
+/** Renders the perf card interface. */
 function PerfCard({ label, value, icon }: { label: string; value: number | string; icon: React.ReactNode }) {
     return (
         <div className="border border-gray-100 rounded-xl p-4">

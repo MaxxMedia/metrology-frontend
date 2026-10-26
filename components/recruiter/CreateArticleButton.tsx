@@ -1,10 +1,13 @@
 "use client";
+/** Implements the recruiter create article button component and its related interface behavior. */
+
 
 import { useState } from "react";
 import Link from "next/link";
 import PackageLimitModal from "@/components/recruiter/PackageLimitModal";
 import type { ContentLimitEligibility } from "@/lib/packageLimits";
 
+/** Renders the create article button interface. */
 export default function CreateArticleButton({
   eligibility,
   className = "bg-[#0073FF] hover:bg-[#0060D0] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors",

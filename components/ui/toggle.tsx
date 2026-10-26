@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable toggle UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as TogglePrimitive from '@radix-ui/react-toggle'
@@ -28,6 +30,7 @@ const toggleVariants = cva(
   },
 )
 
+/** Renders the toggle interface. */
 function Toggle({
   className,
   variant,

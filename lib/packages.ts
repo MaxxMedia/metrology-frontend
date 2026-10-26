@@ -1,3 +1,4 @@
+/** Defines subscription and advertising package tiers, features, prices, and currency formatting. */
 export type PlanTier = "free" | "basic" | "professional" | "enterprise";
 
 export type FeatureValue = boolean | string;

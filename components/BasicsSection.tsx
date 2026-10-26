@@ -1,4 +1,6 @@
 "use client";
+/** Implements the basics section component and its related interface behavior. */
+
 
 import Link from "next/link";
 import Image from "next/image";
@@ -45,6 +47,7 @@ type Props = {
   posts: Post[];
 };
 
+/** Returns the derived category slug value used by this workflow. */
 function getCategorySlug(post: Post): string {
   const slug =
     typeof post.category === "object" && post.category !== null
@@ -53,6 +56,7 @@ function getCategorySlug(post: Post): string {
   return slug.toLowerCase().trim();
 }
 
+/** Returns the derived author name value used by this workflow. */
 function getAuthorName(post: Post): string {
   if (post.author && typeof post.author === "object" && post.author.name) {
     return post.author.name;
@@ -62,6 +66,7 @@ function getAuthorName(post: Post): string {
   return "rstheme";
 }
 
+/** Renders the pulse icon interface. */
 function PulseIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -79,6 +84,7 @@ function PulseIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the calendar icon interface. */
 function CalendarIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -95,6 +101,7 @@ function CalendarIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the arrow icon interface. */
 function ArrowIcon({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 18 12" className={className} aria-hidden fill="currentColor">
@@ -107,6 +114,7 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the diamond dot interface. */
 function DiamondDot({ className = "" }: { className?: string }) {
   return (
     <span
@@ -116,6 +124,7 @@ function DiamondDot({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the chevron left interface. */
 function ChevronLeft() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-5 h-5" aria-hidden>
@@ -124,6 +133,7 @@ function ChevronLeft() {
   );
 }
 
+/** Renders the chevron right interface. */
 function ChevronRight() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-5 h-5" aria-hidden>
@@ -132,6 +142,7 @@ function ChevronRight() {
   );
 }
 
+/** Renders the basics section interface. */
 export default function BasicsSection({ posts }: Props) {
   const swiperRef = useRef<SwiperType | null>(null);
   const [isBeginning, setIsBeginning] = useState(true);
@@ -177,12 +188,14 @@ export default function BasicsSection({ posts }: Props) {
     return null;
   }
 
+  /** Coordinates the image url behavior for this component. */
   const imageUrl = (post: Post) => {
     if (post.imageUrl?.startsWith("http")) return post.imageUrl;
     if (post.imageUrl) return `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`;
     return "/placeholder.jpg";
   };
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (post: Post) => {
     const raw = post.publishedAt || post.createdAt;
     if (!raw) return null;

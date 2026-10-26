@@ -1,6 +1,8 @@
 // app/profile/experience/page.tsx
 
 'use client';
+/** Implements the profile experience page and its route-specific behavior. */
+
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -8,6 +10,7 @@ import Image from 'next/image';
 import { requestToJoinCompany, getMyTeamStatus, TeamMember } from '@/lib/teamService';
 import { Search, Briefcase, Building2, Calendar, CheckCircle, XCircle, Clock } from 'lucide-react';
 
+/** Renders the experience page interface. */
 export default function ExperiencePage() {
     const router = useRouter();
     const [step, setStep] = useState<'search' | 'form' | 'status'>('search');
@@ -30,6 +33,7 @@ export default function ExperiencePage() {
         loadTeamStatus();
     }, []);
 
+    /** Loads team status for the current workflow. */
     async function loadTeamStatus() {
         try {
             const data = await getMyTeamStatus();
@@ -44,6 +48,7 @@ export default function ExperiencePage() {
         }
     }
 
+    /** Coordinates the search companies behavior for this workflow. */
     async function searchCompanies(query: string) {
         if (query.length < 2) {
             setSearchResults([]);
@@ -64,6 +69,7 @@ export default function ExperiencePage() {
         }
     }
 
+    /** Handles the company select interaction and its related state changes. */
     const handleCompanySelect = (company: any) => {
         setSelectedCompany(company);
         setStep('form');
@@ -71,6 +77,7 @@ export default function ExperiencePage() {
         setSearchQuery('');
     };
 
+    /** Handles the submit interaction and its related state changes. */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedCompany) return;

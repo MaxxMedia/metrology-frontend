@@ -1,9 +1,12 @@
 "use client"
+/** Implements the events listing component and its related interface behavior. */
+
 
 import Image from "next/image"
 import Link from "next/link"
 import { Post } from "@/types/Post"
 
+/** Renders the events listing interface. */
 export default function EventsListing({ posts }: { posts: Post[] }) {
   return (
     <section className="max-w-7xl mx-auto px-6 py-10">

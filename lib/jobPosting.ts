@@ -1,3 +1,4 @@
+/** Fetches backend eligibility for recruiter job and internship posting quotas. */
 export type JobPostingEligibility = {
   canPost: boolean;
   plan?: string;
@@ -23,6 +24,7 @@ export type JobPostingEligibilityResponse = JobPostingEligibility & {
   internship: JobPostingEligibility;
 };
 
+/** Loads the backend quota response for both job and internship posting. */
 export async function fetchJobPostingEligibility(
   token: string
 ): Promise<JobPostingEligibilityResponse> {

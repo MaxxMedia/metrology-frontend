@@ -1,5 +1,7 @@
+/** Implements the topics factory automation page and its route-specific behavior. */
 import TopicPage from "../TopicPage";
 
+/** Renders the factory automation page interface. */
 export default function FactoryAutomationPage() {
   return (
     <TopicPage

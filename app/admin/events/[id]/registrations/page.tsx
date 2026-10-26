@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin events id registrations page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
@@ -14,12 +16,14 @@ type Registration = {
   createdAt: string
 }
 
+/** Renders the event registrations page interface. */
 export default function EventRegistrationsPage() {
   const { id } = useParams()
   const [registrations, setRegistrations] = useState<Registration[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    /** Loads data for the current workflow. */
     const fetchData = async () => {
       try {
         const res = await fetch(

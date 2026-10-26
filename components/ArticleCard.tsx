@@ -1,4 +1,6 @@
 "use client"
+/** Implements the article card component and its related interface behavior. */
+
 
 import Link from "next/link"
 import Image from "next/image"
@@ -7,6 +9,7 @@ type ArticleCardProps = {
   post: any
 }
 
+/** Renders the article card interface. */
 export default function ArticleCard({ post }: ArticleCardProps) {
   const imageUrl =
     post.imageUrl && post.imageUrl.startsWith("http")

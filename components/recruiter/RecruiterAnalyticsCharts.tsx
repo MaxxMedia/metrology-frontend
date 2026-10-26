@@ -1,4 +1,6 @@
 "use client";
+/** Implements the recruiter recruiter analytics charts component and its related interface behavior. */
+
 
 import {
   Bar,
@@ -77,10 +79,12 @@ const topJobsConfig = {
   applications: { label: "Applications", color: "#00B5ED" },
 } satisfies ChartConfig;
 
+/** Coordinates the pie total behavior for this component. */
 function pieTotal(data: RecruiterAnalyticsSlice[]) {
   return data.reduce((sum, row) => sum + row.value, 0);
 }
 
+/** Renders the pie legend interface. */
 function PieLegend({ data }: { data: RecruiterAnalyticsSlice[] }) {
   const total = pieTotal(data);
   if (total === 0) {
@@ -109,6 +113,7 @@ function PieLegend({ data }: { data: RecruiterAnalyticsSlice[] }) {
   );
 }
 
+/** Renders the chart card interface. */
 function ChartCard({
   title,
   subtitle,
@@ -129,6 +134,7 @@ function ChartCard({
   );
 }
 
+/** Renders the recruiter analytics charts interface. */
 export default function RecruiterAnalyticsCharts({
   analytics,
   applicationsCount,
@@ -323,6 +329,7 @@ export default function RecruiterAnalyticsCharts({
   );
 }
 
+/** Renders the mini stat interface. */
 function MiniStat({
   label,
   value,

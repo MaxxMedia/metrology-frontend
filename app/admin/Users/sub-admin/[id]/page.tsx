@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin users sub admin id page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -27,6 +29,7 @@ interface SubAdminDetail {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+/** Coordinates the auth headers behavior for this workflow. */
 function authHeaders() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     return {
@@ -35,6 +38,7 @@ function authHeaders() {
     };
 }
 
+/** Renders the view sub admin page interface. */
 export default function ViewSubAdminPage() {
     const router = useRouter();
     const params = useParams();
@@ -48,6 +52,7 @@ export default function ViewSubAdminPage() {
 
     useEffect(() => {
         if (!id) return;
+        /** Coordinates the load behavior for this workflow. */
         async function load() {
             setLoading(true);
             setError("");

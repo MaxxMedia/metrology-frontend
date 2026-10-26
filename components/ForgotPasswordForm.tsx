@@ -1,9 +1,12 @@
 "use client"
+/** Implements the forgot password form component and its related interface behavior. */
+
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
+/** Renders the forgot password form interface. */
 export default function ForgotPasswordForm() {
   const router = useRouter()
 
@@ -12,6 +15,7 @@ export default function ForgotPasswordForm() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")

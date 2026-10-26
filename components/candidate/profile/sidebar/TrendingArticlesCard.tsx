@@ -1,14 +1,18 @@
 "use client";
+/** Implements the candidate profile sidebar trending articles card component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Eye, TrendingUp, ArrowRight } from "lucide-react";
 
+/** Renders the trending articles card interface. */
 export default function TrendingArticlesCard() {
   const [articles, setArticles] = useState<{ id: number; title: string; slug: string; views?: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    /** Loads trending for the current workflow. */
     async function loadTrending() {
       try {
         const res = await fetch(

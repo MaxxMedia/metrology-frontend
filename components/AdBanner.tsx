@@ -1,7 +1,10 @@
 "use client"
+/** Implements the ad banner component and its related interface behavior. */
+
 
 import Image from "next/image"
 
+/** Renders the ad banner interface. */
 export default function AdBanner() {
   return (
     <div className="w-full bg-gray-50 flex justify-center py-3 border-b border-gray-300">

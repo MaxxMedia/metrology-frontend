@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable sheet UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as SheetPrimitive from '@radix-ui/react-dialog'
@@ -6,28 +8,33 @@ import { XIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the sheet interface. */
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
 }
 
+/** Renders the sheet trigger interface. */
 function SheetTrigger({
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Trigger>) {
   return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
 }
 
+/** Renders the sheet close interface. */
 function SheetClose({
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Close>) {
   return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
 }
 
+/** Renders the sheet portal interface. */
 function SheetPortal({
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Portal>) {
   return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
 }
 
+/** Renders the sheet overlay interface. */
 function SheetOverlay({
   className,
   ...props
@@ -44,6 +51,7 @@ function SheetOverlay({
   )
 }
 
+/** Renders the sheet content interface. */
 function SheetContent({
   className,
   children,
@@ -81,6 +89,7 @@ function SheetContent({
   )
 }
 
+/** Renders the sheet header interface. */
 function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -91,6 +100,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the sheet footer interface. */
 function SheetFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -101,6 +111,7 @@ function SheetFooter({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the sheet title interface. */
 function SheetTitle({
   className,
   ...props
@@ -114,6 +125,7 @@ function SheetTitle({
   )
 }
 
+/** Renders the sheet description interface. */
 function SheetDescription({
   className,
   ...props

@@ -1,14 +1,18 @@
 "use client";
+/** Implements the popular news sidebar component and its related interface behavior. */
+
 
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Post } from "../types/Post";
 
+/** Renders the popular news sidebar interface. */
 export default function PopularNewsSidebar() {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
+    /** Coordinates the load behavior for this component. */
     async function load() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=6`
@@ -19,6 +23,7 @@ export default function PopularNewsSidebar() {
     load();
   }, []);
 
+  /** Coordinates the image url behavior for this component. */
   const imageUrl = (post: Post) =>
     post.imageUrl?.startsWith("http")
       ? post.imageUrl

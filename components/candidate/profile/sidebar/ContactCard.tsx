@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile sidebar contact card component and its related interface behavior. */
+
 
 import { Pencil, Mail, Globe } from "lucide-react";
 
@@ -8,6 +10,7 @@ interface ContactCardProps {
   onEditClick?: () => void;
 }
 
+/** Renders the contact card interface. */
 export default function ContactCard({ candidate, isOwner, onEditClick }: ContactCardProps) {
   return (
     <div className="bg-white rounded-xl border border-[#e0e0e0] p-6 shadow-sm relative">

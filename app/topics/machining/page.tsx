@@ -1,9 +1,11 @@
+/** Implements the topics machining page and its route-specific behavior. */
 import Link from "next/link"
 import EngineerListing from "@/components/topics/EngineerListing"
 import type { Post } from "@/types/Post"
 import TopicListing from "@/components/topics/TopicListing"
 import { resolveCategorySlug } from "@/lib/topic"
 
+/** Renders the machining page interface. */
 export default async function MachiningPage() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(resolveCategorySlug("machining"))}&limit=50`,

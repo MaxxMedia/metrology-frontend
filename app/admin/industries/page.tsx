@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin industries page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -33,6 +35,7 @@ type FlatRow = Industry & {
   childrenCount: number;
 };
 
+/** Coordinates the auth headers behavior for this workflow. */
 function authHeaders() {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   return {
@@ -41,6 +44,7 @@ function authHeaders() {
   };
 }
 
+/** Coordinates the slugify behavior for this workflow. */
 function slugify(name: string, parentSlug?: string | null) {
   const base =
     name
@@ -53,6 +57,7 @@ function slugify(name: string, parentSlug?: string | null) {
   return parentSlug ? `${parentSlug}-${base}` : base;
 }
 
+/** Builds the nested rows value used by the surrounding workflow. */
 function buildNestedRows(industries: Industry[]): FlatRow[] {
   const parentMap = new Map<number, Industry>();
   for (const item of industries) {
@@ -112,6 +117,7 @@ function buildNestedRows(industries: Industry[]): FlatRow[] {
   return rows;
 }
 
+/** Renders the industry management interface. */
 export default function IndustryManagement() {
   const router = useRouter();
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -132,6 +138,7 @@ export default function IndustryManagement() {
     setPage(1);
   }, [selectedParentFilter, typeFilter, searchQuery]);
 
+  /** Loads industries for the current workflow. */
   const fetchIndustries = async () => {
     try {
       setLoading(true);
@@ -192,6 +199,7 @@ export default function IndustryManagement() {
     selectedParentFilter || typeFilter !== "all" || searchQuery.trim()
   );
 
+  /** Clears the filters values and resets the related state. */
   const clearFilters = () => {
     setSelectedParentFilter("");
     setTypeFilter("all");
@@ -204,6 +212,7 @@ export default function IndustryManagement() {
     page * ADMIN_PAGE_SIZE
   );
 
+  /** Starts the edit workflow. */
   const startEdit = (item: Industry) => {
     setEditingIndustry(item);
     setForm({
@@ -215,6 +224,7 @@ export default function IndustryManagement() {
     nameInputRef.current?.focus();
   };
 
+  /** Handles the add sub industry interaction and its related state changes. */
   const handleAddSubIndustry = (parent: Industry) => {
     setEditingIndustry(null);
     setForm({ name: "", parentId: String(parent.id) });
@@ -223,12 +233,14 @@ export default function IndustryManagement() {
     nameInputRef.current?.focus();
   };
 
+  /** Cancels the edit operation and restores the appropriate interface state. */
   const cancelEdit = () => {
     setEditingIndustry(null);
     setForm({ name: "", parentId: "" });
     setMessage("");
   };
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
@@ -278,6 +290,7 @@ export default function IndustryManagement() {
     }
   };
 
+  /** Handles the delete interaction and its related state changes. */
   const handleDelete = async (id: number, name: string) => {
     if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
 

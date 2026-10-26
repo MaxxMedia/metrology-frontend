@@ -1,4 +1,6 @@
 "use client"
+/** Implements the candidate saved jobs page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -22,6 +24,7 @@ type SavedJob = {
   }
 }
 
+/** Renders the saved jobs page interface. */
 export default function SavedJobsPage() {
   useCandidateGuard()
 
@@ -29,6 +32,7 @@ export default function SavedJobsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    /** Loads saved jobs for the current workflow. */
     async function loadSavedJobs() {
       try {
         const token = localStorage.getItem("token")
@@ -48,6 +52,7 @@ export default function SavedJobsPage() {
     loadSavedJobs()
   }, [])
 
+  /** Handles the unsave interaction and its related state changes. */
   async function handleUnsave(jobId: number) {
     try {
       const token = localStorage.getItem("token")

@@ -1,4 +1,6 @@
 "use client"
+/** Implements the industry talks slug page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
@@ -88,6 +90,7 @@ function stripHtml(html?: string | null): string {
     .trim()
 }
 
+/** Builds the talk to post value used by the surrounding workflow. */
 function mapTalkToPost(inputData: any): Post {
   const data = inputData?.data && typeof inputData.data === "object" && (inputData.data.id || inputData.data.title)
     ? inputData.data
@@ -165,6 +168,7 @@ function mapTalkToPost(inputData: any): Post {
   }
 }
 
+/** Renders the post details page interface. */
 export default function PostDetailsPage() {
   const { slug } = useParams()
   const slugValue = Array.isArray(slug) ? slug[0] : slug
@@ -190,6 +194,7 @@ export default function PostDetailsPage() {
 
   /* ================= FETCH POST BY SLUG ================= */
   useEffect(() => {
+    /** Loads post for the current workflow. */
     async function fetchPost() {
       if (!slugValue) {
         setLoading(false)
@@ -286,6 +291,7 @@ export default function PostDetailsPage() {
 
   /* ================= FETCH RELATED INDUSTRY TALKS (same source as admin) ================= */
   useEffect(() => {
+    /** Loads related for the current workflow. */
     async function fetchRelated() {
       if (!post || post.category?.slug !== "industry-talks") return
       try {

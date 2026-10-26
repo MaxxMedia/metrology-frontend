@@ -1,4 +1,6 @@
 "use client"
+/** Implements the passion on wheels component and its related interface behavior. */
+
 
 import Image from "next/image"
 import Link from "next/link"
@@ -7,6 +9,7 @@ type PassionOnWheelsProps = {
   post: any
 }
 
+/** Renders the passion on wheels interface. */
 export default function PassionOnWheels({ post }: PassionOnWheelsProps) {
   const imageUrl =
     post.imageUrl && post.imageUrl.startsWith("http")

@@ -1,4 +1,6 @@
 "use client"
+/** Implements the upload box component and its related interface behavior. */
+
 
 import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
@@ -15,6 +17,7 @@ interface UploadBoxProps {
   uploadType?: "image" | "document"
 }
 
+/** Renders the upload box interface. */
 export default function UploadBox({
   label,
   value,
@@ -34,6 +37,7 @@ export default function UploadBox({
     setPreview(value || "")
   }, [value])
 
+  /** Handles the file change interaction and its related state changes. */
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -115,6 +119,7 @@ export default function UploadBox({
     }
   }
 
+  /** Uploads the file asset and returns its result to the form. */
   const uploadFile = async (file: File, type: "image" | "document"): Promise<string> => {
     const formData = new FormData()
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
@@ -199,6 +204,7 @@ export default function UploadBox({
     }
   }
 
+  /** Handles the remove interaction and its related state changes. */
   const handleRemove = () => {
     setPreview("")
     onClear?.()

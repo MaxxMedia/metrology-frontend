@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin magazines cover stories create page and its route-specific behavior. */
+
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import UploadBox from "@/components/UploadBox"
@@ -9,6 +11,7 @@ type Author = {
   name: string
 }
 
+/** Coordinates the generate slug behavior for this workflow. */
 function generateSlug(text: string) {
   return text
     .toLowerCase()
@@ -17,6 +20,7 @@ function generateSlug(text: string) {
     .replace(/\s+/g, "-")
 }
 
+/** Renders the create cover story page interface. */
 export default function CreateCoverStoryPage() {
   const router = useRouter()
 
@@ -84,6 +88,7 @@ export default function CreateCoverStoryPage() {
     }))
   }
 
+  /** Uploads the extra image asset and returns its result to the form. */
   async function uploadExtraImage(file: File) {
     const data = new FormData()
     data.append("image", file)
@@ -101,6 +106,7 @@ export default function CreateCoverStoryPage() {
     }))
   }
 
+  /** Removes the image record or interface element. */
   function removeImage(index: number) {
     setForm(prev => ({
       ...prev,

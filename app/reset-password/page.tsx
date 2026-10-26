@@ -1,8 +1,10 @@
+/** Implements the reset password page and its route-specific behavior. */
 import AuthHero from "@/components/AuthHero"
 import ResetPasswordForm from "@/components/ResetPasswordForm"
 import Image from "next/image"
 import { Suspense } from "react"
 
+/** Renders the reset password page interface. */
 export default function ResetPasswordPage() {
   return (
     <>

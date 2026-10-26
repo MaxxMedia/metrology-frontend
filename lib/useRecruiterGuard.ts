@@ -1,8 +1,11 @@
 "use client"
+/** Protects recruiter-only flows by checking recruiter authentication and access state. */
+
 
 import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 
+/** Provides the recruiter guard hook and its shared access behavior. */
 export function useRecruiterGuard(): boolean {
   const router = useRouter()
   const pathname = usePathname()
@@ -12,6 +15,7 @@ export function useRecruiterGuard(): boolean {
   useEffect(() => {
     let cancelled = false
 
+    /** Coordinates the redirect to login behavior used by this module. */
     const redirectToLogin = () => {
       localStorage.removeItem("token")
       localStorage.removeItem("user")
@@ -20,6 +24,7 @@ export function useRecruiterGuard(): boolean {
       router.replace(`/login?redirect=${encodeURIComponent(pathname)}`)
     }
 
+    /** Checks whether recruiter meets this workflow?s conditions. */
     async function checkRecruiter() {
       const token = localStorage.getItem("token")
       const userRaw = localStorage.getItem("user")

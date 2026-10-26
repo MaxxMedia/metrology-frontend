@@ -1,3 +1,4 @@
+/** Implements the site page and its route-specific behavior. */
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,7 @@ import NewsLetters from "@/components/NewsLetters";
 import HomeContentGate from "@/components/HomeContentGate";
 
 
+/** Renders the home interface. */
 export default async function Home() {
   /* ================= FETCH POSTS ================= */
 

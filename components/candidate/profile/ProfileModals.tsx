@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile profile modals component and its related interface behavior. */
+
 
 import { X } from "lucide-react";
 import BasicInfoForm, { type BasicInfoValues } from "@/components/candidate/profile/forms/BasicInfoForm";
@@ -46,6 +48,7 @@ interface ProfileModalsProps {
   onSaveSocials: (values: SocialLink[]) => Promise<void>;
 }
 
+/** Renders the profile modals interface. */
 export default function ProfileModals({
   activeModal,
   onClose,

@@ -1,3 +1,4 @@
+/** Implements the videos page and its route-specific behavior. */
 import Image from "next/image"
 import Link from "next/link"
 import type { Post } from "@/types/Post"
@@ -18,12 +19,14 @@ interface PostsResponse {
   meta: Meta
 }
 
+/** Returns the derived image url value used by this workflow. */
 function getImageUrl(url?: string | null) {
   if (!url) return "/placeholder.svg"
   if (url.startsWith("http")) return url
   return `${process.env.NEXT_PUBLIC_API_URL}${url}`
 }
 
+/** Normalizes the date value for consistent display or use. */
 function formatDate(dateStr?: string | null) {
   if (!dateStr) return ""
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -33,16 +36,19 @@ function formatDate(dateStr?: string | null) {
   })
 }
 
+/** Returns the derived category name value used by this workflow. */
 function getCategoryName(post: Post) {
   return typeof post.category === "object" ? post.category?.name : post.category
 }
 
+/** Returns the derived category slug value used by this workflow. */
 function getCategorySlug(post: Post) {
   return typeof post.category === "object"
     ? post.category?.slug?.toLowerCase() ?? ""
     : String(post.category || "").toLowerCase()
 }
 
+/** Renders the videos page interface. */
 export default async function VideosPage({
   searchParams,
 }: {
@@ -264,6 +270,7 @@ function Pagination({
   )
 }
 
+/** Renders the page link interface. */
 function PageLink({
   page,
   active,

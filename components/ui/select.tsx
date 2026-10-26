@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable select UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
@@ -6,24 +8,28 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the select interface. */
 function Select({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root>) {
   return <SelectPrimitive.Root data-slot="select" {...props} />
 }
 
+/** Renders the select group interface. */
 function SelectGroup({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Group>) {
   return <SelectPrimitive.Group data-slot="select-group" {...props} />
 }
 
+/** Renders the select value interface. */
 function SelectValue({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Value>) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
+/** Renders the select trigger interface. */
 function SelectTrigger({
   className,
   size = 'default',
@@ -50,6 +56,7 @@ function SelectTrigger({
   )
 }
 
+/** Renders the select content interface. */
 function SelectContent({
   className,
   children,
@@ -85,6 +92,7 @@ function SelectContent({
   )
 }
 
+/** Renders the select label interface. */
 function SelectLabel({
   className,
   ...props
@@ -98,6 +106,7 @@ function SelectLabel({
   )
 }
 
+/** Renders the select item interface. */
 function SelectItem({
   className,
   children,
@@ -122,6 +131,7 @@ function SelectItem({
   )
 }
 
+/** Renders the select separator interface. */
 function SelectSeparator({
   className,
   ...props
@@ -135,6 +145,7 @@ function SelectSeparator({
   )
 }
 
+/** Renders the select scroll up button interface. */
 function SelectScrollUpButton({
   className,
   ...props
@@ -153,6 +164,7 @@ function SelectScrollUpButton({
   )
 }
 
+/** Renders the select scroll down button interface. */
 function SelectScrollDownButton({
   className,
   ...props

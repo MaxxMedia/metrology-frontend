@@ -1,3 +1,4 @@
+/** Implements the topics topic page interface and its related behavior. */
 import Link from "next/link";
 import TopicListing from "@/components/topics/TopicListing";
 import type { Post } from "@/types/Post";
@@ -10,6 +11,7 @@ interface TopicPageProps {
   sectionTitle: string;
 }
 
+/** Renders the topic page interface. */
 export default async function TopicPage({
   categorySlug,
   title,

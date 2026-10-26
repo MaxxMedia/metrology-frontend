@@ -1,10 +1,13 @@
 'use client'
+/** Provides the reusable switch UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as SwitchPrimitive from '@radix-ui/react-switch'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the switch interface. */
 function Switch({
   className,
   ...props

@@ -1,14 +1,18 @@
 "use client";
+/** Implements the footer recent posts component and its related interface behavior. */
+
 
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Post } from "@/types/Post";
 
+/** Renders the footer recent posts interface. */
 export default function FooterRecentPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
+    /** Loads posts for the current workflow. */
     async function fetchPosts() {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=5`
