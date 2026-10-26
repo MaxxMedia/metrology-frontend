@@ -1,4 +1,6 @@
 "use client"
+/** Implements the archive listing component and its related interface behavior. */
+
 import Image from "next/image"
 import Link from "next/link"
 import type { Post } from "@/types/Post"
@@ -7,6 +9,7 @@ type Props = {
   posts: Post[]
 }
 
+/** Renders the archive listing interface. */
 export default function ArchiveListing({ posts }: Props) {
   return (
     <section className="max-w-[1320px] mx-auto px-[15px] py-12">

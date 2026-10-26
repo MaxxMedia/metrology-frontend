@@ -1,14 +1,18 @@
 "use client";
+/** Implements the candidate profile sidebar home feed card component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Briefcase, MapPin } from "lucide-react";
 
+/** Renders the home feed card interface. */
 export default function HomeFeedCard() {
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    /** Loads jobs for the current workflow. */
     async function loadJobs() {
       try {
         let fetchedJobs: any[] = [];

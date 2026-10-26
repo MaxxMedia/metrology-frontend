@@ -1,3 +1,4 @@
+/** Implements the packages job posting policy component and its related interface behavior. */
 import PackagesHero from "./PackagesHero"
 
 type Section = {
@@ -271,6 +272,7 @@ const sections: Section[] = [
   },
 ]
 
+/** Coordinates the render block behavior for this component. */
 function renderBlock(block: string | string[], key: number) {
   if (Array.isArray(block)) {
     return (
@@ -295,6 +297,7 @@ function renderBlock(block: string | string[], key: number) {
   )
 }
 
+/** Renders the job posting policy page client interface. */
 export default function JobPostingPolicyPageClient() {
   return (
     <main className="w-full bg-white">

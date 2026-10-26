@@ -1,3 +1,4 @@
+/** Implements the teams pending request card component and its related interface behavior. */
 // components/team/PendingRequestCard.tsx
 
 import { useState } from 'react';
@@ -10,11 +11,13 @@ interface Props {
     onReject: (id: number, reason: string) => void;
 }
 
+/** Renders the pending request card interface. */
 export default function PendingRequestCard({ request, onApprove, onReject }: Props) {
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectionReason, setRejectionReason] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
 
+    /** Handles the approve interaction and its related state changes. */
     const handleApprove = async () => {
         setIsProcessing(true);
         try {
@@ -24,6 +27,7 @@ export default function PendingRequestCard({ request, onApprove, onReject }: Pro
         }
     };
 
+    /** Handles the reject interaction and its related state changes. */
     const handleReject = async () => {
         if (!rejectionReason.trim()) {
             alert('Please provide a reason for rejection');

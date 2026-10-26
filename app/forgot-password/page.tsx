@@ -1,7 +1,9 @@
+/** Implements the forgot password page and its route-specific behavior. */
 import AuthHero from "@/components/AuthHero"
 import ForgotPasswordForm from "@/components/ForgotPasswordForm"
 import Image from "next/image"
 
+/** Renders the forgot password page interface. */
 export default function ForgotPasswordPage() {
   return (
     <>

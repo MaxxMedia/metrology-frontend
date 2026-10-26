@@ -1,4 +1,6 @@
 "use client";
+/** Implements the network request card component and its related interface behavior. */
+
 
 import Image from "next/image";
 import { acceptRequest, rejectRequest } from "@/services/connection.service";
@@ -19,10 +21,12 @@ interface RequestCardProps {
   onUpdate?: () => void;
 }
 
+/** Renders the request card interface. */
 export default function RequestCard({
   request,
   onUpdate,
 }: RequestCardProps) {
+  /** Handles the accept interaction and its related state changes. */
   const handleAccept = async () => {
     try {
       await acceptRequest(request.id);
@@ -32,6 +36,7 @@ export default function RequestCard({
     }
   };
 
+  /** Handles the reject interaction and its related state changes. */
   const handleReject = async () => {
     try {
       await rejectRequest(request.id);

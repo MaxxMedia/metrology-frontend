@@ -1,4 +1,6 @@
 "use client"
+/** Implements the suppliers page and its route-specific behavior. */
+
 
 import { Suspense, useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
@@ -29,6 +31,7 @@ type FilterState = {
 
 const PER_PAGE = 15
 
+/** Renders the suppliers page content interface. */
 function SuppliersPageContent() {
   const searchParams = useSearchParams()
   const industryFromUrl = searchParams.get("industry") // e.g. "Additive Manufacturing"
@@ -112,12 +115,14 @@ function SuppliersPageContent() {
 
   const totalPages = Math.ceil(total / PER_PAGE)
 
+  /** Handles the page change interaction and its related state changes. */
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
     fetchSuppliers(activeFilters, page, sortBy)
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
+  /** Returns the derived pagination numbers value used by this workflow. */
   const getPaginationNumbers = () => {
     const pages: (number | string)[] = []
     if (totalPages <= 7) {
@@ -326,6 +331,7 @@ function SuppliersPageContent() {
   )
 }
 
+/** Renders the suppliers page interface. */
 export default function SuppliersPage() {
   return (
     <Suspense fallback={null}>

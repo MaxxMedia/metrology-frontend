@@ -1,13 +1,17 @@
 "use client";
+/** Implements the candidate profile sidebar saved jobs card component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react";
 import { Bookmark } from "lucide-react";
 
+/** Renders the saved jobs card interface. */
 export default function SavedJobsCard() {
   const [savedJobs, setSavedJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    /** Loads saved for the current workflow. */
     async function loadSaved() {
       const token = localStorage.getItem("token");
       if (!token) {

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the supplier promotion banner component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -77,6 +79,7 @@ const TIER_STYLES: Record<Exclude<PlanTier, "free">, TierStyles> = {
     },
 };
 
+/** Renders the cover image carousel interface. */
 function CoverImageCarousel({ images, name }: { images: string[]; name: string }) {
     const [index, setIndex] = useState(0);
 
@@ -92,7 +95,9 @@ function CoverImageCarousel({ images, name }: { images: string[]; name: string }
         );
     }
 
+    /** Coordinates the go prev behavior for this component. */
     const goPrev = () => setIndex((i) => (i === 0 ? images.length - 1 : i - 1));
+    /** Coordinates the go next behavior for this component. */
     const goNext = () => setIndex((i) => (i === images.length - 1 ? 0 : i + 1));
 
     return (
@@ -136,6 +141,7 @@ function CoverImageCarousel({ images, name }: { images: string[]; name: string }
     );
 }
 
+/** Renders the connect button interface. */
 function ConnectButton({
     companyId,
     isLoggedIn,
@@ -150,6 +156,7 @@ function ConnectButton({
     const router = useRouter();
     const [connected, setConnected] = useState(false);
 
+    /** Coordinates the auth headers behavior for this component. */
     function authHeaders(): HeadersInit {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
         return token ? { Authorization: `Bearer ${token}` } : {};
@@ -174,6 +181,7 @@ function ConnectButton({
         };
     }, [isCandidate, companyId]);
 
+    /** Handles the click interaction and its related state changes. */
     async function handleClick() {
         if (!companyId) return;
 
@@ -233,6 +241,7 @@ function ConnectButton({
     );
 }
 
+/** Renders the supplier promotion banner interface. */
 export default function SupplierPromotionBanner({
     planTier,
     companyId,

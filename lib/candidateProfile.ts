@@ -1,3 +1,4 @@
+/** Provides candidate profile and resume operations, including synchronization with the cached user record. */
 // lib/candidateProfile.ts
 import { getSocials, createSocial, updateSocial, deleteSocial } from "@/lib/api/candidate/socials";
 // ✅ ADDED: the real resume storage lives in the CandidateResume table via
@@ -45,6 +46,7 @@ export type CandidateProfile = {
   };
 };
 
+/** Uploads candidate image and returns the resulting file reference. */
 export async function uploadCandidateImage(file: File): Promise<string> {
   const formData = new FormData();
   formData.append("image", file);
@@ -62,6 +64,7 @@ export async function uploadCandidateImage(file: File): Promise<string> {
   return data.imageUrl;
 }
 
+/** Loads the signed-in candidate profile and normalizes company field casing. */
 export async function fetchMyCandidateProfile(): Promise<CandidateProfile> {
   const token = localStorage.getItem("token");
   const res = await fetch(
@@ -83,6 +86,7 @@ export async function fetchMyCandidateProfile(): Promise<CandidateProfile> {
   return data;
 }
 
+/** Updates my candidate profile through the configured API. */
 export async function updateMyCandidateProfile(
   profile: Partial<CandidateProfile>
 ): Promise<CandidateProfile> {
@@ -106,6 +110,7 @@ export async function updateMyCandidateProfile(
   return res.json();
 }
 
+/** Copies updated candidate identity fields into local storage and notifies other views. */
 export function syncCandidateUserInStorage(profile: CandidateProfile) {
   const stored = localStorage.getItem("user");
   if (!stored) return;

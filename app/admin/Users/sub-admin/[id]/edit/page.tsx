@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin users sub admin id edit page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -30,6 +32,7 @@ interface SubAdminDetail {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+/** Coordinates the auth headers behavior for this workflow. */
 function authHeaders() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     return {
@@ -44,6 +47,7 @@ function authHeaders() {
 //   false     -> explicit DENY override (blocks a role default)
 type OverrideMap = Record<string, boolean | undefined>;
 
+/** Renders the edit sub admin page interface. */
 export default function EditSubAdminPage() {
     const router = useRouter();
     const params = useParams();
@@ -76,6 +80,7 @@ export default function EditSubAdminPage() {
     useEffect(() => {
         if (!id) return;
 
+        /** Coordinates the load behavior for this workflow. */
         async function load() {
             setLoading(true);
             setError("");
@@ -148,12 +153,14 @@ export default function EditSubAdminPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [permissionModules, roleDefaultKeys, overrides]);
 
+    /** Coordinates the is effectively granted behavior for this workflow. */
     function isEffectivelyGranted(key: string): boolean {
         const override = overrides[key];
         if (override !== undefined) return override; // explicit override always wins
         return roleDefaultKeys.has(key); // otherwise fall back to role default
     }
 
+    /** Coordinates the source label behavior for this workflow. */
     function sourceLabel(key: string): "role" | "grant-override" | "deny-override" | "none" {
         const override = overrides[key];
         if (override === true) return "grant-override";
@@ -164,6 +171,7 @@ export default function EditSubAdminPage() {
 
     const effectiveCount = allPermissions.filter((p) => isEffectivelyGranted(p.key)).length;
 
+    /** Coordinates the toggle expand behavior for this workflow. */
     function toggleExpand(mod: string) {
         setExpanded((prev) => {
             const next = new Set(prev);
@@ -193,6 +201,7 @@ export default function EditSubAdminPage() {
         });
     }
 
+    /** Coordinates the toggle module all behavior for this workflow. */
     function toggleModuleAll(mod: string) {
         const modPerms = permissionModules[mod] || [];
         const allOn = modPerms.every((p) => isEffectivelyGranted(p.key));
@@ -214,6 +223,7 @@ export default function EditSubAdminPage() {
     }
 
 
+    /** Handles the submit interaction and its related state changes. */
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError("");

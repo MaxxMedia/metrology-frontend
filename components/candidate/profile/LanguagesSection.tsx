@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile languages section component and its related interface behavior. */
+
 
 import { Pencil } from "lucide-react";
 
@@ -14,6 +16,7 @@ interface Props {
   onEditClick?: () => void;
 }
 
+/** Renders the languages section interface. */
 export default function LanguagesSection({
   editable = false,
   languages = [],

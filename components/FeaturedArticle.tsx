@@ -1,4 +1,6 @@
 "use client"
+/** Implements the featured article component and its related interface behavior. */
+
 import Image from "next/image"
 import Link from "next/link"
 
@@ -6,6 +8,7 @@ type FeaturedArticleProps = {
   post: any
 }
 
+/** Renders the featured article interface. */
 export default function FeaturedArticle({ post }: FeaturedArticleProps) {
   const imageUrl =
     post.imageUrl && post.imageUrl.startsWith("http")

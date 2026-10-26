@@ -1,5 +1,8 @@
 "use client"
+/** Implements the network id page and its route-specific behavior. */
 
+
+/** Renders the network page interface. */
 export default function NetworkPage() {
   return (
     <div className="p-4">

@@ -1,4 +1,6 @@
 "use client"
+/** Implements the events eventtabs component and its related interface behavior. */
+
 
 import { useState } from "react"
 import Image from "next/image"
@@ -28,6 +30,7 @@ const TABS = [
   { label: "Other Details", id: "details" },
 ]
 
+/** Returns the derived youtube embed url value used by this workflow. */
 function getYoutubeEmbedUrl(url: string): string {
   const match = url.match(
     /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
@@ -35,6 +38,7 @@ function getYoutubeEmbedUrl(url: string): string {
   return match ? `https://www.youtube.com/embed/${match[1]}` : url
 }
 
+/** Renders the images gallery section interface. */
 function ImagesGallerySection({
   images,
   imgIndex,
@@ -103,6 +107,7 @@ function ImagesGallerySection({
   )
 }
 
+/** Renders the videos section interface. */
 function VideosSection({ videos, title }: { videos: string[]; title: string }) {
   return (
     <section className="bg-[#1D2125] rounded-xl border border-[#292C30] p-6 text-[#CCCCCC]">
@@ -129,6 +134,7 @@ function VideosSection({ videos, title }: { videos: string[]; title: string }) {
   )
 }
 
+/** Renders the other details section interface. */
 function OtherDetailsSection({ event }: { event: Event }) {
   return (
     <section className="bg-[#1D2125] rounded-xl border border-[#292C30] p-6 text-[#CCCCCC]">
@@ -149,6 +155,7 @@ function OtherDetailsSection({ event }: { event: Event }) {
   )
 }
 
+/** Renders the event tabs interface. */
 export default function EventTabs({ event }: { event: Event }) {
   const [imgIndex, setImgIndex] = useState(0)
   const [activeTab, setActiveTab] = useState(TABS[0].id)
@@ -225,6 +232,7 @@ export default function EventTabs({ event }: { event: Event }) {
   )
 }
 
+/** Renders the detail row interface. */
 function DetailRow({ label, value, fullWidth }: { label: string; value?: string; fullWidth?: boolean }) {
   if (!value) return null
   const isUrl = /^https?:\/\//.test(value)

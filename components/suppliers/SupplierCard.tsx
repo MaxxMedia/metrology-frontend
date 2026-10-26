@@ -1,8 +1,11 @@
 "use client"
+/** Implements the suppliers supplier card component and its related interface behavior. */
+
 
 import Image from "next/image"
 import { Supplier } from "@/types/Supplier"
 
+/** Renders the supplier card interface. */
 export default function SupplierCard({ supplier }: { supplier: Supplier }) {
   return (
     <article className="border rounded p-6 flex gap-6">

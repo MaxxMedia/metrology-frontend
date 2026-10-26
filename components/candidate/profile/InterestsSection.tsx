@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile interests section component and its related interface behavior. */
+
 
 import { Heart, Pencil } from "lucide-react";
 
@@ -16,6 +18,7 @@ interface Props {
     onEditClick?: () => void; // Add this
 }
 
+/** Renders the interests section interface. */
 export default function InterestsSection({
     editable = false,
     interests,

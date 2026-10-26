@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile education section component and its related interface behavior. */
+
 
 import { GraduationCap, Pencil, Calendar } from "lucide-react";
 
@@ -19,6 +21,7 @@ interface Props {
   onEditClick?: () => void;
 }
 
+/** Renders the education section interface. */
 export default function EducationSection({
   editable = false,
   education = [],

@@ -8,6 +8,7 @@ interface HomeContentGateProps {
   delayMs?: number
 }
 
+/** Renders the home content gate interface. */
 export default function HomeContentGate({ delayMs = 7000 }: HomeContentGateProps) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -31,6 +32,7 @@ export default function HomeContentGate({ delayMs = 7000 }: HomeContentGateProps
     }
   }, [delayMs])
 
+  /** Handles the success interaction and its related state changes. */
   const handleSuccess = () => {
     try {
       localStorage.setItem("premiumAccess", "true")
@@ -38,6 +40,7 @@ export default function HomeContentGate({ delayMs = 7000 }: HomeContentGateProps
     setIsOpen(false)
   }
 
+  /** Handles the close interaction and its related state changes. */
   const handleClose = () => {
     try {
       sessionStorage.setItem("contentGateDismissed", "true")

@@ -1,8 +1,11 @@
 "use client"
+/** Implements the admin magazines id registrations page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 
+/** Renders the registrations page interface. */
 export default function RegistrationsPage() {
   const { id } = useParams()
   const [data, setData] = useState<any[]>([])

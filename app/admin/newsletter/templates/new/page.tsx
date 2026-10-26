@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin newsletter templates new page and its route-specific behavior. */
+
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -16,6 +18,7 @@ interface Post {
   excerpt?: string;
 }
 
+/** Renders the create template page interface. */
 export default function CreateTemplatePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -43,6 +46,7 @@ export default function CreateTemplatePage() {
     fetchPosts();
   }, []);
 
+  /** Loads posts for the current workflow. */
   async function fetchPosts() {
     try {
       setFetchingPosts(true);
@@ -60,6 +64,7 @@ export default function CreateTemplatePage() {
     }
   }
 
+  /** Handles the change interaction and its related state changes. */
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
@@ -69,6 +74,7 @@ export default function CreateTemplatePage() {
     });
   }
 
+  /** Coordinates the toggle post selection behavior for this workflow. */
   function togglePostSelection(postId: number) {
     setSelectedPosts(prev =>
       prev.includes(postId)
@@ -77,6 +83,7 @@ export default function CreateTemplatePage() {
     );
   }
 
+  /** Coordinates the select all posts behavior for this workflow. */
   function selectAllPosts() {
     if (selectedPosts.length === posts.length) {
       setSelectedPosts([]);
@@ -85,6 +92,7 @@ export default function CreateTemplatePage() {
     }
   }
 
+  /** Returns the derived badge color value used by this workflow. */
   function getBadgeColor(badge: string): string {
     const colors: Record<string, string> = {
       FEATURED: "#E11D48",
@@ -96,6 +104,7 @@ export default function CreateTemplatePage() {
     return colors[badge.toUpperCase()] || "#0073FF";
   }
 
+  /** Returns the derived category name value used by this workflow. */
   function getCategoryName(post: Post): string {
     if (typeof post.category === "object" && post.category) {
       return post.category.name || "";
@@ -103,6 +112,7 @@ export default function CreateTemplatePage() {
     return String(post.category || "");
   }
 
+  /** Coordinates the generate preview html behavior for this workflow. */
   function generatePreviewHTML(): string {
     const selected = posts.filter(p => selectedPosts.includes(p.id));
     
@@ -653,6 +663,7 @@ export default function CreateTemplatePage() {
     return html;
   }
 
+  /** Creates the template record or interface element. */
   async function createTemplate(e: React.FormEvent) {
     e.preventDefault();
     setError(null);

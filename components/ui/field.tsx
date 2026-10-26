@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable field UI primitive and its interaction behavior. */
+
 
 import { useMemo } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -7,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 
+/** Renders the field set interface. */
 function FieldSet({ className, ...props }: React.ComponentProps<'fieldset'>) {
   return (
     <fieldset
@@ -21,6 +24,7 @@ function FieldSet({ className, ...props }: React.ComponentProps<'fieldset'>) {
   )
 }
 
+/** Renders the field legend interface. */
 function FieldLegend({
   className,
   variant = 'legend',
@@ -41,6 +45,7 @@ function FieldLegend({
   )
 }
 
+/** Renders the field group interface. */
 function FieldGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -78,6 +83,7 @@ const fieldVariants = cva(
   },
 )
 
+/** Renders the field interface. */
 function Field({
   className,
   orientation = 'vertical',
@@ -94,6 +100,7 @@ function Field({
   )
 }
 
+/** Renders the field content interface. */
 function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -107,6 +114,7 @@ function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the field label interface. */
 function FieldLabel({
   className,
   ...props
@@ -125,6 +133,7 @@ function FieldLabel({
   )
 }
 
+/** Renders the field title interface. */
 function FieldTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -138,6 +147,7 @@ function FieldTitle({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the field description interface. */
 function FieldDescription({ className, ...props }: React.ComponentProps<'p'>) {
   return (
     <p
@@ -153,6 +163,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<'p'>) {
   )
 }
 
+/** Renders the field separator interface. */
 function FieldSeparator({
   children,
   className,
@@ -183,6 +194,7 @@ function FieldSeparator({
   )
 }
 
+/** Renders the field error interface. */
 function FieldError({
   className,
   children,

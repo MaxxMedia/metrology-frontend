@@ -1,5 +1,7 @@
 // app/admin/components/AddBlock.tsx
 "use client";
+/** Implements the admin components add block interface and its related behavior. */
+
 
 import { ContentBlock } from "./types";
 
@@ -7,7 +9,9 @@ interface Props {
   onAdd(block: ContentBlock): void;
 }
 
+/** Renders the add block interface. */
 export default function AddBlock({ onAdd }: Props) {
+  /** Coordinates the create behavior for this workflow. */
   function create(type: ContentBlock["type"]) {
     const id = crypto.randomUUID();
 

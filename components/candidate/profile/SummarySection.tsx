@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile summary section component and its related interface behavior. */
+
 
 import { useState } from "react";
 import { Pencil, ExternalLink, FolderKanban } from "lucide-react";
@@ -12,6 +14,7 @@ interface Props {
   onSeeAllProjects?: () => void;
 }
 
+/** Renders the summary section interface. */
 export default function SummarySection({
   aboutText,
   websiteUrl,

@@ -1,4 +1,6 @@
 "use client"
+/** Implements the recruiter profile edit page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -25,6 +27,7 @@ type CompanyProfileLimits = {
   certifications: boolean
 }
 
+/** Renders the edit recruiter profile interface. */
 export default function EditRecruiterProfile() {
   const router = useRouter()
 
@@ -63,6 +66,7 @@ export default function EditRecruiterProfile() {
   /* ================= LOAD PROFILE ================= */
 
   useEffect(() => {
+    /** Loads data for the current workflow. */
     async function loadData() {
       const token = localStorage.getItem("token")
 
@@ -522,6 +526,7 @@ function SectionTitle({ title }: { title: string }) {
   )
 }
 
+/** Renders the input interface. */
 function Input({
   label,
   name,
@@ -556,6 +561,7 @@ function Input({
   )
 }
 
+/** Renders the textarea interface. */
 function Textarea({
   label,
   name,

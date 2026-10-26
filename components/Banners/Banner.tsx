@@ -1,5 +1,7 @@
 // Banner.tsx
 "use client";
+/** Implements the banners banner component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -77,6 +79,7 @@ export default function Banner({ placement, variant = "standard", slotIndex = 0,
     useEffect(() => {
         let cancelled = false;
 
+        /** Loads banners for the current workflow. */
         const fetchBanners = async () => {
             try {
                 const res = await fetch(

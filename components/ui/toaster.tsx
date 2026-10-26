@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable toaster UI primitive and its interaction behavior. */
+
 
 import { useToast } from '@/hooks/use-toast'
 import {
@@ -10,6 +12,7 @@ import {
   ToastViewport,
 } from '@/components/ui/toast'
 
+/** Renders the toaster interface. */
 export function Toaster() {
   const { toasts } = useToast()
 

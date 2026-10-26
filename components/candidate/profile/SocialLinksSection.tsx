@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile social links section component and its related interface behavior. */
+
 
 import {
     Globe,
@@ -22,6 +24,7 @@ interface Props {
     onEditClick?: () => void;
 }
 
+/** Returns the derived icon value used by this workflow. */
 function getIcon(platform: string) {
     switch (platform.toLowerCase()) {
         case "linkedin":
@@ -38,6 +41,7 @@ function getIcon(platform: string) {
     }
 }
 
+/** Renders the social links section interface. */
 export default function SocialLinksSection({
     socials,
     onEditClick,

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate dashboard profile page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 
@@ -85,6 +87,7 @@ import AchievementsForm from "../../../../components/candidate/profile/forms/Ach
 import InterestsForm from "../../../../components/candidate/profile/forms/InterestsForm";
 import SocialLinksForm from "../../../../components/candidate/profile/forms/SocialLinksForm";
 
+/** Renders the candidate profile page interface. */
 export default function CandidateProfilePage() {
   const [basicInfo, setBasicInfo] = useState<BasicInfoValues>({
     firstName: "",
@@ -116,6 +119,7 @@ export default function CandidateProfilePage() {
     loadProfile();
   }, []);
 
+  /** Loads profile for the current workflow. */
   const loadProfile = async () => {
     try {
       setLoading(true);
@@ -234,6 +238,7 @@ export default function CandidateProfilePage() {
     }
   };
 
+  /** Handles the basic info submit interaction and its related state changes. */
   const handleBasicInfoSubmit = async (
     values: BasicInfoValues
   ) => {
@@ -255,6 +260,7 @@ export default function CandidateProfilePage() {
     }
   };
 
+  /** Handles the skills submit interaction and its related state changes. */
   const handleSkillsSubmit = async (
     values: Skill[]
   ) => {
@@ -298,6 +304,7 @@ export default function CandidateProfilePage() {
     }
   };
 
+  /** Handles the experience submit interaction and its related state changes. */
   const handleExperienceSubmit = async (
     values: Experience[]
   ) => {
@@ -356,6 +363,7 @@ export default function CandidateProfilePage() {
     }
   };
 
+  /** Handles the education submit interaction and its related state changes. */
   const handleEducationSubmit = async (
     values: Education[]
   ) => {
@@ -409,6 +417,7 @@ export default function CandidateProfilePage() {
     }
   };
 
+  /** Handles the projects submit interaction and its related state changes. */
   const handleProjectsSubmit = async (
     values: Project[]
   ) => {
@@ -462,6 +471,7 @@ export default function CandidateProfilePage() {
     }
   };
 
+/** Handles the certifications submit interaction and its related state changes. */
 const handleCertificationsSubmit = async (
   values: Certification[]
 ) => {
@@ -539,6 +549,7 @@ const handleCertificationsSubmit = async (
   }
 };
 
+  /** Handles the languages submit interaction and its related state changes. */
   const handleLanguagesSubmit = async (
     values: Language[]
   ) => {
@@ -582,6 +593,7 @@ const handleCertificationsSubmit = async (
     }
   };
 
+  /** Handles the achievements submit interaction and its related state changes. */
   const handleAchievementsSubmit = async (
     values: Achievement[]
   ) => {
@@ -627,6 +639,7 @@ const handleCertificationsSubmit = async (
     }
   };
 
+ /** Handles the interests submit interaction and its related state changes. */
  const handleInterestsSubmit = async (
   values: Interest[]
 ) => {
@@ -685,6 +698,7 @@ const handleCertificationsSubmit = async (
   }
 };
 
+  /** Handles the socials submit interaction and its related state changes. */
   const handleSocialsSubmit = async (
     values: SocialLink[]
   ) => {

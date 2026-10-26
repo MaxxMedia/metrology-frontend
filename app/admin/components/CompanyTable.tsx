@@ -1,5 +1,7 @@
+/** Implements the admin components company table interface and its related behavior. */
 import type { Company } from "@/types/admin"
 
+/** Renders the company table interface. */
 export default function CompanyTable({
   companies,
 }: {

@@ -1,7 +1,10 @@
 "use client"
+/** Implements the events event view tracker component and its related interface behavior. */
+
 
 import { useEffect, useRef } from "react"
 
+/** Renders the event view tracker interface. */
 export default function EventViewTracker({ slug }: { slug: string }) {
   const fired = useRef(false)
 

@@ -1,4 +1,6 @@
 "use client"
+/** Implements the event registration form component and its related interface behavior. */
+
 
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
@@ -97,6 +99,7 @@ const TERMS_SECTIONS = [
   },
 ]
 
+/** Renders the terms modal interface. */
 function TermsModal({
   onClose,
   onAccept,
@@ -107,6 +110,7 @@ function TermsModal({
   const [hasReachedEnd, setHasReachedEnd] = useState(false)
   const bodyRef = useRef<HTMLDivElement>(null)
 
+  /** Handles the scroll interaction and its related state changes. */
   const handleScroll = () => {
     const el = bodyRef.current
     if (!el) return

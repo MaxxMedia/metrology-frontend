@@ -1,4 +1,6 @@
 "use client"
+/** Implements the share section component and its related interface behavior. */
+
 
 import { useState } from "react"
 import Link from "next/link"
@@ -28,6 +30,7 @@ type Props = {
   post: SharePost
 }
 
+/** Renders the share section interface. */
 export default function ShareSection({ post }: Props) {
   const [copied, setCopied] = useState(false)
 
@@ -50,6 +53,7 @@ export default function ShareSection({ post }: Props) {
     }
   }
 
+  /** Handles the copy interaction and its related state changes. */
   const handleCopy = async () => {
     if (typeof window === "undefined") return
     try {

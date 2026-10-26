@@ -1,4 +1,6 @@
 "use client"
+/** Implements the news page and its route-specific behavior. */
+
 
 import Link from "next/link"
 import Image from "next/image"
@@ -9,12 +11,14 @@ import NewsletterForm from "@/components/news/NewsletterForm"
 
 const POSTS_PER_PAGE = 6
 
+/** Renders the news page interface. */
 export default function NewsPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
+    /** Loads posts for the current workflow. */
     async function fetchPosts() {
       try {
         const res = await fetch(
@@ -41,6 +45,7 @@ export default function NewsPage() {
       ? post.category?.slug?.toLowerCase()
       : String(post.category || "").toLowerCase()
 
+  /** Returns the derived image value used by this workflow. */
   const getImage = (url?: string | null) => {
     if (!url) return "/placeholder.svg"
     if (url.startsWith("http")) return url
@@ -63,11 +68,13 @@ export default function NewsPage() {
   const endIndex = startIndex + POSTS_PER_PAGE
   const currentPosts = newsPosts.slice(startIndex, endIndex)
 
+  /** Handles the page change interaction and its related state changes. */
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
     document.getElementById('news-section')?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  /** Returns the derived page numbers value used by this workflow. */
   const getPageNumbers = () => {
     const pages = []
     const maxVisible = 5

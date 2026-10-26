@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable command UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import { Command as CommandPrimitive } from 'cmdk'
@@ -13,6 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
+/** Renders the command interface. */
 function Command({
   className,
   ...props
@@ -29,6 +32,7 @@ function Command({
   )
 }
 
+/** Renders the command dialog interface. */
 function CommandDialog({
   title = 'Command Palette',
   description = 'Search for a command to run...',
@@ -60,6 +64,7 @@ function CommandDialog({
   )
 }
 
+/** Renders the command input interface. */
 function CommandInput({
   className,
   ...props
@@ -82,6 +87,7 @@ function CommandInput({
   )
 }
 
+/** Renders the command list interface. */
 function CommandList({
   className,
   ...props
@@ -98,6 +104,7 @@ function CommandList({
   )
 }
 
+/** Renders the command empty interface. */
 function CommandEmpty({
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
@@ -110,6 +117,7 @@ function CommandEmpty({
   )
 }
 
+/** Renders the command group interface. */
 function CommandGroup({
   className,
   ...props
@@ -126,6 +134,7 @@ function CommandGroup({
   )
 }
 
+/** Renders the command separator interface. */
 function CommandSeparator({
   className,
   ...props
@@ -139,6 +148,7 @@ function CommandSeparator({
   )
 }
 
+/** Renders the command item interface. */
 function CommandItem({
   className,
   ...props
@@ -155,6 +165,7 @@ function CommandItem({
   )
 }
 
+/** Renders the command shortcut interface. */
 function CommandShortcut({
   className,
   ...props

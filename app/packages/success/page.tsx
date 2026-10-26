@@ -1,5 +1,7 @@
+/** Implements the packages success page and its route-specific behavior. */
 import Link from "next/link";
 
+/** Renders the package success page interface. */
 export default function PackageSuccessPage() {
   return (
     <main className="w-full bg-white">

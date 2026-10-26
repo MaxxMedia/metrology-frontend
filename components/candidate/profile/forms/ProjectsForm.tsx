@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile forms projects form component and its related interface behavior. */
+
 
 import { Formik, Form, Field, FieldArray, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
@@ -35,6 +37,7 @@ const validationSchema = Yup.object({
   ),
 });
 
+/** Renders the projects form interface. */
 export default function ProjectsForm({
   initialValues,
   onSubmit,
@@ -192,6 +195,7 @@ export default function ProjectsForm({
   );
 }
 
+/** Renders the input interface. */
 function Input({
   label,
   name,

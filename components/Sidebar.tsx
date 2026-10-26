@@ -1,5 +1,8 @@
 "use client"
+/** Implements the sidebar component and its related interface behavior. */
 
+
+/** Renders the sidebar interface. */
 export default function Sidebar() {
   const ads = [
     { id: 1, title: "YOUR NIGHT CREW'S NEW TEAMMATE", bgGradient: "bg-gradient-to-br from-green-600 to-green-800" },

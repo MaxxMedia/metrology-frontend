@@ -1,9 +1,12 @@
 // app/unauthorized/page.tsx
 "use client"
+/** Implements the unauthorized page and its route-specific behavior. */
+
 
 import Link from "next/link"
 import { ShieldAlert } from "lucide-react"
 
+/** Renders the unauthorized page interface. */
 export default function UnauthorizedPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#F4F6FA] px-4">

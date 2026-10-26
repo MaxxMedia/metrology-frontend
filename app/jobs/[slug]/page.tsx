@@ -1,4 +1,6 @@
 "use client"
+/** Implements the jobs slug page and its route-specific behavior. */
+
 import Image from "next/image"
 import { useEffect, useState, useRef } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
@@ -46,6 +48,7 @@ type Readiness = {
   resume?: { fileUrl?: string; fileName?: string } | null
 }
 
+/** Renders the job detail page interface. */
 export default function JobDetailPage() {
   const params = useParams<{ slug?: string }>()
   const searchParams = useSearchParams()
@@ -83,6 +86,7 @@ export default function JobDetailPage() {
   useEffect(() => {
     if (!slug) return;
 
+    /** Loads job for the current workflow. */
     async function loadJob() {
       try {
         if (!viewRecordedRef.current) {
@@ -134,6 +138,7 @@ export default function JobDetailPage() {
     if (!job?.id) return;
     if (user?.role?.toLowerCase() !== "candidate") return;
 
+    /** Checks the save status data against the requirements used by this workflow. */
     async function checkSaveStatus() {
       try {
         const token = localStorage.getItem("token");
@@ -198,6 +203,7 @@ export default function JobDetailPage() {
   useEffect(() => {
     if (user?.role?.toLowerCase() !== "candidate") return;
 
+    /** Loads readiness for the current workflow. */
     async function loadReadiness() {
       setCheckingReadiness(true);
       try {
@@ -226,6 +232,7 @@ export default function JobDetailPage() {
     loadReadiness();
   }, [user?.role]);
 
+  /** Coordinates the toggle save behavior for this workflow. */
   async function toggleSave() {
     if (!user?.id) {
       router.push("/login");
@@ -972,6 +979,7 @@ function Tag({ icon, label, variant = "default" }: any) {
   )
 }
 
+/** Renders the company meta interface. */
 function CompanyMeta({ icon, label, value }: any) {
   return (
     <div>
@@ -984,6 +992,7 @@ function CompanyMeta({ icon, label, value }: any) {
   )
 }
 
+/** Renders the insight row interface. */
 function InsightRow({ icon, title, subtitle }: any) {
   return (
     <div className="flex items-start gap-3">
@@ -996,6 +1005,7 @@ function InsightRow({ icon, title, subtitle }: any) {
   )
 }
 
+/** Renders the explore row interface. */
 function ExploreRow({ icon, title, subtitle, href }: any) {
   return (
     <Link href={href} className="flex items-start gap-3 group">
@@ -1010,6 +1020,7 @@ function ExploreRow({ icon, title, subtitle, href }: any) {
   )
 }
 
+/** Coordinates the sanitize rich text html behavior for this workflow. */
 function sanitizeRichTextHtml(html: string) {
   if (!html) return ""
   return html

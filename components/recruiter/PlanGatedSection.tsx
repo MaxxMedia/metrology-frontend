@@ -1,7 +1,10 @@
 // components/recruiter/PlanGatedSection.tsx - FULL COMPLETE VERSION
 
 "use client";
+/** Implements the recruiter plan gated section component and its related interface behavior. */
 
+
+/** Renders the plan gated section interface. */
 export function PlanGatedSection({
     allowed,
     upgradeMessage,

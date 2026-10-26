@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin newsletter campaigns page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -24,6 +26,7 @@ type Campaign = {
   smsEnabled?: boolean;
 };
 
+/** Renders the campaigns page interface. */
 export default function CampaignsPage() {
   const router = useRouter();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -38,6 +41,7 @@ export default function CampaignsPage() {
     loadCampaigns();
   }, []);
 
+  /** Loads campaigns for the current workflow. */
   async function loadCampaigns() {
     try {
       setError("");
@@ -110,6 +114,7 @@ export default function CampaignsPage() {
     }
   }
 
+  /** Removes the campaign record or interface element. */
   async function deleteCampaign(id: number) {
     if (!confirm("Delete this campaign?")) return;
 
@@ -138,6 +143,7 @@ export default function CampaignsPage() {
     }
   }
 
+  /** Coordinates the send campaign behavior for this workflow. */
   async function sendCampaign(id: number) {
     if (!confirm("Send campaign now?")) return;
 
@@ -167,6 +173,7 @@ export default function CampaignsPage() {
     }
   }
 
+  /** Coordinates the schedule campaign behavior for this workflow. */
   async function scheduleCampaign(id: number) {
     const scheduledAt = prompt("Enter scheduled date and time (YYYY-MM-DD HH:MM):");
     if (!scheduledAt) return;
@@ -205,6 +212,7 @@ export default function CampaignsPage() {
     }
   }
 
+  /** Cancels the campaign operation and restores the appropriate interface state. */
   async function cancelCampaign(id: number) {
     if (!confirm("Cancel this scheduled campaign?")) return;
 
@@ -246,6 +254,7 @@ export default function CampaignsPage() {
     });
   }, [campaigns, search, statusFilter]);
 
+  /** Returns the derived status color value used by this workflow. */
   function getStatusColor(status: string) {
     switch(status) {
       case "SENT": return "bg-green-100 text-green-700";
@@ -256,6 +265,7 @@ export default function CampaignsPage() {
     }
   }
 
+  /** Returns the derived channels display value used by this workflow. */
   function getChannelsDisplay(campaign: Campaign) {
     const channels = [];
     if (campaign.emailEnabled !== false) channels.push("📧 Email");
@@ -264,6 +274,7 @@ export default function CampaignsPage() {
     return channels.length ? channels.join(", ") : "📧 Email";
   }
 
+  /** Normalizes the date value for consistent display or use. */
   function formatDate(dateString?: string) {
     if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("en-US", {

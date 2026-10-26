@@ -1,4 +1,6 @@
 "use client";
+/** Implements the webinar page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -35,6 +37,7 @@ interface WebinarItem {
     category?: WebinarCategory;
 }
 
+/** Coordinates the derive list state behavior for this workflow. */
 function deriveListState(w: {
     isOnDemand?: boolean;
     startDate?: string;
@@ -46,6 +49,7 @@ function deriveListState(w: {
     return undefined;
 }
 
+/** Coordinates the badge for webinar behavior for this workflow. */
 function badgeForWebinar(w: {
     featured?: boolean;
     isOnDemand?: boolean;
@@ -66,16 +70,19 @@ const BADGE_STYLES = {
     demand: "bg-[#00B5ED] text-[#0a0d14]",
 };
 
+/** Normalizes the date value for consistent display or use. */
 function formatDate(dateStr: string) {
     const d = new Date(dateStr);
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase();
 }
 
+/** Normalizes the full date value for consistent display or use. */
 function formatFullDate(dateStr: string) {
     const d = new Date(dateStr);
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
+/** Renders the webinar thumbnail interface. */
 function WebinarThumbnail({
     src,
     alt,
@@ -102,6 +109,7 @@ function WebinarThumbnail({
     );
 }
 
+/** Renders the video placeholder interface. */
 function VideoPlaceholder() {
     return (
         <svg className="h-10 w-10 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,6 +123,7 @@ function VideoPlaceholder() {
     );
 }
 
+/** Renders the webinar card interface. */
 function WebinarCard({ webinar }: { webinar: WebinarItem }) {
     const badge = badgeForWebinar(webinar);
     const listState = deriveListState(webinar);
@@ -207,6 +216,7 @@ function WebinarCard({ webinar }: { webinar: WebinarItem }) {
     );
 }
 
+/** Renders the webinar listing page interface. */
 export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
     const [webinars, setWebinars] = useState<WebinarItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -276,6 +286,7 @@ export default function WebinarListingPage({ apiBase = DEFAULT_API_BASE }) {
         });
     }, [webinars, search, category, quickFilter]);
 
+    /** Coordinates the scroll to grid behavior for this workflow. */
     const scrollToGrid = () => {
         gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     };

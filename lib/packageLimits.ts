@@ -1,3 +1,4 @@
+/** Fetches server-authoritative eligibility for company profiles, product listings, and article posting. */
 // lib/packageLimits.ts - FULL COMPLETE VERSION
 
 export type ContentLimitEligibility = {
@@ -48,6 +49,7 @@ export type CompanyProfileEligibility = {
   inquiryForm: string;
 };
 
+/** Loads the backend plan permissions for editing a recruiter company profile. */
 export async function fetchCompanyProfileEligibility(
   token: string
 ): Promise<CompanyProfileEligibility> {
@@ -59,6 +61,7 @@ export async function fetchCompanyProfileEligibility(
   return res.json();
 }
 
+/** Loads the backend plan quota for supplier product listings. */
 export async function fetchProductListingEligibility(
   token: string
 ): Promise<ContentLimitEligibility> {

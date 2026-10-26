@@ -1,4 +1,6 @@
 "use client"
+/** Implements the candidate job alerts page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -35,6 +37,7 @@ const EMPLOYMENT_TYPES = [
   "Freelance",
 ]
 
+/** Renders the job alerts page interface. */
 export default function JobAlertsPage() {
   useCandidateGuard()
 
@@ -50,6 +53,7 @@ export default function JobAlertsPage() {
   })
   const [saving, setSaving] = useState(false)
 
+  /** Loads alerts for the current workflow. */
   async function loadAlerts() {
     try {
       const token = localStorage.getItem("token")
@@ -70,6 +74,7 @@ export default function JobAlertsPage() {
     loadAlerts()
   }, [])
 
+  /** Handles the create interaction and its related state changes. */
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
     if (!form.keywords && !form.location && !form.employmentType) return
@@ -107,6 +112,7 @@ export default function JobAlertsPage() {
     }
   }
 
+  /** Coordinates the toggle active behavior for this workflow. */
   async function toggleActive(alert: JobAlert) {
     try {
       const token = localStorage.getItem("token")
@@ -133,6 +139,7 @@ export default function JobAlertsPage() {
     }
   }
 
+  /** Handles the delete interaction and its related state changes. */
   async function handleDelete(id: number) {
     try {
       const token = localStorage.getItem("token")

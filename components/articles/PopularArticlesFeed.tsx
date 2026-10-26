@@ -1,4 +1,6 @@
 "use client";
+/** Implements the articles popular articles feed component and its related interface behavior. */
+
 
 import Image from "next/image";
 import Link from "next/link";
@@ -6,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Eye, TrendingUp } from "lucide-react";
 import type { Post } from "@/types/Post";
 
+/** Returns the derived image url value used by this workflow. */
 function getImageUrl(url?: string | null) {
   if (!url) return "/placeholder.svg";
   if (url.startsWith("http")) return url;
@@ -13,12 +16,14 @@ function getImageUrl(url?: string | null) {
   return `${base.replace(/\/$/, "")}/${url.replace(/^\//, "")}`;
 }
 
+/** Returns the derived author name value used by this workflow. */
 function getAuthorName(post: Post) {
   if (post.author?.name) return post.author.name;
   if (post.Company?.name) return post.Company.name;
   return "Metrology";
 }
 
+/** Normalizes the date value for consistent display or use. */
 function formatDate(date?: string | null) {
   if (!date) return "";
   return new Date(date).toLocaleDateString("en-US", {
@@ -32,6 +37,7 @@ type PopularArticlesFeedProps = {
   onArticlesLoaded?: (articles: Post[]) => void;
 };
 
+/** Renders the popular articles feed interface. */
 export default function PopularArticlesFeed({
   onArticlesLoaded,
 }: PopularArticlesFeedProps) {
@@ -40,6 +46,7 @@ export default function PopularArticlesFeed({
   const [error, setError] = useState("");
 
   useEffect(() => {
+    /** Loads articles for the current workflow. */
     async function loadArticles() {
       try {
         const res = await fetch(
@@ -206,6 +213,7 @@ export default function PopularArticlesFeed({
   );
 }
 
+/** Renders the article meta interface. */
 function ArticleMeta({ post }: { post: Post }) {
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500">

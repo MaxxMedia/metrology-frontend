@@ -1,8 +1,11 @@
 "use client"
+/** Implements the ctasection component and its related interface behavior. */
+
 
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
+/** Renders the ctasection interface. */
 export default function CTASection() {
   return (
     <section className="relative overflow-hidden 

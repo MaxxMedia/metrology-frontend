@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile skills section component and its related interface behavior. */
+
 
 import { Pencil } from "lucide-react";
 
@@ -15,6 +17,7 @@ interface SkillsSectionProps {
   onEditClick?: () => void;
 }
 
+/** Renders the skills section interface. */
 export default function SkillsSection({
   editable = false,
   skills = [],

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile forms basic info form component and its related interface behavior. */
+
 
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -38,6 +40,7 @@ const validationSchema = Yup.object({
   about: Yup.string().max(2000),
 });
 
+/** Renders the basic info form interface. */
 export default function BasicInfoForm({
   initialValues,
   onSubmit,
@@ -124,6 +127,7 @@ interface InputProps {
   disabled?: boolean;
 }
 
+/** Renders the input interface. */
 function Input({ label, name, type = "text", placeholder = "", disabled = false }: InputProps) {
   return (
     <div>

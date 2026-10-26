@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin users sub admin create page and its route-specific behavior. */
+
 
 
 import { useEffect, useState } from "react";
@@ -22,6 +24,7 @@ type PermissionsByModule = Record<string, Permission[]>;
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+/** Coordinates the auth headers behavior for this workflow. */
 function authHeaders() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     return {
@@ -30,6 +33,7 @@ function authHeaders() {
     };
 }
 
+/** Renders the add new sub admin page interface. */
 export default function AddNewSubAdminPage() {
     const router = useRouter();
 
@@ -52,6 +56,7 @@ export default function AddNewSubAdminPage() {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        /** Loads meta for the current workflow. */
         async function loadMeta() {
             setLoadingMeta(true);
             try {
@@ -73,6 +78,7 @@ export default function AddNewSubAdminPage() {
         loadMeta();
     }, []);
 
+    /** Coordinates the toggle expand behavior for this workflow. */
     function toggleExpand(mod: string) {
         setExpanded((prev) => {
             const next = new Set(prev);
@@ -81,6 +87,7 @@ export default function AddNewSubAdminPage() {
         });
     }
 
+    /** Coordinates the toggle permission behavior for this workflow. */
     function togglePermission(key: string) {
         setSelectedKeys((prev) => {
             const next = new Set(prev);
@@ -89,6 +96,7 @@ export default function AddNewSubAdminPage() {
         });
     }
 
+    /** Coordinates the toggle module all behavior for this workflow. */
     function toggleModuleAll(mod: string) {
         const modPerms = permissionModules[mod] || [];
         const allSelected = modPerms.every((p) => selectedKeys.has(p.key));
@@ -99,6 +107,7 @@ export default function AddNewSubAdminPage() {
         });
     }
 
+    /** Handles the submit interaction and its related state changes. */
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError("");

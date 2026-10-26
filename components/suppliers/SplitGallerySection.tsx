@@ -1,4 +1,6 @@
 "use client"
+/** Implements the suppliers split gallery section component and its related interface behavior. */
+
 
 import { useState } from "react"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
@@ -37,7 +39,9 @@ export default function SplitGallerySection({
     const start = page * cardsPerPage
     const visibleItems = items.slice(start, start + cardsPerPage)
 
+    /** Coordinates the go prev behavior for this component. */
     const goPrev = () => setPage((p) => (p - 1 + totalPages) % totalPages)
+    /** Coordinates the go next behavior for this component. */
     const goNext = () => setPage((p) => (p + 1) % totalPages)
 
     return (

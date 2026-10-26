@@ -1,5 +1,7 @@
 // app/(dashboard)/recruiter/events/edit/[id]/page.tsx
 "use client"
+/** Implements the admin events edit id page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
@@ -99,6 +101,7 @@ const initialValues = {
   agreeTerms: false,
 }
 
+/** Renders the edit event page interface. */
 export default function EditEventPage() {
   const { id } = useParams()
   const router = useRouter()
@@ -111,6 +114,7 @@ export default function EditEventPage() {
   // FETCH EVENT DATA
   // ============================================================
   useEffect(() => {
+    /** Loads event for the current workflow. */
     const fetchEvent = async () => {
       try {
         const token = localStorage.getItem("token")

@@ -1,8 +1,11 @@
 "use client";
+/** Implements the admin newsletter subscribers id page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
+/** Renders the edit subscriber page interface. */
 export default function EditSubscriberPage() {
   const router = useRouter();
   const { id } = useParams();
@@ -27,6 +30,7 @@ export default function EditSubscriberPage() {
     loadSubscriber();
   }, [id]);
 
+  /** Loads subscriber for the current workflow. */
   async function loadSubscriber() {
     try {
       setError(null);
@@ -79,6 +83,7 @@ export default function EditSubscriberPage() {
     }
   }
 
+  /** Updates the field record or interface state. */
   function updateField(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) {
@@ -98,6 +103,7 @@ export default function EditSubscriberPage() {
     }));
   }
 
+  /** Updates the subscriber record or interface state. */
   async function updateSubscriber(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -152,6 +158,7 @@ export default function EditSubscriberPage() {
     }
   }
 
+  /** Removes the subscriber record or interface element. */
   async function deleteSubscriber() {
     if (!confirm("Are you sure you want to delete this subscriber?")) return;
 

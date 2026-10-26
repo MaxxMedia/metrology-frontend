@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable use toast UI primitive and its interaction behavior. */
+
 
 // Inspired by react-hot-toast library
 import * as React from 'react'
@@ -24,6 +26,7 @@ const actionTypes = {
 
 let count = 0
 
+/** Coordinates the gen id behavior for this component. */
 function genId() {
   count = (count + 1) % Number.MAX_SAFE_INTEGER
   return count.toString()
@@ -55,6 +58,7 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
+/** Creates the to remove queue record or interface element. */
 const addToRemoveQueue = (toastId: string) => {
   if (toastTimeouts.has(toastId)) {
     return
@@ -71,6 +75,7 @@ const addToRemoveQueue = (toastId: string) => {
   toastTimeouts.set(toastId, timeout)
 }
 
+/** Coordinates the reducer behavior for this component. */
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'ADD_TOAST':
@@ -130,6 +135,7 @@ const listeners: Array<(state: State) => void> = []
 
 let memoryState: State = { toasts: [] }
 
+/** Coordinates the dispatch behavior for this component. */
 function dispatch(action: Action) {
   memoryState = reducer(memoryState, action)
   listeners.forEach((listener) => {
@@ -139,14 +145,17 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, 'id'>
 
+/** Coordinates the toast behavior for this component. */
 function toast({ ...props }: Toast) {
   const id = genId()
 
+  /** Coordinates the update behavior for this component. */
   const update = (props: ToasterToast) =>
     dispatch({
       type: 'UPDATE_TOAST',
       toast: { ...props, id },
     })
+  /** Coordinates the dismiss behavior for this component. */
   const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id })
 
   dispatch({
@@ -168,6 +177,7 @@ function toast({ ...props }: Toast) {
   }
 }
 
+/** Provides the toast hook for this component workflow. */
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
 

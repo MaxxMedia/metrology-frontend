@@ -1,6 +1,8 @@
+/** Implements the admin components directory table interface and its related behavior. */
 import type { Company, Recruiter, Directory } from "@/types/admin"
 
 
+/** Renders the directory table interface. */
 export default function DirectoryTable({
   directories = [],
 }: {

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the recruiter articles create page and its route-specific behavior. */
+
 
 import ContentSubmissionPolicy from "@/components/ContentSubmissionPolicy";
 import { useEffect, useState } from "react";
@@ -11,6 +13,7 @@ import {
   type ContentLimitEligibility,
 } from "@/lib/packageLimits";
 
+/** Renders the create recruiter article page interface. */
 export default function CreateRecruiterArticlePage() {
   const router = useRouter();
 
@@ -30,6 +33,7 @@ export default function CreateRecruiterArticlePage() {
   useEffect(() => {
     console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
 
+    /** Loads eligibility for the current workflow. */
     async function loadEligibility() {
       try {
         const token = localStorage.getItem("token");

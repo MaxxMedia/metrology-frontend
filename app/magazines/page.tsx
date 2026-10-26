@@ -1,3 +1,4 @@
+/** Implements the magazines page and its route-specific behavior. */
 ﻿// import MagazineGrid from "@/components/magazine/MagazineGrid"
 
 // export default function MagazinesPage() {
@@ -14,6 +15,7 @@ import MagazineArchive from "@/components/magazine/MagazineArchive"
 import InThisIssue from "@/components/magazine/InThisIssue"
 import type { Post } from "@/types/Post"
 
+/** Renders the magazines page interface. */
 export default async function MagazinesPage() {
 
   /* FETCH ISSUE POSTS DIRECTLY */

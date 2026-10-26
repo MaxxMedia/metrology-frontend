@@ -1,4 +1,6 @@
 "use client";
+/** Implements the topics topic listing component and its related interface behavior. */
+
 
 import Image from "next/image";
 import Link from "next/link";
@@ -21,6 +23,7 @@ type Props = {
   sidebarCategories?: SidebarCategory[];
 };
 
+/** Renders the topic listing interface. */
 export default function TopicListing({
   posts,
   title,
@@ -29,6 +32,7 @@ export default function TopicListing({
   activeSlug,
   sidebarCategories = [],
 }: Props) {
+  /** Returns the derived image value used by this workflow. */
   const getImage = (post: Post) =>
     post.imageUrl?.startsWith("http")
       ? post.imageUrl
@@ -36,6 +40,7 @@ export default function TopicListing({
         ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
         : "/placeholder.svg";
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (date?: string) =>
     date
       ? new Date(date).toLocaleDateString("en-US", {
@@ -45,6 +50,7 @@ export default function TopicListing({
         })
       : "";
 
+  /** Returns the derived subcategory name value used by this workflow. */
   const getSubcategoryName = (post: Post) =>
     (post as Post & { subCategory?: { name?: string } }).subCategory?.name;
 

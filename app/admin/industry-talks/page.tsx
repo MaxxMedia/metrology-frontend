@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin industry talks page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -63,6 +65,7 @@ export default function IndustryTalksPage() {
   /* ================= FETCH INDUSTRY TALKS ================= */
 
   useEffect(() => {
+    /** Coordinates the load behavior for this workflow. */
     async function load() {
       setLoading(true)
 

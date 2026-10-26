@@ -1,4 +1,6 @@
 "use client";
+/** Implements the webinar slug page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -119,6 +121,7 @@ interface WebinarDetailPageProps {
     apiBase?: string;
 }
 
+/** Coordinates the to webinar behavior for this workflow. */
 function toWebinar(raw: RawWebinar): Webinar {
     return {
         slug: raw.slug,
@@ -148,12 +151,14 @@ function toWebinar(raw: RawWebinar): Webinar {
     };
 }
 
+/** Builds the google calendar url value used by the surrounding workflow. */
 function buildGoogleCalendarUrl(webinar: Webinar): string {
     const start = new Date(webinar.startDate);
     const end = webinar.endDate
         ? new Date(webinar.endDate)
         : new Date(start.getTime() + (webinar.duration || 60) * 60000);
 
+    /** Coordinates the fmt behavior for this workflow. */
     const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 
     const params = new URLSearchParams({
@@ -166,6 +171,7 @@ function buildGoogleCalendarUrl(webinar: Webinar): string {
     return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
+/** Returns the derived you tube embed url value used by this workflow. */
 function getYouTubeEmbedUrl(url?: string | null): string | null {
     if (!url) return null;
     try {
@@ -188,6 +194,7 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
     }
 }
 
+/** Renders the info stat interface. */
 function InfoStat({ icon: Icon, label, value }: InfoStatProps) {
     return (
         <div className="flex items-center gap-3 px-4 py-3">
@@ -200,6 +207,7 @@ function InfoStat({ icon: Icon, label, value }: InfoStatProps) {
     );
 }
 
+/** Renders the webinar detail page interface. */
 export default function WebinarDetailPage({ slug: slugProp, apiBase = DEFAULT_API_BASE }: WebinarDetailPageProps) {
     const params = useParams();
     const rawParamSlug = params?.slug;

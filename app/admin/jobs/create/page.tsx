@@ -1,8 +1,11 @@
 "use client"
+/** Implements the admin jobs create page and its route-specific behavior. */
+
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
+/** Renders the create job page interface. */
 export default function CreateJobPage() {
   const router = useRouter()
 
@@ -23,6 +26,7 @@ export default function CreateJobPage() {
       ? localStorage.getItem("token")
       : null
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -161,6 +165,7 @@ function Input({
   )
 }
 
+/** Renders the textarea interface. */
 function Textarea({
   label,
   value,
@@ -185,6 +190,7 @@ function Textarea({
   )
 }
 
+/** Renders the select interface. */
 function Select({
   label,
   value,

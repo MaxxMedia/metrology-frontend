@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable context menu UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu'
@@ -6,12 +8,14 @@ import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the context menu interface. */
 function ContextMenu({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Root>) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />
 }
 
+/** Renders the context menu trigger interface. */
 function ContextMenuTrigger({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Trigger>) {
@@ -20,6 +24,7 @@ function ContextMenuTrigger({
   )
 }
 
+/** Renders the context menu group interface. */
 function ContextMenuGroup({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Group>) {
@@ -28,6 +33,7 @@ function ContextMenuGroup({
   )
 }
 
+/** Renders the context menu portal interface. */
 function ContextMenuPortal({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Portal>) {
@@ -36,12 +42,14 @@ function ContextMenuPortal({
   )
 }
 
+/** Renders the context menu sub interface. */
 function ContextMenuSub({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Sub>) {
   return <ContextMenuPrimitive.Sub data-slot="context-menu-sub" {...props} />
 }
 
+/** Renders the context menu radio group interface. */
 function ContextMenuRadioGroup({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.RadioGroup>) {
@@ -53,6 +61,7 @@ function ContextMenuRadioGroup({
   )
 }
 
+/** Renders the context menu sub trigger interface. */
 function ContextMenuSubTrigger({
   className,
   inset,
@@ -77,6 +86,7 @@ function ContextMenuSubTrigger({
   )
 }
 
+/** Renders the context menu sub content interface. */
 function ContextMenuSubContent({
   className,
   ...props
@@ -93,6 +103,7 @@ function ContextMenuSubContent({
   )
 }
 
+/** Renders the context menu content interface. */
 function ContextMenuContent({
   className,
   ...props
@@ -111,6 +122,7 @@ function ContextMenuContent({
   )
 }
 
+/** Renders the context menu item interface. */
 function ContextMenuItem({
   className,
   inset,
@@ -134,6 +146,7 @@ function ContextMenuItem({
   )
 }
 
+/** Renders the context menu checkbox item interface. */
 function ContextMenuCheckboxItem({
   className,
   children,
@@ -160,6 +173,7 @@ function ContextMenuCheckboxItem({
   )
 }
 
+/** Renders the context menu radio item interface. */
 function ContextMenuRadioItem({
   className,
   children,
@@ -184,6 +198,7 @@ function ContextMenuRadioItem({
   )
 }
 
+/** Renders the context menu label interface. */
 function ContextMenuLabel({
   className,
   inset,
@@ -204,6 +219,7 @@ function ContextMenuLabel({
   )
 }
 
+/** Renders the context menu separator interface. */
 function ContextMenuSeparator({
   className,
   ...props
@@ -217,6 +233,7 @@ function ContextMenuSeparator({
   )
 }
 
+/** Renders the context menu shortcut interface. */
 function ContextMenuShortcut({
   className,
   ...props

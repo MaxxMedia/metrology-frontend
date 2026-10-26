@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile forms interests form component and its related interface behavior. */
+
 
 import { Formik, Form, FieldArray, useField } from "formik";
 import * as Yup from "yup";
@@ -27,6 +29,7 @@ const validationSchema = Yup.object({
   ),
 });
 
+/** Renders the interests form interface. */
 export default function InterestsForm({
   initialValues,
   onSubmit,
@@ -125,6 +128,7 @@ export default function InterestsForm({
   );
 }
 
+/** Renders the input interface. */
 function Input({
   label,
   name,

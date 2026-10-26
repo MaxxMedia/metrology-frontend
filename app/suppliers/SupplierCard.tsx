@@ -1,3 +1,4 @@
+/** Implements the suppliers supplier card interface and its related behavior. */
 import Link from "next/link"
 import Image from "next/image"
 
@@ -9,6 +10,7 @@ type Supplier = {
   website?: string
 }
 
+/** Renders the supplier card interface. */
 export default function SupplierCard({ supplier }: { supplier: Supplier }) {
   return (
     <div className="border rounded-lg p-5 hover:shadow-md transition">

@@ -1,8 +1,11 @@
 "use client";
+/** Implements the admin newsletter subscribers add page and its route-specific behavior. */
+
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+/** Renders the add subscriber page interface. */
 export default function AddSubscriberPage() {
   const router = useRouter();
 
@@ -21,6 +24,7 @@ export default function AddSubscriberPage() {
     status: "ACTIVE",
   });
 
+  /** Updates the field record or interface state. */
   function updateField(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) {
@@ -41,6 +45,7 @@ export default function AddSubscriberPage() {
     }));
   }
 
+  /** Coordinates the submit behavior for this workflow. */
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);

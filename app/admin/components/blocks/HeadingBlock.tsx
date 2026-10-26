@@ -1,5 +1,7 @@
 // app/admin/components/blocks/HeadingBlock.tsx
 "use client";
+/** Implements the admin components blocks heading block interface and its related behavior. */
+
 
 import { HeadingBlock } from "../types";
 
@@ -8,6 +10,7 @@ interface Props {
   onChange: (block: HeadingBlock) => void;
 }
 
+/** Renders the heading block editor interface. */
 export default function HeadingBlockEditor({ block, onChange }: Props) {
   return (
     <div className="space-y-4">

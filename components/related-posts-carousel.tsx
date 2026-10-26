@@ -1,4 +1,6 @@
 "use client"
+/** Implements the related posts carousel component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -17,11 +19,13 @@ type Post = {
   views?: number
 }
 
+/** Renders the related posts carousel interface. */
 export default function RelatedPostsCarousel() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    /** Loads related for the current workflow. */
     async function fetchRelated() {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`)

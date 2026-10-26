@@ -1,5 +1,7 @@
 // app/admin/components/post/BlockRenderer.tsx
 "use client";
+/** Implements the admin components post block renderer interface and its related behavior. */
+
 
 import { ContentBlock } from "../types";
 import PostQuoteCard from "@/components/posts/PostQuoteCard";
@@ -10,6 +12,7 @@ interface Props {
   blocks: ContentBlock[];
 }
 
+/** Renders the block renderer interface. */
 export default function BlockRenderer({ blocks }: Props) {
   if (!blocks || blocks.length === 0) {
     return null;
@@ -84,6 +87,7 @@ interface HeadingBlockProps {
   };
 }
 
+/** Renders the heading block interface. */
 function HeadingBlock({ block }: HeadingBlockProps) {
   const level = block.level || 2;
   const sizeMap: Record<number, string> = {
@@ -111,6 +115,7 @@ interface ParagraphBlockProps {
   };
 }
 
+/** Renders the paragraph block interface. */
 function ParagraphBlock({ block }: ParagraphBlockProps) {
   return (
     <div
@@ -130,6 +135,7 @@ interface ImageBlockLargeProps {
   };
 }
 
+/** Renders the image block large interface. */
 function ImageBlockLarge({ block }: ImageBlockLargeProps) {
   return (
     <figure className="space-y-2 mb-6">
@@ -164,6 +170,7 @@ interface ImageBlockSmallProps {
   };
 }
 
+/** Renders the image block small interface. */
 function ImageBlockSmall({ block }: ImageBlockSmallProps) {
   return (
     <figure className="space-y-2">
@@ -195,6 +202,7 @@ interface GalleryBlockProps {
   };
 }
 
+/** Renders the gallery block interface. */
 function GalleryBlock({ block }: GalleryBlockProps) {
   const images = block.images || [];
   const count = images.length;
@@ -232,6 +240,7 @@ interface QuoteBlockProps {
   };
 }
 
+/** Renders the quote block interface. */
 function QuoteBlock({ block }: QuoteBlockProps) {
   return <PostQuoteCard quote={block.quote} author={block.author} />;
 }

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the recruiter jobs job id applications application id page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -29,6 +31,7 @@ type Application = {
   } | null;
 };
 
+/** Renders the applicant details page interface. */
 export default function ApplicantDetailsPage() {
   const params = useParams();
   const applicationId = params.applicationId as string;
@@ -38,6 +41,7 @@ export default function ApplicantDetailsPage() {
   const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
+    /** Loads application for the current workflow. */
     async function loadApplication() {
       try {
         const token = localStorage.getItem("token");

@@ -1,9 +1,12 @@
 "use client";
+/** Implements the recruiter package limit modal component and its related interface behavior. */
+
 
 import Link from "next/link";
 import { X } from "lucide-react";
 import type { ContentLimitEligibility } from "@/lib/packageLimits";
 
+/** Renders the package limit modal interface. */
 export default function PackageLimitModal({
   open,
   onClose,

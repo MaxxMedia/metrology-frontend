@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile forms about form component and its related interface behavior. */
+
 
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
@@ -9,6 +11,7 @@ interface AboutFormProps {
   loading?: boolean;
 }
 
+/** Renders the about form interface. */
 export default function AboutForm({
   initialValue,
   onSubmit,
@@ -16,6 +19,7 @@ export default function AboutForm({
 }: AboutFormProps) {
   const [about, setAbout] = useState(initialValue || "");
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSubmit(about);

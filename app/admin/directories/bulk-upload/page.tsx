@@ -1,10 +1,13 @@
 // app/admin/directories/bulk-upload/page.tsx
 
 "use client"
+/** Implements the admin directories bulk upload page and its route-specific behavior. */
+
 
 import { useState } from "react"
 import BulkImportUserList from "@/components/admin/BulkImportUserList"
 
+/** Renders the bulk directory upload interface. */
 export default function BulkDirectoryUpload() {
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
@@ -16,6 +19,7 @@ export default function BulkDirectoryUpload() {
       ? localStorage.getItem("token")
       : null
 
+  /** Handles the upload interaction and its related state changes. */
   const handleUpload = async () => {
     if (!file) {
       setError("Please select an Excel file.")
@@ -56,6 +60,7 @@ export default function BulkDirectoryUpload() {
     }
   }
 
+  /** Handles the download template interaction and its related state changes. */
   const handleDownloadTemplate = async () => {
     try {
       setError(null)

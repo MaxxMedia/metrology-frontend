@@ -1,3 +1,4 @@
+/** Implements the topics category page and its route-specific behavior. */
 import Link from "next/link";
 import TopicListing from "@/components/topics/TopicListing";
 import type { Post } from "@/types/Post";
@@ -18,6 +19,7 @@ type Props = {
 
 const METROLOGY_SLUGS = new Set(MASTER_CATEGORIES.map((c) => c.slug));
 
+/** Renders the topic category page interface. */
 export default async function TopicCategoryPage({ params }: Props) {
   const { category: categorySlug } = await params;
   const databaseCategorySlugs = resolveCategorySlugs(categorySlug);

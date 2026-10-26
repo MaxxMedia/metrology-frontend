@@ -1,9 +1,11 @@
+/** Implements the adminwebinarform component and its related interface behavior. */
 import { useEffect, useState } from "react";
 import { Plus, Trash2, Save, Loader2 } from "lucide-react";
 import UploadBox from "@/components/UploadBox";
 
 const DEFAULT_API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
+/** Coordinates the auth headers behavior for this component. */
 function authHeaders(extra?: Record<string, string>): Record<string, string> {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     return {
@@ -94,6 +96,7 @@ const EMPTY_FORM: WebinarForm = {
     seoDescription: "",
 };
 
+/** Renders the section interface. */
 function Section({ title, description, children }: SectionProps) {
     return (
         <div className="border-b border-slate-200 py-6 first:pt-0 last:border-0">
@@ -106,6 +109,7 @@ function Section({ title, description, children }: SectionProps) {
     );
 }
 
+/** Renders the field interface. */
 function Field({ label, required, full, children, hint }: FieldProps) {
     return (
         <div className={full ? "sm:col-span-2" : ""}>
@@ -118,6 +122,7 @@ function Field({ label, required, full, children, hint }: FieldProps) {
     );
 }
 
+/** Renders the admin webinar form interface. */
 export default function AdminWebinarForm({
     webinarId = null,
     apiBase = DEFAULT_API_BASE,
@@ -164,11 +169,13 @@ export default function AdminWebinarForm({
             .finally(() => setLoading(false));
     }, [webinarId, apiBase]);
 
+    /** Coordinates the update behavior for this component. */
     const update = (key: keyof WebinarForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const value = e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value;
         setForm((f) => ({ ...f, [key]: value }));
     };
 
+    /** Uploads the image asset and returns its result to the form. */
     const uploadImage = async (file: File, field: ImageFieldKey) => {
         const formData = new FormData();
         formData.append("image", file);
@@ -186,10 +193,12 @@ export default function AdminWebinarForm({
         setForm((f) => ({ ...f, [field]: data.imageUrl }));
     };
 
+    /** Clears the image values and resets the related state. */
     const clearImage = (field: ImageFieldKey) => {
         setForm((f) => ({ ...f, [field]: "" }));
     };
 
+    /** Coordinates the submit behavior for this component. */
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");

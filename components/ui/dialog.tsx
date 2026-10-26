@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable dialog UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
@@ -6,30 +8,35 @@ import { XIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the dialog interface. */
 function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
 
+/** Renders the dialog trigger interface. */
 function DialogTrigger({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
 }
 
+/** Renders the dialog portal interface. */
 function DialogPortal({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
 }
 
+/** Renders the dialog close interface. */
 function DialogClose({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
+/** Renders the dialog overlay interface. */
 function DialogOverlay({
   className,
   ...props
@@ -46,6 +53,7 @@ function DialogOverlay({
   )
 }
 
+/** Renders the dialog content interface. */
 function DialogContent({
   className,
   children,
@@ -80,6 +88,7 @@ function DialogContent({
   )
 }
 
+/** Renders the dialog header interface. */
 function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -90,6 +99,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the dialog footer interface. */
 function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -103,6 +113,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the dialog title interface. */
 function DialogTitle({
   className,
   ...props
@@ -116,6 +127,7 @@ function DialogTitle({
   )
 }
 
+/** Renders the dialog description interface. */
 function DialogDescription({
   className,
   ...props

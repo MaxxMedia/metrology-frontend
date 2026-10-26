@@ -1,4 +1,6 @@
 "use client";
+/** Implements the trending section component and its related interface behavior. */
+
 
 import Image from "next/image";
 import Link from "next/link";
@@ -53,6 +55,7 @@ function PulseIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the calendar icon interface. */
 function CalendarIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -69,6 +72,7 @@ function CalendarIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the arrow icon interface. */
 function ArrowIcon({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 18 12" className={className} aria-hidden fill="currentColor">
@@ -84,6 +88,7 @@ function ArrowIcon({ className = "" }: { className?: string }) {
 /* ================= MAIN COMPONENT ================= */
 
 export default function TrendingSection({ posts }: Props) {
+  /** Returns the derived author name value used by this workflow. */
   const getAuthorName = (post?: Post) => {
     if (!post) return "rstheme";
     if (post.author && typeof post.author === "object" && post.author.name) {
@@ -104,6 +109,7 @@ export default function TrendingSection({ posts }: Props) {
 
   if (!featured) return null;
 
+  /** Coordinates the image url behavior for this component. */
   const imageUrl = (post?: Post) =>
     post?.imageUrl?.startsWith("http")
       ? post.imageUrl
@@ -144,6 +150,7 @@ export default function TrendingSection({ posts }: Props) {
   const featuredTag = tagsWithUniqueColors[0];
   const listTags = tagsWithUniqueColors.slice(1);
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (date?: string | null) =>
     date
       ? new Date(date).toLocaleDateString("en-US", {

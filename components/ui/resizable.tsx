@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable resizable UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import { GripVerticalIcon } from 'lucide-react'
@@ -6,6 +8,7 @@ import * as ResizablePrimitive from 'react-resizable-panels'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the resizable panel group interface. */
 function ResizablePanelGroup({
   className,
   ...props
@@ -22,12 +25,14 @@ function ResizablePanelGroup({
   )
 }
 
+/** Renders the resizable panel interface. */
 function ResizablePanel({
   ...props
 }: React.ComponentProps<typeof ResizablePrimitive.Panel>) {
   return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />
 }
 
+/** Renders the resizable handle interface. */
 function ResizableHandle({
   withHandle,
   className,

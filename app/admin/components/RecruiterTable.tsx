@@ -1,5 +1,7 @@
+/** Implements the admin components recruiter table interface and its related behavior. */
 import type { Company, Recruiter, Directory } from "@/types/admin"
 
+/** Renders the recruiter table interface. */
 export default function RecruiterTable({
   recruiters = [],
 }: {

@@ -1,10 +1,13 @@
 'use client';
+/** Implements the admin contact id page and its route-specific behavior. */
+
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getContactById, updateContactStatus, deleteContact, ContactMessage } from '@/lib/api/contact';
 
+/** Renders the status badge interface. */
 function StatusBadge({ status }: { status: ContactMessage['status'] }) {
   const statusStyles = {
     NEW: 'bg-blue-100 text-blue-800',
@@ -20,6 +23,7 @@ function StatusBadge({ status }: { status: ContactMessage['status'] }) {
   );
 }
 
+/** Renders the contact detail page interface. */
 export default function ContactDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -37,6 +41,7 @@ export default function ContactDetailPage() {
     }
   }, [id]);
 
+  /** Loads contact for the current workflow. */
   const fetchContact = async () => {
     try {
       setLoading(true);
@@ -54,6 +59,7 @@ export default function ContactDetailPage() {
     }
   };
 
+  /** Handles the status update interaction and its related state changes. */
   const handleStatusUpdate = async (newStatus: ContactMessage['status']) => {
     try {
       const response = await updateContactStatus(id, newStatus);
@@ -69,6 +75,7 @@ export default function ContactDetailPage() {
     }
   };
 
+  /** Handles the delete interaction and its related state changes. */
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this message?')) return;
 
@@ -83,6 +90,7 @@ export default function ContactDetailPage() {
     }
   };
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin authors page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,6 +15,7 @@ type Author = {
   avatarUrl?: string | null;
 };
 
+/** Renders the author management interface. */
 export default function AuthorManagement() {
   const router = useRouter();
 
@@ -83,6 +86,7 @@ export default function AuthorManagement() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  /** Starts the edit workflow. */
   const startEdit = (author: Author) => {
     setEditingAuthor(author);
     setForm({
@@ -93,12 +97,14 @@ export default function AuthorManagement() {
     setMessage("");
   };
 
+  /** Cancels the edit operation and restores the appropriate interface state. */
   const cancelEdit = () => {
     setEditingAuthor(null);
     setForm({ name: "", bio: "", avatarUrl: "" });
     setMessage("");
   };
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
@@ -171,6 +177,7 @@ export default function AuthorManagement() {
     page * ADMIN_PAGE_SIZE
   );
 
+  /** Returns the derived full image url value used by this workflow. */
   const getFullImageUrl = (url?: string | null) => {
     if (!url) return null;
     return url.startsWith("http") ? url : `${process.env.NEXT_PUBLIC_API_URL}${url}`;

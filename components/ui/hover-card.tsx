@@ -1,16 +1,20 @@
 'use client'
+/** Provides the reusable hover card UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the hover card interface. */
 function HoverCard({
   ...props
 }: React.ComponentProps<typeof HoverCardPrimitive.Root>) {
   return <HoverCardPrimitive.Root data-slot="hover-card" {...props} />
 }
 
+/** Renders the hover card trigger interface. */
 function HoverCardTrigger({
   ...props
 }: React.ComponentProps<typeof HoverCardPrimitive.Trigger>) {
@@ -19,6 +23,7 @@ function HoverCardTrigger({
   )
 }
 
+/** Renders the hover card content interface. */
 function HoverCardContent({
   className,
   align = 'center',

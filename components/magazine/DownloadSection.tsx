@@ -1,4 +1,6 @@
 "use client"
+/** Implements the magazine download section component and its related interface behavior. */
+
 
 import { useState } from "react"
 import RegistrationModal from "./RegistrationModal"
@@ -7,6 +9,7 @@ type Props = {
   magazineId: number
 }
 
+/** Renders the download section interface. */
 export default function DownloadSection({ magazineId }: Props) {
   const [open, setOpen] = useState(false)
 

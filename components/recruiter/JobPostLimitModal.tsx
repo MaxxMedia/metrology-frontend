@@ -1,9 +1,12 @@
 "use client";
+/** Implements the recruiter job post limit modal component and its related interface behavior. */
+
 
 import Link from "next/link";
 import { X } from "lucide-react";
 import type { JobPostingEligibility } from "@/lib/jobPosting";
 
+/** Renders the job post limit modal interface. */
 export default function JobPostLimitModal({
   open,
   onClose,

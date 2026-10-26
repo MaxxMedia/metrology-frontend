@@ -1,5 +1,8 @@
 "use client"
+/** Implements the suppliers supplier filters component and its related interface behavior. */
 
+
+/** Renders the supplier filters interface. */
 export default function SupplierFilters() {
   return (
     <aside className="space-y-4">

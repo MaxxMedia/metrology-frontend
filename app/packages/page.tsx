@@ -1,6 +1,8 @@
+/** Implements the packages page and its route-specific behavior. */
 import { Suspense } from "react";
 import PackagesPageClient from "@/components/packages/PackagesPageClient";
 
+/** Renders the packages page interface. */
 export default function PackagesPage() {
   return (
     <Suspense fallback={

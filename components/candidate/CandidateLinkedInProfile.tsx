@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate candidate linked in profile component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react";
 import { Pencil, CheckCircle2, Users, FolderKanban } from "lucide-react";
@@ -64,6 +66,7 @@ type CandidateProfileData = {
   socials?: any[];
 };
 
+/** Returns the derived education display value used by this workflow. */
 function getEducationDisplay(education: any, educationList?: any[]): string {
   if (typeof education === "string" && education.trim()) {
     return education;
@@ -83,6 +86,7 @@ function getEducationDisplay(education: any, educationList?: any[]): string {
   return "";
 }
 
+/** Returns the derived company display value used by this workflow. */
 function getCompanyDisplay(company: any): string {
   if (typeof company === "string" && company.trim()) {
     return company;
@@ -96,6 +100,7 @@ function getCompanyDisplay(company: any): string {
   return "";
 }
 
+/** Returns the derived location display value used by this workflow. */
 function getLocationDisplay(location: any): string {
   if (typeof location === "string" && location.trim()) {
     return location;
@@ -109,6 +114,7 @@ function getLocationDisplay(location: any): string {
   return "";
 }
 
+/** Returns the derived safe string value used by this workflow. */
 function getSafeString(val: any, fallback: string = ""): string {
   if (typeof val === "string" && val.trim()) {
     return val;
@@ -120,6 +126,7 @@ interface Props {
   username: string;
 }
 
+/** Renders the candidate linked in profile interface. */
 export default function CandidateLinkedInProfile({ username }: Props) {
   const [candidate, setCandidate] = useState<CandidateProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -134,6 +141,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
   const [resume, setResume] = useState<{ fileName?: string; fileUrl?: string } | null>(null);
   const [resumeUploading, setResumeUploading] = useState(false);
 
+  /** Handles the upload resume interaction and its related state changes. */
   const handleUploadResume = async (file: File) => {
     setResumeUploading(true);
     try {
@@ -150,6 +158,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
 
   // Check ownership
   useEffect(() => {
+    /** Checks the ownership data against the requirements used by this workflow. */
     async function checkOwnership() {
       try {
         const stored = localStorage.getItem("user");
@@ -181,6 +190,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   }, [toastMessage]);
 
+  /** Loads candidate for the current workflow. */
   const loadCandidate = async () => {
     try {
       setLoading(true);
@@ -252,6 +262,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
 
       // 3. ONLY if logged-in user IS THE OWNER, fetch owner's personal items via token
       if (currentIsOwner) {
+        /** Coordinates the safe fetch behavior for this component. */
         const safeFetch = async (fn: () => Promise<any>) => {
           try {
             return await fn();
@@ -365,6 +376,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     loadCandidate();
   }, [username]);
 
+  /** Returns the derived role and organization value used by this workflow. */
   function getRoleAndOrganization(candidate: any) {
     const exps = candidate?.experiences || candidate?.experiencesList || [];
     const edus = candidate?.educationList || candidate?.education || [];
@@ -407,6 +419,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
   const displayLocation = getLocationDisplay(candidate?.location);
   const displayAbout = getSafeString(candidate?.about, "");
 
+  /** Handles the save intro interaction and its related state changes. */
   const handleSaveIntro = async (values: BasicInfoValues) => {
     setModalSaving(true);
     try {
@@ -453,6 +466,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   };
 
+  /** Handles the save about interaction and its related state changes. */
   const handleSaveAbout = async (aboutText: string) => {
     setModalSaving(true);
     try {
@@ -468,6 +482,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   };
 
+  /** Handles the save experience interaction and its related state changes. */
   const handleSaveExperience = async (values: Experience[]) => {
     setModalSaving(true);
     try {
@@ -506,6 +521,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   };
 
+  /** Handles the save education interaction and its related state changes. */
   const handleSaveEducation = async (values: Education[]) => {
     setModalSaving(true);
     try {
@@ -541,6 +557,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   };
 
+  /** Handles the save skills interaction and its related state changes. */
   const handleSaveSkills = async (values: Skill[]) => {
     setModalSaving(true);
     try {
@@ -567,6 +584,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   };
 
+  /** Handles the save projects interaction and its related state changes. */
   const handleSaveProjects = async (values: Project[]) => {
     setModalSaving(true);
     try {
@@ -602,6 +620,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   };
 
+  /** Handles the save certifications interaction and its related state changes. */
   const handleSaveCertifications = async (values: Certification[]) => {
     setModalSaving(true);
     try {
@@ -642,6 +661,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   };
 
+  /** Handles the save languages interaction and its related state changes. */
   const handleSaveLanguages = async (values: Language[]) => {
     setModalSaving(true);
     try {
@@ -668,6 +688,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   };
 
+  /** Handles the save achievements interaction and its related state changes. */
   const handleSaveAchievements = async (values: Achievement[]) => {
     setModalSaving(true);
     try {
@@ -701,6 +722,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   };
 
+  /** Handles the save interests interaction and its related state changes. */
   const handleSaveInterests = async (values: Interest[]) => {
     setModalSaving(true);
     try {
@@ -736,6 +758,7 @@ export default function CandidateLinkedInProfile({ username }: Props) {
     }
   };
 
+  /** Handles the save socials interaction and its related state changes. */
   const handleSaveSocials = async (values: SocialLink[]) => {
     setModalSaving(true);
     try {

@@ -1,10 +1,13 @@
 "use client";
+/** Implements the recruiter post job button component and its related interface behavior. */
+
 
 import { useState } from "react";
 import Link from "next/link";
 import JobPostLimitModal from "@/components/recruiter/JobPostLimitModal";
 import type { JobPostingEligibility } from "@/lib/jobPosting";
 
+/** Renders the post job button interface. */
 export default function PostJobButton({
   eligibility,
   className = "bg-[#0073FF] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0060D0] transition-colors",

@@ -1,8 +1,10 @@
+/** Implements the admin components stat card interface and its related behavior. */
 type StatCardProps = {
   label: string
   value: number | string
 }
 
+/** Renders the stat card interface. */
 export default function StatCard({
   label,
   value,

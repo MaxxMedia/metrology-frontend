@@ -1,3 +1,4 @@
+/** Implements the article page and its route-specific behavior. */
 import Image from "next/image"
 import Link from "next/link"
 
@@ -17,6 +18,7 @@ type Article = {
   company?: Company | null
 }
 
+/** Returns the derived articles value used by this workflow. */
 async function getArticles(): Promise<Article[]> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=articles`,
@@ -33,6 +35,7 @@ async function getArticles(): Promise<Article[]> {
   return json.data
 }
 
+/** Renders the articles page interface. */
 export default async function ArticlesPage() {
   const articles = await getArticles()
 

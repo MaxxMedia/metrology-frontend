@@ -1,9 +1,12 @@
 "use client"
+/** Implements the reset password form component and its related interface behavior. */
+
 
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 
+/** Renders the reset password form interface. */
 export default function ResetPasswordForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -16,6 +19,7 @@ export default function ResetPasswordForm() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")

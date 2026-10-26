@@ -1,3 +1,4 @@
+/** Defines the shared layout and access structure for site. */
 ﻿import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import "remixicon/fonts/remixicon.css"
@@ -126,6 +127,7 @@ export const viewport: Viewport = {
   ],
 }
 
+/** Renders the root layout interface. */
 export default function RootLayout({
   children,
 }: {

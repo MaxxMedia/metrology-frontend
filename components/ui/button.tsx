@@ -1,3 +1,4 @@
+/** Provides the reusable button UI primitive and its interaction behavior. */
 import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -36,6 +37,7 @@ const buttonVariants = cva(
   },
 )
 
+/** Renders the button interface. */
 function Button({
   className,
   variant,

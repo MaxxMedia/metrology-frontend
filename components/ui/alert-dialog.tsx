@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable alert dialog UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
@@ -6,12 +8,14 @@ import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 
+/** Renders the alert dialog interface. */
 function AlertDialog({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
 }
 
+/** Renders the alert dialog trigger interface. */
 function AlertDialogTrigger({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {
@@ -20,6 +24,7 @@ function AlertDialogTrigger({
   )
 }
 
+/** Renders the alert dialog portal interface. */
 function AlertDialogPortal({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
@@ -28,6 +33,7 @@ function AlertDialogPortal({
   )
 }
 
+/** Renders the alert dialog overlay interface. */
 function AlertDialogOverlay({
   className,
   ...props
@@ -44,6 +50,7 @@ function AlertDialogOverlay({
   )
 }
 
+/** Renders the alert dialog content interface. */
 function AlertDialogContent({
   className,
   ...props
@@ -63,6 +70,7 @@ function AlertDialogContent({
   )
 }
 
+/** Renders the alert dialog header interface. */
 function AlertDialogHeader({
   className,
   ...props
@@ -76,6 +84,7 @@ function AlertDialogHeader({
   )
 }
 
+/** Renders the alert dialog footer interface. */
 function AlertDialogFooter({
   className,
   ...props
@@ -92,6 +101,7 @@ function AlertDialogFooter({
   )
 }
 
+/** Renders the alert dialog title interface. */
 function AlertDialogTitle({
   className,
   ...props
@@ -105,6 +115,7 @@ function AlertDialogTitle({
   )
 }
 
+/** Renders the alert dialog description interface. */
 function AlertDialogDescription({
   className,
   ...props
@@ -118,6 +129,7 @@ function AlertDialogDescription({
   )
 }
 
+/** Renders the alert dialog action interface. */
 function AlertDialogAction({
   className,
   ...props
@@ -130,6 +142,7 @@ function AlertDialogAction({
   )
 }
 
+/** Renders the alert dialog cancel interface. */
 function AlertDialogCancel({
   className,
   ...props

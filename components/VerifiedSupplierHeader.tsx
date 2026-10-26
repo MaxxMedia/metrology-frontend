@@ -1,4 +1,6 @@
 "use client"
+/** Implements the verified supplier header component and its related interface behavior. */
+
 
 import { ShieldCheck } from "lucide-react"
 import type { PlanTier } from "@/lib/packages"
@@ -41,6 +43,7 @@ const VERIFIED_BADGE_CONFIG: Record<Exclude<PlanTier, "free">, {
     },
 }
 
+/** Renders the verified supplier header interface. */
 export default function VerifiedSupplierHeader({
     planTier,
 }: VerifiedSupplierHeaderProps) {

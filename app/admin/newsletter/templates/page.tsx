@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin newsletter templates page and its route-specific behavior. */
+
 
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
@@ -14,6 +16,7 @@ interface Template {
   createdById?: number;
 }
 
+/** Renders the templates page interface. */
 export default function TemplatesPage() {
   const router = useRouter();
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -27,6 +30,7 @@ export default function TemplatesPage() {
     loadTemplates();
   }, []);
 
+  /** Loads templates for the current workflow. */
   async function loadTemplates() {
     try {
       setError(null);
@@ -68,6 +72,7 @@ export default function TemplatesPage() {
     }
   }
 
+  /** Removes the template record or interface element. */
   async function deleteTemplate(id: number) {
     if (!confirm("Are you sure you want to delete this template?")) return;
 
@@ -101,6 +106,7 @@ export default function TemplatesPage() {
     }
   }
 
+  /** Coordinates the duplicate template behavior for this workflow. */
   async function duplicateTemplate(id: number) {
     try {
       const token = localStorage.getItem("token");
@@ -164,10 +170,12 @@ export default function TemplatesPage() {
     return result;
   }, [templates, search, sortBy, sortOrder]);
 
+  /** Coordinates the is dynamic template behavior for this workflow. */
   function isDynamicTemplate(content: string): boolean {
     return content.includes('{{posts}}') || content.includes('{posts}');
   }
 
+  /** Returns the derived post count value used by this workflow. */
   function getPostCount(content: string): number {
     // Count how many posts are referenced in the template
     const matches = content.match(/<div class="post"/g);

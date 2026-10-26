@@ -1,10 +1,14 @@
 "use client"
+/** Implements the magazine registration modal component and its related interface behavior. */
+
 
 import { useState } from "react"
 
+/** Renders the registration modal interface. */
 export default function RegistrationModal({ magazineId, onClose }: any) {
   const [loading, setLoading] = useState(false)
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit(e: any) {
     e.preventDefault()
     setLoading(true)

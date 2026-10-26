@@ -1,5 +1,7 @@
 // app/admin/leads/page.tsx
 "use client";
+/** Implements the admin leads page and its route-specific behavior. */
+
 
 import { useState, useEffect } from 'react';
 import {
@@ -59,6 +61,7 @@ type Summary = {
     byPlan: Record<string, number>;
 };
 
+/** Renders the admin leads page interface. */
 export default function AdminLeadsPage() {
     const [leads, setLeads] = useState<Lead[]>([]);
     const [loading, setLoading] = useState(true);
@@ -80,6 +83,7 @@ export default function AdminLeadsPage() {
         fetchLeads();
     }, [filter, statusFilter]);
 
+    /** Loads leads for the current workflow. */
     const fetchLeads = async () => {
         try {
             setLoading(true);
@@ -118,6 +122,7 @@ export default function AdminLeadsPage() {
         }
     };
 
+    /** Updates the status record or interface state. */
     const updateStatus = async (id: number, newStatus: string) => {
         try {
             const token = localStorage.getItem('token');
@@ -140,6 +145,7 @@ export default function AdminLeadsPage() {
         }
     };
 
+    /** Removes the lead record or interface element. */
     const deleteLead = async (id: number) => {
         if (!confirm('Are you sure you want to delete this lead?')) return;
 
@@ -162,6 +168,7 @@ export default function AdminLeadsPage() {
         }
     };
 
+    /** Returns the derived status color value used by this workflow. */
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'NEW': return 'bg-blue-100 text-blue-700 border-blue-200';
@@ -172,6 +179,7 @@ export default function AdminLeadsPage() {
         }
     };
 
+    /** Returns the derived status icon value used by this workflow. */
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'NEW': return <Clock size={14} />;
@@ -182,6 +190,7 @@ export default function AdminLeadsPage() {
         }
     };
 
+    /** Returns the derived package badge value used by this workflow. */
     const getPackageBadge = (lead: Lead) => {
         if (lead.hasPackage) {
             return (
@@ -217,6 +226,7 @@ export default function AdminLeadsPage() {
         );
     });
 
+    /** Coordinates the toggle row behavior for this workflow. */
     const toggleRow = (id: number) => {
         const newExpanded = new Set(expandedRows);
         if (newExpanded.has(id)) {

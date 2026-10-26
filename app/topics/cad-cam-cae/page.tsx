@@ -1,5 +1,7 @@
+/** Implements the topics cad cam cae page and its route-specific behavior. */
 import TopicPage from "../TopicPage";
 
+/** Renders the cad cam cae page interface. */
 export default function CadCamCaePage() {
   return (
     <TopicPage

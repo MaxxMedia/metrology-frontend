@@ -1,4 +1,6 @@
 "use client";
+/** Implements the network suggestion card component and its related interface behavior. */
+
 
 import Image from "next/image";
 import ConnectionButton from "./ConnectionButton";
@@ -14,6 +16,7 @@ interface SuggestionCardProps {
   };
 }
 
+/** Renders the suggestion card interface. */
 export default function SuggestionCard({
   user,
 }: SuggestionCardProps) {

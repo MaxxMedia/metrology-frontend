@@ -1,4 +1,6 @@
 "use client";
+/** Implements the company company articles component and its related interface behavior. */
+
 
 import Image from "next/image";
 import Link from "next/link";
@@ -57,18 +59,21 @@ function getAuthorName(post: Post): string {
   return "rstheme";
 }
 
+/** Returns the derived category slug value used by this workflow. */
 function getCategorySlug(post: Post): string {
   return typeof post.category === "object"
     ? post.category?.slug?.toLowerCase() || ""
     : String(post.category || "").toLowerCase();
 }
 
+/** Returns the derived category name value used by this workflow. */
 function getCategoryName(post: Post): string {
   return typeof post.category === "object"
     ? post.category?.name || ""
     : String(post.category || "");
 }
 
+/** Determines whether the current state satisfies the optical vision post condition. */
 function isOpticalVisionPost(post: Post): boolean {
   const slug = getCategorySlug(post);
   const name = getCategoryName(post).toLowerCase();
@@ -80,12 +85,14 @@ function isOpticalVisionPost(post: Post): boolean {
   );
 }
 
+/** Returns the derived image url value used by this workflow. */
 function getImageUrl(post: Post): string {
   if (post.imageUrl?.startsWith("http")) return post.imageUrl;
   if (post.imageUrl) return `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`;
   return "/placeholder.jpg";
 }
 
+/** Renders the pulse icon interface. */
 function PulseIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -103,12 +110,14 @@ function PulseIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Coordinates the truncate title behavior for this component. */
 function truncateTitle(title: string, max = 38) {
   if (!title) return "";
   if (title.length <= max) return title;
   return `${title.slice(0, max).trimEnd()}…`;
 }
 
+/** Orders the by recency items for display. */
 function sortByRecency(list: Post[]) {
   return [...list].sort((a, b) => {
     const aTime = new Date(

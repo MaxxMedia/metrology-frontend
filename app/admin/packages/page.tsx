@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin packages page and its route-specific behavior. */
+
 
 import AdminPackages from "@/components/admin/AdminPackages";
 import { useEffect, useState } from "react";
@@ -19,6 +21,7 @@ type Purchase = {
   Company?: { name: string; subscriptionPlan?: string };
 };
 
+/** Renders the admin packages page interface. */
 export default function AdminPackagesPage() {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [stats, setStats] = useState({
@@ -30,6 +33,7 @@ export default function AdminPackagesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    /** Coordinates the load behavior for this workflow. */
     async function load() {
       try {
         const token = localStorage.getItem("token");

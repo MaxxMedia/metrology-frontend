@@ -1,4 +1,6 @@
 "use client";
+/** Implements the videos section component and its related interface behavior. */
+
 
 import Image from "next/image";
 import Link from "next/link";
@@ -40,11 +42,13 @@ type Props = {
   posts: Post[];
 };
 
+/** Returns the derived recency value used by this workflow. */
 function getRecency(p: Post) {
   const raw = p.publishedAt || p.createdAt;
   return raw ? new Date(raw).getTime() : 0;
 }
 
+/** Returns the derived author name value used by this workflow. */
 function getAuthorName(post?: Post) {
   if (!post) return "rstheme";
   if (post.author && typeof post.author === "object" && post.author.name) {
@@ -55,11 +59,13 @@ function getAuthorName(post?: Post) {
   return "rstheme";
 }
 
+/** Coordinates the truncate title behavior for this component. */
 function truncateTitle(title: string, max = 48) {
   if (title.length <= max) return title;
   return `${title.slice(0, max).trimEnd()}…`;
 }
 
+/** Renders the pulse icon interface. */
 function PulseIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -77,6 +83,7 @@ function PulseIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the calendar icon interface. */
 function CalendarIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -93,6 +100,7 @@ function CalendarIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the arrow icon interface. */
 function ArrowIcon({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 18 12" className={className} aria-hidden fill="currentColor">
@@ -105,6 +113,7 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the diamond dot interface. */
 function DiamondDot({ className = "" }: { className?: string }) {
   return (
     <span
@@ -114,6 +123,7 @@ function DiamondDot({ className = "" }: { className?: string }) {
   );
 }
 
+/** Renders the videos section interface. */
 export default function VideosSection({ posts }: Props) {
   /* Latest news by recency — 2 featured + 3 list with non-repeating tags */
   const latestPostsWithTags = useMemo(() => {
@@ -155,6 +165,7 @@ export default function VideosSection({ posts }: Props) {
 
   const [leftFeatured, rightFeatured, ...smallPosts] = latestPostsWithTags;
 
+  /** Coordinates the image url behavior for this component. */
   const imageUrl = (post?: Post) =>
     post?.imageUrl?.startsWith("http")
       ? post.imageUrl
@@ -162,6 +173,7 @@ export default function VideosSection({ posts }: Props) {
         ? `${process.env.NEXT_PUBLIC_API_URL}${post.imageUrl}`
         : "/placeholder.jpg";
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (post?: Post) => {
     const raw = post?.publishedAt || post?.createdAt;
     if (!raw) return null;
@@ -172,6 +184,7 @@ export default function VideosSection({ posts }: Props) {
     });
   };
 
+  /** Renders the featured card interface. */
   const FeaturedCard = ({
     itemObj,
     className = "",

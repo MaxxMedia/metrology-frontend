@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile forms social links form component and its related interface behavior. */
+
 
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -43,6 +45,7 @@ const platforms = [
   "Other",
 ];
 
+/** Renders the social links form interface. */
 export default function SocialLinksForm({
   initialValues,
   onSubmit,

@@ -1,4 +1,6 @@
 ﻿"use client"
+/** Implements the recruiter directories page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -38,6 +40,7 @@ type Directory = {
   enableInquiryForm?: boolean
 }
 
+/** Renders the recruiter directories page interface. */
 export default function RecruiterDirectoriesPage() {
   const [directories, setDirectories] = useState<Directory[]>([])
   const [listingEligibility, setListingEligibility] =
@@ -48,6 +51,7 @@ const [loading, setLoading] = useState(true)
   useEffect(() => {
     let cancelled = false
 
+    /** Loads data for the current workflow. */
     async function loadData() {
       try {
         const token = localStorage.getItem("token")

@@ -1,5 +1,7 @@
 // components/recruiter/TeamManagementTab.tsx
 'use client';
+/** Implements the recruiter team management tab component and its related interface behavior. */
+
 
 import { useState, useEffect } from 'react';
 import {
@@ -58,6 +60,7 @@ interface Candidate {
     headline?: string;
 }
 
+/** Renders the team management tab interface. */
 export default function TeamManagementTab() {
     const [activeTab, setActiveTab] = useState<'members' | 'add'>('members');
     const [members, setMembers] = useState<TeamMember[]>([]);
@@ -84,6 +87,7 @@ export default function TeamManagementTab() {
         loadData();
     }, []);
 
+    /** Returns the derived stored company id value used by this workflow. */
     function getStoredCompanyId() {
         try {
             const storedUser = localStorage.getItem('user');
@@ -98,6 +102,7 @@ export default function TeamManagementTab() {
         }
     }
 
+    /** Builds the team url value used by the surrounding workflow. */
     function buildTeamUrl(path: string, companyId: number | null) {
         const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}${path}`);
 
@@ -108,6 +113,7 @@ export default function TeamManagementTab() {
         return url.toString();
     }
 
+    /** Loads data for the current workflow. */
     async function loadData() {
         try {
             setLoading(true);
@@ -152,6 +158,7 @@ export default function TeamManagementTab() {
         }
     }
 
+    /** Handles the select candidate interaction and its related state changes. */
     const handleSelectCandidate = async (candidate: Candidate) => {
         if (!candidate) return;
 
@@ -202,6 +209,7 @@ export default function TeamManagementTab() {
         }
     };
 
+    /** Handles the edit member interaction and its related state changes. */
     const handleEditMember = (member: TeamMember) => {
         setEditingMember(member);
         setEditForm({
@@ -211,6 +219,7 @@ export default function TeamManagementTab() {
         });
     };
 
+    /** Handles the update member interaction and its related state changes. */
     const handleUpdateMember = async () => {
         if (!editingMember) return;
 
@@ -243,6 +252,7 @@ export default function TeamManagementTab() {
         }
     };
 
+    /** Handles the remove member interaction and its related state changes. */
     const handleRemoveMember = async () => {
         if (!selectedMemberId) return;
 

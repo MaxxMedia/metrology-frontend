@@ -1,5 +1,7 @@
+/** Implements the topics manufacturing technologies page and its route-specific behavior. */
 import TopicPage from "../TopicPage";
 
+/** Renders the manufacturing technologies page interface. */
 export default function ManufacturingTechnologiesPage() {
   return (
     <TopicPage

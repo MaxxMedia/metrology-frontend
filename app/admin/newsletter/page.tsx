@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin newsletter page and its route-specific behavior. */
+
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -13,6 +15,7 @@ type Dashboard = {
   sentCampaigns: number;
 };
 
+/** Renders the newsletter dashboard interface. */
 export default function NewsletterDashboard() {
   const [stats, setStats] = useState<Dashboard>({
     totalSubscribers: 0,
@@ -30,6 +33,7 @@ export default function NewsletterDashboard() {
     loadDashboard();
   }, []);
 
+  /** Loads dashboard for the current workflow. */
   async function loadDashboard() {
     try {
       setLoading(true);
@@ -299,6 +303,7 @@ export default function NewsletterDashboard() {
   );
 }
 
+/** Renders the card interface. */
 function Card({
   title,
   value,
@@ -319,6 +324,7 @@ function Card({
   );
 }
 
+/** Renders the quick link interface. */
 function QuickLink({
   title,
   description,

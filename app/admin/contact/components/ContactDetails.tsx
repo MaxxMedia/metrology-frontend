@@ -1,4 +1,6 @@
 'use client';
+/** Implements the admin contact components contact details interface and its related behavior. */
+
 
 import { useState } from 'react';
 import { ContactMessage } from '@/lib/api/contact';
@@ -11,6 +13,7 @@ interface ContactDetailsProps {
   onReply?: () => void;
 }
 
+/** Renders the contact details interface. */
 export default function ContactDetails({ 
   contact, 
   onStatusUpdate, 
@@ -22,6 +25,7 @@ export default function ContactDetails({
   
   const isSolved = contact.status === 'RESOLVED';
 
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
@@ -33,6 +37,7 @@ export default function ContactDetails({
     }).format(date);
   };
 
+  /** Coordinates the toggle solved behavior for this workflow. */
   const toggleSolved = () => {
     if (isSolved) {
       onStatusUpdate('NEW');
@@ -41,10 +46,12 @@ export default function ContactDetails({
     }
   };
 
+  /** Handles the delete click interaction and its related state changes. */
   const handleDeleteClick = () => {
     setShowDeleteDialog(true);
   };
 
+  /** Coordinates the confirm delete behavior for this workflow. */
   const confirmDelete = async () => {
     setIsDeleting(true);
     await onDelete();
@@ -52,6 +59,7 @@ export default function ContactDetails({
     setShowDeleteDialog(false);
   };
 
+  /** Cancels the delete operation and restores the appropriate interface state. */
   const cancelDelete = () => {
     setShowDeleteDialog(false);
   };

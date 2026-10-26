@@ -1,4 +1,6 @@
 ﻿"use client"
+/** Implements the magazine magazine with cover story component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -23,6 +25,7 @@ type Magazine = {
   author?: { name?: string | null } | null
 }
 
+/** Renders the magazine with cover story interface. */
 export default function MagazineWithCoverStory() {
   const [magazine, setMagazine] = useState<Magazine | null>(null)
   const [loading, setLoading] = useState(true)

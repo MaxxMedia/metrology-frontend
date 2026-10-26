@@ -1,4 +1,6 @@
 "use client"
+/** Implements the company articles carousel component and its related interface behavior. */
+
 
 import Image from "next/image"
 import Link from "next/link"
@@ -25,11 +27,13 @@ type Props = {
   articles: Article[]
 }
 
+/** Renders the company articles carousel interface. */
 export default function CompanyArticlesCarousel({ articles }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   if (!articles || articles.length === 0) return null
 
+  /** Coordinates the scroll behavior for this component. */
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return
     const amount = dir === "left" ? -350 : 350

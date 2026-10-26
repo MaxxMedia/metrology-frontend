@@ -1,5 +1,7 @@
 // app/admin/components/blocks/QuoteBlock.tsx
 "use client";
+/** Implements the admin components blocks quote block interface and its related behavior. */
+
 
 import { QuoteBlock } from "../types";
 
@@ -8,6 +10,7 @@ interface Props {
   onChange: (block: QuoteBlock) => void;
 }
 
+/** Renders the quote block editor interface. */
 export default function QuoteBlockEditor({ block, onChange }: Props) {
   return (
     <div className="space-y-4">

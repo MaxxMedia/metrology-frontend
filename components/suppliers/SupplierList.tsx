@@ -1,8 +1,11 @@
 "use client"
+/** Implements the suppliers supplier list component and its related interface behavior. */
+
 
 import { Supplier } from "@/types/Supplier"
 import SupplierCard from "./SupplierCard"
 
+/** Renders the supplier list interface. */
 export default function SupplierList({ suppliers }: { suppliers: Supplier[] }) {
   return (
     <section>

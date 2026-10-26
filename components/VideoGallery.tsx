@@ -1,12 +1,16 @@
 "use client"
+/** Implements the video gallery component and its related interface behavior. */
+
 
 import { useState } from "react"
 
+/** Renders the video gallery interface. */
 export default function VideoGallery({
   videos,
 }: {
   videos: string[]
 }) {
+  /** Returns the derived video id value used by this workflow. */
   const getVideoId = (url: string) =>
     url.split("v=")[1]?.split("&")[0] || url.split("/").pop()
 
@@ -15,9 +19,11 @@ export default function VideoGallery({
   )
   const [isPlaying, setIsPlaying] = useState(false)
 
+  /** Coordinates the thumbnail url behavior for this component. */
   const thumbnailUrl = (id?: string) =>
     `https://img.youtube.com/vi/${id}/hqdefault.jpg`
 
+  /** Renders the play button interface. */
   const PlayButton = ({ size = "lg" }: { size?: "lg" | "sm" }) => (
     <div className="absolute inset-0 flex items-center justify-center">
       <div

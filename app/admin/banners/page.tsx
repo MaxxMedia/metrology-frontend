@@ -1,4 +1,6 @@
 ﻿"use client"
+/** Implements the admin banners page and its route-specific behavior. */
+
 import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
@@ -15,6 +17,7 @@ type Banner = {
   clicks: number
 }
 
+/** Renders the banner list page interface. */
 export default function BannerListPage() {
   const [banners, setBanners] = useState<Banner[]>([])
   const [placement, setPlacement] = useState("ALL")

@@ -1,7 +1,10 @@
 "use client";
+/** Implements the admin login page and its route-specific behavior. */
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+/** Renders the admin login interface. */
 export default function AdminLogin() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -9,6 +12,7 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  /** Handles the login interaction and its related state changes. */
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError(""); setLoading(true);

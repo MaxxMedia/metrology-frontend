@@ -1,13 +1,17 @@
 "use client";
+/** Implements the network page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import { getConnections } from "@/services/connection.service";
 import ConnectionCard from "@/components/network/ConnectionCard";
 
+/** Renders the network page interface. */
 export default function NetworkPage() {
   const [connections, setConnections] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  /** Loads connections for the current workflow. */
   const fetchConnections = async () => {
     try {
       setLoading(true);

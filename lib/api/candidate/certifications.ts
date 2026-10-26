@@ -1,5 +1,7 @@
+/** Provides candidate certifications API helpers for reading and updating candidate data. */
 const API = process.env.NEXT_PUBLIC_API_URL;
 
+/** Builds request headers with the current bearer token and JSON content type. */
 function authHeaders() {
   const token = localStorage.getItem("token");
 
@@ -9,6 +11,7 @@ function authHeaders() {
   };
 }
 
+/** Loads or retrieves certifications data for this workflow. */
 export async function getCertifications() {
   const res = await fetch(`${API}/api/candidate-certifications`, {
     headers: authHeaders(),
@@ -19,6 +22,7 @@ export async function getCertifications() {
   return res.json();
 }
 
+/** Creates certification through the configured API. */
 export async function createCertification(data: any) {
   const res = await fetch(`${API}/api/candidate-certifications`, {
     method: "POST",
@@ -35,6 +39,7 @@ export async function createCertification(data: any) {
   return res.json();
 }
 
+/** Updates certification through the configured API. */
 export async function updateCertification(id: number, data: any) {
   const res = await fetch(`${API}/api/candidate-certifications/${id}`, {
     method: "PUT",
@@ -51,6 +56,7 @@ export async function updateCertification(id: number, data: any) {
   return res.json();
 }
 
+/** Removes certification through the configured API. */
 export async function deleteCertification(id: number) {
   const res = await fetch(`${API}/api/candidate-certifications/${id}`, {
     method: "DELETE",

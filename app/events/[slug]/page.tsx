@@ -1,3 +1,4 @@
+/** Implements the events slug page and its route-specific behavior. */
 import Image from "next/image"
 import Link from "next/link"
 import { Calendar, Clock, MapPin, Globe, Mail, Phone } from "lucide-react"
@@ -43,6 +44,7 @@ type UpcomingEvent = {
   location?: string
 }
 
+/** Returns the derived event value used by this workflow. */
 async function getEvent(slug: string): Promise<Event | null> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${slug}`, {
     cache: "no-store",
@@ -51,6 +53,7 @@ async function getEvent(slug: string): Promise<Event | null> {
   return res.json()
 }
 
+/** Returns the derived upcoming events value used by this workflow. */
 async function getUpcomingEvents(excludeSlug: string): Promise<UpcomingEvent[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events`, {
     cache: "no-store",
@@ -60,10 +63,12 @@ async function getUpcomingEvents(excludeSlug: string): Promise<UpcomingEvent[]> 
   return events.filter(e => e.slug !== excludeSlug).slice(0, 2)
 }
 
+/** Normalizes the date value for consistent display or use. */
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })
 }
 
+/** Renders the event details page interface. */
 export default async function EventDetailsPage({
   params,
 }: {

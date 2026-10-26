@@ -1,4 +1,6 @@
 ﻿"use client"
+/** Implements the admin directories page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
@@ -187,6 +189,7 @@ export default function AdminDirectoriesPage() {
   }
 
 
+  /** Removes the directory record or interface element. */
   const deleteDirectory = async (directory: Directory) => {
     if (!window.confirm(`Delete "${directory.name}" permanently?`)) return
     setDeletingId(directory.id)
@@ -261,6 +264,7 @@ export default function AdminDirectoriesPage() {
     return !user?.lastLoginAt && !user?.emailSentForBulkImport
   }
 
+  /** Returns the derived email status value used by this workflow. */
   const getEmailStatus = (user: any) => {
     if (!user) {
       return {

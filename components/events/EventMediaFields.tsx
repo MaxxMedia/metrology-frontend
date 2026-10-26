@@ -1,4 +1,6 @@
 "use client"
+/** Implements the events event media fields component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
@@ -18,10 +20,12 @@ type VideoItem = {
     error: string | null
 }
 
+/** Coordinates the gen id behavior for this component. */
 function genId() {
     return Math.random().toString(36).slice(2, 10)
 }
 
+/** Returns the derived youtube id value used by this workflow. */
 function getYoutubeId(url: string): string | null {
     const match = url.match(
         /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
@@ -29,6 +33,7 @@ function getYoutubeId(url: string): string | null {
     return match ? match[1] : null
 }
 
+/** Uploads the file asset and returns its result to the form. */
 async function uploadFile(file: File): Promise<string> {
     const formData = new FormData()
     formData.append("image", file) // ✅ matches backend's uploadImage.single("image")
@@ -51,6 +56,7 @@ async function uploadFile(file: File): Promise<string> {
     return data.imageUrl as string // ✅ backend returns { imageUrl }, not { url }
 }
 
+/** Renders the event media fields interface. */
 export default function EventMediaFields({
     initialImages = [],
     initialVideos = [],
@@ -133,6 +139,7 @@ export default function EventMediaFields({
         )
     }
 
+    /** Removes the image record or interface element. */
     const removeImage = (id: string) => {
         setImages(prev => prev.filter(i => i.id !== id))
     }
@@ -148,10 +155,12 @@ export default function EventMediaFields({
         )
     }
 
+    /** Creates the video field record or interface element. */
     const addVideoField = () => {
         setVideos(prev => [...prev, { id: genId(), url: "", error: null }])
     }
 
+    /** Removes the video field record or interface element. */
     const removeVideoField = (id: string) => {
         setVideos(prev => (prev.length === 1 ? prev : prev.filter(v => v.id !== id)))
     }

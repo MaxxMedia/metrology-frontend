@@ -1,18 +1,24 @@
 "use client"
+/** Implements the gallery grid with lightbox component and its related interface behavior. */
+
 
 import { useState } from "react"
 import { X } from "lucide-react"
 
+/** Returns the derived image value used by this workflow. */
 function getImage(item: any): string {
     return typeof item === "string" ? item : item?.image || ""
 }
+/** Returns the derived name value used by this workflow. */
 function getName(item: any): string {
     return typeof item === "string" ? "" : item?.name || ""
 }
+/** Returns the derived description value used by this workflow. */
 function getDescription(item: any): string {
     return typeof item === "string" ? "" : item?.description || ""
 }
 
+/** Renders the gallery grid with lightbox interface. */
 export default function GalleryGridWithLightbox({
     items,
     title,

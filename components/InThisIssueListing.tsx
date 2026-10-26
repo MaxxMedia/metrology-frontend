@@ -1,4 +1,6 @@
 "use client"
+/** Implements the in this issue listing component and its related interface behavior. */
+
 
 import Image from "next/image"
 import Link from "next/link"
@@ -8,6 +10,7 @@ type Props = {
   posts: Post[]
 }
 
+/** Renders the in this issue listing interface. */
 export default function InThisIssueListing({ posts }: Props) {
   return (
     <section className="max-w-7xl mx-auto px-6 py-10">

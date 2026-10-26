@@ -1,4 +1,6 @@
 "use client";
+/** Implements the tags widget component and its related interface behavior. */
+
 
 const tags = [
   "Gaming",
@@ -17,6 +19,7 @@ const tags = [
   "Politics",
 ];
 
+/** Renders the tags widget interface. */
 export default function TagsWidget() {
   return (
     <div className="bg-white rounded-xl border p-6">

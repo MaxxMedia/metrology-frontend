@@ -1,8 +1,11 @@
 "use client"
+/** Implements the coming soon page and its route-specific behavior. */
+
 
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
+/** Renders the coming soon page interface. */
 export default function ComingSoonPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0F5B78] via-[#083A54] to-[#021E2D] flex items-center justify-center px-6">

@@ -1,11 +1,14 @@
 // components/ui/avatar.tsx
 'use client'
+/** Provides the reusable avatar UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the avatar interface. */
 function Avatar({
   className,
   ...props
@@ -22,6 +25,7 @@ function Avatar({
   )
 }
 
+/** Renders the avatar image interface. */
 function AvatarImage({
   className,
   ...props
@@ -35,6 +39,7 @@ function AvatarImage({
   )
 }
 
+/** Renders the avatar fallback interface. */
 function AvatarFallback({
   className,
   ...props

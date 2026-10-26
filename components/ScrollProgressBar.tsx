@@ -1,13 +1,17 @@
 "use client"
+/** Implements the scroll progress bar component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 
+/** Renders the scroll progress bar interface. */
 export default function ScrollProgressBar() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const pathname = usePathname()
 
   useEffect(() => {
+    /** Updates the progress record or interface state. */
     const updateProgress = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop || 0
       const scrollHeight =

@@ -1,9 +1,11 @@
+/** Implements the suppliers gallery card component and its related interface behavior. */
 type GalleryCardProps = {
     image: string
     title?: string
     description?: string
 }
 
+/** Renders the gallery card interface. */
 export default function GalleryCard({ image, title, description }: GalleryCardProps) {
     return (
         <div className="bg-[#1D2125] rounded-xl overflow-hidden border border-[#292C30] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">

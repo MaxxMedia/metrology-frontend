@@ -1,4 +1,6 @@
 "use client";
+/** Implements the job saved jobs component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -21,12 +23,14 @@ type SavedJob = {
   };
 };
 
+/** Renders the saved jobs interface. */
 export default function SavedJobs() {
   const [savedJobs, setSavedJobs] = useState<SavedJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    /** Loads saved jobs for the current workflow. */
     async function loadSavedJobs() {
       const token = localStorage.getItem("token");
 
@@ -73,6 +77,7 @@ export default function SavedJobs() {
     loadSavedJobs();
   }, []);
 
+  /** Handles the unsave interaction and its related state changes. */
   async function handleUnsave(jobId: number) {
     const token = localStorage.getItem("token");
     if (!token) return;

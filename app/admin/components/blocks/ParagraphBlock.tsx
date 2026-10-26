@@ -1,5 +1,7 @@
 // app/admin/components/blocks/ParagraphBlock.tsx
 "use client";
+/** Implements the admin components blocks paragraph block interface and its related behavior. */
+
 
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
@@ -14,6 +16,7 @@ interface Props {
   onChange: (block: ParagraphBlock) => void;
 }
 
+/** Renders the paragraph block editor interface. */
 export default function ParagraphBlockEditor({ block, onChange }: Props) {
   return (
     <div className="space-y-3">

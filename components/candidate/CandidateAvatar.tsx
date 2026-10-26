@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate candidate avatar component and its related interface behavior. */
+
 
 import Image from "next/image";
 import { User } from "lucide-react";
@@ -10,6 +12,7 @@ const sizeMap = {
   xl: { box: "w-24 h-24", icon: 32, text: "text-xl" },
 } as const;
 
+/** Returns the derived initials value used by this workflow. */
 function getInitials(name?: string) {
   if (!name) return "";
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -18,6 +21,7 @@ function getInitials(name?: string) {
   return `${parts[0].charAt(0)}${parts[parts.length - 1].charAt(0)}`.toUpperCase();
 }
 
+/** Renders the candidate avatar interface. */
 export default function CandidateAvatar({
   avatarUrl,
   name,

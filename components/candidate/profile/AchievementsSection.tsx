@@ -1,4 +1,6 @@
 "use client";
+/** Implements the candidate profile achievements section component and its related interface behavior. */
+
 
 import { Trophy, Pencil, Calendar } from "lucide-react";
 
@@ -16,11 +18,13 @@ interface Props {
   onEditClick?: () => void;
 }
 
+/** Renders the achievements section interface. */
 export default function AchievementsSection({
   editable = false,
   achievements = [],
   onEditClick,
 }: Props) {
+  /** Normalizes the date value for consistent display or use. */
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return "";
     try {

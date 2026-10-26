@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin newsletter analytics page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -24,6 +26,7 @@ type Analytics = {
   magazineSubscribers: number;
 };
 
+/** Renders the newsletter analytics page interface. */
 export default function NewsletterAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
@@ -33,6 +36,7 @@ export default function NewsletterAnalyticsPage() {
     loadAnalytics();
   }, []);
 
+  /** Loads analytics for the current workflow. */
   async function loadAnalytics() {
     try {
       setError(null);
@@ -409,6 +413,7 @@ function StatCard({
   );
 }
 
+/** Renders the source card interface. */
 function SourceCard({ 
   title, 
   value, 
@@ -427,6 +432,7 @@ function SourceCard({
   );
 }
 
+/** Renders the action card interface. */
 function ActionCard({ 
   title, 
   description, 

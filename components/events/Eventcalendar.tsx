@@ -1,4 +1,6 @@
 "use client"
+/** Implements the events eventcalendar component and its related interface behavior. */
+
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { useMemo, useState } from "react"
@@ -20,6 +22,7 @@ function parseDateKey(dateStr: string) {
   return new Date(y, m - 1, d)
 }
 
+/** Renders the event calendar interface. */
 export default function EventCalendar({ events }: { events: CalendarEvent[] }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -55,10 +58,12 @@ export default function EventCalendar({ events }: { events: CalendarEvent[] }) {
     return { date: new Date(year, month, dayNum), inMonth: dayNum >= 1 && dayNum <= daysInMonth }
   })
 
+  /** Coordinates the go to month behavior for this component. */
   function goToMonth(offset: number) {
     setViewDate(new Date(year, month + offset, 1))
   }
 
+  /** Updates the current selection for date. */
   function selectDate(date: Date) {
     const key = formatDateKey(date)
     const params = new URLSearchParams(searchParams.toString())

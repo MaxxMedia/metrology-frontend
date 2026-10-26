@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable carousel UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import useEmblaCarousel, {
@@ -32,6 +34,7 @@ type CarouselContextProps = {
 
 const CarouselContext = React.createContext<CarouselContextProps | null>(null)
 
+/** Provides the carousel hook for this component workflow. */
 function useCarousel() {
   const context = React.useContext(CarouselContext)
 
@@ -42,6 +45,7 @@ function useCarousel() {
   return context
 }
 
+/** Renders the carousel interface. */
 function Carousel({
   orientation = 'horizontal',
   opts,
@@ -132,6 +136,7 @@ function Carousel({
   )
 }
 
+/** Renders the carousel content interface. */
 function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
   const { carouselRef, orientation } = useCarousel()
 
@@ -153,6 +158,7 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the carousel item interface. */
 function CarouselItem({ className, ...props }: React.ComponentProps<'div'>) {
   const { orientation } = useCarousel()
 
@@ -171,6 +177,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the carousel previous interface. */
 function CarouselPrevious({
   className,
   variant = 'outline',
@@ -201,6 +208,7 @@ function CarouselPrevious({
   )
 }
 
+/** Renders the carousel next interface. */
 function CarouselNext({
   className,
   variant = 'outline',

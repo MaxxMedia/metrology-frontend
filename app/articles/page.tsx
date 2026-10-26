@@ -1,3 +1,4 @@
+/** Implements the articles page and its route-specific behavior. */
 export const dynamic = "force-dynamic";
 
 import Image from "next/image"
@@ -8,6 +9,7 @@ import SupplierAds from "@/components/SupplierAds"
 import type { Post } from "@/types/Post"
 
 
+/** Returns the derived category slug value used by this workflow. */
 function getCategorySlug(post: Post) {
   if (typeof post.category === "object") {
     return post.category?.slug?.toLowerCase() ?? ""
@@ -15,6 +17,7 @@ function getCategorySlug(post: Post) {
   return String(post.category ?? "").toLowerCase()
 }
 
+/** Returns the derived category name value used by this workflow. */
 function getCategoryName(post: Post) {
   if (typeof post.category === "object") {
     return post.category?.name ?? "Article"
@@ -22,6 +25,7 @@ function getCategoryName(post: Post) {
   return String(post.category || "Article")
 }
 
+/** Returns the derived summary value used by this workflow. */
 function getSummary(post: Post) {
   if (post.excerpt?.trim()) return post.excerpt.trim()
   if (post.content?.trim()) {
@@ -37,6 +41,7 @@ function getSummary(post: Post) {
   return text ? `${text.slice(0, 180)}${text.length > 180 ? "…" : ""}` : "Read the full article for details."
 }
 
+/** Returns the derived image url value used by this workflow. */
 function getImageUrl(url?: string | null) {
   if (!url) return "/placeholder.svg"
   if (/^https?:\/\//i.test(url)) return url
@@ -44,6 +49,7 @@ function getImageUrl(url?: string | null) {
   return `${base.replace(/\/$/, "")}/${url.replace(/^\//, "")}`
 }
 
+/** Normalizes the date value for consistent display or use. */
 function formatDate(date?: string | null) {
   if (!date) return ""
   const parsed = new Date(date)
@@ -52,6 +58,7 @@ function formatDate(date?: string | null) {
   })
 }
 
+/** Renders the articles page interface. */
 export default async function ArticlesPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
   let posts: Post[] = []

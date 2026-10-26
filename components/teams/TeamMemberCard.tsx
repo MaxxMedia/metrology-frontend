@@ -1,3 +1,4 @@
+/** Implements the teams team member card component and its related interface behavior. */
 // components/team/TeamMemberCard.tsx
 
 import Image from 'next/image';
@@ -8,6 +9,7 @@ interface Props {
     showCompany?: boolean;
 }
 
+/** Renders the team member card interface. */
 export default function TeamMemberCard({ member, showCompany = false }: Props) {
     return (
         <div className="bg-white rounded-xl border p-6 hover:shadow-md transition">

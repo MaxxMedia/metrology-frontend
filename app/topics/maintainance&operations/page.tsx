@@ -1,8 +1,10 @@
+/** Implements the topics maintainance&operations page and its route-specific behavior. */
 import Link from "next/link"
 import type { Post } from "@/types/Post"
 import TopicListing from "@/components/topics/TopicListing"
 import { resolveCategorySlug } from "@/lib/topic"
 
+/** Renders the maintainance operations page interface. */
 export default async function MaintainanceOperationsPage() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/posts?category=${encodeURIComponent(resolveCategorySlug("maintainance&operations"))}&limit=50`,

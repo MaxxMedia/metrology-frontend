@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin users custom role templates page and its route-specific behavior. */
+
 
 import { useCallback, useEffect, useState } from "react";
 import { Plus, RefreshCw, Pencil, Trash2, X, ChevronRight, Power } from "lucide-react";
@@ -33,6 +35,7 @@ type PermissionsByModule = Record<string, Permission[]>;
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+/** Coordinates the auth headers behavior for this workflow. */
 function authHeaders() {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     return {
@@ -48,6 +51,7 @@ const emptyForm = {
     sortOrder: "100",
 };
 
+/** Renders the custom role templates page interface. */
 export default function CustomRoleTemplatesPage() {
     const [roles, setRoles] = useState<Role[]>([]);
     const [loading, setLoading] = useState(true);
@@ -202,6 +206,7 @@ export default function CustomRoleTemplatesPage() {
         }
     }
 
+    /** Coordinates the toggle expand behavior for this workflow. */
     function toggleExpand(mod: string) {
         setExpanded((prev) => {
             const next = new Set(prev);
@@ -210,6 +215,7 @@ export default function CustomRoleTemplatesPage() {
         });
     }
 
+    /** Coordinates the toggle permission behavior for this workflow. */
     function togglePermission(key: string) {
         setSelectedKeys((prev) => {
             const next = new Set(prev);
@@ -218,6 +224,7 @@ export default function CustomRoleTemplatesPage() {
         });
     }
 
+    /** Coordinates the toggle module all behavior for this workflow. */
     function toggleModuleAll(mod: string) {
         const modPerms = permissionModules[mod] || [];
         const allSelected = modPerms.every((p) => selectedKeys.has(p.key));

@@ -1,3 +1,4 @@
+/** Provides the reusable item UI primitive and its interaction behavior. */
 import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -5,6 +6,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 
+/** Renders the item group interface. */
 function ItemGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -16,6 +18,7 @@ function ItemGroup({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the item separator interface. */
 function ItemSeparator({
   className,
   ...props
@@ -51,6 +54,7 @@ const itemVariants = cva(
   },
 )
 
+/** Renders the item interface. */
 function Item({
   className,
   variant = 'default',
@@ -88,6 +92,7 @@ const itemMediaVariants = cva(
   },
 )
 
+/** Renders the item media interface. */
 function ItemMedia({
   className,
   variant = 'default',
@@ -103,6 +108,7 @@ function ItemMedia({
   )
 }
 
+/** Renders the item content interface. */
 function ItemContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -116,6 +122,7 @@ function ItemContent({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the item title interface. */
 function ItemTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -129,6 +136,7 @@ function ItemTitle({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the item description interface. */
 function ItemDescription({ className, ...props }: React.ComponentProps<'p'>) {
   return (
     <p
@@ -143,6 +151,7 @@ function ItemDescription({ className, ...props }: React.ComponentProps<'p'>) {
   )
 }
 
+/** Renders the item actions interface. */
 function ItemActions({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -153,6 +162,7 @@ function ItemActions({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the item header interface. */
 function ItemHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -166,6 +176,7 @@ function ItemHeader({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the item footer interface. */
 function ItemFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div

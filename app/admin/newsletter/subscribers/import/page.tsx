@@ -1,8 +1,11 @@
 "use client";
+/** Implements the admin newsletter subscribers import page and its route-specific behavior. */
+
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
+/** Renders the import subscribers page interface. */
 export default function ImportSubscribersPage() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -11,6 +14,7 @@ export default function ImportSubscribersPage() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /** Coordinates the upload behavior for this workflow. */
   async function upload() {
     if (!file) {
       alert("Please select a CSV file.");

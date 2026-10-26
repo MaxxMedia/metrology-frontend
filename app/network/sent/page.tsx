@@ -1,4 +1,6 @@
 "use client";
+/** Implements the network sent page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react";
 import {
@@ -6,10 +8,12 @@ import {
   getSentRequests,
 } from "@/services/connection.service";
 
+/** Renders the sent requests page interface. */
 export default function SentRequestsPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  /** Loads requests for the current workflow. */
   const fetchRequests = async () => {
     try {
       setLoading(true);
@@ -26,6 +30,7 @@ export default function SentRequestsPage() {
     fetchRequests();
   }, []);
 
+  /** Handles the cancel interaction and its related state changes. */
   const handleCancel = async (id: number) => {
     await cancelRequest(id);
     fetchRequests();

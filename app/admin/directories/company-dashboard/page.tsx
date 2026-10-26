@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin directories company dashboard page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -31,6 +33,7 @@ export default function CompanyDashboard() {
   useEffect(() => {
     if (!token) return
 
+    /** Loads data for the current workflow. */
     async function fetchData() {
       try {
         const [cRes, rRes, dRes] = await Promise.all([

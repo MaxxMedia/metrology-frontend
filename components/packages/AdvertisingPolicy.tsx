@@ -1,3 +1,4 @@
+/** Implements the packages advertising policy component and its related interface behavior. */
 import Link from "next/link";
 import PackagesHero from "./PackagesHero";
 
@@ -297,6 +298,7 @@ const SECTIONS: Section[] = [
   },
 ];
 
+/** Coordinates the render block behavior for this component. */
 function renderBlock(block: string | string[], key: number) {
   if (Array.isArray(block)) {
     return (
@@ -321,6 +323,7 @@ function renderBlock(block: string | string[], key: number) {
   );
 }
 
+/** Renders the advertising policy page client interface. */
 export default function AdvertisingPolicyPageClient() {
   return (
     <main className="w-full bg-white">

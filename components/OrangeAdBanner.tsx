@@ -1,7 +1,10 @@
 "use client"
+/** Implements the orange ad banner component and its related interface behavior. */
+
 
 import Image from "next/image"
 
+/** Renders the orange ad banner interface. */
 export default function OrangeAdBanner() {
   return (
     <div className="w-full bg-orange-500 text-white py-8 px-4">

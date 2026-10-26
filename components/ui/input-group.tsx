@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable input group UI primitive and its interaction behavior. */
+
 
 import { cva, type VariantProps } from 'class-variance-authority'
 
@@ -7,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
+/** Renders the input group interface. */
 function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -56,6 +59,7 @@ const inputGroupAddonVariants = cva(
   },
 )
 
+/** Renders the input group addon interface. */
 function InputGroupAddon({
   className,
   align = 'inline-start',
@@ -96,6 +100,7 @@ const inputGroupButtonVariants = cva(
   },
 )
 
+/** Renders the input group button interface. */
 function InputGroupButton({
   className,
   type = 'button',
@@ -115,6 +120,7 @@ function InputGroupButton({
   )
 }
 
+/** Renders the input group text interface. */
 function InputGroupText({ className, ...props }: React.ComponentProps<'span'>) {
   return (
     <span
@@ -127,6 +133,7 @@ function InputGroupText({ className, ...props }: React.ComponentProps<'span'>) {
   )
 }
 
+/** Renders the input group input interface. */
 function InputGroupInput({
   className,
   ...props
@@ -143,6 +150,7 @@ function InputGroupInput({
   )
 }
 
+/** Renders the input group textarea interface. */
 function InputGroupTextarea({
   className,
   ...props

@@ -1,4 +1,6 @@
 "use client";
+/** Implements the create issue post component and its related interface behavior. */
+
 
 import dynamic from "next/dynamic";
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
@@ -7,6 +9,7 @@ import "react-quill-new/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
+/** Renders the create issue post interface. */
 export default function CreateIssuePost() {
   const [form, setForm] = useState({
     title: "",
@@ -32,11 +35,13 @@ export default function CreateIssuePost() {
     (c) => c.parentId != null && String(c.parentId) === form.categoryId
   );
 
+  /** Normalizes the category key value for consistent display or use. */
   const normalizeCategoryKey = (value: unknown) =>
     String(value ?? "")
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "");
 
+  /** Returns the derived category list value used by this workflow. */
   const getCategoryList = (payload: any) => {
     if (Array.isArray(payload)) return payload;
     if (Array.isArray(payload?.data)) return payload.data;
@@ -80,6 +85,7 @@ export default function CreateIssuePost() {
     setForm(prev => ({ ...prev, title, slug }));
   }
 
+  /** Handles the change interaction and its related state changes. */
   function handleChange(
     e:
       | ChangeEvent<HTMLInputElement>

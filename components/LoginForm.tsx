@@ -1,16 +1,20 @@
 "use client"
+/** Implements the login form component and its related interface behavior. */
+
 
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Eye, EyeOff } from "lucide-react"
 
+/** Updates the token cookie record or interface state. */
 function setTokenCookie(token: string) {
   const maxAge = 60 * 60 * 24 * 7 // 7 days — match your JWT expiry
   const secure = typeof window !== "undefined" && window.location.protocol === "https:" ? "; Secure" : ""
   document.cookie = `token=${token}; path=/; max-age=${maxAge}; SameSite=Lax${secure}`
 }
 
+/** Renders the login form interface. */
 export default function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -21,6 +25,7 @@ export default function LoginForm() {
   const [error, setError] = useState("")
   const [showPassword, setShowPassword] = useState(false)
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")

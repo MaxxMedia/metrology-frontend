@@ -1,4 +1,6 @@
 "use client"
+/** Implements the signup form component and its related interface behavior. */
+
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -9,6 +11,7 @@ import RecruiterSubscriptionTerms from "@/components/RecruiterSubscriptionTerms"
 
 type Role = "candidate" | "recruiter"
 
+/** Renders the signup form interface. */
 export default function SignupForm() {
   const router = useRouter()
   const searchParams = useSearchParams()

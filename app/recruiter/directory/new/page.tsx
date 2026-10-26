@@ -1,4 +1,6 @@
 "use client";
+/** Implements the recruiter directory new page and its route-specific behavior. */
+
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -18,6 +20,7 @@ import {
 } from "@/lib/packageLimits";
 import { PlanGatedSection } from "@/components/recruiter/PlanGatedSection";
 
+/** Coordinates the slugify behavior for this workflow. */
 function slugify(text: string) {
   return text
     .toLowerCase()
@@ -105,6 +108,7 @@ const DirectorySchema = Yup.object({
   ),
 });
 
+/** Renders the add directory page interface. */
 export default function AddDirectoryPage() {
   const router = useRouter();
 
@@ -124,6 +128,7 @@ export default function AddDirectoryPage() {
   const [eligibilityLoaded, setEligibilityLoaded] = useState(false);
 
   useEffect(() => {
+    /** Loads eligibility for the current workflow. */
     async function loadEligibility() {
       try {
         const token = localStorage.getItem("token");
@@ -180,6 +185,7 @@ export default function AddDirectoryPage() {
   };
 
   useEffect(() => {
+    /** Coordinates the load behavior for this workflow. */
     async function load() {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -193,6 +199,7 @@ export default function AddDirectoryPage() {
   }, []);
 
   useEffect(() => {
+    /** Loads industries for the current workflow. */
     async function fetchIndustries() {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/industries`);
@@ -206,6 +213,7 @@ export default function AddDirectoryPage() {
     fetchIndustries();
   }, []);
 
+  /** Handles the industry select interaction and its related state changes. */
   const handleIndustrySelect = async (levelIndex: number, id: number, setFieldValue: any) => {
     const newSelected = [...industrySelected.slice(0, levelIndex), id];
     const newLevels = industryLevels.slice(0, levelIndex + 1);
@@ -231,6 +239,7 @@ export default function AddDirectoryPage() {
     }
   };
 
+  /** Handles the image upload interaction and its related state changes. */
   const handleImageUpload = async (file: File, setFieldValue: any, fieldName: "logoUrl", type: "logo") => {
     setUploadingLogo(true);
     setUploadError("");
@@ -255,6 +264,7 @@ export default function AddDirectoryPage() {
     }
   };
 
+  /** Handles the cover image upload interaction and its related state changes. */
   const handleCoverImageUpload = async (file: File, setFieldValue: any, values: any, index: number) => {
     setUploadingCover(true);
     setUploadError("");
@@ -372,6 +382,7 @@ export default function AddDirectoryPage() {
     }
   };
 
+  /** Handles the catalogue upload interaction and its related state changes. */
   const handleCatalogueUpload = async (file: File, setFieldValue: any, values: any, index: number) => {
     setUploadingCatalogue(true);
     setUploadError("");
@@ -401,6 +412,7 @@ export default function AddDirectoryPage() {
     }
   };
 
+  /** Coordinates the submit behavior for this workflow. */
   async function submit(values: any, { setSubmitting, setStatus }: any) {
     console.log("=== SUBMIT CALLED ===", values);
 
@@ -428,6 +440,7 @@ export default function AddDirectoryPage() {
         .filter(Boolean)
         .join(", ");
 
+      /** Coordinates the clean array behavior for this workflow. */
       const cleanArray = (arr: any[]) =>
         (arr ?? []).filter((item: any) => typeof item === "string" ? item.trim().length > 0 : Boolean(item));
 
@@ -1663,6 +1676,7 @@ export default function AddDirectoryPage() {
   );
 }
 
+/** Renders the field block interface. */
 function FieldBlock({ label, name }: any) {
   return (
     <div>
@@ -1673,6 +1687,7 @@ function FieldBlock({ label, name }: any) {
   );
 }
 
+/** Renders the section interface. */
 function Section({ title, children }: any) {
   return (
     <div className="space-y-3">

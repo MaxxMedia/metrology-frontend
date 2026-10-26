@@ -1,3 +1,5 @@
+/** Shared data contracts for admin company, recruiter, directory, and moderation views. */
+/** Represents a company record shown in admin tools, including its verification state and creation time. */
 export type Company = {
   id: number
   name: string
@@ -6,6 +8,7 @@ export type Company = {
   createdAt: string
 }
 
+/** Represents a recruiter account and its optional company association. */
 export type Recruiter = {
   id: number
   username: string
@@ -16,6 +19,7 @@ export type Recruiter = {
   }
 }
 
+/** Represents a submitted directory listing; status tracks whether admin review is pending, approved, or rejected. */
 export type Directory = {
   id: number
   name: string

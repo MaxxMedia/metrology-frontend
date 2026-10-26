@@ -1,5 +1,7 @@
 // components/user-avatar.tsx
 "use client"
+/** Implements the user avatar component and its related interface behavior. */
+
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { getInitials, getAvatarColor } from "@/lib/utils"
@@ -20,6 +22,7 @@ const sizeMap = {
   xl: "size-20 text-2xl",
 }
 
+/** Renders the user avatar interface. */
 export function UserAvatar({
   name,
   imageUrl,

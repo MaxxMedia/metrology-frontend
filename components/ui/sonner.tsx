@@ -1,8 +1,11 @@
 'use client'
+/** Provides the reusable sonner UI primitive and its interaction behavior. */
+
 
 import { useTheme } from 'next-themes'
 import { Toaster as Sonner, ToasterProps } from 'sonner'
 
+/** Renders the toaster interface. */
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme()
 

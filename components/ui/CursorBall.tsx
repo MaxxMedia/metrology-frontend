@@ -1,7 +1,10 @@
 "use client"
+/** Provides the reusable cursor ball UI primitive and its interaction behavior. */
+
 
 import { useEffect, useRef } from "react"
 
+/** Renders the cursor ball interface. */
 export default function CursorBall() {
   const ballRef = useRef<HTMLDivElement>(null)
   const mouse = useRef({ x: 0, y: 0 })
@@ -9,11 +12,13 @@ export default function CursorBall() {
   const scale = useRef(1)
 
   useEffect(() => {
+    /** Handles the mouse move interaction and its related state changes. */
     const handleMouseMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX
       mouse.current.y = e.clientY
     }
 
+    /** Handles the mouse over interaction and its related state changes. */
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement
 
@@ -32,6 +37,7 @@ export default function CursorBall() {
     window.addEventListener("mousemove", handleMouseMove)
     window.addEventListener("mouseover", handleMouseOver)
 
+    /** Coordinates the animate behavior for this component. */
     const animate = () => {
       pos.current.x += (mouse.current.x - pos.current.x) * 0.25
       pos.current.y += (mouse.current.y - pos.current.y) * 0.25

@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin posts page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -95,6 +97,7 @@ export default function PostsList() {
   /* ================= FETCH POSTS ================= */
 
   useEffect(() => {
+    /** Coordinates the load behavior for this workflow. */
     async function load() {
       setLoading(true)
 

@@ -1,9 +1,12 @@
 "use client"
+/** Implements the admin magazines authors create page and its route-specific behavior. */
+
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import UploadBox from "@/components/UploadBox"
 
+/** Renders the create author page interface. */
 export default function CreateAuthorPage() {
   const router = useRouter()
 
@@ -14,6 +17,7 @@ export default function CreateAuthorPage() {
     linkedinUrl: "",
   })
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit() {
     const token = localStorage.getItem("token")
 
@@ -29,6 +33,7 @@ export default function CreateAuthorPage() {
     router.push("/admin/magazines/authors")
   }
 
+  /** Uploads the file asset and returns its result to the form. */
   async function uploadFile(file: File) {
     const data = new FormData()
     data.append("image", file)

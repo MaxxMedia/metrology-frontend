@@ -1,9 +1,12 @@
 'use client'
+/** Provides the reusable table UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the table interface. */
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
     <div
@@ -19,6 +22,7 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
   )
 }
 
+/** Renders the table header interface. */
 function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
   return (
     <thead
@@ -29,6 +33,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
   )
 }
 
+/** Renders the table body interface. */
 function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
   return (
     <tbody
@@ -39,6 +44,7 @@ function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
   )
 }
 
+/** Renders the table footer interface. */
 function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
   return (
     <tfoot
@@ -52,6 +58,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
   )
 }
 
+/** Renders the table row interface. */
 function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   return (
     <tr
@@ -65,6 +72,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   )
 }
 
+/** Renders the table head interface. */
 function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
@@ -78,6 +86,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   )
 }
 
+/** Renders the table cell interface. */
 function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   return (
     <td
@@ -91,6 +100,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   )
 }
 
+/** Renders the table caption interface. */
 function TableCaption({
   className,
   ...props

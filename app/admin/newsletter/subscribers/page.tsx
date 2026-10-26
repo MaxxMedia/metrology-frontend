@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin newsletter subscribers page and its route-specific behavior. */
+
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -41,6 +43,7 @@ const SOURCE_FILTER_OPTIONS: { value: string; label: string }[] = [
   { value: "ADMIN", label: "Admin" },
 ];
 
+/** Renders the subscribers page interface. */
 export default function SubscribersPage() {
   const searchParams = useSearchParams();
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -61,6 +64,7 @@ export default function SubscribersPage() {
     }
   }, []);
 
+  /** Loads subscribers for the current workflow. */
   async function loadSubscribers() {
     try {
       setLoading(true);
@@ -128,6 +132,7 @@ export default function SubscribersPage() {
     }
   }
 
+  /** Removes the subscriber record or interface element. */
   async function deleteSubscriber(id: number) {
     if (!confirm("Delete subscriber?")) return;
 

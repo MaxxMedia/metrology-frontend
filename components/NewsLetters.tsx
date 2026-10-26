@@ -1,4 +1,6 @@
 "use client";
+/** Implements the news letters component and its related interface behavior. */
+
 
 import Image from "next/image";
 import { FormEvent, useState, type CSSProperties } from "react";
@@ -92,6 +94,7 @@ const SUBMIT_ARROW = (
   </span>
 );
 
+/** Renders the news letters interface. */
 export default function NewsLetters() {
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(true);
@@ -100,6 +103,7 @@ export default function NewsLetters() {
   );
   const [pending, setPending] = useState(false);
 
+  /** Handles the submit interaction and its related state changes. */
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const cleanEmail = email.trim();

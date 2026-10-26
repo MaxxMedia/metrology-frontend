@@ -1,4 +1,6 @@
 "use client"
+/** Implements the admin events create page and its route-specific behavior. */
+
 
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik"
 import * as Yup from "yup"
@@ -89,6 +91,7 @@ const initialValues = {
   agreeTerms: false,
 }
 
+/** Renders the create event page interface. */
 export default function CreateEventPage() {
   const router = useRouter()
   const [submitAction, setSubmitAction] = useState<"submit" | "draft">("draft")

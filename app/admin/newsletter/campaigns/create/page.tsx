@@ -1,4 +1,6 @@
 "use client";
+/** Implements the admin newsletter campaigns create page and its route-specific behavior. */
+
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -13,6 +15,7 @@ interface Template {
   updatedAt: string;
 }
 
+/** Renders the create campaign page interface. */
 export default function CreateCampaignPage() {
   const router = useRouter();
 
@@ -44,6 +47,7 @@ export default function CreateCampaignPage() {
     fetchTemplates();
   }, []);
 
+  /** Loads templates for the current workflow. */
   async function fetchTemplates() {
     try {
       setLoadingTemplates(true);
@@ -78,6 +82,7 @@ export default function CreateCampaignPage() {
     }
   }
 
+  /** Handles the change interaction and its related state changes. */
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
@@ -87,6 +92,7 @@ export default function CreateCampaignPage() {
     });
   }
 
+  /** Handles the channel interaction and its related state changes. */
   function handleChannel(name: string) {
     setForm({
       ...form,
@@ -97,6 +103,7 @@ export default function CreateCampaignPage() {
     });
   }
 
+  /** Handles the template select interaction and its related state changes. */
   function handleTemplateSelect(e: React.ChangeEvent<HTMLSelectElement>) {
     const templateId = e.target.value ? parseInt(e.target.value) : null;
     setSelectedTemplate(templateId);
@@ -113,15 +120,18 @@ export default function CreateCampaignPage() {
     }
   }
 
+  /** Coordinates the is dynamic template behavior for this workflow. */
   function isDynamicTemplate(content: string): boolean {
     return content.includes('{{posts}}') || content.includes('{posts}');
   }
 
+  /** Returns the derived post count value used by this workflow. */
   function getPostCount(content: string): number {
     const matches = content.match(/<div class="post"/g);
     return matches ? matches.length : 0;
   }
 
+  /** Creates the campaign record or interface element. */
   async function createCampaign(e: React.FormEvent) {
     e.preventDefault();
     setError(null);

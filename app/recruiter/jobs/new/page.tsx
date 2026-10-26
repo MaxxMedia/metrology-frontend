@@ -1,4 +1,6 @@
 "use client"
+/** Implements the recruiter jobs new page and its route-specific behavior. */
+
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -116,6 +118,7 @@ const REQUIRED_FIELDS: { key: keyof FormState; label: string }[] = [
   { key: "reportsTo", label: "Reports to" },
 ]
 
+/** Renders the create job page interface. */
 export default function CreateJobPage() {
   const router = useRouter()
 
@@ -141,6 +144,7 @@ export default function CreateJobPage() {
   useEffect(() => {
     if (!token) return
 
+    /** Loads profile for the current workflow. */
     const fetchProfile = async () => {
       try {
         const res = await fetch(
@@ -185,6 +189,7 @@ export default function CreateJobPage() {
     fetchProfile()
   }, [token])
 
+  /** Coordinates the update behavior for this workflow. */
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm(prev => ({ ...prev, [key]: value }))
     setErrors(prev => {
@@ -195,6 +200,7 @@ export default function CreateJobPage() {
     })
   }
 
+  /** Coordinates the validate behavior for this workflow. */
   const validate = () => {
     const nextErrors: Partial<Record<keyof FormState, string>> = {}
     REQUIRED_FIELDS.forEach(({ key, label }) => {
@@ -206,6 +212,7 @@ export default function CreateJobPage() {
     return nextErrors
   }
 
+  /** Coordinates the toggle benefit behavior for this workflow. */
   const toggleBenefit = (benefit: string) => {
     setForm(prev => ({
       ...prev,
@@ -215,6 +222,7 @@ export default function CreateJobPage() {
     }))
   }
 
+  /** Creates the custom benefit record or interface element. */
   const addCustomBenefit = () => {
     const trimmed = customBenefit.trim()
     if (!trimmed || form.benefits.includes(trimmed)) return
@@ -240,6 +248,7 @@ export default function CreateJobPage() {
     return `${baseSlug}-${timestamp}-${random}`;
   };
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -812,6 +821,7 @@ function Section({
   )
 }
 
+/** Renders the row interface. */
 function Row({
   cols,
   children,
@@ -830,6 +840,7 @@ function Row({
   )
 }
 
+/** Renders the field label interface. */
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
     <label className="block text-sm font-medium text-[#CCCCCC] mb-1">
@@ -883,6 +894,7 @@ function Input({
   )
 }
 
+/** Renders the textarea interface. */
 function Textarea({
   label,
   value,
@@ -940,6 +952,7 @@ function Textarea({
   )
 }
 
+/** Renders the select interface. */
 function Select({
   label,
   value,

@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable input otp UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import { OTPInput, OTPInputContext } from 'input-otp'
@@ -6,6 +8,7 @@ import { MinusIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the input otp interface. */
 function InputOTP({
   className,
   containerClassName,
@@ -26,6 +29,7 @@ function InputOTP({
   )
 }
 
+/** Renders the input otpgroup interface. */
 function InputOTPGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -36,6 +40,7 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/** Renders the input otpslot interface. */
 function InputOTPSlot({
   index,
   className,
@@ -66,6 +71,7 @@ function InputOTPSlot({
   )
 }
 
+/** Renders the input otpseparator interface. */
 function InputOTPSeparator({ ...props }: React.ComponentProps<'div'>) {
   return (
     <div data-slot="input-otp-separator" role="separator" {...props}>

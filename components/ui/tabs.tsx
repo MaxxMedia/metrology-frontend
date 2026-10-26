@@ -1,10 +1,13 @@
 'use client'
+/** Provides the reusable tabs UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the tabs interface. */
 function Tabs({
   className,
   ...props
@@ -18,6 +21,7 @@ function Tabs({
   )
 }
 
+/** Renders the tabs list interface. */
 function TabsList({
   className,
   ...props
@@ -34,6 +38,7 @@ function TabsList({
   )
 }
 
+/** Renders the tabs trigger interface. */
 function TabsTrigger({
   className,
   ...props
@@ -50,6 +55,7 @@ function TabsTrigger({
   )
 }
 
+/** Renders the tabs content interface. */
 function TabsContent({
   className,
   ...props

@@ -1,5 +1,7 @@
 // app/admin/posts/create/page.tsx
 "use client";
+/** Implements the admin posts create page and its route-specific behavior. */
+
 
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -7,6 +9,7 @@ import UploadBox from "@/components/UploadBox";
 import PostBuilder from "@/app/admin/components/PostBuilder";
 import { ContentBlock } from "@/app/admin/components/types";
 
+/** Renders the create post interface. */
 export default function CreatePost() {
   const router = useRouter();
   
@@ -87,6 +90,7 @@ export default function CreatePost() {
     setForm((prev) => ({ ...prev, title, slug }));
   }
 
+  /** Handles the change interaction and its related state changes. */
   function handleChange(
     e:
       | ChangeEvent<HTMLInputElement>

@@ -1,3 +1,5 @@
+/** Implements the admin components section card interface and its related behavior. */
+/** Renders the section card interface. */
 export default function SectionCard({
   title,
   children,

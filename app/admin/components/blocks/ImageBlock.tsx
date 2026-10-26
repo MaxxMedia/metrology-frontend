@@ -1,5 +1,7 @@
 // app/admin/components/blocks/ImageBlock.tsx
 "use client";
+/** Implements the admin components blocks image block interface and its related behavior. */
+
 
 import UploadBox from "@/components/UploadBox";
 import { ImageBlock } from "../types";
@@ -9,7 +11,9 @@ interface Props {
   onChange: (block: ImageBlock) => void;
 }
 
+/** Renders the image block editor interface. */
 export default function ImageBlockEditor({ block, onChange }: Props) {
+  /** Handles the upload interaction and its related state changes. */
   async function handleUpload(file: File) {
     const formData = new FormData();
     formData.append("image", file);

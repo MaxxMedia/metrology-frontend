@@ -1,4 +1,6 @@
 "use client";
+/** Implements the news products section component and its related interface behavior. */
+
 
 import Link from "next/link";
 import Image from "next/image";
@@ -9,6 +11,7 @@ type NewsProductsSectionProps = {
   productPosts: Post[];
 };
 
+/** Renders the news products section interface. */
 export default function NewsProductsSection({
   newsPosts,
   productPosts,

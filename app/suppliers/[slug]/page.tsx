@@ -1,3 +1,4 @@
+/** Implements the suppliers slug page and its route-specific behavior. */
 // app/supplier/[slug]/page.tsx
 import CompanyArticlesCarousel from "@/components/CompanyArticlesCarousel"
 import SocialLinksTracker from "@/components/SocialLinksTracker"
@@ -33,6 +34,7 @@ type JwtPayload = {
   companyId?: number | null
 }
 
+/** Returns the derived current user value used by this workflow. */
 async function getCurrentUser(): Promise<JwtPayload | null> {
   const cookieStore = await cookies()
   const token = cookieStore.get("token")?.value
@@ -133,21 +135,25 @@ type Supplier = {
   }
 }
 
+/** Returns the derived gallery image value used by this workflow. */
 function getGalleryImage(item: any): string {
   if (typeof item === 'string') return item
   return item?.image || ''
 }
 
+/** Returns the derived gallery name value used by this workflow. */
 function getGalleryName(item: any): string {
   if (typeof item === 'string') return ''
   return item?.name || ''
 }
 
+/** Returns the derived gallery description value used by this workflow. */
 function getGalleryDescription(item: any): string {
   if (typeof item === 'string') return ''
   return item?.description || ''
 }
 
+/** Renders the gallery item card interface. */
 function GalleryItemCard({ item, title }: { item: any; title?: string }) {
   const image = getGalleryImage(item)
   const name = getGalleryName(item)
@@ -178,6 +184,7 @@ function GalleryItemCard({ item, title }: { item: any; title?: string }) {
   )
 }
 
+/** Renders the gallery grid interface. */
 function GalleryGrid({ items, title }: { items: any[]; title?: string }) {
   if (!items || items.length === 0) return null
 
@@ -193,6 +200,7 @@ function GalleryGrid({ items, title }: { items: any[]; title?: string }) {
   )
 }
 
+/** Renders the supplier showroom page interface. */
 export default async function SupplierShowroomPage({
   params,
 }: {
@@ -254,6 +262,7 @@ export default async function SupplierShowroomPage({
 
   const location = supplier.Company?.location || ""
 
+  /** Returns the derived map embed url value used by this workflow. */
   function getMapEmbedUrl(googleMapUrl?: string | null, location?: string): string | null {
     if (googleMapUrl) {
       const coordMatch = googleMapUrl.match(/@([-0-9.]+),([-0-9.]+)/)

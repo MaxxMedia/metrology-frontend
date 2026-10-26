@@ -1,4 +1,6 @@
 "use client"
+/** Implements the news newsletter form component and its related interface behavior. */
+
 import { useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -33,6 +35,7 @@ interface NewsletterFormProps {
   hasNewsletterContent?: boolean
 }
 
+/** Renders the newsletter form interface. */
 export default function NewsletterForm({ hasNewsletterContent = true }: NewsletterFormProps) {
   const router = useRouter()
   const [step, setStep] = useState(1)
@@ -44,15 +47,18 @@ export default function NewsletterForm({ hasNewsletterContent = true }: Newslett
     email: "",
   })
 
+  /** Handles the next interaction and its related state changes. */
   const handleNext = (values: typeof formData) => {
     setFormData(values)
     setStep(2)
   }
 
+  /** Handles the back interaction and its related state changes. */
   const handleBack = () => {
     setStep(1)
   }
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (values: typeof formData, { setSubmitting, resetForm }: any) => {
     try {
       const subscriberData = {

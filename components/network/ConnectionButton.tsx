@@ -1,4 +1,6 @@
 "use client";
+/** Implements the network connection button component and its related interface behavior. */
+
 
 import { useEffect, useState } from "react";
 import {
@@ -12,6 +14,7 @@ interface ConnectionButtonProps {
   userId: number;
 }
 
+/** Renders the connection button interface. */
 export default function ConnectionButton({
   userId,
 }: ConnectionButtonProps) {
@@ -20,6 +23,7 @@ export default function ConnectionButton({
     useState<ConnectionStatusResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  /** Loads status for the current workflow. */
   const fetchStatus = async () => {
     try {
       const res = await getStatus(userId);
@@ -33,6 +37,7 @@ export default function ConnectionButton({
     fetchStatus();
   }, [userId]);
 
+  /** Handles the connect interaction and its related state changes. */
   const handleConnect = async () => {
     try {
       setLoading(true);
@@ -49,6 +54,7 @@ export default function ConnectionButton({
     }
   };
 
+  /** Handles the accept interaction and its related state changes. */
   const handleAccept = async () => {
     if (!status?.requestId) return;
 

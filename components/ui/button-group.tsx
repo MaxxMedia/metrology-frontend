@@ -1,3 +1,4 @@
+/** Provides the reusable button group UI primitive and its interaction behavior. */
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 
@@ -21,6 +22,7 @@ const buttonGroupVariants = cva(
   },
 )
 
+/** Renders the button group interface. */
 function ButtonGroup({
   className,
   orientation,
@@ -37,6 +39,7 @@ function ButtonGroup({
   )
 }
 
+/** Renders the button group text interface. */
 function ButtonGroupText({
   className,
   asChild = false,
@@ -57,6 +60,7 @@ function ButtonGroupText({
   )
 }
 
+/** Renders the button group separator interface. */
 function ButtonGroupSeparator({
   className,
   orientation = 'vertical',

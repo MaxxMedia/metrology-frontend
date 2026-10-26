@@ -1,5 +1,7 @@
 // components/NewsletterBuilder.tsx
 "use client";
+/** Implements the newsletter builder component and its related interface behavior. */
+
 
 import { useState } from "react";
 
@@ -21,17 +23,20 @@ interface NewsletterBuilderProps {
   onGenerate: (html: string) => void;
 }
 
+/** Renders the newsletter builder interface. */
 export function NewsletterBuilder({ posts, onGenerate }: NewsletterBuilderProps) {
   const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
   const [headerText, setHeaderText] = useState("Metrology Newsletter");
   const [footerText, setFooterText] = useState("© 2025 Metrology. All rights reserved.");
 
+  /** Toggles the post state in response to the current interaction. */
   function togglePost(postId: number) {
     setSelectedPosts(prev =>
       prev.includes(postId) ? prev.filter(id => id !== postId) : [...prev, postId]
     );
   }
 
+  /** Coordinates the generate html behavior for this component. */
   function generateHTML() {
     const selected = posts.filter(p => selectedPosts.includes(p.id));
     

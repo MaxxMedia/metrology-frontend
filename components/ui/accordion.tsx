@@ -1,4 +1,6 @@
 'use client'
+/** Provides the reusable accordion UI primitive and its interaction behavior. */
+
 
 import * as React from 'react'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
@@ -6,12 +8,14 @@ import { ChevronDownIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+/** Renders the accordion interface. */
 function Accordion({
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
   return <AccordionPrimitive.Root data-slot="accordion" {...props} />
 }
 
+/** Renders the accordion item interface. */
 function AccordionItem({
   className,
   ...props
@@ -25,6 +29,7 @@ function AccordionItem({
   )
 }
 
+/** Renders the accordion trigger interface. */
 function AccordionTrigger({
   className,
   children,
@@ -47,6 +52,7 @@ function AccordionTrigger({
   )
 }
 
+/** Renders the accordion content interface. */
 function AccordionContent({
   className,
   children,

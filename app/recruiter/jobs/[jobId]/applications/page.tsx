@@ -1,4 +1,6 @@
 "use client"
+/** Implements the recruiter jobs job id applications page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
@@ -30,6 +32,7 @@ type Application = {
   } | null
 }
 
+/** Renders the job applicants page interface. */
 export default function JobApplicantsPage() {
   const params = useParams()
   const jobId = params.jobId as string
@@ -38,6 +41,7 @@ export default function JobApplicantsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    /** Loads applicants for the current workflow. */
     async function loadApplicants() {
       try {
         const token = localStorage.getItem("token")
@@ -65,6 +69,7 @@ export default function JobApplicantsPage() {
     loadApplicants()
   }, [jobId])
 
+  /** Updates the status record or interface state. */
   async function updateStatus(applicationId: number, status: "shortlisted" | "rejected") {
     const token = localStorage.getItem("token")
 

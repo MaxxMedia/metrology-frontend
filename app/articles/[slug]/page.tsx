@@ -1,3 +1,4 @@
+/** Implements the articles slug page and its route-specific behavior. */
 import Image from "next/image";
 import type { Post } from "@/types/Post";
 
@@ -7,6 +8,7 @@ type Props = {
   };
 };
 
+/** Renders the article detail page interface. */
 export default async function ArticleDetailPage({ params }: Props) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${params.slug}`,
@@ -19,6 +21,7 @@ export default async function ArticleDetailPage({ params }: Props) {
 
   const post: Post = await res.json();
 
+  /** Returns the derived image url value used by this workflow. */
   const getImageUrl = (url?: string | null) => {
     if (!url) return "/placeholder.svg";
     if (url.startsWith("http")) return url;

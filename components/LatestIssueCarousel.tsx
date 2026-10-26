@@ -1,4 +1,6 @@
 "use client"
+/** Implements the latest issue carousel component and its related interface behavior. */
+
 import Image from "next/image"
 
 import { useState } from "react"
@@ -8,13 +10,16 @@ type LatestIssueCarouselProps = {
   posts: any[]
 }
 
+/** Renders the latest issue carousel interface. */
 export default function LatestIssueCarousel({ posts }: LatestIssueCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
 
+  /** Handles the prev interaction and its related state changes. */
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? posts.length - 1 : prev - 1))
   }
 
+  /** Handles the next interaction and its related state changes. */
   const handleNext = () => {
     setCurrentIndex((prev) => (prev === posts.length - 1 ? 0 : prev + 1))
   }

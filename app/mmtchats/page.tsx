@@ -1,6 +1,8 @@
+/** Implements the mmtchats page and its route-specific behavior. */
 import VideoListing from "@/components/VideoListing"
 import type { Post } from "@/types/Post"
 
+/** Renders the videos page interface. */
 export default async function VideosPage() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/posts?limit=50`,

@@ -1,4 +1,6 @@
 "use client"
+/** Implements the candidate profile delete page and its route-specific behavior. */
+
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -14,6 +16,7 @@ type Profile = {
   websiteUrl?: string
 }
 
+/** Renders the edit candidate profile page interface. */
 export default function EditCandidateProfilePage() {
   const router = useRouter()
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -29,6 +32,7 @@ export default function EditCandidateProfilePage() {
       .finally(() => setLoading(false))
   }, [])
 
+  /** Handles the submit interaction and its related state changes. */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)

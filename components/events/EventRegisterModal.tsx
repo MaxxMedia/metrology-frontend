@@ -1,4 +1,6 @@
 "use client"
+/** Implements the events event register modal component and its related interface behavior. */
+
 
 import { useState, useEffect } from "react"
 import EventRegistrationForm from "@/components/EventRegistrationForm"
@@ -7,6 +9,7 @@ interface Props {
   slug: string
 }
 
+/** Renders the event register modal interface. */
 export default function EventRegisterModal({ slug }: Props) {
   const [open, setOpen] = useState(false)
 
@@ -20,6 +23,7 @@ export default function EventRegisterModal({ slug }: Props) {
 
   // ESC close
   useEffect(() => {
+    /** Handles the esc interaction and its related state changes. */
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false)
     }

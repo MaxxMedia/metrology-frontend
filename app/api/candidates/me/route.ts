@@ -1,3 +1,4 @@
+/** Proxies authenticated candidate-profile requests to the backend. */
 // import { cookies } from "next/headers"
 
 // const BACKEND_URL = process.env.BACKEND_URL!
@@ -44,6 +45,7 @@ import { cookies } from "next/headers"
 
 const BACKEND_URL = process.env.BACKEND_URL!
 
+/** Serializes the incoming request cookies for the authenticated backend calls. */
 async function serializeCookies() {
   const cookieStore = await cookies()
 
@@ -53,6 +55,7 @@ async function serializeCookies() {
     .join("; ")
 }
 
+/** Retrieves the current candidate profile while forwarding the request cookies. */
 export async function GET() {
   const cookieHeader = await serializeCookies()
 
@@ -67,6 +70,7 @@ export async function GET() {
   return Response.json(data, { status: res.status })
 }
 
+/** Updates the current candidate profile while forwarding its authentication cookies. */
 export async function PUT(req: Request) {
   const body = await req.json()
   const cookieHeader = await serializeCookies()

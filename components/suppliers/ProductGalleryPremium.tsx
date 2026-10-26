@@ -1,5 +1,7 @@
 // components/suppliers/ProductGalleryPremium.tsx
 "use client"
+/** Implements the suppliers product gallery premium component and its related interface behavior. */
+
 
 import { useState } from "react"
 import { ChevronUp, ChevronDown } from "lucide-react"
@@ -10,12 +12,14 @@ type ProductGalleryPremiumProps = {
   images: GalleryItem[] | string[]
 }
 
+/** Coordinates the normalize behavior for this component. */
 function normalize(items: GalleryItem[] | string[]): GalleryItem[] {
   return items
     .map((item) => (typeof item === "string" ? { image: item } : item))
     .filter((item) => item && item.image && item.image.trim().length > 0)
 }
 
+/** Renders the product gallery premium interface. */
 export default function ProductGalleryPremium({ images }: ProductGalleryPremiumProps) {
   const items = normalize(images)
   const [activeIndex, setActiveIndex] = useState(0)
@@ -24,7 +28,9 @@ export default function ProductGalleryPremium({ images }: ProductGalleryPremiumP
 
   const active = items[Math.min(activeIndex, items.length - 1)]
 
+  /** Coordinates the go prev behavior for this component. */
   const goPrev = () => setActiveIndex((i) => (i - 1 + items.length) % items.length)
+  /** Coordinates the go next behavior for this component. */
   const goNext = () => setActiveIndex((i) => (i + 1) % items.length)
 
   return (

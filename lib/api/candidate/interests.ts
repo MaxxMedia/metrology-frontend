@@ -1,5 +1,7 @@
+/** Provides candidate interests API helpers for reading and updating candidate data. */
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
+/** Builds request headers with the current bearer token and JSON content type. */
 function authHeaders() {
   const token = localStorage.getItem("token");
   return {
@@ -8,6 +10,7 @@ function authHeaders() {
   };
 }
 
+/** Loads or retrieves interests data for this workflow. */
 export async function getInterests() {
   try {
     const res = await fetch(`${API}/api/candidate-interests`, {
@@ -29,6 +32,7 @@ export async function getInterests() {
   }
 }
 
+/** Creates interest through the configured API. */
 export async function createInterest(data: { title: string; type?: string }) {
   try {
     const res = await fetch(`${API}/api/candidate-interests`, {
@@ -50,6 +54,7 @@ export async function createInterest(data: { title: string; type?: string }) {
   }
 }
 
+/** Updates interest through the configured API. */
 export async function updateInterest(
   id: number,
   data: { title: string; type?: string }
@@ -72,6 +77,7 @@ export async function updateInterest(
   }
 }
 
+/** Removes interest through the configured API. */
 export async function deleteInterest(id: number) {
   try {
     const res = await fetch(`${API}/api/candidate-interests/${id}`, {

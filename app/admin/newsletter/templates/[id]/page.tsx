@@ -1,8 +1,11 @@
 "use client";
+/** Implements the admin newsletter templates id page and its route-specific behavior. */
+
 
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+/** Renders the edit template page interface. */
 export default function EditTemplatePage() {
   const router = useRouter();
   const { id } = useParams();
@@ -23,6 +26,7 @@ export default function EditTemplatePage() {
     }
   }, [id]);
 
+  /** Loads template for the current workflow. */
   async function loadTemplate() {
     try {
       setError(null);
@@ -67,6 +71,7 @@ export default function EditTemplatePage() {
     }
   }
 
+  /** Handles the change interaction and its related state changes. */
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
@@ -76,6 +81,7 @@ export default function EditTemplatePage() {
     });
   }
 
+  /** Updates the template record or interface state. */
   async function updateTemplate(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -117,6 +123,7 @@ export default function EditTemplatePage() {
     }
   }
 
+  /** Removes the template record or interface element. */
   async function deleteTemplate() {
     if (!confirm("Are you sure you want to delete this template?")) return;
 

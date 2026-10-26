@@ -1,4 +1,6 @@
 "use client"
+/** Implements the video listing component and its related interface behavior. */
+
 
 import Link from "next/link"
 import type { Post } from "@/types/Post"
@@ -9,6 +11,7 @@ type Props = {
   posts: Post[]
 }
 
+/** Renders the video listing interface. */
 export default function VideoListing({ posts }: Props) {
   return (
     <>

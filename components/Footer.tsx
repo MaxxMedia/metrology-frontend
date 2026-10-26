@@ -1,3 +1,4 @@
+/** Implements the footer component and its related interface behavior. */
 import Link from "next/link"
 import Image from "next/image"
 import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react"
@@ -9,6 +10,7 @@ type FooterLink = {
   href: string
 }
 
+/** Renders the xicon interface. */
 function XIcon({ size = 18 }: { size?: number; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width={size} height={size}>
@@ -17,6 +19,7 @@ function XIcon({ size = 18 }: { size?: number; strokeWidth?: number }) {
   )
 }
 
+/** Renders the footer nav interface. */
 function FooterNav({ title, label, links, className = "" }: {
   title: string
   label: string
@@ -85,6 +88,7 @@ const SOCIAL_LINKS = [
   { label: "Instagram", href: "https://www.instagram.com/", Icon: Instagram, className: "bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 hover:opacity-90" },
 ]
 
+/** Renders the footer interface. */
 export default function Footer() {
   return (
     <>

@@ -1,4 +1,6 @@
 'use client';
+/** Implements the admin contact page and its route-specific behavior. */
+
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -31,6 +33,7 @@ function ContactStats({ contacts }: { contacts: any[] }) {
   );
 }
 
+/** Renders the admin contact page interface. */
 export default function AdminContactPage() {
   const [contacts, setContacts] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,6 +46,7 @@ export default function AdminContactPage() {
     fetchContacts();
   }, []);
 
+  /** Loads contacts for the current workflow. */
   const fetchContacts = async () => {
     try {
       setLoading(true);
@@ -59,6 +63,7 @@ export default function AdminContactPage() {
     }
   };
 
+  /** Handles the delete interaction and its related state changes. */
   const handleDelete = async (id: number) => {
     try {
       const response = await deleteContact(id);
@@ -95,6 +100,7 @@ export default function AdminContactPage() {
     return result;
   };
 
+  /** Returns the derived counts value used by this workflow. */
   const getCounts = () => {
     const total = contacts.length;
     const unsolved = contacts.filter(c => c.status === 'NEW' || c.status === 'IN_PROGRESS').length;

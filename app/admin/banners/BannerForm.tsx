@@ -1,4 +1,6 @@
 ﻿"use client";
+/** Implements the admin banners banner form interface and its related behavior. */
+
 
 import { useState, useEffect } from "react";
 import { BANNER_PLACEMENTS } from "@/lib/bannerPlacements";
@@ -12,6 +14,7 @@ type BannerFormProps = {
 
 const DEFAULT_BANNER_PLACEMENT = BANNER_PLACEMENTS[0].value as BannerPlacement;
 
+/** Builds the banner placement value used by the surrounding workflow. */
 function resolveBannerPlacement(value?: string): BannerPlacement {
   return (
     BANNER_PLACEMENTS.find((placement) => placement.value === value)?.value ??
@@ -19,6 +22,7 @@ function resolveBannerPlacement(value?: string): BannerPlacement {
   );
 }
 
+/** Renders the banner form interface. */
 export default function BannerForm({
   initialData,
   onSubmit,
@@ -49,6 +53,7 @@ export default function BannerForm({
     setImageUrl(initialData.imageUrl ?? "");
   }, [initialData]);
 
+  /** Uploads the image asset and returns its result to the form. */
   const uploadImage = async (file: File) => {
     setUploading(true);
     setUploadError("");
@@ -84,6 +89,7 @@ export default function BannerForm({
     }
   };
 
+  /** Handles the submit interaction and its related state changes. */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!imageUrl) {

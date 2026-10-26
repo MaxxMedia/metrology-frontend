@@ -1,4 +1,6 @@
 "use client";
+/** Implements the posts post quote card component and its related interface behavior. */
+
 
 interface PostQuoteCardProps {
   quote: string;
@@ -6,6 +8,7 @@ interface PostQuoteCardProps {
   className?: string;
 }
 
+/** Renders the post quote card interface. */
 export default function PostQuoteCard({
   quote,
   author,

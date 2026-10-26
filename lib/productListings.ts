@@ -1,3 +1,5 @@
+/** Normalizes supplier product data and counts usable product entries. */
+/** Converts stored product data into a consistent string list, including JSON-encoded values. */
 export function normalizeProductSupplies(
   productSupplies: unknown
 ): string[] {
@@ -19,6 +21,7 @@ export function normalizeProductSupplies(
   })
 }
 
+/** Counts non-empty product entries after normalizing the supplied product data. */
 export function countFilledProducts(productSupplies: unknown = []) {
   return normalizeProductSupplies(productSupplies).filter(
     (item) => item.trim().length > 0
