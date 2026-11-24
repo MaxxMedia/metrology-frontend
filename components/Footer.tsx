@@ -100,7 +100,7 @@ export default function Footer() {
               <div className="col-span-2 sm:col-span-3 lg:col-span-3">
                 <Link href="/" className="mb-4 inline-block">
                   <Image
-                    src="/images/logo5.png"
+                    src="/images/Metrology_logo.png"
                     alt="Metrology"
                     width={300}
                     height={100}

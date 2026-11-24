@@ -433,7 +433,7 @@ export default function Header() {
         <div className={`${container} h-[72px] flex items-center justify-between gap-4`}>
           <Link href="/" onMouseEnter={() => setOpenMega(null)} className="shrink-0 flex items-center">
             <Image
-              src="/images/logo5.png"
+              src="/images/Metrology_logo.png"
               alt="Tooling Trends"
               width={180}
               height={56}
@@ -785,7 +785,7 @@ export default function Header() {
             <div className="flex items-center justify-between p-5 border-b border-white/10">
               <Link href="/" onClick={closeMobileMenu} className="flex items-center">
                 <Image
-                  src="/images/logo5.png"
+                  src="/images/Metrology_logo.png"
                   alt="Metrology"
                   width={140}
                   height={40}
